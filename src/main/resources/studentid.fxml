@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="189.0" prefWidth="275.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label layoutX="11.0" layoutY="7.0" prefHeight="90.0" prefWidth="253.0" text="Welcome to the Jeeves EMA creation environment! Please enter your username in the box below and click OK to continue" textAlignment="CENTER" wrapText="true">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <TextField fx:id="txtUsername" layoutX="56.0" layoutY="109.0" promptText="Username" />
+      <Button fx:id="btnOK" disable="true" layoutX="119.0" layoutY="149.0" mnemonicParsing="false" onAction="#save" text="OK" />
+   </children>
+</Pane>

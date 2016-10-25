@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<Pane fx:id="pane" minHeight="30.0" prefHeight="30.0" styleClass="time_button" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+  <children>
+    <HBox fx:id="hbox" alignment="CENTER" fillHeight="false" layoutX="8.0" layoutY="-6.0" prefHeight="45.0">
+         <children>
+            <Label text="set the variable:">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <Label text="to value:">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <RadioButton fx:id="trueButton" mnemonicParsing="false" selected="true" text="true" textFill="WHITE">
+               <font>
+                  <Font size="13.0" />
+               </font>
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </RadioButton>
+            <RadioButton fx:id="falseButton" mnemonicParsing="false" text="false" textFill="WHITE">
+               <font>
+                  <Font size="13.0" />
+               </font>
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </RadioButton>
+         </children></HBox>
+      <Pane layoutX="-14.0" layoutY="9.0" prefHeight="12.0" prefWidth="15.0" styleClass="time_buttonmark2" />
+  </children>
+  <stylesheets>
+    <URL value="@ButtonsDemo.css" />
+  </stylesheets>
+</Pane>

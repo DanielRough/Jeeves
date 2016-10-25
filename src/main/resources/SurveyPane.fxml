@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane fx:id="pane" prefHeight="200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TabPane fx:id="paneSurveys" layoutX="14.0" layoutY="70.0" tabClosingPolicy="UNAVAILABLE" />
+      <Button fx:id="btnNewSurvey" layoutX="397.0" layoutY="25.0" mnemonicParsing="false" onAction="#handleNewSurveyClick" prefHeight="12.0" prefWidth="151.0" text="New Survey">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Pane fx:id="paneNoSurveys" layoutX="14.0" layoutY="100.0" prefHeight="518.0" prefWidth="1021.0">
+         <children>
+            <Text fill="#478ecd" fontSmoothingType="LCD" layoutX="206.0" layoutY="119.0" strokeType="OUTSIDE" strokeWidth="0.0" text="You don't have any created surveys yet" textAlignment="CENTER" wrappingWidth="517.6829261779785">
+               <font>
+                  <Font size="27.0" />
+               </font>
+            </Text>
+            <Text fill="#478ecd" layoutX="146.0" layoutY="167.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Click the 'New Survey' button above to begin creating one" textAlignment="CENTER">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Text>
+         </children>
+      </Pane>
+   </children>
+</Pane>

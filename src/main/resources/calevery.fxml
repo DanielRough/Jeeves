@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.*?>
+<?import javafx.scene.image.*?>
+
+<Pane stylesheets="@ButtonsDemo.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView fx:id="imgCalendar" fitHeight="44.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../bin/img/icons/calenda.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="2.0" layoutY="3.0" prefHeight="44.0" prefWidth="44.0" styleClass="blacktext" stylesheets="@ButtonsDemo.css" text="every day" textAlignment="CENTER" wrapText="true">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Label>
+   </children>
+</Pane>

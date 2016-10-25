@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="160.0" prefWidth="321.0" styleClass="action-list" stylesheets="@ButtonsDemo.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label layoutX="50.0" layoutY="14.0" text="Researcher number" />
+      <TextField fx:id="txtSaveAsName" layoutX="50.0" layoutY="31.0" prefHeight="25.0" prefWidth="183.0" promptText="+44" />
+      <Button fx:id="btnSave" layoutX="50.0" layoutY="122.0" mnemonicParsing="false" onAction="#handleSaveAsClick" prefHeight="25.0" prefWidth="108.0" text="Save" />
+      <Label fx:id="lblError" layoutX="11.0" layoutY="200.0" prefHeight="25.0" prefWidth="300.0" textFill="#f8360a" />
+      <VBox fx:id="extraFields" layoutX="14.0" layoutY="147.0" />
+      <Button fx:id="btnCancel" layoutX="161.0" layoutY="122.0" mnemonicParsing="false" onAction="#handleCloseClick" prefHeight="25.0" prefWidth="108.0" text="Cancel" />
+      <Label layoutX="52.0" layoutY="53.0" prefHeight="54.0" prefWidth="202.0" text="Enter your phone number here if you wish to receive updates via SMS" wrapText="true" />
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" />
+   </padding>
+</Pane>

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<Pane prefHeight="478.0" prefWidth="914.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Group fx:id="grpSurveyEdit" layoutX="-8.0" layoutY="-172.0">
+         <children>
+            <Label layoutX="337.0" layoutY="312.0" prefHeight="20.0" prefWidth="135.0" text="Response type:" textAlignment="RIGHT">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <TextArea fx:id="txtRegQ" layoutX="336.0" layoutY="262.0" prefHeight="44.0" prefWidth="269.0" promptText="Question text" wrapText="true" />
+            <Label layoutX="336.0" layoutY="240.0" prefHeight="22.0" prefWidth="72.0" text="Question:" textAlignment="RIGHT" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <VBox fx:id="vBoxQuestionType" layoutX="337.0" layoutY="332.0" prefWidth="281.0" spacing="7.0">
+               <children>
+                  <RadioButton fx:id="rdioRegOpen" layoutX="70.0" layoutY="170.0" mnemonicParsing="false" onAction="#showOpenEnded" selected="true" text="Text">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="type" />
+                     </toggleGroup>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </RadioButton>
+                  <RadioButton fx:id="rdioRegNum" mnemonicParsing="false" onAction="#showNumeric" text="Number" toggleGroup="$type">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </RadioButton>
+                  <RadioButton fx:id="rdioRegBool" mnemonicParsing="false" onAction="#showBoolean" text="True/False" toggleGroup="$type">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </RadioButton>
+                  <RadioButton fx:id="rdioRegMultSingle" layoutX="70.0" layoutY="195.0" mnemonicParsing="false" onAction="#showMultChoiceS" text="Multi-choice (Single)" toggleGroup="$type">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </RadioButton>
+                  <Pane fx:id="paneMultChoiceS" prefHeight="0.0" visible="false">
+                     <children>
+                        <VBox alignment="CENTER">
+                           <children>
+                              <ScrollPane fx:id="paneOptionsS" prefHeight="100.0" prefWidth="217.0">
+                                 <content>
+                                    <VBox fx:id="paneChoiceOptsS" prefWidth="181.0" spacing="5.0" />
+                                 </content>
+                              </ScrollPane>
+                              <Button fx:id="btnAddOptS" mnemonicParsing="false" text="Add option" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </Pane>
+                  <RadioButton fx:id="rdioRegMultMany" layoutX="71.0" layoutY="219.0" mnemonicParsing="false" onAction="#showMultChoiceM" text="Multi-choice (Many)" toggleGroup="$type">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </RadioButton>
+                  <Pane fx:id="paneMultChoiceM" prefHeight="0.0" visible="false">
+                     <children>
+                        <VBox alignment="CENTER">
+                           <children>
+                              <ScrollPane fx:id="paneOptionsM" prefHeight="100.0" prefWidth="217.0">
+                                 <content>
+                                    <VBox fx:id="paneChoiceOptsM" prefWidth="181.0" spacing="5.0" />
+                                 </content>
+                              </ScrollPane>
+                              <Button fx:id="btnAddOptM" mnemonicParsing="false" text="Add option" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </Pane>
+                  <RadioButton fx:id="rdioRegScale" layoutX="70.0" layoutY="370.0" mnemonicParsing="false" onAction="#showScale" text="Scale" toggleGroup="$type">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </RadioButton>
+                  <Pane fx:id="paneScale" layoutX="66.0" layoutY="396.0" prefHeight="0.0" visible="false">
+                     <children>
+                        <TextField fx:id="txtMin" layoutY="18.0" prefHeight="26.0" prefWidth="84.0" promptText="Min label" />
+                        <Label layoutX="103.0" text="Max Value">
+                           <font>
+                              <Font size="14.0" />
+                           </font></Label>
+                        <TextField fx:id="txtScaleMax" alignment="CENTER" layoutX="119.0" layoutY="17.0" prefHeight="30.0" prefWidth="33.0" text="5">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                        <TextField fx:id="txtMax" layoutX="185.0" layoutY="18.0" prefHeight="26.0" prefWidth="84.0" promptText="Max label" />
+                     </children>
+                  </Pane>
+                  <RadioButton fx:id="rdioRegDate" mnemonicParsing="false" onAction="#showDate" text="Date/Time" toggleGroup="$type">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </RadioButton>
+                  <RadioButton fx:id="rdioRegGeo" mnemonicParsing="false" onAction="#showGeo" text="Geolocation" toggleGroup="$type">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </RadioButton>
+               </children>
+            </VBox>
+            <VBox layoutX="621.0" layoutY="240.0" prefHeight="468.0" prefWidth="287.0">
+               <children>
+                  <CheckBox fx:id="chkAskOnCondition" mnemonicParsing="false" prefHeight="36.0" prefWidth="287.0" text="Ask this based on a previous answer" wrapText="true">
+                     <font>
+                        <Font size="14.0" />
+                     </font></CheckBox>
+                  <Pane fx:id="paneCondition" prefWidth="289.0">
+                     <children>
+                        <Label layoutY="47.0" text="was">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutY="2.0" text="Ask this if answer to">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="txtAnswer" layoutY="67.0" prefHeight="25.0" />
+                        <ComboBox fx:id="cboQuestionText" layoutY="22.0" prefHeight="25.0" />
+                     </children>
+                  </Pane>
+                  <CheckBox fx:id="chkAssignScore" disable="true" mnemonicParsing="false" onAction="#handleAssignScore" prefHeight="35.0" prefWidth="245.0" text="Add this answer to survey score">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <CheckBox fx:id="chkAssignToVar" mnemonicParsing="false" prefHeight="33.0" prefWidth="289.0" text="Assign this answer to a variable" wrapText="true">
+                     <font>
+                        <Font size="14.0" />
+                     </font></CheckBox>
+                  <Pane fx:id="paneAssignToVar" prefWidth="287.0" stylesheets="@ButtonsDemo.css">
+                     <children>
+                        <Label text="Store this answer in:">
+                           <font>
+                              <Font size="14.0" />
+                           </font></Label>
+                        <ScrollPane fx:id="paneScrollVars" layoutX="-3.0" layoutY="25.0" prefHeight="126.0" prefViewportHeight="122.0" prefViewportWidth="82.0" prefWidth="287.0">
+                           <content>
+                              <VBox fx:id="paneVariables" fillWidth="false" prefHeight="121.0" prefWidth="272.0" spacing="10.0" styleClass="bordered" stylesheets="@ButtonsDemo.css">
+                                 <padding>
+                                    <Insets left="5.0" />
+                                 </padding></VBox>
+                           </content>
+                        </ScrollPane>
+                        <Button fx:id="btnAddVariable" layoutY="157.0" mnemonicParsing="false" onAction="#handleAddProperty" prefHeight="51.0" prefWidth="135.0" text="Create new variable" textAlignment="CENTER" wrapText="true">
+                           <font>
+                              <Font size="14.0" />
+                           </font></Button>
+                     </children>
+                  </Pane>
+               </children>
+            </VBox>
+            <Pane fx:id="paneAssignToVar1" layoutX="10.0" layoutY="10.0" prefHeight="0.0" prefWidth="287.0" stylesheets="@ButtonsDemo.css" visible="false">
+               <children>
+                  <Label text="Store this answer in:">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <ScrollPane fx:id="paneScrollVars1" layoutX="-3.0" layoutY="25.0" prefHeight="167.0" prefViewportHeight="122.0" prefViewportWidth="82.0" prefWidth="287.0">
+                     <content>
+                        <VBox fx:id="paneVariables1" fillWidth="false" spacing="10.0" styleClass="bordered" stylesheets="@ButtonsDemo.css">
+                           <padding>
+                              <Insets left="5.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+                  <Button fx:id="btnAddVariable1" layoutX="9.0" layoutY="195.0" mnemonicParsing="false" onAction="#handleAddProperty" prefHeight="51.0" prefWidth="135.0" text="Create new variable" textAlignment="CENTER" wrapText="true">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+               </children>
+            </Pane>
+            <Pane fx:id="paneAssignToVar2" layoutX="20.0" layoutY="20.0" prefHeight="0.0" prefWidth="287.0" stylesheets="@ButtonsDemo.css" visible="false">
+               <children>
+                  <Label text="Store this answer in:">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <ScrollPane fx:id="paneScrollVars2" layoutX="-3.0" layoutY="25.0" prefHeight="167.0" prefViewportHeight="122.0" prefViewportWidth="82.0" prefWidth="287.0">
+                     <content>
+                        <VBox fx:id="paneVariables2" fillWidth="false" spacing="10.0" styleClass="bordered" stylesheets="@ButtonsDemo.css">
+                           <padding>
+                              <Insets left="5.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+                  <Button fx:id="btnAddVariable2" layoutX="9.0" layoutY="195.0" mnemonicParsing="false" onAction="#handleAddProperty" prefHeight="51.0" prefWidth="135.0" text="Create new variable" textAlignment="CENTER" wrapText="true">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+               </children>
+            </Pane>
+         </children>
+      </Group>
+      <ScrollPane fitToWidth="true" layoutX="13.0" layoutY="91.0" prefHeight="273.0" prefWidth="287.0">
+         <content>
+            <VBox fx:id="lstRegQ" spacing="5.0" />
+         </content>
+      </ScrollPane>
+      <Group fx:id="grpSurveyGroup" layoutX="28.0" layoutY="3.0">
+         <children>
+            <TextField fx:id="txtSurveyName" layoutX="89.0" layoutY="15.0" prefHeight="28.0" prefWidth="154.0" promptText="Survey name" />
+            <Label alignment="CENTER_RIGHT" layoutX="14.0" layoutY="15.0" text="Name:" textAlignment="RIGHT">
+               <font>
+                  <Font size="22.0" />
+               </font>
+            </Label>
+         </children>
+      </Group>
+      <Label fx:id="lblExpiry" disable="true" layoutX="319.0" layoutY="41.0" text="Minutes until expiry:">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <TextField fx:id="txtExpiry" disable="true" layoutX="457.0" layoutY="37.0" prefHeight="26.0" prefWidth="33.0" />
+      <CheckBox fx:id="chkExpiry" layoutX="321.0" layoutY="17.0" mnemonicParsing="false" text="Add expiry time">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </CheckBox>
+      <Button fx:id="btnAddQ" layoutX="69.0" layoutY="374.0" mnemonicParsing="false" onAction="#addQ" prefHeight="44.0" prefWidth="177.0" text="Add New Question">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
+      <Label layoutX="107.0" layoutY="63.0" text="Questions">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Label>
+   </children>
+</Pane>

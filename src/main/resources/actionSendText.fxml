@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<Pane fx:id="pane" maxHeight="30.0" minHeight="30.0" pickOnBounds="false" prefHeight="30.0" styleClass="time_button" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Pane layoutX="-14.0" layoutY="9.0" prefHeight="12.0" prefWidth="15.0" styleClass="time_buttonmark2" />
+      <ImageView fitHeight="25.0" fitWidth="33.0" layoutX="6.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../../../img/sensors/SMS.png" />
+         </image>
+      </ImageView>
+      <HBox fx:id="hboxSMS" alignment="CENTER_LEFT" fillHeight="false" layoutX="130.0" layoutY="2.0" maxHeight="26.0" prefHeight="26.0" spacing="5.0">
+         <children>
+            <TextField fx:id="txtMessage" layoutX="56.0" layoutY="17.0" maxHeight="25.0" minWidth="-Infinity" prefHeight="20.0" prefWidth="127.0" promptText="Enter SMS here" styleClass="textyfield" />
+            <Label alignment="CENTER" layoutX="212.0" layoutY="11.0" text="to">
+               <font>
+                  <Font size="13.0" />
+               </font>
+               <padding>
+                  <Insets left="2.0" right="2.0" top="3.0" />
+               </padding>
+            </Label>
+            <ComboBox fx:id="cboRecipient" layoutX="234.0" layoutY="10.0" prefHeight="15.0" stylesheets="@ButtonsDemo.css">
+               <styleClass>
+                  <String fx:value="styled-select" />
+                  <String fx:value="shadowy" />
+               </styleClass></ComboBox>
+         </children>
+      </HBox>
+      <Label layoutX="42.0" layoutY="8.0" text="send an SMS:">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Label>
+      <TextArea fx:id="smsText" layoutX="125.0" layoutY="3.0" prefHeight="163.0" prefWidth="104.0" stylesheets="@ButtonsDemo.css" visible="false" />
+   </children>
+   <stylesheets>
+      <URL value="@ButtonsDemo.css" />
+   </stylesheets>
+</Pane>

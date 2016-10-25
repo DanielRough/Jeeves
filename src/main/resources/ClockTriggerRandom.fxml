@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<Pane fx:id="pane" minHeight="81.0" styleClass="rich-blue" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+  <children>
+      <Label id="txtSensorName" alignment="CENTER" contentDisplay="CENTER" layoutY="1.0" prefHeight="26.0" prefWidth="48.0" text="from:" textAlignment="CENTER" textFill="WHITE" visible="true">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Label>
+      <Pane layoutY="49.0" prefHeight="32.0" styleClass="rich-blue">
+         <children>
+        <Label id="txtSensorName" fx:id="txtRandomPreamble" alignment="CENTER" contentDisplay="CENTER" layoutX="6.0" layoutY="5.0" text="within each window of" textAlignment="CENTER" textFill="WHITE" visible="true" wrapText="true">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+        <TextField id="txtFieldInterval" fx:id="txtFieldRandom" layoutX="140.0" layoutY="4.0" prefHeight="25.0" prefWidth="34.0" promptText="123" visible="true" />
+            <ComboBox fx:id="cboRandom" layoutX="180.0" layoutY="4.0" stylesheets="@ButtonsDemo.css">
+</ComboBox>
+         </children>
+      </Pane>
+  <Label id="txtSensorName" alignment="CENTER" contentDisplay="CENTER" layoutX="22.0" layoutY="23.0" prefHeight="26.0" prefWidth="22.0" text="to:" textAlignment="CENTER" textFill="WHITE" visible="true">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Label>
+  <Pane fx:id="paneRandomTo" layoutX="40.0" layoutY="28.0">
+    <stylesheets>
+      <URL value="@ButtonsDemo.css" />
+    </stylesheets>
+  </Pane>
+  <Pane fx:id="paneRandomFrom" layoutX="40.0" layoutY="5.0">
+    <stylesheets>
+      <URL value="@ButtonsDemo.css" />
+    </stylesheets>
+  </Pane>
+      <Pane fx:id="paneDate" layoutX="100.0" layoutY="5.0" />
+  </children>
+  <stylesheets>
+    <URL value="@ButtonsDemo.css" />
+  </stylesheets>
+</Pane>
