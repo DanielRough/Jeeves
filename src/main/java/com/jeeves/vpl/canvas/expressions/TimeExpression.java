@@ -11,11 +11,11 @@ import javafx.scene.control.ComboBox;
 import com.jeeves.vpl.canvas.receivers.DateReceiver;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 
-public class TImeExpression extends Expression { // NO_UCD (unused code)
+public class TimeExpression extends Expression { // NO_UCD (unused code)
 	private ComboBox<String> cboTimeDiff;
 	private ComboBox<String> cboBeforeAfter;
 	private DateReceiver exprTimeVar;
-public TImeExpression() {
+public TimeExpression() {
 	this(new FirebaseExpression());
 }
 	public Node[] getWidgets(){
@@ -86,7 +86,7 @@ public void fxmlInit(){
 	box.getChildren().addAll(cboTimeDiff,cboBeforeAfter,exprTimeVar);
 	box.setPadding(new Insets(0,14,0,14));
 }
-public TImeExpression(FirebaseExpression data) {
+public TimeExpression(FirebaseExpression data) {
 	super(data);
 	name.setValue("Time expression");
 	description = "Returns true if the time falls within this date";

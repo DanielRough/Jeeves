@@ -19,7 +19,10 @@ import com.jeeves.vpl.firebase.FirebaseUI;
 public abstract class UIElement extends ViewElement<FirebaseUI>{
 	private ElementReceiver receiver;
 	public boolean previouslyAdded = false;
-	
+	public static String[] uiElements = {
+			"com.jeeves.vpl.canvas.uielements.UIButton",
+			"com.jeeves.vpl.canvas.uielements.UILabel"
+	};
 	public UIElement(FirebaseUI data){
 		super(data,FirebaseUI.class);
 		this.model = data;

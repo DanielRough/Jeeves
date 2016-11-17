@@ -32,6 +32,17 @@ public abstract class Expression extends ViewElement<FirebaseExpression> {
 	public static final String VAR_NUMERIC = "Numeric";
 	public static final String VAR_LOCATION = "Location";
 	
+	public static String[] exprNames = {
+			"com.jeeves.vpl.canvas.expressions.AndExpression",
+			"com.jeeves.vpl.canvas.expressions.OrExpression",
+			"com.jeeves.vpl.canvas.expressions.NotExpression",
+			"com.jeeves.vpl.canvas.expressions.EqualsExpression",
+			"com.jeeves.vpl.canvas.expressions.GreaterExpression",
+			"com.jeeves.vpl.canvas.expressions.LessExpression",
+			"com.jeeves.vpl.canvas.expressions.SensorExpression",
+			"com.jeeves.vpl.canvas.expressions.TimeExpression",
+	};
+	
 	public static final String VAR_NONE = "None"; //for when we don't want the ExpressionReceiver to accept anything
 	protected HBox box;
 	protected Map<String,Object> params = new HashMap<String,Object>();

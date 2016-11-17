@@ -16,9 +16,10 @@ import com.google.firebase.database.ValueEventListener;
 public class FirebaseDB {
 
 	public FirebaseDB(){
+		System.out.println("AM i null " + (FirebaseDB.class.getResourceAsStream("/Jeeves-9b9326e90601.json") == null));;
 			FirebaseOptions options = new FirebaseOptions.Builder()
 			.setDatabaseUrl("https://jeeves-27914.firebaseio.com/")
-			.setServiceAccount(this.getClass().getClassLoader().getResourceAsStream("Jeeves-9b9326e90601.json"))//new FileInputStream("/Users/Daniel/Documents/workspace/NewJeeves/Jeeves-9b9326e90601.json"))
+			.setServiceAccount(FirebaseDB.class.getResourceAsStream("/Jeeves-9b9326e90601.json"))//new FileInputStream("/Users/Daniel/Documents/workspace/NewJeeves/Jeeves-9b9326e90601.json"))
 			.build();
 			
 			FirebaseApp.initializeApp(options);

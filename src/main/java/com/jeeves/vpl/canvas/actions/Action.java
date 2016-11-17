@@ -14,6 +14,14 @@ import com.jeeves.vpl.firebase.FirebaseAction;
  *
  */
 public abstract class Action extends ViewElement<FirebaseAction> {
+	public static String[] actionNames = {
+			"com.jeeves.vpl.canvas.actions.PromptAction",
+			"com.jeeves.vpl.canvas.actions.SendTextAction",
+			"com.jeeves.vpl.canvas.actions.SpeakerAction",
+			"com.jeeves.vpl.canvas.actions.SurveyAction",
+			"com.jeeves.vpl.canvas.actions.UpdateAction",
+			"com.jeeves.vpl.canvas.actions.WaitingAction",
+	};
 	
 	public static Action create(FirebaseAction exprmodel){
 		String classname = exprmodel.gettype();

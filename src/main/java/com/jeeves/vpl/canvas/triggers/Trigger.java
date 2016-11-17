@@ -26,6 +26,13 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> implements Ac
 	protected Map<String,Object> params = new HashMap<String,Object>();
 	private ActionReceiver childReceiver;
 	private double receiverheight = 0.0;
+	public static final String[] triggerNames = {"com.jeeves.vpl.canvas.triggers.ButtonTrigger",
+			"com.jeeves.vpl.canvas.triggers.ClockTriggerInterval",
+			"com.jeeves.vpl.canvas.triggers.ClockTriggerRandom",
+			"com.jeeves.vpl.canvas.triggers.ClockTriggerSetTimes",
+			"com.jeeves.vpl.canvas.triggers.SensorTrigger",
+			"com.jeeves.vpl.canvas.triggers.SurveyTrigger"
+	};
 	public ActionReceiver getMyReceiver(){
 		return childReceiver;
 	}		private Node root;
