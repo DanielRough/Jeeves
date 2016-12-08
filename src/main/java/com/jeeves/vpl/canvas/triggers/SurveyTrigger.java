@@ -131,7 +131,7 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 	@Override
 	public void setData(FirebaseTrigger model){
 		super.setData(model);
-		Map<String,Object> params = model.getparams();
+	//	Map<String,Object> params = model.getparams();
 		if(params.containsKey("selectedSurvey") && params.get("selectedSurvey") != null){ //Bah this is dodgy
 			cboSurvey.setValue(params.get("selectedSurvey").toString());
 		}

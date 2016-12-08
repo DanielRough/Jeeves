@@ -2,17 +2,8 @@ package com.jeeves.vpl.canvas.triggers;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Point2D;
-import javafx.scene.Node;
-import javafx.scene.layout.Pane;
+import java.util.Random;
 
 import com.jeeves.vpl.ActionHolder;
 import com.jeeves.vpl.ViewElement;
@@ -21,9 +12,21 @@ import com.jeeves.vpl.canvas.receivers.ActionReceiver;
 import com.jeeves.vpl.firebase.FirebaseAction;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.MapChangeListener;
+import javafx.collections.ObservableMap;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
+import javafx.scene.layout.Pane;
+
 public abstract class Trigger extends ViewElement<FirebaseTrigger> implements ActionHolder{
 	private ArrayList<Action> actions;// = new ArrayList<Action>();
-	protected Map<String,Object> params = new HashMap<String,Object>();
+	//protected Map<String,Object> params = new HashMap<String,Object>();
+	protected ObservableMap<String,Object> params = FXCollections.observableHashMap();
 	private ActionReceiver childReceiver;
 	private double receiverheight = 0.0;
 	public static final String[] triggerNames = {"com.jeeves.vpl.canvas.triggers.ButtonTrigger",
@@ -49,9 +52,24 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> implements Ac
 		return null;
 	}
 	
+	protected static String getSaltString() {
+        String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        StringBuilder salt = new StringBuilder();
+        Random rnd = new Random();
+        while (salt.length() < 18) {
+            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
+            salt.append(SALTCHARS.charAt(index));
+        }
+        String saltStr = salt.toString();
+        return saltStr;
+
+    }
 	public Trigger(FirebaseTrigger data){
 		super(data,FirebaseTrigger.class);
 		this.model = data; 
+		if(model.gettriggerId() == null)
+			model.settriggerId(getSaltString());
+		
 		if(actions != null)
 			actions.forEach(action -> childReceiver.addChild(action, 0, 0));
 	}
@@ -82,8 +100,20 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> implements Ac
 
 	public void addListeners() {
 		super.addListeners();
+		if(params != null)
+		params.addListener(new MapChangeListener<String, Object>(){
+
+			@Override
+			public void onChanged(
+					javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
+				model.settriggerId(getSaltString()); //Again, update, must reset 
+				System.out.println("CHANGED PARAMS");
+			}
+			
+		});
 		childReceiver.getChildElements().addListener(
 				(ListChangeListener<ViewElement>) arg0 -> {
+					model.settriggerId(getSaltString()); //Need to update ID if actions change
 					ArrayList<Action> newActions = new ArrayList<Action>();
 					if(model.getactions() == null)
 						model.setactions(new ArrayList<FirebaseAction>());
@@ -118,6 +148,7 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> implements Ac
 	}
 	protected void setData(FirebaseTrigger model){
 		super.setData(model);
+		params = FXCollections.observableMap(model.getparams());
 		double posX = model.getxPos();
 		double posY = model.getyPos();
 		Point2D position = new Point2D(posX,posY);

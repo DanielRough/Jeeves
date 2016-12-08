@@ -152,21 +152,21 @@ public class ClockTriggerRandom extends ClockTrigger { // NO_UCD (use default)
 				if(duration.equals("hours"))
 					intervalTriggerTime *=60;
 				params.put(NOTIFICATION_MIN_INTERVAL, intervalTriggerTime);
-				model.getparams().put("frequency", txtFieldRandom.getText());				
+				params.put("frequency", txtFieldRandom.getText());				
 			}
 		});
 		cboRandom.valueProperty().addListener(
-				(ChangeListener<String>) (arg0, arg1, arg2) -> model.getparams().put("granularity", arg2));
-		timeReceiverFrom.getChildElements().addListener((ListChangeListener)(listener->model.getparams().put(LIMIT_BEFORE_HOUR, timeReceiverFrom.getChildElements().get(0).getModel())));
-		timeReceiverTo.getChildElements().addListener((ListChangeListener)listener->model.getparams().put(LIMIT_AFTER_HOUR, timeReceiverTo.getChildElements().get(0).getModel()));
-		timeReceiverFrom.getTextField().textProperty().addListener(listen->{model.getparams().put(LIMIT_BEFORE_HOUR, timeReceiverFrom.getText());});//;(KeyEvent.KEY_TYPED,event->	{model.getparams().put(LIMIT_BEFORE_HOUR, timeReceiverFrom.getText());System.out.println("yes");});
-		timeReceiverTo.getTextField().textProperty().addListener(listen->{model.getparams().put(LIMIT_AFTER_HOUR, timeReceiverTo.getText());});//System.out.println("indeed");});
+				(ChangeListener<String>) (arg0, arg1, arg2) -> params.put("granularity", arg2));
+		timeReceiverFrom.getChildElements().addListener((ListChangeListener)(listener->params.put(LIMIT_BEFORE_HOUR, timeReceiverFrom.getChildElements().get(0).getModel())));
+		timeReceiverTo.getChildElements().addListener((ListChangeListener)listener->params.put(LIMIT_AFTER_HOUR, timeReceiverTo.getChildElements().get(0).getModel()));
+		timeReceiverFrom.getTextField().textProperty().addListener(listen->{params.put(LIMIT_BEFORE_HOUR, timeReceiverFrom.getText());});//;(KeyEvent.KEY_TYPED,event->	{params.put(LIMIT_BEFORE_HOUR, timeReceiverFrom.getText());System.out.println("yes");});
+		timeReceiverTo.getTextField().textProperty().addListener(listen->{params.put(LIMIT_AFTER_HOUR, timeReceiverTo.getText());});//System.out.println("indeed");});
 	}
 
 	@Override
 	public void setData(FirebaseTrigger model) {
 		super.setData(model);
-		Map<String,Object> params = model.getparams();
+	//	Map<String,Object> params = params;
 		if(params.containsKey("granularity"))
 		duration = params.get("granularity").toString();
 		else

@@ -1,9 +1,7 @@
-package com.jeeves.vpl.firebase;
+package com.jeeves.vpl;
+
 
 import java.util.Map;
-
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -12,11 +10,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.jeeves.vpl.firebase.FirebaseMain;
+import com.jeeves.vpl.firebase.FirebasePatient;
+import com.jeeves.vpl.firebase.FirebaseProject;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class FirebaseDB {
 
 	public FirebaseDB(){
-		System.out.println("AM i null " + (FirebaseDB.class.getResourceAsStream("/Jeeves-9b9326e90601.json") == null));;
+		System.out.println("AM i null " + (FirebaseDB.class.getClassLoader().getResourceAsStream("/Jeeves-9b9326e90601.json") == null));;
 			FirebaseOptions options = new FirebaseOptions.Builder()
 			.setDatabaseUrl("https://jeeves-27914.firebaseio.com/")
 			.setServiceAccount(FirebaseDB.class.getResourceAsStream("/Jeeves-9b9326e90601.json"))//new FileInputStream("/Users/Daniel/Documents/workspace/NewJeeves/Jeeves-9b9326e90601.json"))
@@ -30,7 +34,7 @@ public class FirebaseDB {
 
 	
 
-	private String username;
+	//private String username;
 	
 	private String DBNAME = "JeevesData";
 	private String PATIENTS_COLL = "patients";
@@ -41,9 +45,9 @@ public class FirebaseDB {
 	private ObservableList<FirebasePatient> newpatients = FXCollections.observableArrayList();
 
 	
-	public void setUsername(String username){
-		this.username = username;
-	}
+//	public void setUsername(String username){
+//		this.username = username;
+//	}
 	public ObservableList<FirebaseProject> getprojects(){
 		return newprojects;
 	}
@@ -88,11 +92,11 @@ public class FirebaseDB {
 		
 		DatabaseReference globalRef = null;
 		if(oldname == null || oldname.equals(""))
-			globalRef = myFirebaseRef.child(DBNAME).child(PROJECTS_COLL).child(username + object.getname());
+			globalRef = myFirebaseRef.child(DBNAME).child(PROJECTS_COLL).child(object.getname());
 		else{
-			globalRef = myFirebaseRef.child(DBNAME).child(PROJECTS_COLL).child(username + oldname); //Update an old one
+			globalRef = myFirebaseRef.child(DBNAME).child(PROJECTS_COLL).child(oldname); //Update an old one
 			globalRef.removeValue();
-			globalRef = myFirebaseRef.child(DBNAME).child(PROJECTS_COLL).child(username + object.getname());
+			globalRef = myFirebaseRef.child(DBNAME).child(PROJECTS_COLL).child(object.getname());
 		}
 		globalRef.setValue(object);
 		return true;

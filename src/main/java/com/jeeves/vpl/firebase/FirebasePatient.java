@@ -36,7 +36,7 @@ public class FirebasePatient implements Serializable{
     }
     private Map<String,Object> feedback;
     public Map<String,Object> getfeedback(){ return feedback; }
-    private Map<String,Map<String,FirebaseSurvey>> incomplete;
+    private Map<String,FirebaseSurvey> incomplete;
     private Map<String,FirebaseSurvey> complete;
     private String uid;
     
@@ -58,7 +58,7 @@ public class FirebasePatient implements Serializable{
         return phone;
     }
 
-    public Map<String,Map<String,FirebaseSurvey>> getincomplete(){
+    public Map<String,FirebaseSurvey> getincomplete(){
         return incomplete;
     }
     public Map<String,FirebaseSurvey> getcomplete(){

@@ -85,7 +85,7 @@ public class ButtonTrigger extends Trigger {  // NO_UCD (unused code)
 	@Override
 	public void setData(FirebaseTrigger model) {
 		super.setData(model);
-		Map<String,Object> params = model.getparams();
+	//	Map<String,Object> params = model.getparams();
 
 		if(cboButton.getItems()!= null && cboButton.getItems().size()>0)
 			cboButton.getSelectionModel().clearAndSelect(0);

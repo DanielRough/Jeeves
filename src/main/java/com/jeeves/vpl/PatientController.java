@@ -14,6 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.jeeves.vpl.firebase.FirebasePatient;
+import com.jeeves.vpl.firebase.FirebaseQuestion;
+import com.jeeves.vpl.firebase.FirebaseSurvey;
+
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -34,11 +38,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 
-import com.jeeves.vpl.firebase.FirebaseDB;
-import com.jeeves.vpl.firebase.FirebasePatient;
-import com.jeeves.vpl.firebase.FirebaseQuestion;
-import com.jeeves.vpl.firebase.FirebaseSurvey;
-
 public class PatientController extends Pane{
 	
 
@@ -55,7 +54,7 @@ public class PatientController extends Pane{
 	
 	@FXML private Label lblCompleted;
 	@FXML private Label lblMissed;
-	private Map<String,Map<String,FirebaseSurvey>> incompleteSurveys;
+	private Map<String,FirebaseSurvey> incompleteSurveys;
 	private Map<String,FirebaseSurvey> completedSurveys;
 	
 	private FirebasePatient selectedPatient;
@@ -165,10 +164,10 @@ public class PatientController extends Pane{
 							else 
 							{
 								int incomplete = 0;
-								Iterator<Map<String,FirebaseSurvey>> incompleteIter = incompleteSurveys.values().iterator();
+								Iterator<FirebaseSurvey> incompleteIter = incompleteSurveys.values().iterator();
 								while(incompleteIter.hasNext()){
-									Map<String,FirebaseSurvey> surveygroup = incompleteIter.next();
-									incomplete += surveygroup.size();
+									FirebaseSurvey surveygroup = incompleteIter.next();
+									incomplete ++;
 								}
 								lblMissed.setText(Integer.toString(incomplete));}
 								

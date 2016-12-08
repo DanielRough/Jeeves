@@ -2,6 +2,8 @@ package com.jeeves.vpl.canvas.actions;
 
 import java.io.IOException;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 
@@ -14,6 +16,8 @@ import com.jeeves.vpl.firebase.FirebaseAction;
  *
  */
 public abstract class Action extends ViewElement<FirebaseAction> {
+	protected ObservableMap<String,Object> params = FXCollections.observableHashMap();
+
 	public static String[] actionNames = {
 			"com.jeeves.vpl.canvas.actions.PromptAction",
 			"com.jeeves.vpl.canvas.actions.SendTextAction",

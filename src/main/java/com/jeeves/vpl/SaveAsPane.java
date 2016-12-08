@@ -2,6 +2,8 @@ package com.jeeves.vpl;
 
 import java.net.URL;
 
+import com.jeeves.vpl.firebase.FirebaseProject;
+
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,9 +12,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-
-import com.jeeves.vpl.firebase.FirebaseDB;
-import com.jeeves.vpl.firebase.FirebaseProject;
 
 public class SaveAsPane extends Pane{ // NO_UCD (use default)
 	private Stage stage;

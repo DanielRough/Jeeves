@@ -1,11 +1,7 @@
 package com.jeeves.vpl;
 
-import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Modifier;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,11 +9,9 @@ import java.util.Map;
 import com.jeeves.vpl.canvas.actions.Action;
 import com.jeeves.vpl.canvas.expressions.Expression;
 import com.jeeves.vpl.canvas.expressions.UserVariable;
-import com.jeeves.vpl.canvas.ifsloops.Control;
 import com.jeeves.vpl.canvas.receivers.ElementReceiver;
 import com.jeeves.vpl.canvas.triggers.Trigger;
 import com.jeeves.vpl.canvas.uielements.UIElement;
-import com.jeeves.vpl.firebase.FirebaseDB;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 import com.jeeves.vpl.firebase.FirebaseProject;
 import com.jeeves.vpl.firebase.FirebaseSurvey;
@@ -25,7 +19,6 @@ import com.jeeves.vpl.firebase.FirebaseTrigger;
 import com.jeeves.vpl.firebase.FirebaseUI;
 import com.jeeves.vpl.firebase.FirebaseVariable;
 
-import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
@@ -65,7 +58,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -172,58 +164,58 @@ public class MainController extends Application {
 	public MainController() {
 	}
 
-	//------------------------CLASS-FINDING METHODS -----------------------//
-	@SuppressWarnings("unchecked")
-	private static Class<ViewElement>[] getClasses(String packageName)
-			throws ClassNotFoundException, IOException {
-		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		assert classLoader != null;
-		String path = packageName.replace('.', '/');
-		Enumeration<URL> resources = classLoader.getResources(path);
-		List<File> dirs = new ArrayList<File>();
-		while (resources.hasMoreElements()) {
-			URL resource = resources.nextElement();
-			dirs.add(new File(resource.getFile()));
-		}
-		ArrayList<Class<ViewElement>> classes = new ArrayList<Class<ViewElement>>();
-		for (File directory : dirs) {
-			classes.addAll(findClasses(directory, packageName));
-		}
-		return classes.toArray(new Class[classes.size()]);
-	}
-
-	private static List<Class<ViewElement>> findClasses(File directory, String packageName) throws ClassNotFoundException {
-
-		List<Class<ViewElement>> classes = new ArrayList<Class<ViewElement>>();
-		if (!directory.exists()) 
-			return classes;
-		File[] files = directory.listFiles();
-		for (File file : files) {
-			if (file.isDirectory()) {
-				assert !file.getName().contains(".");
-				classes.addAll(findClasses(file,packageName + "." + file.getName()));
-			} else if (file.getName().endsWith(".class")) {
-				@SuppressWarnings("unchecked")
-				Class<ViewElement> classToAdd = (Class<ViewElement>) Class.forName(packageName+ '.' + file.getName().substring(0,file.getName().length() - 6));
-				if (!Modifier.isAbstract(classToAdd.getModifiers()) && classToAdd.getEnclosingClass() == null) 
-					classes.add(classToAdd);
-			}
-		}
-		return classes;
-	}
+//	//------------------------CLASS-FINDING METHODS -----------------------//
+//	@SuppressWarnings("unchecked")
+//	private static Class<ViewElement>[] getClasses(String packageName)
+//			throws ClassNotFoundException, IOException {
+//		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+//		assert classLoader != null;
+//		String path = packageName.replace('.', '/');
+//		Enumeration<URL> resources = classLoader.getResources(path);
+//		List<File> dirs = new ArrayList<File>();
+//		while (resources.hasMoreElements()) {
+//			URL resource = resources.nextElement();
+//			dirs.add(new File(resource.getFile()));
+//		}
+//		ArrayList<Class<ViewElement>> classes = new ArrayList<Class<ViewElement>>();
+//		for (File directory : dirs) {
+//			classes.addAll(findClasses(directory, packageName));
+//		}
+//		return classes.toArray(new Class[classes.size()]);
+//	}
+//
+//	private static List<Class<ViewElement>> findClasses(File directory, String packageName) throws ClassNotFoundException {
+//
+//		List<Class<ViewElement>> classes = new ArrayList<Class<ViewElement>>();
+//		if (!directory.exists()) 
+//			return classes;
+//		File[] files = directory.listFiles();
+//		for (File file : files) {
+//			if (file.isDirectory()) {
+//				assert !file.getName().contains(".");
+//				classes.addAll(findClasses(file,packageName + "." + file.getName()));
+//			} else if (file.getName().endsWith(".class")) {
+//				@SuppressWarnings("unchecked")
+//				Class<ViewElement> classToAdd = (Class<ViewElement>) Class.forName(packageName+ '.' + file.getName().substring(0,file.getName().length() - 6));
+//				if (!Modifier.isAbstract(classToAdd.getModifiers()) && classToAdd.getEnclosingClass() == null) 
+//					classes.add(classToAdd);
+//			}
+//		}
+//		return classes;
+//	}
 	//------------------------CLASS-FINDING METHODS -----------------------//
 
 	private MainController(Stage primaryStage) {
 		currentGUI = this; 
 		this.primaryStage = primaryStage;
 		firebase = new FirebaseDB();
-		Stage stage = new Stage(StageStyle.UNDECORATED);
-		StudentIDGetter root = new StudentIDGetter(stage,firebase);
-		Scene scene = new Scene(root);
-		stage.setScene(scene);
-		stage.setTitle("Welcome");
-		stage.initModality(Modality.APPLICATION_MODAL);
-		stage.showAndWait();
+//		Stage stage = new Stage(StageStyle.UNDECORATED);
+//		StudentIDGetter root = new StudentIDGetter(stage,firebase);
+	//	Scene scene = new Scene();
+//		stage.setScene(scene);
+//		stage.setTitle("Welcome");
+//		stage.initModality(Modality.APPLICATION_MODAL);
+//		stage.showAndWait();
 		firebase.addListeners();
 		addListeners();
 		primaryStage.setTitle("Jeeves - New Project");
@@ -236,7 +228,7 @@ public class MainController extends Application {
 			e1.printStackTrace();
 		}
 		fxmlLoader.setController(this);
-		scene = new Scene(myPane);
+		Scene scene = new Scene(myPane);
 
 		primaryStage.setOnCloseRequest(event -> System.exit(0));
 		primaryStage.setScene(scene);
@@ -250,7 +242,7 @@ public class MainController extends Application {
 		tabUsers.setContent(patientController);
 		imgPhone.setImage(new Image(this.getClass().getResourceAsStream("/img/icons/phone.png")));
 
-		imgTrash.setImage(new Image("https://sachi.cs.st-andrews.ac.uk/wp-content/uploads/2011/02/recycle.png"));
+		imgTrash.setImage(new Image(this.getClass().getResourceAsStream("/img/icons/recycle.png")));
 		Platform.runLater(new Runnable(){
 			public void run(){
 				loadCanvasElements();
@@ -277,12 +269,12 @@ public class MainController extends Application {
 	@SuppressWarnings("unchecked")
 	private void loadCanvasElements() {
 		try {
-			System.out.println("DOIGETCALLED");
-			List<Class> classes = new ArrayList<>();
-			new FastClasspathScanner("com.jeeves.vpl.canvas")
-			.matchSubclassesOf(ViewElement.class, classes::add)
-			.scan();
-			if(classes.size() == 0){
+		//	System.out.println("DOIGETCALLED");
+//			List<Class> classes = new ArrayList<>();
+//			new FastClasspathScanner("com.jeeves.vpl.canvas")
+//			.matchSubclassesOf(ViewElement.class, classes::add)
+//			.scan();
+//			if(classes.size() == 0){
 				ArrayList<ViewElement> elements = new ArrayList<ViewElement>();
 				for(String trigName : Trigger.triggerNames){
 					ViewElement trigger = ViewElement.create(trigName);
@@ -317,44 +309,37 @@ public class MainController extends Application {
 					ViewElement draggable = ViewElement.create(element.getClass().getName());
 					element.setDraggable(draggable); // DJRNEW
 					element.setReadOnly();
-					System.out.println("Added a represented thing");
+				//	System.out.println("Added a represented thing");
 					element.setHandler(viewElementHandler);
 				}
-			}
+		//	}
 
-			int counter = 0;
-			for (Class<ViewElement> classname : classes) {
-				counter++;
-				System.out.println("Er, hello?");
-				if (!ViewElement.class.isAssignableFrom(classname) || Modifier.isAbstract(classname.getModifiers()))
-					continue;
-				final ViewElement represented = ViewElement.create(classname.getName());
-				Label nameLabel = new Label(represented.name.get());
-
-				if (represented instanceof Trigger) {																							
-					paneTriggers.getChildren().addAll(nameLabel, represented);
-				} else if (represented instanceof Expression && !(represented instanceof UserVariable) || represented instanceof Control)
-					paneConditions.getChildren().addAll(nameLabel, represented);
-				else if (represented instanceof Action)
-					paneActions.getChildren().addAll(nameLabel, represented);
-				else if (represented instanceof UIElement)
-					paneUI.getChildren().addAll(nameLabel, represented);
-				represented.setPadding(new Insets(0, 0, 10, 0));
-				ViewElement draggable = ViewElement.create(classname.getName());
-				represented.setDraggable(draggable); // DJRNEW
-				represented.setReadOnly();
-				System.out.println("Added a represented thing");
-				represented.setHandler(viewElementHandler);
-				nameLabel.setFont(Font.font("Calibri", FontWeight.BOLD, 14));
-			}
-			final Stage dialog = new Stage();
-			dialog.initModality(Modality.APPLICATION_MODAL);
-			dialog.initOwner(primaryStage);
-			VBox dialogVbox = new VBox(20);
-			dialogVbox.getChildren().add(new Label("This is a Dialog with " + counter ));
-			Scene dialogScene = new Scene(dialogVbox, 300, 200);
-			dialog.setScene(dialogScene);
-			dialog.show();
+//			//int counter = 0;
+//			for (Class<ViewElement> classname : classes) {
+//			//	counter++;
+//				//System.out.println("Er, hello?");
+//				if (!ViewElement.class.isAssignableFrom(classname) || Modifier.isAbstract(classname.getModifiers()))
+//					continue;
+//				final ViewElement represented = ViewElement.create(classname.getName());
+//				Label nameLabel = new Label(represented.name.get());
+//
+//				if (represented instanceof Trigger) {																							
+//					paneTriggers.getChildren().addAll(nameLabel, represented);
+//				} else if (represented instanceof Expression && !(represented instanceof UserVariable) || represented instanceof Control)
+//					paneConditions.getChildren().addAll(nameLabel, represented);
+//				else if (represented instanceof Action)
+//					paneActions.getChildren().addAll(nameLabel, represented);
+//				else if (represented instanceof UIElement)
+//					paneUI.getChildren().addAll(nameLabel, represented);
+//				represented.setPadding(new Insets(0, 0, 10, 0));
+//				ViewElement draggable = ViewElement.create(classname.getName());
+//				represented.setDraggable(draggable); // DJRNEW
+//				represented.setReadOnly();
+//		//		System.out.println("Added a represented thing");
+//				represented.setHandler(viewElementHandler);
+//				nameLabel.setFont(Font.font("Calibri", FontWeight.BOLD, 14));
+//			}
+		
 		} catch (Exception e){
 			e.printStackTrace();
 		}

@@ -26,5 +26,13 @@ public class FirebaseTrigger extends FirebaseElement implements Serializable{
     public void setactions(List<FirebaseAction> actions){
     	this.actions = actions;
     }
+    private String triggerId;
+    
+    public void settriggerId(String triggerId){
+    	this.triggerId = triggerId;
+    }
+    public String gettriggerId(){
+    	return triggerId;
+    }
     private List<FirebaseAction> actions;
 }

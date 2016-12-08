@@ -110,7 +110,7 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 	@Override
 	public void setData(FirebaseTrigger model) {
 		super.setData(model);
-		Map<String,Object> params = model.getparams();
+	//	Map<String,Object> params = model.getparams();
 		paneDate.getChildren().add(new CalendarEveryday());
 		if(params.containsKey(DATE_FROM)){
 			dateFrom = ((Long)params.get(DATE_FROM)).intValue();dateTo = ((Long)params.get(DATE_TO)).intValue();
@@ -131,7 +131,7 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 			newTimeReceiver.setText(time);
 			timeCount++;
 			paneTimes.getChildren().add(newTimeReceiver);
-			newTimeReceiver.getTextField().textProperty().addListener(listen->{model.getparams().put(key, newTimeReceiver.getText());System.out.println("indeed");});//System.out.println("indeed");});
+			newTimeReceiver.getTextField().textProperty().addListener(listen->{params.put(key, newTimeReceiver.getText());System.out.println("indeed");});//System.out.println("indeed");});
 
 		}
 	}
@@ -146,8 +146,8 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 		TimeReceiver setTimeReceiver = new TimeReceiver(Expression.VAR_CLOCK);
 		paneTimes.getChildren().add(setTimeReceiver);
 		String key = "time" + timeCount++;
-		model.getparams().put(key,setTimeReceiver.getText());
-		setTimeReceiver.getTextField().textProperty().addListener(listen->{model.getparams().put(key, setTimeReceiver.getText());System.out.println("indeed");});//System.out.println("indeed");});
+		params.put(key,setTimeReceiver.getText());
+		setTimeReceiver.getTextField().textProperty().addListener(listen->{params.put(key, setTimeReceiver.getText());System.out.println("indeed");});//System.out.println("indeed");});
 	}
 	@FXML
 	public void handleRemoveTime() {
@@ -156,6 +156,6 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 		TimeReceiver lastReceiver = (TimeReceiver)times.get(times.size()-1);
 		paneTimes.getChildren().remove(lastReceiver);
 		timeCount--;
-		model.getparams().remove("time"+(times.size())); //Removes the last time from parameters
+		params.remove("time"+(times.size())); //Removes the last time from parameters
 	}
 }

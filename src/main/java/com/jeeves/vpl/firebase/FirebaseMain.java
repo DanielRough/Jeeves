@@ -3,7 +3,7 @@ package com.jeeves.vpl.firebase;
 import java.io.Serializable;
 import java.util.Map;
 
-class FirebaseMain implements Serializable{
+public class FirebaseMain implements Serializable{
 
 	private Map<String,FirebaseProject>  projects;
 	private Map<String,FirebasePatient> patients;

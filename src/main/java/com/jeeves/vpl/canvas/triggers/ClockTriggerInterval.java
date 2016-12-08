@@ -128,19 +128,21 @@ public ClockTriggerInterval() {
 
 			@Override
 			public void handle(KeyEvent arg0) {
+				if(txtFieldInterval.getText().equals(""))
+					return;
 				long intervalTriggerTime = Long.parseLong(txtFieldInterval.getText());// * 1000;
 				if(duration.equals("hours"))
 					intervalTriggerTime *=60;
 				params.put(INTERVAL_TRIGGER_TIME, intervalTriggerTime);
-				model.getparams().put("intervalTime", txtFieldInterval.getText());				
+				params.put("intervalTime", txtFieldInterval.getText());				
 			}
 		});
 
-		cboInterval.valueProperty().addListener((ChangeListener<String>) (arg0, arg1, arg2) -> model.getparams().put("granularity", arg2));
-		timeReceiverFrom.getChildElements().addListener((ListChangeListener)(listener->model.getparams().put(LIMIT_BEFORE_HOUR, timeReceiverFrom.getChildElements().get(0).getModel())));
-		timeReceiverTo.getChildElements().addListener((ListChangeListener)listener->model.getparams().put(LIMIT_AFTER_HOUR, timeReceiverTo.getChildElements().get(0).getModel()));
-		timeReceiverFrom.getTextField().textProperty().addListener(listen->{model.getparams().put(LIMIT_BEFORE_HOUR, timeReceiverFrom.getText());});//;(KeyEvent.KEY_TYPED,event->	{model.getparams().put(LIMIT_BEFORE_HOUR, timeReceiverFrom.getText());System.out.println("yes");});
-		timeReceiverTo.getTextField().textProperty().addListener(listen->{model.getparams().put(LIMIT_AFTER_HOUR, timeReceiverTo.getText());});//System.out.println("indeed");});
+		cboInterval.valueProperty().addListener((ChangeListener<String>) (arg0, arg1, arg2) -> params.put("granularity", arg2));
+		timeReceiverFrom.getChildElements().addListener((ListChangeListener)(listener->params.put(LIMIT_BEFORE_HOUR, timeReceiverFrom.getChildElements().get(0).getModel())));
+		timeReceiverTo.getChildElements().addListener((ListChangeListener)listener->params.put(LIMIT_AFTER_HOUR, timeReceiverTo.getChildElements().get(0).getModel()));
+		timeReceiverFrom.getTextField().textProperty().addListener(listen->{params.put(LIMIT_BEFORE_HOUR, timeReceiverFrom.getText());});//;(KeyEvent.KEY_TYPED,event->	{params.put(LIMIT_BEFORE_HOUR, timeReceiverFrom.getText());System.out.println("yes");});
+		timeReceiverTo.getTextField().textProperty().addListener(listen->{params.put(LIMIT_AFTER_HOUR, timeReceiverTo.getText());});//System.out.println("indeed");});
 
 	}
 	public ClockTriggerInterval(FirebaseTrigger data) {
@@ -167,7 +169,7 @@ public ClockTriggerInterval() {
 	@Override
 	public void setData(FirebaseTrigger model) {
 		super.setData(model);
-		Map<String,Object> params = model.getparams();
+	//	Map<String,Object> params = model.getparams();
 		if(!params.isEmpty()){
 			if(params.containsKey("granularity"))
 				duration = params.get("granularity").toString();

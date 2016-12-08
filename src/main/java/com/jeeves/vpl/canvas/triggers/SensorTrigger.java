@@ -70,7 +70,7 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 	public void setData(FirebaseTrigger model){
 		super.setData(model);
 		this.model = model;
-		Map<String,Object> params = model.getparams();
+		//Map<String,Object> params = model.getparams();
 		String sensorName = null,result = null;
 		if(params.containsKey("selectedSensor"))
 			sensorName = params.get("selectedSensor").toString();

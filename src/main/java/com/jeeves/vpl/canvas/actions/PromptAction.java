@@ -71,6 +71,8 @@ public class PromptAction extends Action { // NO_UCD (unused code)
 	@Override
 	public void addListeners() {
 		super.addListeners();
+		
+		
 		txtPrompt.setOnMouseClicked(new EventHandler<MouseEvent>(){
 
 			@Override
