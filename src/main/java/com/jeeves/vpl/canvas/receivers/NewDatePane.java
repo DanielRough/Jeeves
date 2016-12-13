@@ -4,6 +4,9 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import com.jeeves.vpl.CalendarEveryday;
+import com.jeeves.vpl.CalendarFromTo;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
@@ -18,8 +21,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
-import com.jeeves.vpl.CalendarFromTo;
-
 public class NewDatePane extends Pane{
 	private ToggleGroup group;
 	@FXML public RadioButton btnEveryday;
@@ -33,6 +34,7 @@ public class NewDatePane extends Pane{
 	private Stage stage;
 	private Pane paneDate;
 	private CalendarFromTo fromtoDatePane;
+	private CalendarEveryday everydayPane;
 	private long dateFrom;
 	private long dateTo;
 	
@@ -45,7 +47,14 @@ public class NewDatePane extends Pane{
 	public ToggleGroup getToggleGroup(){
 		return group;
 	}
-	public NewDatePane(Stage stage, Pane paneDate, long dateFrom, long dateTo){
+	public void setParams(Stage stage, Pane paneDate, long dateFrom, long dateTo){
+		this.stage = stage;
+		this.paneDate = paneDate;
+		this.dateFrom = dateFrom;
+		this.dateTo = dateTo;
+		setup();
+	}
+	public NewDatePane(){
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setController(this);
 		URL location = this.getClass().getResource("/datepopup.fxml");
@@ -53,23 +62,17 @@ public class NewDatePane extends Pane{
 		try {
 			Node root = (Node) fxmlLoader.load();
 			getChildren().add(root);	
-			this.stage = stage;
-			this.paneDate = paneDate;
-			this.dateFrom = dateFrom;
-			this.dateTo = dateTo;
-			setup();
+			group = new ToggleGroup();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-	//	getStylesheets().add(ViewElement.class.getResource("ButtonsDemo.css").toExternalForm());
 	}
 	
 	public void setup(){
-		group = new ToggleGroup();
 		btnEveryday.setToggleGroup(group);
 		btnRange.setToggleGroup(group);
 		fromtoDatePane = new CalendarFromTo();
-
+		everydayPane = new CalendarEveryday();
 		group.selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
 
 			@Override
@@ -79,7 +82,7 @@ public class NewDatePane extends Pane{
 					pckFrom.setDisable(true);
 					pckTo.setDisable(true);
 					paneDate.getChildren().clear();
-					paneDate.getChildren().add(new CalendarFromTo()); //Every day
+					paneDate.getChildren().add(everydayPane); //Every day
 				}
 				else{
 					paneDate.getChildren().clear();

@@ -33,6 +33,9 @@ public  class FirebaseElement implements Serializable{
     public Map<String, Object> getparams() {
         return params;
     }
+    public void setparams(Map<String,Object> params){
+    	this.params = params;
+    }
 
     public String gettype() {
         return type;

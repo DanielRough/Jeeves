@@ -41,6 +41,7 @@ public abstract class Expression extends ViewElement<FirebaseExpression> {
 			"com.jeeves.vpl.canvas.expressions.LessExpression",
 			"com.jeeves.vpl.canvas.expressions.SensorExpression",
 			"com.jeeves.vpl.canvas.expressions.TimeExpression",
+			"com.jeeves.vpl.canvas.ifsloops.IfControl"
 	};
 	
 	public static final String VAR_NONE = "None"; //for when we don't want the ExpressionReceiver to accept anything

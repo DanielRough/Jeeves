@@ -8,6 +8,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -15,6 +16,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -36,7 +38,6 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 	@FXML protected Button btnAddTime;
 	@FXML protected Button btnRemoveTime;
 	@FXML protected VBox paneTimes;
-	//@FXML protected ImageView imgCalendar;
 	@FXML protected Pane paneDate;
 	private int timeCount;
 	
@@ -48,6 +49,10 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 		this(new FirebaseTrigger());
 	}
 
+	public void fxmlInit(){
+		super.fxmlInit();
+		super.datePane = paneDate;
+	}
 	public ClockTriggerSetTimes(FirebaseTrigger data) {
 		super(data);
 		name.setValue("SET TIMES TRIGGER");
@@ -59,50 +64,23 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 	public void addListeners(){
 		super.addListeners();
 		paneDate.setOnMouseClicked(event->{
-			
-			Stage stage = new Stage(StageStyle.UNDECORATED);
-			NewDatePane root = new NewDatePane(stage,paneDate,dateFrom,dateTo);
-			Scene scene = new Scene(root);
-			stage.setScene(scene);
-			stage.setTitle("Edit dates");
-			stage.initModality(Modality.APPLICATION_MODAL);
+			newDatePane.setParams(dateStage, paneDate, dateFrom, dateTo);
+
 			Point2D point = getInstance().localToScreen(event.getX(),event.getY());
-			stage.setX(point.getX());
-			stage.setY(point.getY());
-			root.getPckFrom().valueProperty().addListener(new ChangeListener<LocalDate>(){
-
-				@Override
-				public void changed(ObservableValue<? extends LocalDate> arg0,
-						LocalDate arg1, LocalDate arg2) {
-					setDateFrom(arg2.toEpochDay());
-				}
-				
-			});
-			root.getPckTo().valueProperty().addListener(new ChangeListener<LocalDate>(){
-
-				@Override
-				public void changed(ObservableValue<? extends LocalDate> arg0,
-						LocalDate arg1, LocalDate arg2) {
-					setDateTo(arg2.toEpochDay());
-				}
-				
-			});
-			root.getToggleGroup().selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
-
-				@Override
-				public void changed(ObservableValue<? extends Toggle> arg0,
-						Toggle arg1, Toggle arg2) {
-					if(arg2.equals(root.btnEveryday)){
-						setDateFrom(0);
-						setDateTo(0);
-					}
-					else{
-						
-					}
-				}
-				
-			});
-			stage.showAndWait();	
+			Rectangle2D bounds = Screen.getPrimary().getBounds();
+			double initX = point.getX();
+			double initY = point.getY();
+			if(point.getX() > (bounds.getWidth()-200)){
+				initX = bounds.getWidth()-200;
+			}
+			if(point.getY() > (bounds.getHeight() - 300)){
+				initY = bounds.getHeight() - 300;
+			}
+			dateStage.setX(initX);
+			dateStage.setY(initY);dateStage.setX(point.getX());
+			dateStage.setY(point.getY());
+		
+			dateStage.showAndWait();	
 			
 		});
 			

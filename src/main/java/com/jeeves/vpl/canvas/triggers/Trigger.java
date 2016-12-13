@@ -29,6 +29,7 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> implements Ac
 	protected ObservableMap<String,Object> params = FXCollections.observableHashMap();
 	private ActionReceiver childReceiver;
 	private double receiverheight = 0.0;
+	boolean loading = true;
 	public static final String[] triggerNames = {"com.jeeves.vpl.canvas.triggers.ButtonTrigger",
 			"com.jeeves.vpl.canvas.triggers.ClockTriggerInterval",
 			"com.jeeves.vpl.canvas.triggers.ClockTriggerRandom",
@@ -69,9 +70,10 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> implements Ac
 		this.model = data; 
 		if(model.gettriggerId() == null)
 			model.settriggerId(getSaltString());
-		
 		if(actions != null)
 			actions.forEach(action -> childReceiver.addChild(action, 0, 0));
+		loading = false; //To check whether we change the salt string on the first action initiation
+
 	}
 
 	public void fxmlInit(){
@@ -107,13 +109,22 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> implements Ac
 			public void onChanged(
 					javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
 				model.settriggerId(getSaltString()); //Again, update, must reset 
+				if(change.wasAdded()){
+					model.getparams().put(change.getKey(), change.getValueAdded());
+				}
+				else{
+					model.getparams().remove(change.getKey());
+				}
 				System.out.println("CHANGED PARAMS");
 			}
 			
 		});
+
 		childReceiver.getChildElements().addListener(
 				(ListChangeListener<ViewElement>) arg0 -> {
-					model.settriggerId(getSaltString()); //Need to update ID if actions change
+					if(loading == false)
+						model.settriggerId(getSaltString()); //Need to update ID if actions change
+					System.out.println("ACTIONS CHANGED");
 					ArrayList<Action> newActions = new ArrayList<Action>();
 					if(model.getactions() == null)
 						model.setactions(new ArrayList<FirebaseAction>());
@@ -121,8 +132,25 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> implements Ac
 					childReceiver.getChildElements().forEach(
 							element ->{newActions.add((Action) element);
 							model.getactions().add((FirebaseAction)element.getModel());
-							((Action)element).setActionHolder(this);});
+							((Action)element).setActionHolder(this);
+							
+							});
+					
+							
 					this.actions = newActions;
+					actions.forEach(myaction ->{
+						myaction.params.addListener(new MapChangeListener<String,Object>(){
+
+							@Override
+							public void onChanged(
+									javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
+								System.out.println("PARAMS CHANGED");
+								model.settriggerId(getSaltString()); //Again, update, must reset 
+
+							}
+							
+						});
+					});
 					updateActionsHeight();
 				});
 		childReceiver.heightProperty().addListener(new ChangeListener<Number>(){

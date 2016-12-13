@@ -107,7 +107,7 @@ public class SurveyAction extends Action { // NO_UCD (unused code)
 					String arg1, String arg2) {
 				if(arg2 != null) //aaaaaaaargh
 
-				getModel().getparams().put("survey", arg2);
+					params.put("survey", arg2);
 			}
 			
 		};

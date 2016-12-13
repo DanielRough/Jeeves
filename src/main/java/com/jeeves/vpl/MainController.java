@@ -1,6 +1,7 @@
 package com.jeeves.vpl;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,7 @@ import com.jeeves.vpl.canvas.actions.Action;
 import com.jeeves.vpl.canvas.expressions.Expression;
 import com.jeeves.vpl.canvas.expressions.UserVariable;
 import com.jeeves.vpl.canvas.receivers.ElementReceiver;
+import com.jeeves.vpl.canvas.receivers.NewDatePane;
 import com.jeeves.vpl.canvas.triggers.Trigger;
 import com.jeeves.vpl.canvas.uielements.UIElement;
 import com.jeeves.vpl.firebase.FirebaseExpression;
@@ -46,6 +48,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.SplitPane.Divider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.Toggle;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -123,6 +126,8 @@ public class MainController extends Application {
 	private AnchorPane myPane; // The main pane
 	private PatientController patientController;
 	private SurveyController surveyController;
+	public Stage dateStage;
+	public NewDatePane root;
 	public ViewCanvas getViewCanvas(){
 		return canvas;
 	}
@@ -164,58 +169,10 @@ public class MainController extends Application {
 	public MainController() {
 	}
 
-//	//------------------------CLASS-FINDING METHODS -----------------------//
-//	@SuppressWarnings("unchecked")
-//	private static Class<ViewElement>[] getClasses(String packageName)
-//			throws ClassNotFoundException, IOException {
-//		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-//		assert classLoader != null;
-//		String path = packageName.replace('.', '/');
-//		Enumeration<URL> resources = classLoader.getResources(path);
-//		List<File> dirs = new ArrayList<File>();
-//		while (resources.hasMoreElements()) {
-//			URL resource = resources.nextElement();
-//			dirs.add(new File(resource.getFile()));
-//		}
-//		ArrayList<Class<ViewElement>> classes = new ArrayList<Class<ViewElement>>();
-//		for (File directory : dirs) {
-//			classes.addAll(findClasses(directory, packageName));
-//		}
-//		return classes.toArray(new Class[classes.size()]);
-//	}
-//
-//	private static List<Class<ViewElement>> findClasses(File directory, String packageName) throws ClassNotFoundException {
-//
-//		List<Class<ViewElement>> classes = new ArrayList<Class<ViewElement>>();
-//		if (!directory.exists()) 
-//			return classes;
-//		File[] files = directory.listFiles();
-//		for (File file : files) {
-//			if (file.isDirectory()) {
-//				assert !file.getName().contains(".");
-//				classes.addAll(findClasses(file,packageName + "." + file.getName()));
-//			} else if (file.getName().endsWith(".class")) {
-//				@SuppressWarnings("unchecked")
-//				Class<ViewElement> classToAdd = (Class<ViewElement>) Class.forName(packageName+ '.' + file.getName().substring(0,file.getName().length() - 6));
-//				if (!Modifier.isAbstract(classToAdd.getModifiers()) && classToAdd.getEnclosingClass() == null) 
-//					classes.add(classToAdd);
-//			}
-//		}
-//		return classes;
-//	}
-	//------------------------CLASS-FINDING METHODS -----------------------//
-
 	private MainController(Stage primaryStage) {
 		currentGUI = this; 
 		this.primaryStage = primaryStage;
 		firebase = new FirebaseDB();
-//		Stage stage = new Stage(StageStyle.UNDECORATED);
-//		StudentIDGetter root = new StudentIDGetter(stage,firebase);
-	//	Scene scene = new Scene();
-//		stage.setScene(scene);
-//		stage.setTitle("Welcome");
-//		stage.initModality(Modality.APPLICATION_MODAL);
-//		stage.showAndWait();
 		firebase.addListeners();
 		addListeners();
 		primaryStage.setTitle("Jeeves - New Project");
@@ -268,13 +225,13 @@ public class MainController extends Application {
 
 	@SuppressWarnings("unchecked")
 	private void loadCanvasElements() {
+		dateStage = new Stage(StageStyle.UNDECORATED);
+		root = new NewDatePane();
+		Scene scene = new Scene(root);
+		dateStage.setScene(scene);
+		dateStage.setTitle("Edit dates");
+		dateStage.initModality(Modality.APPLICATION_MODAL);
 		try {
-		//	System.out.println("DOIGETCALLED");
-//			List<Class> classes = new ArrayList<>();
-//			new FastClasspathScanner("com.jeeves.vpl.canvas")
-//			.matchSubclassesOf(ViewElement.class, classes::add)
-//			.scan();
-//			if(classes.size() == 0){
 				ArrayList<ViewElement> elements = new ArrayList<ViewElement>();
 				for(String trigName : Trigger.triggerNames){
 					ViewElement trigger = ViewElement.create(trigName);
@@ -312,6 +269,8 @@ public class MainController extends Application {
 				//	System.out.println("Added a represented thing");
 					element.setHandler(viewElementHandler);
 				}
+
+				
 		//	}
 
 //			//int counter = 0;

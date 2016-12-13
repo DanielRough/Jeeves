@@ -38,7 +38,8 @@ public class DateReceiver extends ExpressionReceiver{
 
 		text.setPrefWidth(20);
 		text.getStyleClass().add("timevar");
-		captureRect.setOnMouseClicked(event -> {
+		captureRect.setOnMousePressed(event -> {
+			event.consume();
 			Stage stage = new Stage(StageStyle.UNDECORATED);
 			NewSingleDatePane root = new NewSingleDatePane(stage,text);
 			Scene scene = new Scene(root);

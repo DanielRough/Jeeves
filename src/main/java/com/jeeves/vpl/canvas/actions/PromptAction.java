@@ -115,7 +115,7 @@ public class PromptAction extends Action { // NO_UCD (unused code)
 				
 				smsText.setPrefWidth(Math.max(smsText.getWidth(),txtPrompt.getWidth()));
 				smsText.setPrefColumnCount(arg2.length()+1);
-				model.getparams().put("msgtext", smsText.getText());// }
+				params.put("msgtext", smsText.getText());// }
 				txtPrompt.setText(smsText.getText());
 			}
 		});

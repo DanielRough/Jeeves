@@ -20,7 +20,7 @@ class NewSingleDatePane extends Pane{
 	public NewSingleDatePane(Stage stage, TextField texty){
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setController(this);
-		URL location = this.getClass().getResource("newsingledate.fxml");
+		URL location = getClass().getResource("/newsingledate.fxml");
 		fxmlLoader.setLocation(location);
 		try {
 			Node root = (Node) fxmlLoader.load();

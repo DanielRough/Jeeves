@@ -1,31 +1,25 @@
 package com.jeeves.vpl.canvas.triggers;
 
 import java.time.LocalDate;
-import java.util.Map;
-
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.geometry.Point2D;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Toggle;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Pane;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import com.jeeves.vpl.CalendarEveryday;
 import com.jeeves.vpl.CalendarFromTo;
 import com.jeeves.vpl.canvas.expressions.Expression;
-import com.jeeves.vpl.canvas.receivers.NewDatePane;
 import com.jeeves.vpl.canvas.receivers.TimeReceiver;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
+
+import javafx.beans.value.ChangeListener;
+import javafx.collections.ListChangeListener;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Pane;
+import javafx.stage.Screen;
 
 /**
  * This class represents a clock trigger that can be dragged around on the
@@ -60,52 +54,22 @@ public ClockTriggerInterval() {
 }
 	public void addListeners() {
 		super.addListeners();
-		paneDate.setOnMouseClicked(event->{
-			
-			Stage stage = new Stage(StageStyle.UNDECORATED);
-			NewDatePane root = new NewDatePane(stage,paneDate,dateFrom,dateTo);
-			Scene scene = new Scene(root);
-			stage.setScene(scene);
-			stage.setTitle("Edit dates");
-			stage.initModality(Modality.APPLICATION_MODAL);
+		paneDate.setOnMouseClicked(event->{	
+			newDatePane.setParams(dateStage, paneDate, dateFrom, dateTo);
 			Point2D point = getInstance().localToScreen(event.getX(),event.getY());
-			stage.setX(point.getX());
-			stage.setY(point.getY());
-			root.getPckFrom().valueProperty().addListener(new ChangeListener<LocalDate>(){
-
-				@Override
-				public void changed(ObservableValue<? extends LocalDate> arg0,
-						LocalDate arg1, LocalDate arg2) {
-					setDateFrom(arg2.toEpochDay());
-				}
-				
-			});
-			root.getPckTo().valueProperty().addListener(new ChangeListener<LocalDate>(){
-
-				@Override
-				public void changed(ObservableValue<? extends LocalDate> arg0,
-						LocalDate arg1, LocalDate arg2) {
-					setDateTo(arg2.toEpochDay());
-
-				}
-				
-			});
-			root.getToggleGroup().selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
-
-				@Override
-				public void changed(ObservableValue<? extends Toggle> arg0,
-						Toggle arg1, Toggle arg2) {
-					if(arg2.equals(root.btnEveryday)){
-						setDateFrom(0);
-						setDateTo(0);
-					}
-					else{
-						
-					}
-				}
-				
-			});
-			stage.showAndWait();		
+			Rectangle2D bounds = Screen.getPrimary().getBounds();
+			double initX = point.getX();
+			double initY = point.getY();
+			if(point.getX() > (bounds.getWidth()-200)){
+				initX = bounds.getWidth()-200;
+			}
+			if(point.getY() > (bounds.getHeight() - 300)){
+				initY = bounds.getHeight() - 300;
+			}
+			dateStage.setX(initX);
+			dateStage.setY(initY);
+			
+			dateStage.showAndWait();		
 			
 		});
 		txtFieldInterval.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>(){
@@ -161,7 +125,7 @@ public ClockTriggerInterval() {
 		timeReceiverTo = new TimeReceiver(Expression.VAR_CLOCK);
 		paneIntervalFrom.getChildren().add(timeReceiverFrom);
 		paneIntervalTo.getChildren().add(timeReceiverTo);
-
+		super.datePane = paneDate;
 		styleTextCombo(cboInterval);
 		cboInterval.getItems().addAll(DURATIONS); 
 		cboInterval.setValue(DURATIONS[0]);

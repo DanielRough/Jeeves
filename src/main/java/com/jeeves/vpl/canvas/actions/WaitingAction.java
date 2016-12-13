@@ -92,7 +92,7 @@ public class WaitingAction extends Action { // NO_UCD (unused code)
 			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
 				txtWaitTime.setPrefWidth(TextUtils.computeTextWidth(txtWaitTime.getFont(), txtWaitTime.getText(), 0.0D) + 10);
 				autosize();
-				getModel().getparams().put("time", txtWaitTime.getText());
+				params.put("time", txtWaitTime.getText());
 
 			//	txtWaitTime.getText();
 			}
@@ -122,7 +122,7 @@ public class WaitingAction extends Action { // NO_UCD (unused code)
 						String arg1, String arg2) {
 					if(arg2 != null) //aaaaaaaargh
 
-					getModel().getparams().put("granularity", arg2);
+						params.put("granularity", arg2);
 				}
 				
 			};

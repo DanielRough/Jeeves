@@ -113,7 +113,7 @@ public class SendTextAction extends Action { // NO_UCD (unused code)
 					String arg1, String arg2) {
 			//	smsText.setPrefWidth(smsText.getWidth(),txtMessage.getWidth());
 				smsText.setPrefColumnCount(arg2.length()+1);
-				model.getparams().put("msgtext", smsText.getText());// }
+				params.put("msgtext", smsText.getText());// }
 				txtMessage.setText(smsText.getText());
 			}
 		});
@@ -123,7 +123,7 @@ public class SendTextAction extends Action { // NO_UCD (unused code)
 			@Override
 			public void changed(ObservableValue<? extends String> arg0,
 					String arg1, String arg2) {
-				model.getparams().put("recipient", arg2);
+				params.put("recipient", arg2);
 			}
 		});
 	}

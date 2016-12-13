@@ -35,6 +35,9 @@ public void setData(FirebaseExpression model){
 
 public void addListeners(){
 	super.addListeners();
+	model.getparams().put("timeDiff", cboTimeDiff.getValue());
+	model.getparams().put("beforeAfter", cboBeforeAfter.getValue());
+	model.getparams().put("timeVar", exprTimeVar.getText());
 	cboTimeDiff.valueProperty().addListener(new ChangeListener<String>(){
 
 		@Override
@@ -57,7 +60,7 @@ public void addListeners(){
 		@Override
 		public void changed(ObservableValue<? extends String> arg0,
 				String arg1, String arg2) {
-			model.getparams().put("timevar", arg2);
+			model.getparams().put("timeVar", arg2);
 		}
 		
 	});

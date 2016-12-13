@@ -53,7 +53,7 @@ public class SpeakerAction extends Action { // NO_UCD (unused code)
 			@Override
 			public void changed(ObservableValue<? extends String> arg0,
 					String arg1, String arg2) {
-				model.getparams().put("volume", arg2);
+				params.put("volume", arg2);
 			}
 
 		});

@@ -502,7 +502,7 @@ public class Survey extends ViewElement<FirebaseSurvey>{
 			txtAnswer.setText(value);
 			}
 			if(condition.get("question") != null){
-				String question = condition.get("question").toString();
+				int question = Integer.parseInt(condition.get("question").toString());
 				cboQuestionText.getSelectionModel().clearSelection();
 				cboQuestionText.getSelectionModel().select(question);
 			}
@@ -681,7 +681,7 @@ public class Survey extends ViewElement<FirebaseSurvey>{
 			String questiontext = cboQuestionText.getSelectionModel().getSelectedItem();
 			String questionanswer = txtAnswer.getText();
 			Map<String,Object> condition = new HashMap<String,Object>();
-			condition.put("question", questiontext);
+			condition.put("question", cboQuestionText.getSelectionModel().getSelectedIndex());
 			condition.put("answer", questionanswer);
 			selectedQuestionModel.setCondition(condition);;
 		}

@@ -3,6 +3,7 @@ package com.jeeves.vpl.canvas.actions;
 import java.io.IOException;
 
 import javafx.collections.FXCollections;
+import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -16,7 +17,7 @@ import com.jeeves.vpl.firebase.FirebaseAction;
  *
  */
 public abstract class Action extends ViewElement<FirebaseAction> {
-	protected ObservableMap<String,Object> params = FXCollections.observableHashMap();
+	public ObservableMap<String,Object> params = FXCollections.observableHashMap();
 
 	public static String[] actionNames = {
 			"com.jeeves.vpl.canvas.actions.PromptAction",
@@ -66,5 +67,23 @@ public abstract class Action extends ViewElement<FirebaseAction> {
 
 	protected void addListeners(){
 		super.addListeners();
+		if(params != null)
+			params.addListener(new MapChangeListener<String, Object>(){
+
+				@Override
+				public void onChanged(
+						javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
+					//model.settriggerId(getSaltString()); //Again, update, must reset 
+					if(change.wasAdded()){
+						model.getparams().put(change.getKey(), change.getValueAdded());
+					}
+					else{
+						model.getparams().remove(change.getKey());
+					}
+					System.out.println("CHANGED PARAMS");
+				}
+				
+			});
+
 	}
 }
