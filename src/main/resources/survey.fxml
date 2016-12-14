@@ -37,6 +37,81 @@
                         <Font size="14.0" />
                      </font>
                   </RadioButton>
+                  <RadioButton fx:id="rdioRegScale" layoutX="70.0" layoutY="370.0" mnemonicParsing="false" onAction="#showScale" text="Likert Scale" toggleGroup="$type">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </RadioButton>
+                  <Pane fx:id="paneScale" layoutX="66.0" layoutY="396.0" prefHeight="0.0">
+                     <children>
+                        <VBox layoutX="170.0" spacing="5.0">
+                           <children>
+                              <Label layoutX="80.0" text="No. of Items">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <RadioButton fx:id="rdioButton5" mnemonicParsing="false" selected="true" text="5">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </RadioButton>
+                              <RadioButton fx:id="rdioButton7" mnemonicParsing="false" text="7">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </RadioButton>
+                           </children>
+                        </VBox>
+                        <VBox layoutY="-55.0" spacing="10.0">
+                           <children>
+                              <Label text="Option Labels">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="txtLikert1" promptText="Label 1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="txtLikert2" promptText="Label 2">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="txtLikert3" promptText="Label 3">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="txtLikert4" promptText="Label 4">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="txtLikert5" promptText="Label 5">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="txtLikert6" promptText="Label 6" visible="false">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="txtLikert7" promptText="Label 7" visible="false">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                           </children>
+                           <padding>
+                              <Insets top="50.0" />
+                           </padding>
+                        </VBox>
+                     </children>
+                  </Pane>
                   <RadioButton fx:id="rdioRegBool" mnemonicParsing="false" onAction="#showBoolean" text="True/False" toggleGroup="$type">
                      <font>
                         <Font size="14.0" />
@@ -78,26 +153,6 @@
                               <Button fx:id="btnAddOptM" mnemonicParsing="false" text="Add option" />
                            </children>
                         </VBox>
-                     </children>
-                  </Pane>
-                  <RadioButton fx:id="rdioRegScale" layoutX="70.0" layoutY="370.0" mnemonicParsing="false" onAction="#showScale" text="Scale" toggleGroup="$type">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </RadioButton>
-                  <Pane fx:id="paneScale" layoutX="66.0" layoutY="396.0" prefHeight="0.0" visible="false">
-                     <children>
-                        <TextField fx:id="txtMin" layoutY="18.0" prefHeight="26.0" prefWidth="84.0" promptText="Min label" />
-                        <Label layoutX="103.0" text="Max Value">
-                           <font>
-                              <Font size="14.0" />
-                           </font></Label>
-                        <TextField fx:id="txtScaleMax" alignment="CENTER" layoutX="119.0" layoutY="17.0" prefHeight="30.0" prefWidth="33.0" text="5">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </TextField>
-                        <TextField fx:id="txtMax" layoutX="185.0" layoutY="18.0" prefHeight="26.0" prefWidth="84.0" promptText="Max label" />
                      </children>
                   </Pane>
                   <RadioButton fx:id="rdioRegDate" mnemonicParsing="false" onAction="#showDate" text="Date/Time" toggleGroup="$type">

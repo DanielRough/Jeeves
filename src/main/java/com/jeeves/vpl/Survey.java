@@ -4,8 +4,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import com.jeeves.vpl.canvas.expressions.UserVariable;
+import com.jeeves.vpl.firebase.FirebaseQuestion;
+import com.jeeves.vpl.firebase.FirebaseSurvey;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -29,6 +34,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.effect.Bloom;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyEvent;
@@ -41,10 +47,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
-
-import com.jeeves.vpl.canvas.expressions.UserVariable;
-import com.jeeves.vpl.firebase.FirebaseQuestion;
-import com.jeeves.vpl.firebase.FirebaseSurvey;
 
 public class Survey extends ViewElement<FirebaseSurvey>{
 	@FXML private CheckBox chkExpiry;
@@ -63,10 +65,19 @@ public class Survey extends ViewElement<FirebaseSurvey>{
 	@FXML private RadioButton rdioRegDate;
 	@FXML private RadioButton rdioRegGeo;
 	
-	@FXML private TextField txtMin;
-	@FXML private TextField txtMax;
-	@FXML private TextField txtScaleMax;
-	
+///	@FXML private TextField txtMin;
+//	@FXML private TextField txtMax;
+//	@FXML private TextField txtScaleMax;
+	@FXML private RadioButton rdioButton5;
+	@FXML private RadioButton rdioButton7;
+	@FXML private TextField txtLikert1;
+	@FXML private TextField txtLikert2;
+	@FXML private TextField txtLikert3;
+	@FXML private TextField txtLikert4;
+	@FXML private TextField txtLikert5;
+	@FXML private TextField txtLikert6;
+	@FXML private TextField txtLikert7;
+	private TextField[] fields;
 	@FXML private TextArea txtRegQ;
 	@FXML private TextField txtSurveyDesc;
 	@FXML private TextField txtDescription;
@@ -283,8 +294,8 @@ public class Survey extends ViewElement<FirebaseSurvey>{
 		 Bloom bloom = new Bloom();
 
 	     bloom.setThreshold(0.75);
-		
-		qHandler = new EventHandler<MouseEvent>(){
+
+	    qHandler = new EventHandler<MouseEvent>(){
 			@Override
 			public void handle(MouseEvent event) {
 		//		if(event.getSource() instanceof Button)return;
@@ -340,33 +351,7 @@ public class Survey extends ViewElement<FirebaseSurvey>{
 					 if(newValue != null)
 					 handleUpdateCondition();
 				 });
-				 txtScaleMax.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>(){
 
-						@Override
-						public void handle(KeyEvent arg0) {
-							try{
-								Long isValid = Long.parseLong(arg0.getCharacter());
-								
-							}
-							catch(NumberFormatException e){
-								arg0.consume();
-								return;
-							}	
-							
-						
-						}
-					});
-				 txtScaleMax.textProperty().addListener(change->{
-					 handleUpdateScale();
-				 });
-				 txtMin.textProperty().addListener(change->{
-					 handleUpdateScale();
-					 
-				 });
-				 txtMax.textProperty().addListener(change->{
-					 handleUpdateScale();
-
-				 });
 				 txtAnswer.setOnKeyReleased((event)->{handleUpdateCondition();});
 					paneAssignToVar.getChildren().forEach(child->{((Node)child).setDisable(true);;});
 					paneCondition.getChildren().forEach(child->{((Node)child).setDisable(true);;});
@@ -382,7 +367,44 @@ public class Survey extends ViewElement<FirebaseSurvey>{
 						handleAddOpt(paneChoiceOptsM,"");//Add a blank options
 					}
 				});
-				 questionPanes = new ArrayList<Pane>();
+				
+			    fields = new TextField[]{txtLikert1,txtLikert2,txtLikert3,txtLikert4,txtLikert5,txtLikert6,txtLikert7};
+			    for(TextField field : fields){
+			    	field.setText("");
+			    }
+				final ToggleGroup group = new ToggleGroup();
+				rdioButton5.setToggleGroup(group);
+				rdioButton7.setToggleGroup(group);
+				rdioButton7.selectedProperty().addListener(new ChangeListener<Boolean>(){
+
+					@Override
+					public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
+							Boolean newValue) {
+						if(newValue){
+							txtLikert6.setVisible(true);
+							txtLikert7.setVisible(true);
+							handleUpdateScale();
+						}						
+					}
+					
+				});
+				rdioButton5.selectedProperty().addListener(new ChangeListener<Boolean>(){
+
+					@Override
+					public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
+							Boolean newValue) {
+						if(newValue){
+							txtLikert6.setVisible(false);
+							txtLikert7.setVisible(false);
+							handleUpdateScale();
+						}
+					}
+					
+				});
+				for(TextField field : fields){
+					field.textProperty().addListener(change->handleUpdateScale());
+				}
+				questionPanes = new ArrayList<Pane>();
 				 Collections.addAll(questionPanes,paneScale,paneMultChoiceS,paneMultChoiceM);
 		} catch (IOException exception) {
 			throw new RuntimeException(exception);
@@ -560,14 +582,26 @@ public class Survey extends ViewElement<FirebaseSurvey>{
 		case SCALE:
 			showScale(null);
 			rdioRegScale.setSelected(true);
-			if(opts == null)
-				txtScaleMax.setText("5");
+			if(opts == null){
+				rdioButton5.setSelected(true);
+				for(TextField field : fields){
+					field.setText("");
+				}
+			}
 			else{
-				if(opts.containsKey("minLabel"))
-					txtMin.setText(opts.get("minLabel").toString());
-				if(opts.containsKey("maxLabel"))
-					txtMax.setText(opts.get("maxLabel").toString());
-				txtScaleMax.setText(opts.get("to").toString());
+				if(opts.containsKey("number")){
+					String number = opts.get("number").toString();
+					if(number.equals("5"))rdioButton5.setSelected(true);
+					else if(number.equals("7"))rdioButton7.setSelected(true);
+				}
+				if(opts.containsKey("labels")){
+					ArrayList<String> labels = (ArrayList<String>)opts.get("labels");
+					int count = 0;
+					for(String label : labels){
+						fields[count].setText(label);
+						count++;
+					}
+				}
 			}
 				break;
 		}
@@ -686,13 +720,16 @@ public class Survey extends ViewElement<FirebaseSurvey>{
 			selectedQuestionModel.setCondition(condition);;
 		}
 		private void handleUpdateScale(){
-			String toText =  (txtScaleMax.getText().equals("") ? "0" : txtScaleMax.getText());
+		//	String toText =  (txtScaleMax.getText().equals("") ? "0" : txtScaleMax.getText());
+			String number = rdioButton5.isSelected() ? "5" : "7";
 			Map<String,Object> qScaleVals = new HashMap<String,Object>();
-			qScaleVals.put("to",toText);
-			String maxLabelText = txtMax.getText();
-			qScaleVals.put("maxLabel", maxLabelText);
-			String minLabelText = txtMin.getText();
-			qScaleVals.put("minLabel", minLabelText);
+			qScaleVals.put("number", number);
+			ArrayList<String> labels = new ArrayList<String>();
+			for(TextField field : fields){
+				labels.add(field.getText());
+				
+			}
+			qScaleVals.put("labels",labels);
 
 			selectedQuestionModel.setOptions(qScaleVals);
 
