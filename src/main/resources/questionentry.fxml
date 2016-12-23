@@ -7,7 +7,6 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
 <HBox alignment="CENTER" fillHeight="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="51.0" prefWidth="263.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <ImageView fx:id="imgEntry" fitHeight="48.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
@@ -23,5 +22,13 @@
             <Insets left="10.0" />
          </HBox.margin>
       </Label>
+      <Button fx:id="btnDeleteQ" mnemonicParsing="false" text="X" visible="false">
+         <font>
+            <Font size="9.0" />
+         </font>
+      </Button>
    </children>
+   <padding>
+      <Insets right="10.0" />
+   </padding>
 </HBox>

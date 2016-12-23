@@ -5,6 +5,8 @@ import java.util.Map;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import javafx.beans.property.SimpleStringProperty;
+
 /**
  * Created by Daniel on 16/06/16.
  */
@@ -13,24 +15,26 @@ import com.google.firebase.database.IgnoreExtraProperties;
 public class FirebasePatient implements Serializable{
 
     private String address;
-    private String firstName;
-    private String lastName;
-    private String phone;
+    private String name;
+    private String phoneNo;
     private String email;
-
+    private String currentStudy;
     
-    public void setAddress(String address){
+    public String getCurrentStudy(){
+    	return currentStudy;
+    }
+    
+    public void setaddress(String address){
     	this.address = address;
     }
-    public void setFirstName(String firstName){
-    	this.firstName = firstName;
+
+    public void setName(String lastName){
+    	this.name = lastName;
     }
-    public void setLastName(String lastName){
-    	this.lastName = lastName;
+    public void setPhoneNo(String phone){
+    	this.phoneNo = phone;
     }
-    public void setPhone(String phone){
-    	this.phone = phone;
-    }
+    
     public void setEmail(String email){
     	this.email = email;
     }
@@ -43,19 +47,18 @@ public class FirebasePatient implements Serializable{
     public String getUid(){ return uid;}
     
     public void setUid(String uid){ this.uid = uid;}
+
     public String getEmail(){ return email; }
     public String getAddress(){
         return address;
     }
 
-    public String getFirstName(){
-        return firstName;
+    public String getName(){
+    	return name;
     }
-    public String getLastName(){
-        return lastName;
-    }
-    public String getPhone(){
-        return phone;
+
+    public String getPhoneNo(){
+        return phoneNo;
     }
 
     public Map<String,FirebaseSurvey> getincomplete(){

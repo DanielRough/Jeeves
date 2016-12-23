@@ -18,7 +18,7 @@
 	<children>
       <MenuBar fx:id="mnuBar" layoutX="-3.0" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="1476.0">
         <menus>
-          <Menu mnemonicParsing="false" text="File">
+          <Menu fx:id="mnuFile" mnemonicParsing="false" text="File">
             <items>
                   <MenuItem mnemonicParsing="false" onAction="#newStudyMenu" text="New Study" />
                   <Menu fx:id="mnuStudies" mnemonicParsing="false" text="Open" />
@@ -89,7 +89,7 @@
                                     </VBox>
                                     <VBox fx:id="vboxDesign" layoutX="20.0" prefWidth="109.0" visible="false">
                                        <children>
-                                          <Label fx:id="lblUIElements" onMouseClicked="#showMenu" onMouseEntered="#addHighlight" onMouseExited="#removeHighlight" style="-fx-text-fill: orange;" text="UI Elements">
+                                          <Label fx:id="lblUIElements" onMouseClicked="#showMenu" onMouseEntered="#addHighlight" onMouseExited="#removeHighlight" style="-fx-text-fill: orange;" text="Onscreen Buttons">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -141,7 +141,7 @@
                                           </VBox>
                                           <VBox fx:id="paneVariables" alignment="TOP_CENTER" layoutX="175.0" layoutY="20.0" spacing="5.0" stylesheets="@ButtonsDemo.css" visible="false">
                                              <children>
-                                                <Label text="Variables" textAlignment="CENTER" underline="true">
+                                                <Label text="Patient Attributes" textAlignment="CENTER" underline="true">
                                                    <font>
                                                       <Font name="Calibri Bold" size="14.0" />
                                                    </font>
@@ -151,7 +151,7 @@
                                                       <Insets bottom="5.0" left="20.0" right="20.0" top="5.0" />
                                                    </padding>
                                                 </VBox>
-                                                <Button fx:id="btnAddVar" mnemonicParsing="false" onAction="#addVariable" text="New Variable" />
+                                                <Button fx:id="btnAddVar" mnemonicParsing="false" onAction="#addVariable" text="New Attribute" />
                                              </children>
                                           </VBox>
                                        </children>

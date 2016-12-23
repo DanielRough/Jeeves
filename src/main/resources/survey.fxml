@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<Pane prefHeight="478.0" prefWidth="914.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<Pane prefHeight="543.0" prefWidth="914.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Group fx:id="grpSurveyEdit" layoutX="-8.0" layoutY="-172.0">
          <children>
@@ -185,8 +185,13 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
+                        <TextField fx:id="txtNumAnswer" layoutX="135.0" layoutY="67.0" prefHeight="25.0" prefWidth="42.0" visible="false" />
                         <TextField fx:id="txtAnswer" layoutY="67.0" prefHeight="25.0" />
                         <ComboBox fx:id="cboQuestionText" layoutY="22.0" prefHeight="25.0" />
+                        <RadioButton fx:id="rdioTrue" layoutX="7.0" layoutY="70.0" mnemonicParsing="false" text="true" visible="false" />
+                        <RadioButton fx:id="rdioFalse" layoutX="62.0" layoutY="70.0" mnemonicParsing="false" text="false" visible="false" />
+                        <ComboBox fx:id="cboLessMore" layoutX="-1.0" layoutY="67.0" prefHeight="25.0" prefWidth="135.0" visible="false" />
+                        <ComboBox fx:id="cboMultiChoice" layoutX="-1.0" layoutY="67.0" prefWidth="150.0" visible="false" />
                      </children>
                   </Pane>
                   <CheckBox fx:id="chkAssignScore" disable="true" mnemonicParsing="false" onAction="#handleAssignScore" prefHeight="35.0" prefWidth="245.0" text="Add this answer to survey score">
@@ -268,7 +273,7 @@
             </Pane>
          </children>
       </Group>
-      <ScrollPane fitToWidth="true" layoutX="13.0" layoutY="91.0" prefHeight="273.0" prefWidth="287.0">
+      <ScrollPane fitToWidth="true" layoutX="13.0" layoutY="91.0" prefHeight="378.0" prefWidth="287.0">
          <content>
             <VBox fx:id="lstRegQ" spacing="5.0" />
          </content>
@@ -294,7 +299,7 @@
             <Font size="14.0" />
          </font>
       </CheckBox>
-      <Button fx:id="btnAddQ" layoutX="69.0" layoutY="374.0" mnemonicParsing="false" onAction="#addQ" prefHeight="44.0" prefWidth="177.0" text="Add New Question">
+      <Button fx:id="btnAddQ" layoutX="68.0" layoutY="477.0" mnemonicParsing="false" onAction="#addQ" prefHeight="44.0" prefWidth="177.0" text="Add New Question">
          <font>
             <Font size="14.0" />
          </font>

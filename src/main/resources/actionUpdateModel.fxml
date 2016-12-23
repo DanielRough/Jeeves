@@ -15,7 +15,7 @@
   <children>
     <HBox fx:id="hbox" alignment="CENTER" fillHeight="false" layoutX="8.0" layoutY="-6.0" prefHeight="45.0">
          <children>
-            <Label text="set the variable:">
+            <Label text="set the attribute">
                <font>
                   <Font size="13.0" />
                </font>

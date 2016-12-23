@@ -176,6 +176,7 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane{
 			} else if (event.getEventType().equals(MouseEvent.MOUSE_ENTERED)) {
 				setCursor(Cursor.HAND);
 		     	setEffect(shadow);
+		     	MainController.currentGUI.mnuFile.hide();
 			} 
 			else if (event.getEventType().equals(MouseEvent.MOUSE_EXITED)){
 				setEffect(null);
@@ -243,6 +244,7 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane{
 				} 
 				else if (event.getEventType().equals(MouseEvent.MOUSE_ENTERED)){
 					setCursor(Cursor.HAND);
+					MainController.currentGUI.mnuFile.hide();
 				}}
 		};
 

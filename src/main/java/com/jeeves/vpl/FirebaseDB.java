@@ -77,6 +77,7 @@ public class FirebaseDB {
 								newprojects.add(projects.get(key));
 					if(patients != null)
 						newpatients.addAll(patients.values());
+				
 //					systemvars.addAll(vars.values());
 				}			
 			}

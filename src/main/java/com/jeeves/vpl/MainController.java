@@ -1,7 +1,6 @@
 package com.jeeves.vpl;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +29,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -48,7 +48,6 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.SplitPane.Divider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.Toggle;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -86,6 +85,7 @@ public class MainController extends Application {
 
 	@FXML private Label lblUIElements;
 	@FXML private MenuBar mnuBar;
+	@FXML public Menu mnuFile;
 	@FXML private VBox paneTriggers;
 	@FXML private VBox paneActions;
 	@FXML private VBox paneConditions;
@@ -231,6 +231,9 @@ public class MainController extends Application {
 		dateStage.setScene(scene);
 		dateStage.setTitle("Edit dates");
 		dateStage.initModality(Modality.APPLICATION_MODAL);
+		System.out.println("HERE");
+		
+		
 		try {
 				ArrayList<ViewElement> elements = new ArrayList<ViewElement>();
 				for(String trigName : Trigger.triggerNames){
@@ -266,43 +269,15 @@ public class MainController extends Application {
 					ViewElement draggable = ViewElement.create(element.getClass().getName());
 					element.setDraggable(draggable); // DJRNEW
 					element.setReadOnly();
-				//	System.out.println("Added a represented thing");
 					element.setHandler(viewElementHandler);
 				}
 
-				
-		//	}
-
-//			//int counter = 0;
-//			for (Class<ViewElement> classname : classes) {
-//			//	counter++;
-//				//System.out.println("Er, hello?");
-//				if (!ViewElement.class.isAssignableFrom(classname) || Modifier.isAbstract(classname.getModifiers()))
-//					continue;
-//				final ViewElement represented = ViewElement.create(classname.getName());
-//				Label nameLabel = new Label(represented.name.get());
-//
-//				if (represented instanceof Trigger) {																							
-//					paneTriggers.getChildren().addAll(nameLabel, represented);
-//				} else if (represented instanceof Expression && !(represented instanceof UserVariable) || represented instanceof Control)
-//					paneConditions.getChildren().addAll(nameLabel, represented);
-//				else if (represented instanceof Action)
-//					paneActions.getChildren().addAll(nameLabel, represented);
-//				else if (represented instanceof UIElement)
-//					paneUI.getChildren().addAll(nameLabel, represented);
-//				represented.setPadding(new Insets(0, 0, 10, 0));
-//				ViewElement draggable = ViewElement.create(classname.getName());
-//				represented.setDraggable(draggable); // DJRNEW
-//				represented.setReadOnly();
-//		//		System.out.println("Added a represented thing");
-//				represented.setHandler(viewElementHandler);
-//				nameLabel.setFont(Font.font("Calibri", FontWeight.BOLD, 14));
-//			}
 		
 		} catch (Exception e){
 			e.printStackTrace();
 		}
 
+	
 		SingleSelectionModel<Tab> selectionModel = tabPane.getSelectionModel();
 		selectionModel.selectedItemProperty().addListener(tabListener);
 
@@ -335,7 +310,9 @@ public class MainController extends Application {
 
 	}
 
-
+	public FirebaseProject getCurrentProject(){
+		return this.currentproject;
+	}
 	private void loadProject(FirebaseProject proj) {
 		isNewProject = false;
 
@@ -345,6 +322,7 @@ public class MainController extends Application {
 		tabDesign.setText("UI Design");
 		primaryStage.setTitle("Jeeves - " + proj.getname());
 		tabCanvas.setContent(paneIntervention);
+		patientController.loadPatients(); //Reset so we have the patients for THIS project
 		resetPanes();
 	}
 
@@ -502,6 +480,7 @@ public class MainController extends Application {
 				}
 			}
 		};
+
 
 		firebase.getprojects().addListener(new ListChangeListener<FirebaseProject>() {
 			@Override

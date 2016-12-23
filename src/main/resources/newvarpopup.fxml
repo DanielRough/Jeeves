@@ -7,11 +7,11 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="122.0" prefWidth="321.0" style="-fx-background-color: #d3d3d3;" stylesheets="@ButtonsDemo.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Label alignment="CENTER_RIGHT" layoutX="20.0" layoutY="58.0" text="Variable name" textAlignment="RIGHT" />
+      <Label alignment="CENTER_RIGHT" layoutX="20.0" layoutY="58.0" text="Attribute name" textAlignment="RIGHT" />
       <TextField fx:id="txtName" layoutX="119.0" layoutY="53.0" prefHeight="25.0" prefWidth="150.0" promptText="Name" />
       <Button fx:id="btnSave" layoutX="40.0" layoutY="87.0" mnemonicParsing="false" onAction="#handleSaveClick" prefHeight="25.0" prefWidth="108.0" text="Save" />
       <Label fx:id="lblError" layoutX="11.0" layoutY="167.0" prefHeight="25.0" prefWidth="300.0" textFill="#f8360a" />
-      <Label alignment="CENTER_RIGHT" layoutX="26.0" layoutY="19.0" text="Variable type" textAlignment="RIGHT" />
+      <Label alignment="CENTER_RIGHT" layoutX="26.0" layoutY="19.0" text="Attribute type" textAlignment="RIGHT" />
       <ComboBox fx:id="cboVarType" layoutX="119.0" layoutY="14.0" prefWidth="150.0" />
       <Button fx:id="btnCancel" layoutX="161.0" layoutY="87.0" mnemonicParsing="false" onAction="#handleCloseClick" prefHeight="25.0" prefWidth="108.0" text="Cancel" />
    </children>

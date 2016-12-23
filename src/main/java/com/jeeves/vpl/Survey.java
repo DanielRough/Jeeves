@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +19,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -34,10 +34,12 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.effect.Bloom;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -90,6 +92,12 @@ public class Survey extends ViewElement<FirebaseSurvey>{
 
 	@FXML private ComboBox<String> cboQuestionText;
 	@FXML private TextField txtAnswer;
+	@FXML private TextField txtNumAnswer;
+	@FXML private RadioButton rdioTrue;
+	@FXML private RadioButton rdioFalse;
+	@FXML private ComboBox<String> cboMultiChoice;
+	@FXML private ComboBox<String> cboLessMore;
+	
 	private DropShadow selshadow = new DropShadow();
 
 
@@ -115,6 +123,7 @@ public class Survey extends ViewElement<FirebaseSurvey>{
 	
 	@FXML private CheckBox chkAssignScore;
 	private ArrayList<Pane> questionPanes;
+	private ArrayList<Node> conditionPanes;
 	private EventHandler<MouseEvent> qHandler;
 	private QuestionView selectedQuestion;
 	private FirebaseQuestion selectedQuestionModel;
@@ -279,7 +288,8 @@ public class Survey extends ViewElement<FirebaseSurvey>{
 	public Survey(){
 		this(new FirebaseSurvey());
 	}
-	
+    int prevIndex = -1;
+    QuestionView dummyView;
 	public void fxmlInit(){
 		FXMLLoader surveyLoader = new FXMLLoader();
 		surveyLoader.setController(this);
@@ -301,20 +311,23 @@ public class Survey extends ViewElement<FirebaseSurvey>{
 		//		if(event.getSource() instanceof Button)return;
 				QuestionView entry = (QuestionView)event.getSource();
 				if(event.getEventType().equals(MouseEvent.MOUSE_ENTERED)){
+					if(!entry.equals(selectedQuestion)){
 					entry.setEffect(shadow);
-					entry.setEffect(bloom);
+					entry.setEffect(bloom);}
 					setCursor(Cursor.HAND);
 
 				}
 				else if(event.getEventType().equals(MouseEvent.MOUSE_CLICKED)){
 				//	paneVariables.getChildren().forEach(child->child.setEffect(null)); //remove any variable highlighting
-
 					setSelectedQuestion(entry);
 					selectedQuestionModel = entry.getModel();
 					populateQ(entry.getModel());	
 					lstRegQ.getChildren().forEach(label->{
+						((QuestionView)label).hideDelete();
 					label.getStyleClass().remove("borderedselected");});
 					entry.getStyleClass().add("borderedselected");
+					entry.showDelete();
+
 				}
 				else if(event.getEventType().equals(MouseEvent.MOUSE_EXITED)){
 					entry.setEffect(null);
@@ -336,6 +349,83 @@ public class Survey extends ViewElement<FirebaseSurvey>{
 					}
 					
 				});
+				lstRegQ.addEventHandler(MouseDragEvent.MOUSE_DRAG_ENTERED, new EventHandler<MouseDragEvent>(){
+
+					@Override
+					public void handle(MouseDragEvent event) {
+						dummyView = new QuestionView(((QuestionView)event.getGestureSource()));
+						dummyView.setVisible(false);
+					}
+					
+				});
+			    lstRegQ.addEventHandler(MouseDragEvent.MOUSE_DRAG_OVER, new EventHandler<MouseDragEvent>(){
+
+					@Override
+					public void handle(MouseDragEvent event) {
+						if(!(event.getGestureSource() instanceof QuestionView))
+							return;
+						else{
+							QuestionView view = (QuestionView)event.getGestureSource();
+							selectedQuestion = null;
+							Point2D mousePos = lstRegQ.sceneToLocal(new Point2D(event.getSceneX(),event.getSceneY()));
+							double questionHeight = ((QuestionView)event.getGestureSource()).getHeight();
+						//	System.out.println("mosue pos y is " + mousePos.getY());	
+						//	System.out.println("question height is " + questionHeight);
+							int index = (int)(mousePos.getY()/questionHeight);
+							if(index <0)index = 0;
+							System.out.println("size is " + lstRegQ.getChildren().size());
+							if(index >= lstRegQ.getChildren().size())index = lstRegQ.getChildren().size()-1; //to account for dummy view
+							//System.out.println("Index is " + index);
+							if(index != prevIndex){
+								
+								prevIndex = index;
+//								dummyView = new QuestionView(((QuestionView)event.getGestureSource()));
+//								dummyView.setEffect(shadow);
+//								dummyView.setEffect(bloom);
+								lstRegQ.getChildren().remove(dummyView);
+							//	if(index != view.getMyIndex())
+								lstRegQ.getChildren().add(index,dummyView);
+							}
+							
+						}
+						
+					}
+			    	
+			    });
+
+			    lstRegQ.addEventHandler(MouseDragEvent.MOUSE_DRAG_RELEASED, new EventHandler<MouseDragEvent>(){
+
+					@Override
+					public void handle(MouseDragEvent event) {
+						if(!(event.getGestureSource() instanceof QuestionView))
+							return;
+						else{
+							int index = lstRegQ.getChildren().indexOf(dummyView);
+							if(index == -1)index = ((QuestionView)event.getGestureSource()).getMyIndex();
+							QuestionView view = (QuestionView)event.getGestureSource();
+							removeQ(view);
+					//		setSelectedQuestion(view);
+							lstRegQ.getChildren().add(index,view);
+							if(index >= getModel().getquestions().size())index -=1;
+							getModel().getquestions().add(index,view.getModel());
+							lstRegQ.getChildren().remove(dummyView);
+							populateQ(view.getModel());
+
+							view.setManaged(true);
+							view.setMouseTransparent(false);
+							view.addEventFilter(MouseEvent.ANY, qHandler);
+
+
+//							((QuestionView)event.getGestureSource()).setManaged(true);
+						}
+						
+					}
+			    	
+			    });
+			    ToggleGroup tgroup = new ToggleGroup();
+			    rdioTrue.setToggleGroup(tgroup);
+			    rdioFalse.setToggleGroup(tgroup);
+			    cboLessMore.getItems().addAll("less than", "more than", "equal to");
 				chkAskOnCondition.selectedProperty().addListener(new ChangeListener<Boolean>(){
 					public void changed(ObservableValue<? extends Boolean> arg0,Boolean arg1, Boolean arg2) {
 						handleCheckQuestion();
@@ -347,12 +437,55 @@ public class Survey extends ViewElement<FirebaseSurvey>{
 					}
 				});
 				 txtRegQ.setOnKeyReleased((event)->{selectedQuestion.setQuestionText(txtRegQ.getText());});
-				 cboQuestionText.getSelectionModel().selectedItemProperty().addListener((observable,oldValue,newValue)->{
-					 if(newValue != null)
-					 handleUpdateCondition();
-				 });
+//				 cboQuestionText.getSelectionModel().selectedItemProperty().addListener((observable,oldValue,newValue)->{
+//					 if(newValue != null)
+//					 handleUpdateCondition("");
+//				 });
 
-				 txtAnswer.setOnKeyReleased((event)->{handleUpdateCondition();});
+				 txtAnswer.setOnKeyReleased((event)->{handleUpdateCondition(txtAnswer.getText());});
+				 
+				 txtNumAnswer.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>(){
+
+						@Override
+						public void handle(KeyEvent arg0) {
+							try{
+								Long isValid = Long.parseLong(arg0.getCharacter());
+								if(txtNumAnswer.getText().length()>0)
+								handleUpdateCondition(cboLessMore.getValue()+";"+txtNumAnswer.getText());
+							}
+							catch(NumberFormatException e){
+								arg0.consume();
+								return;
+							}	
+						}
+					});
+				 
+				 	cboMultiChoice.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>(){
+
+						@Override
+						public void changed(ObservableValue<? extends String> observable, String oldValue,
+								String newValue) {
+							handleUpdateCondition(cboMultiChoice.getValue());
+						}
+				 	});
+				 	cboLessMore.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>(){
+
+						@Override
+						public void changed(ObservableValue<? extends String> observable, String oldValue,
+								String newValue) {
+							if(txtNumAnswer.getText().length()>0)
+							handleUpdateCondition(cboLessMore.getValue()+";"+txtNumAnswer.getText());
+						}
+				 	});
+				 	tgroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
+
+						@Override
+						public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue,
+								Toggle newValue) {
+							handleUpdateCondition(rdioTrue.isSelected() ? "true" : "false");
+						}
+				 		
+				 	});
 					paneAssignToVar.getChildren().forEach(child->{((Node)child).setDisable(true);;});
 					paneCondition.getChildren().forEach(child->{((Node)child).setDisable(true);;});
 					grpSurveyEdit.setDisable(true);
@@ -406,6 +539,8 @@ public class Survey extends ViewElement<FirebaseSurvey>{
 				}
 				questionPanes = new ArrayList<Pane>();
 				 Collections.addAll(questionPanes,paneScale,paneMultChoiceS,paneMultChoiceM);
+				 conditionPanes = new ArrayList<Node>();
+				 Collections.addAll(conditionPanes, txtAnswer,txtNumAnswer,cboLessMore,cboMultiChoice,rdioTrue,rdioFalse);
 		} catch (IOException exception) {
 			throw new RuntimeException(exception);
 		}
@@ -444,12 +579,14 @@ public class Survey extends ViewElement<FirebaseSurvey>{
 		List<FirebaseQuestion> questions = model.getquestions();
 
 		if(questions == null)return;
+		int index = 0;
 		for(FirebaseQuestion newquestion : questions){
-			QuestionView question = new QuestionView((int)newquestion.getquestionType(),newquestion.questionText);
+			QuestionView question = new QuestionView((int)newquestion.getquestionType(),newquestion.questionText,this);
 			question.setData(newquestion);
 			setSelectedQuestion(question);
 			selectedQuestionModel = newquestion;
 			lstRegQ.getChildren().add(question);
+			question.setMyIndex(index);
 			populateQ(newquestion);
 		}
 		setSelectedQuestion(null);
@@ -469,6 +606,10 @@ public class Survey extends ViewElement<FirebaseSurvey>{
 		return new Node[]{};
 	}
 
+	public void removeQ(QuestionView question){
+		model.getquestions().remove(question.getModel());
+		lstRegQ.getChildren().remove(question);
+	}
 	/**
 	 * Given a JSON representation of a question, this populates the survey pane with the question's parameters
 	 * @param qJson JSON representation of a Question
@@ -511,23 +652,62 @@ public class Survey extends ViewElement<FirebaseSurvey>{
 		
 		boolean assigntoscore = qParams.get("assignToScore") == null ? false : Boolean.parseBoolean(qParams.get("assignToScore").toString());
 		cboQuestionText.getItems().clear();
-		txtAnswer.clear();
+		System.out.println("SHOULD BE CLREAING");
+		//txtAnswer.clear();
 		for(Node qentries : lstRegQ.getChildren()){
 			QuestionView preventry = (QuestionView)qentries;
 			if(preventry.getModel().equals(qEntry))break;
 			cboQuestionText.getItems().add(preventry.getQuestionText());
 		}
+		hideConditionPanes();
 		if(condition != null){
 			chkAskOnCondition.setSelected(true);
-			if(condition.get("answer") != null){
-			String value = condition.get("answer").toString();
-			txtAnswer.setText(value);
-			}
 			if(condition.get("question") != null){
-				int question = Integer.parseInt(condition.get("question").toString());
+				int questionno = Integer.parseInt(condition.get("question").toString());
 				cboQuestionText.getSelectionModel().clearSelection();
-				cboQuestionText.getSelectionModel().select(question);
+				cboQuestionText.getSelectionModel().select(questionno);
+				if(condition.get("answer") != null){
+					System.out.println("its " + condition.get("answer"));
+					String scon = condition.get("answer").toString();
+					FirebaseQuestion question = model.getquestions().get(questionno);
+					System.out.println("QUESTION TYPE IS " + question.getquestionType());
+					switch((int)question.getquestionType()){
+					case Survey.BOOLEAN: 
+						rdioTrue.setVisible(true);
+						rdioFalse.setVisible(true);
+						if(Boolean.parseBoolean(scon))
+							rdioTrue.setSelected(true);
+						else
+							rdioFalse.setSelected(true);
+						break;
+					case Survey.MULT_MANY:
+						System.out.println("YEAH THIS IS TRUE");
+						cboMultiChoice.setVisible(true);
+						cboMultiChoice.getSelectionModel().select(scon);
+						break;
+					case Survey.MULT_SINGLE: 
+						cboMultiChoice.setVisible(true);
+						cboMultiChoice.getSelectionModel().select(scon);
+						break;
+					case Survey.NUMERIC:
+					case Survey.SCALE: 
+						cboLessMore.setVisible(true);
+						txtNumAnswer.setVisible(true);
+						System.out.println("scon is " + scon);
+						String[] components = scon.split(";");
+						cboLessMore.setValue(components[0]);
+						System.out.println("Components[0] is " + components[0]);
+						txtNumAnswer.setText(components[1]);
+						break;
+					case Survey.OPEN_ENDED: 
+						txtAnswer.setVisible(true);
+						txtAnswer.setText(scon);
+						break;
+					}
+					}
 			}
+			
+
 		}
 		else{
 			chkAskOnCondition.setSelected(false);
@@ -543,7 +723,7 @@ public class Survey extends ViewElement<FirebaseSurvey>{
 		}
 		chkAssignScore.setDisable(true);
 		txtRegQ.setText(questionText);
-
+		if(selectedQuestion == null)return; 
 		switch (questionType) {
 		case OPEN_ENDED:
 			showOpenEnded(null);
@@ -568,15 +748,17 @@ public class Survey extends ViewElement<FirebaseSurvey>{
 		case MULT_SINGLE:
 			showMultChoiceS(null);
 			if(opts != null)
-			for (Object opt : opts.values())
+			for (Object opt : opts.values()){
 				handleAddOpt(paneChoiceOptsS,opt.toString());
+			}
 			rdioRegMultSingle.setSelected(true);
 			break;
 		case MULT_MANY:
 			showMultChoiceM(null);
 			if(opts!= null)
-			for (Object opt : opts.values())
+			for (Object opt : opts.values()){
 				handleAddOpt(paneChoiceOptsM,opt.toString());
+			}
 			rdioRegMultMany.setSelected(true);
 			break;
 		case SCALE:
@@ -609,13 +791,21 @@ public class Survey extends ViewElement<FirebaseSurvey>{
 
 
 	private void hidePanes(){
+	//	hideConditionPanes();
 		chkAssignScore.setDisable(true);
 		questionPanes.forEach(pane->{
 			pane.setPrefHeight(0); 
 			pane.setVisible(false);
 		});
+		
+		
 	}
 
+	private void hideConditionPanes(){
+		conditionPanes.forEach(pane->{
+			pane.setVisible(false);
+		});
+	}
 	@FXML
 	public void handleAssignScore(Event e){
 		selectedQuestionModel.setAssign(chkAssignScore.isSelected()); //This is getting silly
@@ -660,13 +850,15 @@ public class Survey extends ViewElement<FirebaseSurvey>{
 
 		selectedQuestion.setQuestionType(SCALE);	
 		handleUpdateScale(); //Updates the scale value in case the user doesn't touch it
+
 	}
 
 	@FXML
 	public void addQ(Event e) { // NO_UCD (unused code)
-			QuestionView newEntry = new QuestionView(OPEN_ENDED,"");
+			QuestionView newEntry = new QuestionView(OPEN_ENDED,"",this);
 			lstRegQ.getChildren().add(newEntry);
 			setSelectedQuestion(newEntry);
+			newEntry.setMyIndex(lstRegQ.getChildren().size()-1);
 			selectedQuestionModel = newEntry.getModel();
 			newEntry.addEventFilter(MouseEvent.ANY, qHandler);
 			lstRegQ.getChildren().forEach(label->{
@@ -679,6 +871,40 @@ public class Survey extends ViewElement<FirebaseSurvey>{
 		private void handleCheckQuestion(){
 			if(chkAskOnCondition.isSelected()){
 				paneCondition.getChildren().forEach(child->{((Node)child).setDisable(false);;});
+				cboQuestionText.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>(){
+
+					@Override
+					public void changed(ObservableValue<? extends String> observable, String oldValue,
+							String newValue) {
+						int questionNo = cboQuestionText.getSelectionModel().getSelectedIndex();
+						if(questionNo <0)return;
+						FirebaseQuestion question = getModel().getquestions().get(questionNo);
+						hideConditionPanes();
+						switch((int)question.getquestionType()){
+						case Survey.BOOLEAN: 
+							rdioTrue.setVisible(true);rdioFalse.setVisible(true);
+							break;
+						case Survey.MULT_MANY: 
+						case Survey.MULT_SINGLE: 
+							cboMultiChoice.setVisible(true);
+							Map<String,Object> opts = (Map<String,Object>)question.getparams().get("options");
+							cboMultiChoice.getItems().clear();
+							if(opts != null)
+								opts.values().forEach(mval ->{cboMultiChoice.getItems().add(mval.toString());});
+							break;
+						case Survey.SCALE:
+						case Survey.NUMERIC: 
+							cboLessMore.setVisible(true);
+							txtNumAnswer.setVisible(true);
+							break;
+						case Survey.OPEN_ENDED: 
+							txtAnswer.setVisible(true);
+							break;
+						
+						}
+					}
+					
+				});
 			}
 			else{
 				paneCondition.getChildren().forEach(child->{((Node)child).setDisable(true);;});
@@ -711,12 +937,11 @@ public class Survey extends ViewElement<FirebaseSurvey>{
 		}
 		
 		
-		private void handleUpdateCondition(){
+		private void handleUpdateCondition(String answer){
 			String questiontext = cboQuestionText.getSelectionModel().getSelectedItem();
-			String questionanswer = txtAnswer.getText();
 			Map<String,Object> condition = new HashMap<String,Object>();
 			condition.put("question", cboQuestionText.getSelectionModel().getSelectedIndex());
-			condition.put("answer", questionanswer);
+			condition.put("answer", answer);
 			selectedQuestionModel.setCondition(condition);;
 		}
 		private void handleUpdateScale(){
