@@ -1,4 +1,4 @@
-package com.jeeves.vpl;
+package com.jeeves.vpl.survey;
 
 import java.net.URL;
 
@@ -36,8 +36,6 @@ public class QuestionDeletePane extends Pane{
 			Node root = (Node) fxmlLoader.load();
 			getChildren().add(root);	
 			this.stage = stage;
-		//	this.currentGUI = gui;
-			//this.project = project;
 		} catch (Exception e) {
 				e.printStackTrace();
 			}

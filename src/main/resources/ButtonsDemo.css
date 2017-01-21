@@ -200,6 +200,9 @@
 	-fx-fill: radial-gradient(center 50% -40%, radius 200%, #b8ee36 45%, #80c800 50%);
 	-fx-border-color: darkgreen;
 	-fx-border-width: 0;
+		  -fx-text-fill: white;
+	  -fx-alignment: center;
+-fx-text-alignment: center;
 	/* 	 
 	-fx-background-color:transparent; 
 	/*  -fx-border-color: darkcyan;
@@ -237,6 +240,9 @@
 	-fx-border-width: 0;
 	-fx-border-radius: 20 20 20 20;
 	-fx-background-radius: 20 20 20 20;
+		  -fx-text-fill: white;
+	  -fx-alignment: center;
+-fx-text-alignment: center;
 }
 
 .Boolean .label {
@@ -253,6 +259,9 @@
 	-fx-border-radius: 20 20 20 20;
 	-fx-border-width: 0;
 	-fx-background-radius: 20 20 20 20;
+		  -fx-text-fill: white;
+	  -fx-alignment: center;
+-fx-text-alignment: center;
 }
 
 .Location .label {
@@ -272,6 +281,10 @@
 	-fx-border-radius: 20 20 20 20;
 	-fx-background-radius: 20 20 20 20;
 	-fx-background-color: #223768;
+	  -fx-text-fill: white;
+	  -fx-alignment: center;
+-fx-text-alignment: center;
+	
 	/*	 -fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.7) , 6, 0.0 , 0 , 2 );*/
 }
 /* .Time .label{
@@ -310,9 +323,7 @@
   -fx-font-weight: bold;
   -fx-padding: 1px 5px 1px 5px;
 } */
-.timevar:hover {
-	-fx-background-color: linear-gradient(#3cb0fd, #3498db);
-}
+
 /*For choice boxes */
 .styled-select {
 	-fx-background-color: #223768;

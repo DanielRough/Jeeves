@@ -44,7 +44,7 @@ public class SendTextAction extends Action { // NO_UCD (unused code)
 		super.fxmlInit();
 		smsText = new TextArea();
 		cboRecipient.getItems().clear();
-		cboRecipient.getItems().addAll("Last sender", "Emergency contact","User",
+		cboRecipient.getItems().addAll("Last sender", "Emergency contact",
 				"Researcher");
 	}
 	public void setData(FirebaseAction model) {

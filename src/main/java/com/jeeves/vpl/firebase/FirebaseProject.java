@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.firebase.database.IgnoreExtraProperties;
-import com.jeeves.vpl.Survey;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.expressions.Expression;
 import com.jeeves.vpl.canvas.expressions.UserVariable;
 import com.jeeves.vpl.canvas.triggers.Trigger;
 import com.jeeves.vpl.canvas.uielements.UIElement;
+import com.jeeves.vpl.survey.Survey;
 
 /**
  * Created by Daniel on 28/04/2016.

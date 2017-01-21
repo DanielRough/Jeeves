@@ -2,22 +2,29 @@ package com.jeeves.vpl;
 
 import java.awt.Desktop;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.fasterxml.jackson.core.sym.Name;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+
 import com.jeeves.vpl.firebase.FirebasePatient;
 import com.jeeves.vpl.firebase.FirebaseProject;
-import com.jeeves.vpl.firebase.FirebaseQuestion;
 import com.jeeves.vpl.firebase.FirebaseSurvey;
 
 import javafx.application.Platform;
@@ -123,6 +130,8 @@ public class PatientController extends Pane{
 			public void onChanged(javafx.collections.ListChangeListener.Change<? extends FirebasePatient> c) {
 				Platform.runLater(new Runnable(){
 					public void run(){
+						System.out.println("herewego");
+					//	MainController.currentGUI.printHeight();
 						loadPatientTable();
 						allowedPatients.clear();
 						firebase.getpatients().forEach(patient->{
@@ -130,7 +139,10 @@ public class PatientController extends Pane{
 								allowedPatients.add(patient);
 							
 						});
+						System.out.println("herewewent");
+						//MainController.currentGUI.printHeight();
 						changeyMethod();
+						
 					}
 				});
 				
@@ -184,6 +196,8 @@ public class PatientController extends Pane{
 
 		Platform.runLater(new Runnable(){
 			public void run(){
+				System.out.println("OOOOOOOOH");
+				MainController.currentGUI.printHeight();
 
 					
 	//	if(selectedIndex > 0 || tblPatients.getSelectionModel().getSelectedItem() != null) 
@@ -266,38 +280,41 @@ public class PatientController extends Pane{
 		//	txtFname.setOnKeyReleased(event->selectedPatient.setFirstName(txtFname.getText()));
 
 			grpInfo.setDisable(false);
+			System.out.println("WWWAYYYYYY");
+			MainController.currentGUI.printHeight();
+
 		}
 			
 			});
 	}
 	@FXML
 	public void downloadResults(Event e){
-		FileWriter writer;
+	//	FileWriter writer;
 		Date date = new Date();
 		try {
 			 FileChooser fileChooser = new FileChooser();
-			 fileChooser.setInitialFileName("results.csv");
-			 fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV file(*.csv)", "*.csv"));
+			 fileChooser.setInitialFileName("results.xls");
+			 fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel spreadsheet(*.xls)", "*.xls"));
 
 			 fileChooser.setTitle("Save Image");
+			 Workbook wb = new HSSFWorkbook();
+			    Row r = null;
+			 // declare a cell object reference
+			    Cell c = null;
+
 	            File file = fileChooser.showSaveDialog(getScene().getWindow());
 	            
 	            if (file != null) {
 	            	if(!file.getName().contains(".")) {
-		            	  file = new File(file.getAbsolutePath() + ".csv");
+		            	  file = new File(file.getAbsolutePath() + ".xls");
 		            }
 	                try {
-	        			writer = new FileWriter(file);
-	        		    writer.append("Date/Time");
+	    			    FileOutputStream fileOut = new FileOutputStream(file);
+	
+	    			    
 	        		    if(completedSurveys == null)return;
-	        		    FirebaseSurvey survey = completedSurveys.values().iterator().next();
-	        		    List<FirebaseQuestion> questions = survey.getquestions();
-	        		    questions.forEach(question->{try {
-	        				writer.append(',' + "\"" + question.questionText + "\"");
-	        			} catch (Exception e1) {
-	        			}});
-	        		    writer.append('\n');
-
+	        		    System.out.println("Completed surveys was not null");
+	        		    HashMap<String,Sheet> sheets = new HashMap<String,Sheet>();
 	        		    //Is this horrendously convoluted? Perhaps. Hopefully it won't slow things down
 	        		    Collection<FirebaseSurvey> surveys = completedSurveys.values();
 	        		    ArrayList<FirebaseSurvey> surveylist = new ArrayList<FirebaseSurvey>(surveys);
@@ -308,19 +325,39 @@ public class PatientController extends Pane{
 	        					return (int)(o1.gettimeFinished() - o2.gettimeFinished());
 	        				}} );
 	        		    
+	        		    Sheet s = null;
+	        		    CreationHelper createHelper = wb.getCreationHelper();
+        			    CellStyle cellStyle = wb.createCellStyle();
+        			    cellStyle.setDataFormat(
+        			        createHelper.createDataFormat().getFormat("m/d/yy h:mm"));
 	        			for(FirebaseSurvey nextsurvey : surveylist){
 	        				date.setTime(nextsurvey.gettimeFinished());
-	        				writer.append(date.toGMTString());
-	        				List<Map<String, String>> answers = nextsurvey.getanswers();			
-	        				for(Map<String,String> answer : answers){
-	        					if(answer != null) //Really weird how some of the answer lists go 0,1,2,3,5. No 4? Find this out
-	        					writer.append("," + "\"" + answer.get("answer") + "\"");
+	        				String surveyname = nextsurvey.getname();
+	        				//Do we have a sheet for this particular survey?
+	        				s = sheets.get(surveyname);
+	        				if(s == null){
+	        					s = wb.createSheet();
+	        					sheets.put(surveyname, s);
+	        					wb.setSheetName(wb.getSheetIndex(s), surveyname);
 	        				}
-	        				writer.append('\n');
+	        			   
+	        				r = s.createRow(s.getLastRowNum()+1);
+	        				c = r.createCell(0);
 	        				
+	        				c.setCellValue(date);
+	        			    c.setCellStyle(cellStyle);
+	        				List<Map<String, String>> answers = nextsurvey.getanswers();			
+	        				int answercounter = 1;
+	        				for(Map<String,String> answer : answers){
+	        					if(answer != null){ //Really weird how some of the answer lists go 0,1,2,3,5. No 4? Find this out
+	        					c = r.createCell(answercounter);
+	        					answercounter++;
+	        					c.setCellValue(answer.get("answer"));
+	        					}
+	        				}	        				
 	        			}	        				
-	        		    writer.flush();
-	        		    writer.close();
+	    			    wb.write(fileOut);
+	    			    fileOut.close();
 	        		    Desktop.getDesktop().open(file);
 	        			}
 	        		    catch (IOException e1) {
@@ -329,7 +366,7 @@ public class PatientController extends Pane{
 	        			}
 	                }
 	            }catch(Exception ex){
-	            	
+	            	ex.printStackTrace();
 	            }
 
 	}

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane fx:id="paneMultChoiceM" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox alignment="CENTER">
+         <children>
+            <ScrollPane fx:id="paneOptionsM" prefHeight="100.0" prefWidth="217.0">
+               <content>
+                  <VBox fx:id="paneChoiceOptsM" prefWidth="181.0" spacing="5.0" />
+               </content>
+            </ScrollPane>
+            <Button fx:id="btnAddOptM" mnemonicParsing="false" text="Add option" />
+         </children>
+      </VBox>
+   </children>
+</Pane>

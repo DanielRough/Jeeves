@@ -29,9 +29,10 @@ import com.jeeves.vpl.firebase.FirebaseElement;
 public abstract class ViewElement<T extends FirebaseElement> extends Pane{
 	private ViewElement draggable; //Self-referencing class, hm...
 	protected T model;
-     
+     public boolean isReadOnly = false;
 
      public void setReadOnly(){
+    	 isReadOnly = true;
     	 removeEventHandler(MouseEvent.ANY,mainHandler);
     	 addEventHandler(MouseEvent.ANY,sidebarElemHandler);
 			Node[] widgets = getWidgets();

@@ -35,13 +35,8 @@
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Label alignment="CENTER_RIGHT" layoutX="1.0" layoutY="36.0" prefHeight="22.0" prefWidth="79.0" text="Last name:" textAlignment="RIGHT" wrapText="true">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
                   <TextField fx:id="txtFname" editable="false" layoutX="87.0" prefHeight="28.0" prefWidth="150.0" />
-                  <Label alignment="CENTER_RIGHT" layoutX="1.0" layoutY="3.0" prefHeight="22.0" prefWidth="79.0" text="First name:" textAlignment="RIGHT" wrapText="true">
+                  <Label alignment="CENTER_RIGHT" layoutX="1.0" layoutY="3.0" prefHeight="22.0" prefWidth="79.0" text="Name:" textAlignment="RIGHT" wrapText="true">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -58,12 +53,10 @@
                   </Label>
                   <TextField fx:id="txtEmail" editable="false" layoutX="87.0" layoutY="252.0" prefHeight="28.0" prefWidth="150.0" />
                   <TextField fx:id="txtPhone" editable="false" layoutX="87.0" layoutY="219.0" prefHeight="28.0" prefWidth="150.0" />
-                  <TextField fx:id="txtLname" editable="false" layoutX="87.0" layoutY="33.0" prefHeight="28.0" prefWidth="150.0" />
                   <TextField fx:id="txtAddress1" editable="false" layoutX="87.0" layoutY="68.0" prefHeight="28.0" prefWidth="150.0" />
-                  <TextField fx:id="txtAddress2" editable="false" layoutX="87.0" layoutY="104.0" prefHeight="28.0" prefWidth="150.0" />
-                  <TextField fx:id="txtAddress3" editable="false" layoutX="87.0" layoutY="137.0" prefHeight="28.0" prefWidth="150.0" />
-                  <TextField fx:id="txtAddress4" editable="false" layoutX="87.0" layoutY="171.0" prefHeight="28.0" prefWidth="150.0" />
-                  <Button fx:id="btnUpdateInfo" layoutX="87.0" layoutY="302.0" mnemonicParsing="false" onAction="#updateInfo" text="Update Info" />
+                  <TextField fx:id="txtAddress2" editable="false" layoutX="87.0" layoutY="102.0" prefHeight="28.0" prefWidth="150.0" />
+                  <TextField fx:id="txtAddress3" editable="false" layoutX="87.0" layoutY="136.0" prefHeight="28.0" prefWidth="150.0" />
+                  <TextField fx:id="txtAddress4" editable="false" layoutX="87.0" layoutY="170.0" prefHeight="28.0" prefWidth="150.0" />
                </children>
             </AnchorPane>
          </children>

@@ -1,6 +1,9 @@
-package com.jeeves.vpl;
+package com.jeeves.vpl.survey;
 
 import java.net.URL;
+
+import com.jeeves.vpl.MainController;
+import com.jeeves.vpl.firebase.FirebaseSurvey;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -13,8 +16,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Pane;
 
-import com.jeeves.vpl.firebase.FirebaseSurvey;
-
 public class SurveyController extends Pane{
 	
 	@FXML private Pane paneNoSurveys;
@@ -23,7 +24,7 @@ public class SurveyController extends Pane{
 	private Survey currentSurvey;
 	
 	private ObservableList<FirebaseSurvey> currentsurveys;
-
+	
 	public SurveyController(ObservableList<FirebaseSurvey> currentsurveys){
 		this.currentsurveys = currentsurveys;
 		FXMLLoader fxmlLoader = new FXMLLoader();
@@ -44,7 +45,7 @@ public class SurveyController extends Pane{
 	public void handleNewSurveyClick(Event e){
 		Tab tab = new Tab();
 		FirebaseSurvey survey = new FirebaseSurvey();
-		Survey surveyview = new Survey(new FirebaseSurvey());
+		Survey surveyview = new Survey(this,new FirebaseSurvey());
 		surveyview.setTab(tab);
 		surveyview.setData(survey);
 		tab.setContent(surveyview);
@@ -65,10 +66,10 @@ public class SurveyController extends Pane{
 		paneSurveys.getTabs().clear();
 		currentsurveys.forEach(survey->{
 			Tab surveytab = new Tab(survey.getname());
-			Survey surveyView = new Survey(survey);
+			Survey surveyView = new Survey(this,survey);
 			surveytab.setContent(surveyView);
 			paneSurveys.getTabs().add(surveytab);
-			surveyView.parentTab = surveytab;
+			surveyView.setTab(surveytab);
 
 		});
 		if(currentsurveys.size() > 0){

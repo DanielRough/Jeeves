@@ -19,6 +19,7 @@ import com.jeeves.vpl.firebase.FirebaseSurvey;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
 import com.jeeves.vpl.firebase.FirebaseUI;
 import com.jeeves.vpl.firebase.FirebaseVariable;
+import com.jeeves.vpl.survey.SurveyController;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -29,7 +30,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -39,10 +39,12 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.SplitPane.Divider;
@@ -209,7 +211,7 @@ public class MainController extends Application {
 
 
 	}
-
+@FXML private ScrollPane paneMain;
 
 	private void loadProjectsIntoMenu() {
 		mnuStudies.getItems().clear();
@@ -222,7 +224,11 @@ public class MainController extends Application {
 		});
 	}
 
-
+	public void printHeight(){
+		System.out.println("TRIGGER PANE HEIGHT IS " + paneTriggers.getHeight());
+	}
+	@FXML private ContextMenu mnuContext;
+	@FXML private VBox vboxFrame;
 	@SuppressWarnings("unchecked")
 	private void loadCanvasElements() {
 		dateStage = new Stage(StageStyle.UNDECORATED);
@@ -242,6 +248,16 @@ public class MainController extends Application {
 					Label newlable = new Label(trigger.name.get());
 					newlable.setFont(Font.font("Calibri", FontWeight.BOLD, 14));
 					paneTriggers.getChildren().addAll(newlable,trigger);
+					trigger.heightProperty().addListener(new ChangeListener<Number>(){
+
+						@Override
+						public void changed(ObservableValue<? extends Number> observable, Number oldValue,
+								Number newValue) {
+
+								System.out.println("The actual TRIGGER height changed from " + oldValue + " to " + newValue);
+						}
+						
+					});
 				}
 				for(String actName : Action.actionNames){
 					ViewElement action = ViewElement.create(actName);
@@ -288,6 +304,14 @@ public class MainController extends Application {
 		labelPaneMap.put(lblActions, paneActions);
 		labelPaneMap.put(lblConditions, paneConditions);
 		labelPaneMap.put(lblTriggers, paneTriggers);
+		paneTriggers.heightProperty().addListener(new ChangeListener<Number>(){
+
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				System.out.println("Changed from " + oldValue + " to " + newValue);
+			}
+			
+		});
 		labelPaneMap.put(lblUIElements, paneUI);
 		lblTriggers.setUserData("selected");
 		lblTriggers.setTextFill(Color.ORANGE); // Initial selection of triggers
@@ -320,10 +344,14 @@ public class MainController extends Application {
 		paneIntervention = new Pane();
 		tabCanvas.setText(proj.getname() + " Configuration");
 		tabDesign.setText("UI Design");
+		System.out.println("11 Height here is " + paneTriggers.getHeight());
 		primaryStage.setTitle("Jeeves - " + proj.getname());
 		tabCanvas.setContent(paneIntervention);
+		System.out.println("Height here is " + paneTriggers.getHeight());
 		patientController.loadPatients(); //Reset so we have the patients for THIS project
 		resetPanes();
+		System.out.println("22 Height here is " + paneTriggers.getHeight());
+
 	}
 
 	private void loadNewApp() {

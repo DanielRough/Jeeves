@@ -48,7 +48,9 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 		ObservableList<FirebaseSurvey> surveys = MainController.currentGUI.currentsurveys;
 		String value = cboSurvey.getValue();
 		cboSurvey.getItems().clear();
-		surveys.forEach(survey->{cboSurvey.getItems().add(survey.getname());
+		surveys.forEach(survey->{
+			if(getInstance().isReadOnly)return;
+		cboSurvey.getItems().add(survey.getname());
 		if(survey.getname().equals(value))cboSurvey.setValue(value);
 		survey.name.addListener(new ChangeListener<String>(){
 

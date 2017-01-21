@@ -49,6 +49,7 @@ public class FirebaseQuestion extends FirebaseElement implements Serializable{
     public void setCondition(Map<String,Object> question){
     	params.put("condition", question);
     }
+
     public void setOptions(Map<String,Object> options){
     	params.put("options", options);
     }
