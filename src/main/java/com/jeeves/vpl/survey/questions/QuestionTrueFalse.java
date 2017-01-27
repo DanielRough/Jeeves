@@ -26,7 +26,9 @@ public class QuestionTrueFalse extends QuestionView{
 		setQuestionText("True/False");
 	}
 
-
+	public String getImagePath(){
+		return "/img/icons/imgbool.png";
+	}
 
 	public void populateQ(FirebaseQuestion entry) {
 		// TODO Auto-generated method stub

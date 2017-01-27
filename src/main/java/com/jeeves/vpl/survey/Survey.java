@@ -7,12 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.jeeves.vpl.MainController;
-import com.jeeves.vpl.ViewElement;
-import com.jeeves.vpl.canvas.expressions.UserVariable;
-import com.jeeves.vpl.firebase.FirebaseQuestion;
-import com.jeeves.vpl.firebase.FirebaseSurvey;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -39,9 +33,11 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.effect.Bloom;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -50,6 +46,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
+
+import com.jeeves.vpl.MainController;
+import com.jeeves.vpl.ViewElement;
+import com.jeeves.vpl.canvas.expressions.UserVariable;
+import com.jeeves.vpl.firebase.FirebaseQuestion;
+import com.jeeves.vpl.firebase.FirebaseSurvey;
 
 public class Survey extends ViewElement<FirebaseSurvey> {
 	@FXML
@@ -64,7 +66,8 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 	@FXML
 	private VBox lstRegQ;
 	@FXML
-	private VBox vboxQuestionTypes;
+	private FlowPane flowPaneQuestionTypes;
+	//private VBox vboxQuestionTypes;
 	@FXML
 	private TextField txtQText;
 	@FXML
@@ -136,6 +139,13 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 	private ComboBox<UserVariable> cboVars;
 	private Tab parentTab;
 
+	@FXML
+	private Pane paneInfo;
+	@FXML 
+	private Label paneInfoDragged;
+	@FXML
+	private ScrollPane paneScroller;
+	private boolean containsQs = false;
 	void refreshVariables(){
 		cboVars.getItems().clear();
 		MainController.currentGUI.currentvariables.forEach(entry -> {
@@ -238,12 +248,13 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 
 			@Override
 			public void handle(MouseEvent event) {
-				QuestionView entry = (QuestionView) event.getSource();
+				Pane entry = (Pane)event.getSource();
+		//		QuestionView entry = (QuestionView) event.getSource();
 				if (event.getEventType().equals(MouseEvent.MOUSE_ENTERED)) {
-					if (!entry.equals(selectedQuestion)) {
+//					if (!entry.equals(selectedQuestion)) {
 						entry.setEffect(shadow);
 						entry.setEffect(bloom);
-					}
+//					}
 					setCursor(Cursor.HAND);
 
 				} else if (event.getEventType().equals(MouseEvent.MOUSE_EXITED)) {
@@ -297,6 +308,7 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 				@Override
 				public void changed(ObservableValue<? extends UserVariable> observable, UserVariable oldValue,
 						UserVariable newValue) {
+					if(newValue != null)
 					selectedQuestionModel.setAssignedVar(newValue.getName());
 				}
 				
@@ -376,6 +388,8 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 			@Override
 			public void handle(MouseDragEvent event) {
 				if(event.getEventType().equals(MouseDragEvent.MOUSE_DRAG_ENTERED)){
+					((QuestionView) event.getGestureSource()).wasDetected = true;
+
 					dummyView = ((QuestionView) event.getGestureSource()).clone();
 					dummyView.setVisible(false);
 					lstRegQ.getChildren().add(dummyView);
@@ -390,6 +404,7 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 						return;
 					else {
 						QuestionView view = (QuestionView) event.getGestureSource();
+						view.wasDetected = true;
 						selectedQuestion = null;
 						Point2D mousePos = lstRegQ.sceneToLocal(new Point2D(event.getSceneX(), event.getSceneY()));
 						double questionHeight = ((QuestionView) event.getGestureSource()).getHeight();
@@ -411,12 +426,15 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 					if (!(event.getGestureSource() instanceof QuestionView))
 						return;
 					else {
+						System.out.println("yaaaaaaa");
+
 						int index = lstRegQ.getChildren().indexOf(dummyView);
 						if (index == -1)
 							index = ((QuestionView) event.getGestureSource()).getMyIndex();
 						QuestionView view = (QuestionView) event.getGestureSource();
-						removeQ(view);
-						lstRegQ.getChildren().add(index, view);
+					//	if(lstRegQ.getChildren().contains(view))return;
+					//	removeQ(view);
+						lstRegQ.getChildren().add(index, QuestionView.create(view.getModel(), getMyInstance()));
 						view.removeEventHandler(MouseEvent.ANY, qTypeHandler);
 						lstRegQ.setPrefHeight(lstRegQ.getPrefHeight() + view.getHeight());
 						view.isReadOnly = false;
@@ -428,7 +446,10 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 						else
 							getModel().getquestions().add(view.getModel());
 						lstRegQ.getChildren().remove(dummyView);
+						lstRegQ.getChildren().remove(paneInfo);
 						populateQ(view.getModel());
+						containsQs = true;
+						paneScroller.setStyle("");
 
 						view.setManaged(true);
 						view.setMouseTransparent(false);
@@ -526,11 +547,60 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 			FirebaseQuestion q = new FirebaseQuestion();
 			q.setquestionType(i);
 			QuestionView view = QuestionView.create(q, this);
-			vboxQuestionTypes.getChildren().add(view);
+			Pane imgPane = new Pane();
+			ImageView myview = new ImageView(view.getImagePath());
+			myview.setFitHeight(50);
+			myview.setFitWidth(70);
+			imgPane.setPrefWidth(70);
+			imgPane.setPrefHeight(50);
+			imgPane.getChildren().add(myview);
+			view.setVisible(false);
+			imgPane.getChildren().add(view);
+			imgPane.setStyle("-fx-background-color: white");
+			flowPaneQuestionTypes.getChildren().add(imgPane);
 			view.setReadOnly();
-			view.setDraggable(QuestionView.create(q, this));
+			imgPane.addEventHandler(MouseEvent.ANY,new EventHandler<MouseEvent>(){
+				public void handle(MouseEvent event){
+					if(event.isSecondaryButtonDown()){event.consume();return;}
+					setOnDragDetected(event1 ->{if(event1.isSecondaryButtonDown())return; view.startFullDrag();});
+				if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
+					MainController.currentGUI.getMainPane().getChildren().add(view);
+					if(containsQs == false){
+						paneScroller.setStyle("-fx-border-color: #71a4eb; -fx-border-width: 5");
+						paneInfo.getChildren().forEach(child->child.setVisible(false));
+						paneInfoDragged.setVisible(true);
+						}
+					view.setVisible(true);
+					view.setMouseTransparent(true);
+					view.setLayoutX(event.getSceneX());
+					view.setLayoutY(event.getSceneY());//Should hopefully add it to the main pane
+				//	view.setEffect(shadow);
+				//	view.currentCanvas = MainController.currentGUI.getViewCanvas(); //I don't like this much
+					setEffect(null);
+				} else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
+					view.setLayoutX(event.getSceneX());
+					view.setLayoutY(event.getSceneY());
+				
+				} else if (event.getEventType().equals(MouseEvent.MOUSE_ENTERED)) {
+					setCursor(Cursor.HAND);
+			    // 	setEffect(shadow);
+			   //  	MainController.currentGUI.mnuFile.hide();
+				} 
+				else if (event.getEventType().equals(MouseEvent.MOUSE_EXITED)){
+					setEffect(null);
+				}
+				else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
+					MainController.currentGUI.getMainPane().getChildren().remove(view);
+					imgPane.getChildren().add(view);
+					view.setVisible(false);
+					//draggable.setEffect(null);
+				}
+			}});
+			
+		//	view.setDraggable(QuestionView.create(q, this));
 
 		}
+	
 		setExpiry(model.gettimeAlive());
 		model.getquestions();
 		List<FirebaseQuestion> questions = model.getquestions();
@@ -551,16 +621,20 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 		}
 		setSelectedQuestion(null);
 
-		vboxQuestionTypes.getChildren().forEach(label -> {
+		flowPaneQuestionTypes.getChildren().forEach(label -> {
 			label.addEventHandler(MouseEvent.ANY, qTypeHandler);
 		});
 	}
-
+	public Survey getMyInstance(){
+		return this;
+	}
 
 
 	public void removeQ(QuestionView question) {
+		if(model.getquestions().contains(question.getModel())){
 		model.getquestions().remove(question.getModel());
 		lstRegQ.getChildren().remove(question);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -585,6 +659,7 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 			cboQuestionText.getItems().clear();
 
 			for (Node qentries : lstRegQ.getChildren()) {
+				if(!(qentries instanceof QuestionView))continue;
 				QuestionView preventry = (QuestionView) qentries;
 				if (preventry.getModel().equals(qEntry))
 					break;

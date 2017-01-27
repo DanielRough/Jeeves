@@ -122,7 +122,7 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 
 	public SurveyTrigger(FirebaseTrigger model) {
 		super(model);
-		name.setValue("SURVEY TRIGGER");
+		name.setValue("Survey Trigger");
 		description = "Initiate actions when a user has completed/ignored a survey";
 		if(cboSurvey.getItems()!= null && cboSurvey.getItems().size()>0)
 			cboSurvey.setValue(cboSurvey.getItems().get(0));

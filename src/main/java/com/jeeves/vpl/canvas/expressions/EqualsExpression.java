@@ -12,7 +12,7 @@ public class EqualsExpression extends Expression  { // NO_UCD (unused code)
 	}
 	public EqualsExpression(FirebaseExpression data) {
 		super(data);
-		name.setValue("IS EQUAL");
+		name.setValue("Is Equal");
 		description = "Returns true if two expressions are equal, false otherwise";
 		addListeners();
 		

@@ -43,6 +43,9 @@ public class QuestionLikert extends QuestionView {
 	private CheckBox chkAssignScore;
 	private TextField[] fields;
 
+	public String getImagePath(){
+		return "/img/icons/imgscale.png";
+	}
 	public void loadOptions(){
 		FXMLLoader surveyLoader = new FXMLLoader();
 		surveyLoader.setController(this);

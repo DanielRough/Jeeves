@@ -27,7 +27,7 @@ public class PromptAction extends Action { // NO_UCD (unused code)
 	}
 	public PromptAction(FirebaseAction data) {
 		super(data);
-		this.name.setValue("PROMPT ACTION");
+		this.name.setValue("Send Prompt");
 		this.description = "Show the specified text on the phone screen with a notification";
 //		txtPrompt.textProperty().addListener(new ChangeListener<String>() {
 //

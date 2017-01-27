@@ -40,8 +40,8 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 	}
 	public UpdateAction(FirebaseAction data) {
 		super(data);
-		this.name.setValue("UPDATE VARIABLE ACTION");
-		this.description = "Set the value of a variable";
+		this.name.setValue("Update User Attribute");
+		this.description = "Set the value of an attribute of a user";
 		
 		addListeners();
 	}

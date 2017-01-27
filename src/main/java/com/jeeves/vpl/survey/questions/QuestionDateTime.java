@@ -31,6 +31,10 @@ public class QuestionDateTime extends QuestionView{
 		
 	}
 
+	public String getImagePath(){
+		return "/img/icons/imgdate.png";
+	}
+	
 	public void loadOptions(){
 		optionsPane = new Pane();
 	}

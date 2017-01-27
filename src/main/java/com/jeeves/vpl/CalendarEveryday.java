@@ -21,7 +21,7 @@ public class CalendarEveryday extends Pane{
 		try {
 			Node root = (Node) fxmlLoader.load();
 			getChildren().add(root);	
-			imgCalendar.setImage(new Image("https://sachi.cs.st-andrews.ac.uk/wp-content/uploads/2016/10/calenda.png"));
+			imgCalendar.setImage(new Image("/img/icons/calenda.png"));
 
 			} catch (Exception e) {
 				e.printStackTrace();

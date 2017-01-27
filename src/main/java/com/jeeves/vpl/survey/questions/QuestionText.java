@@ -15,7 +15,9 @@ public class QuestionText extends QuestionView{
 	public QuestionView clone(){
 		return new QuestionText(super.getModel(),mySurvey);
 	}
-	
+	public String getImagePath(){
+		return "/img/icons/imgfreetext.png";
+	}
 	public void loadOptions(){
 		optionsPane = new Pane();
 

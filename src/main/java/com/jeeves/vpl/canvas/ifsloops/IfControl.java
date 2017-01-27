@@ -15,7 +15,7 @@ public class IfControl extends Control { // NO_UCD (unused code)
 
 	public IfControl(FirebaseAction data) {
 		super(data);
-		name.setValue("IF CONDITION");
+		name.setValue("If Condition");
 		description = "Executes the given actions if the given expression is true";
 
 		addListeners();

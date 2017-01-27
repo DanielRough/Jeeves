@@ -12,7 +12,7 @@ public LessExpression() {
 }
 	public LessExpression(FirebaseExpression data) {
 		super(data);
-		name.setValue("IS LESS THAN");
+		name.setValue("Is Less Than");
 		description = "Returns true if two expressions are equal, false otherwise";
 		addListeners();
 

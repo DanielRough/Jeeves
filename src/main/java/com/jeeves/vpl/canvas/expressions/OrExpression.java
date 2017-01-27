@@ -10,7 +10,7 @@ public OrExpression() {
 }
 	public OrExpression(FirebaseExpression data) {
 		super(data);
-		name.setValue("OR");
+		name.setValue("Or");
 		description = "Returns true if either of two expressions are true, false otherwise";
 		addListeners();
 

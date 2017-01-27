@@ -10,7 +10,7 @@ public NotExpression() {
 }
 	public NotExpression(FirebaseExpression data) {
 		super(data);
-		name.setValue("NOT");
+		name.setValue("Is Not");
 		description = "Returns true if either of two expressions are true, false otherwise";
 		addListeners();
 

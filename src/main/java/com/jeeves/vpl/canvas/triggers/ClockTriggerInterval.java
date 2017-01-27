@@ -111,7 +111,7 @@ public ClockTriggerInterval() {
 	}
 	public ClockTriggerInterval(FirebaseTrigger data) {
 		super(data);
-		name.setValue("INTERVAL TRIGGER");
+		name.setValue("Interval Trigger");
 		description = "Execute actions at a set interval between two times";
 		if(paneDate.getChildren().isEmpty())
 			paneDate.getChildren().add(new CalendarEveryday());

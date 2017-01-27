@@ -52,12 +52,11 @@ import javafx.stage.StageStyle;
 		protected Survey mySurvey;
 		public int myIndex;
 		boolean isReadOnly;
-		
 		public Pane optionsPane;
 		public EventHandler<MouseEvent> draggedHandler;
 		public EventHandler<MouseEvent> mainHandler;
 		public EventHandler<MouseEvent> viewElementHandler;
-		private VBox parent;
+		private Pane parent;
 		public EventHandler<MouseEvent> releasedHandler;
 		private QuestionView draggable;
 		public int getMyIndex(){
@@ -158,6 +157,10 @@ import javafx.stage.StageStyle;
 		public QuestionView getInstance(){
 			return this;
 		}
+		public ImageView getImage(){
+			return imgEntry;
+		}
+		public abstract String getImagePath();
 		
 		public void removeFromSurvey(){
 			mySurvey.removeQ(this);
@@ -203,12 +206,14 @@ import javafx.stage.StageStyle;
 		public String getQuestionText(){
 			return model.getquestionText();
 		}
-		public void setDraggable(QuestionView draggable){
-			this.draggable = draggable;
-		}
-		public QuestionView getDraggable(){
-			return draggable;
-		}
+		public boolean wasDetected = false;
+		public boolean wasDragged = false;
+//		public void setDraggable(QuestionView draggable){
+//			this.draggable = draggable;
+//		}
+//		public QuestionView getDraggable(){
+//			return draggable;
+//		}
 		public void addListeners() {
 			draggedHandler = event -> {
 				if (event.isSecondaryButtonDown()){
@@ -228,19 +233,23 @@ import javafx.stage.StageStyle;
 					if (event.isSecondaryButtonDown()){				
 						return;
 					}
+
 					// An event for when we press the mouse
 					else if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
+						event.consume();
 						requestFocus();
-
-						parent = ((VBox)getParent());
-
+						System.out.println("HELOOOOOO");
+						if(!isReadOnly)
+							parent = ((VBox)getParent());
+						else
+							parent = ((Pane)getParent());
 						if(parent == null)System.out.println("parent is null");
 						if(getModel() == null)System.out.println("Model is null");
-						if(isReadOnly){
-						QuestionView duplicate = QuestionView.create(getModel(), mySurvey);
-						duplicate.setReadOnly();
-						parent.getChildren().add(parent.getChildren().indexOf(getInstance()),duplicate);
-						}
+//						if(isReadOnly){
+//						QuestionView duplicate = QuestionView.create(getModel(), mySurvey);
+//						duplicate.setReadOnly();
+//						parent.getChildren().add(parent.getChildren().indexOf(getInstance()),duplicate);
+//						}
 					    index = parent.getChildren().indexOf(getInstance());
 						MainController.currentGUI.getMainPane().getChildren().add(getInstance());
 						setLayoutX(event.getSceneX());
@@ -252,7 +261,7 @@ import javafx.stage.StageStyle;
 						requestFocus();
 						toFront();
 						setManaged(false);
-
+						wasDragged = true;
 						setMouseTransparent(true);
 						setLayoutX(event.getSceneX());
 						setLayoutY(event.getSceneY());
@@ -263,13 +272,15 @@ import javafx.stage.StageStyle;
 						if(event.getButton().equals(MouseButton.SECONDARY))return;
 
 						else{
-							if(!isReadOnly)
+							if((!isReadOnly && wasDragged == false) || wasDetected == false)
 								parent.getChildren().add(index,getInstance());
 							MainController.currentGUI.getMainPane().getChildren().remove(getInstance());
 						setCursor(Cursor.HAND);
 						setManaged(true);
 						setMouseTransparent(false);
 						}
+						wasDragged = false;
+						wasDetected = false;
 					} 
 					else if (event.getEventType().equals(MouseEvent.MOUSE_ENTERED)){
 						setCursor(Cursor.HAND);

@@ -160,8 +160,8 @@ public class ActionReceiver extends Pane implements IReceiver {
 					redrawLine();
 					return;
 				} // MERCILESS HACK BUT COULD BE ONTO SOMETHING
-				actions.getChildren().clear();
-				actions.getChildren().addAll(childList);
+				//actions.getChildren().clear();
+				//actions.getChildren().addAll(childList);
 
 				redrawLine();
 
@@ -174,8 +174,8 @@ public class ActionReceiver extends Pane implements IReceiver {
 					redrawLine();
 					return;
 				} 
-				actions.getChildren().clear();
-				actions.getChildren().addAll(childList);
+				//actions.getChildren().clear();
+				//actions.getChildren().addAll(childList);
 				redrawLine();
 
 			}
@@ -289,7 +289,7 @@ public class ActionReceiver extends Pane implements IReceiver {
 		ObservableList<Double> bottombracket = FXCollections.observableList(points.subList(length - 16, length));
 		for (int yPoint = 1; yPoint < 16; yPoint += 2)
 			bottombracket.set(yPoint, bottombracket.get(yPoint) + heightChange);
-		FXCollections.observableList(points.subList(6, 18));
+	//	FXCollections.observableList(points.subList(6, 18));
 	}
 
 	/**

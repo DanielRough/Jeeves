@@ -31,7 +31,9 @@ public class QuestionMultSingle extends QuestionView{
 		setImage("/img/icons/imgsingle.png");
 		setQuestionText("Select One");
 	}
-
+	public String getImagePath(){
+		return "/img/icons/imgsingle.png";
+	}
 	@FXML private Pane paneMultChoiceS;
 	@FXML private VBox paneChoiceOptsS;
 

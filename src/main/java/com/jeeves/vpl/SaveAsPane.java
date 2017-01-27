@@ -25,7 +25,7 @@ public class SaveAsPane extends Pane{ // NO_UCD (use default)
 	public void handleSaveAsClick(Event e){
 		String oldname = project.getname();
 		project.setname(txtSaveAsName.getText());
-		currentGUI.tabCanvas.setText(txtSaveAsName.getText() + " Configuration");
+		//currentGUI.tabCanvas.setText(txtSaveAsName.getText() + " Configuration");
 		firebase.addProject(oldname,project);
 		currentGUI.isNewProject = false;
 

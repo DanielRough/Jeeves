@@ -60,7 +60,7 @@ public class ClockTriggerRandom extends ClockTrigger { // NO_UCD (use default)
 	}
 	public ClockTriggerRandom(FirebaseTrigger data) {
 		super(data);
-		name.setValue("RANDOM TRIGGER");
+		name.setValue("Random Trigger");
 		description = "Execute actions at a random point within time 'windows', between two times";
 		if(paneDate.getChildren().isEmpty())
 			paneDate.getChildren().add(new CalendarEveryday());

@@ -22,6 +22,9 @@ public class QuestionLocation extends QuestionView{
 		optionsPane = new Pane();
 
 	}
+	public String getImagePath(){
+		return "/img/icons/imggeo.png";
+	}
 	public QuestionView clone(){
 		return new QuestionLocation(super.getModel(),mySurvey);
 	}

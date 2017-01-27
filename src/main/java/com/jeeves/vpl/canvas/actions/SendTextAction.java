@@ -31,7 +31,7 @@ public class SendTextAction extends Action { // NO_UCD (unused code)
 	}
 	public SendTextAction(FirebaseAction data) {
 		super(data);
-		this.name.setValue("SEND TEXT ACTION");
+		this.name.setValue("Send SMS");
 		this.description = "Sends an SMS with the given text to the specified recipient";
 
 		addListeners();

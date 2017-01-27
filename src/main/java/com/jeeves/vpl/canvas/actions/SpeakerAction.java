@@ -20,7 +20,7 @@ public class SpeakerAction extends Action { // NO_UCD (unused code)
 	}
 	public SpeakerAction(FirebaseAction data) {
 		super(data);
-		this.name.setValue("SPEAKER ACTION");
+		this.name.setValue("Adjust Volume");
 		this.description = "Turn phone volume on or off";
 		cboVolumeOn.getItems().addAll("On", "Off");
 		addListeners();

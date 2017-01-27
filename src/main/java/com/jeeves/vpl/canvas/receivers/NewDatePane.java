@@ -73,6 +73,8 @@ public class NewDatePane extends Pane{
 		btnRange.setToggleGroup(group);
 		fromtoDatePane = new CalendarFromTo();
 		everydayPane = new CalendarEveryday();
+		pckFrom.getEditor().setDisable(true);
+		pckTo.getEditor().setDisable(true);
 		group.selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
 
 			@Override

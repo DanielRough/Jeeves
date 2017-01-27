@@ -12,7 +12,7 @@ public class GreaterExpression extends Expression  { // NO_UCD (unused code)
 	}
 	public GreaterExpression(FirebaseExpression data) {
 		super(data);
-		name.setValue("IS GREATER THAN");
+		name.setValue("Is Greater Than");
 		description = "Returns true if two expressions are equal, false otherwise";
 		addListeners();
 	}

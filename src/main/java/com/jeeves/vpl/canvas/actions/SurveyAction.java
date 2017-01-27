@@ -24,7 +24,7 @@ public class SurveyAction extends Action { // NO_UCD (unused code)
 	}
 	public SurveyAction(FirebaseAction data) {
 		super(data);
-		name.setValue("SURVEY ACTION");
+		name.setValue("Send Survey");
 		description = "Send a notification to complete a survey";
 		addListeners();
 	}

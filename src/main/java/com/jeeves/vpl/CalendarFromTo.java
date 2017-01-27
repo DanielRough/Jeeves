@@ -26,8 +26,8 @@ public class CalendarFromTo extends Pane{
 		try {
 			Node root = (Node) fxmlLoader.load();
 			getChildren().add(root);	
-			imgCalFrom.setImage(new Image("https://sachi.cs.st-andrews.ac.uk/wp-content/uploads/2016/10/calenda.png"));
-			imgCalTo.setImage(new Image("https://sachi.cs.st-andrews.ac.uk/wp-content/uploads/2016/10/calenda.png"));
+			imgCalFrom.setImage(new Image("/img/icons/calenda.png"));
+			imgCalTo.setImage(new Image("/img/icons/calenda.png"));
 
 			} catch (Exception e) {
 				e.printStackTrace();

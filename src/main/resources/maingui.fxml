@@ -14,7 +14,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane id="AnchorPane" fx:id="myPane" maxHeight="-1.0" maxWidth="-1.0" minHeight="-1.0" minWidth="-1.0" prefHeight="693.0" prefWidth="1475.9999000000025" stylesheets="@ButtonsDemo.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane id="AnchorPane" fx:id="myPane" maxHeight="-1.0" maxWidth="-1.0" minHeight="-1.0" minWidth="-1.0" prefHeight="740.0" prefWidth="1474.0" stylesheets="@ButtonsDemo.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
       <MenuBar fx:id="mnuBar" layoutX="-3.0" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="1476.0">
         <menus>
@@ -31,7 +31,7 @@
           </Menu>
         </menus>
       </MenuBar>
-		<SplitPane fx:id="splitPane" dividerPositions="0.23812756025288698" focusTraversable="true" layoutX="-3.0" layoutY="29.0" prefHeight="667.0" prefWidth="1476.0" AnchorPane.bottomAnchor="-3.0" AnchorPane.leftAnchor="-3.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="29.0">
+		<SplitPane fx:id="splitPane" dividerPositions="0.2764945652173913, 0.7948369565217391" focusTraversable="true" layoutX="-3.0" layoutY="29.0" prefHeight="667.0" prefWidth="1476.0" AnchorPane.bottomAnchor="-3.0" AnchorPane.leftAnchor="-3.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="29.0">
 			<items>
 				<TabPane fx:id="tabPane" prefHeight="691.0">
 					<stylesheets>
@@ -108,11 +108,11 @@
                                     </VBox>
                                  </children>
                               </Pane>
-                              <ScrollPane fx:id="paneMain" hbarPolicy="NEVER">
+                              <ScrollPane fx:id="paneMain" hbarPolicy="NEVER" VBox.vgrow="ALWAYS">
                                  <content>
-                                    <Pane fx:id="paneFrame" prefWidth="348.0">
+                                    <Pane fx:id="paneFrame" prefWidth="402.0">
                                        <children>
-                                          <VBox fx:id="paneTriggers" layoutY="20.0" spacing="10.0" stylesheets="@ButtonsDemo.css">
+                                          <VBox fx:id="paneTriggers" layoutY="20.0" stylesheets="@ButtonsDemo.css">
                                              <padding>
                                                 <Insets left="20.0" />
                                              </padding>
@@ -122,10 +122,7 @@
                                                 <Insets left="20.0" />
                                              </padding>
                                           </VBox>
-                                          <VBox fx:id="paneConditions" layoutX="10.0" layoutY="20.0" stylesheets="@ButtonsDemo.css" visible="false">
-                                             <padding>
-                                                <Insets left="20.0" />
-                                             </padding>
+                                          <VBox fx:id="paneConditions" layoutY="20.0" stylesheets="@ButtonsDemo.css" visible="false">
                                              <children>
                                                 <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="19.0" prefWidth="95.0" text="Expressions" textAlignment="CENTER" underline="true">
                                                    <font>
@@ -133,6 +130,9 @@
                                                    </font>
                                                 </Label>
                                              </children>
+                                             <padding>
+                                                <Insets left="20.0" />
+                                             </padding>
                                           </VBox>
                                           <VBox fx:id="paneUI" layoutY="20.0" visible="false">
                                              <padding>
@@ -174,51 +174,47 @@
                   </ContextMenu>
                </contextMenu>
 				</TabPane>
-				<TabPane fx:id="tabPaneDesign" tabClosingPolicy="ALL_TABS">
-					<tabs>
-						<Tab fx:id="tabCanvas" closable="false" text="Canvas">
-							<content>
-								<Pane fx:id="paneIntervention" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="660.0" prefWidth="1266.0">
+            <TitledPane collapsible="false" prefHeight="718.0" text="Application Logic">
+               <content>
+								<Pane fx:id="paneIntervention" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="685.0" prefWidth="720.0">
 									<stylesheets>
 										<URL value="@ButtonsDemo.css" />
 									</stylesheets>
 								</Pane>
-							</content>
-						</Tab>
-                  <Tab fx:id="tabDesign" closable="false" text="Design">
-                    <content>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="632.0" prefWidth="393.0">
-                           <children>
-                              <ImageView fx:id="imgPhone" fitHeight="482.0" fitWidth="403.0" layoutX="45.0" layoutY="56.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../../../../resources/img/icons/Nexus_4.png" />
-                                 </image>
-                              </ImageView>
-                              <Pane fx:id="paneAndroid" layoutX="68.0" layoutY="168.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="307.0" prefWidth="215.0" style="-fx-background-color: white;" />
-                              <Rectangle arcHeight="5.0" fill="#2914c6" height="21.0" layoutX="68.0" layoutY="115.0" mouseTransparent="true" stroke="#4c32f2" strokeType="OUTSIDE" width="213.0" />
-                              <Rectangle arcHeight="5.0" fill="#4c32f2" height="39.0" layoutX="68.0" layoutY="128.0" mouseTransparent="true" stroke="#4c32f2" strokeType="OUTSIDE" width="214.0" />
-                              <Label layoutX="103.0" layoutY="135.0" text="Jeeves" textFill="WHITE">
-                                 <font>
-                                    <Font size="16.0" />
-                                 </font>
-                              </Label>
-                              <ImageView fitHeight="18.0" fitWidth="17.0" layoutX="78.0" layoutY="137.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../../../bin/img/arrow-left.png" />
-                                 </image>
-                              </ImageView>
-                           </children>
-                        </AnchorPane>
-                    </content>
-                  </Tab>
-					</tabs>
-				</TabPane>
+               </content>
+            </TitledPane>
+            <TitledPane animated="false" collapsible="false" prefHeight="712.0" text="User Interface Design">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="632.0">
+                     <children>
+                        <ImageView fx:id="imgPhone" fitHeight="482.0" fitWidth="261.0" layoutX="14.0" layoutY="75.0" mouseTransparent="true" pickOnBounds="true">
+                           <image>
+                              <Image url="@../../../../resources/img/icons/Nexus_4.png" />
+                           </image>
+                        </ImageView>
+                        <Pane fx:id="paneAndroid" layoutX="37.0" layoutY="187.0" prefHeight="307.0" prefWidth="215.0" style="-fx-background-color: white;" />
+                        <Rectangle arcHeight="5.0" fill="#2914c6" height="21.0" layoutX="37.0" layoutY="134.0" mouseTransparent="true" stroke="#4c32f2" strokeType="OUTSIDE" width="213.0" />
+                        <Rectangle arcHeight="5.0" fill="#4c32f2" height="39.0" layoutX="37.0" layoutY="147.0" mouseTransparent="true" stroke="#4c32f2" strokeType="OUTSIDE" width="214.0" />
+                        <Label layoutX="72.0" layoutY="154.0" text="Jeeves" textFill="WHITE">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <ImageView fitHeight="18.0" fitWidth="17.0" layoutX="47.0" layoutY="156.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../bin/img/arrow-left.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </TitledPane>
 			</items>
 			<stylesheets>
 				<URL value="@ButtonsDemo.css" />
 			</stylesheets>
 		</SplitPane>
-      <ImageView fx:id="imgTrash" fitHeight="99.0" fitWidth="65.0" layoutX="1400.0" layoutY="600.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="16.52941131591797" AnchorPane.rightAnchor="10.999900000002526">
+      <ImageView fx:id="imgTrash" fitHeight="99.0" fitWidth="65.0" layoutX="1075.0" layoutY="640.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../../../bin/img/icons/recycle.png" />
          </image>

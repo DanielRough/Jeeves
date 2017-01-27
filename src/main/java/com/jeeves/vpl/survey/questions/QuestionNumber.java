@@ -20,7 +20,9 @@ public class QuestionNumber extends QuestionView {
 		setImage("/img/icons/imgnumeric.png");
 		setQuestionText("Numeric");
 	}
-
+	public String getImagePath(){
+		return "/img/icons/imgnumeric.png";
+	}
 	public void loadOptions(){
 		optionsPane = new Pane();
 

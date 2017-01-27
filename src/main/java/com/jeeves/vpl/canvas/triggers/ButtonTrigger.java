@@ -75,7 +75,7 @@ public class ButtonTrigger extends Trigger {  // NO_UCD (unused code)
 	}
 	public ButtonTrigger(FirebaseTrigger data) {
 		super(data);
-		name.setValue("BUTTON TRIGGER");
+		name.setValue("Button Trigger");
 		description = "Initiate actions when a user presses a UI button";
 		if(cboButton.getItems()!= null && cboButton.getItems().size()>0)
 			cboButton.getSelectionModel().clearAndSelect(0);

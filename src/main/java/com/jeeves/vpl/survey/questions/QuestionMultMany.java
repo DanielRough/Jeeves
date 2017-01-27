@@ -38,7 +38,9 @@ public class QuestionMultMany extends QuestionView{
 			 System.out.println("Hello?");
 		 }
 	}
-	
+	public String getImagePath(){
+		return "/img/icons/imgmany.png";
+	}
 	public QuestionMultMany(FirebaseQuestion model, Survey survey) {
 		super(model,survey);
 		setImage("/img/icons/imgmany.png");

@@ -1,10 +1,63 @@
 package com.jeeves.vpl;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SingleSelectionModel;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.SplitPane.Divider;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.Tooltip;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseDragEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.util.Duration;
 
 import com.jeeves.vpl.canvas.actions.Action;
 import com.jeeves.vpl.canvas.expressions.Expression;
@@ -21,50 +74,6 @@ import com.jeeves.vpl.firebase.FirebaseUI;
 import com.jeeves.vpl.firebase.FirebaseVariable;
 import com.jeeves.vpl.survey.SurveyController;
 
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Point2D;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SingleSelectionModel;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.SplitPane.Divider;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseDragEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-
 /**
  * The controller class for our main GUI. A lot of boggy setup code in here but
  * it gets the job done. This is like a combination of the View/Controller,
@@ -76,8 +85,8 @@ import javafx.stage.StageStyle;
 public class MainController extends Application {
 
 	@FXML private Menu mnuStudies;
-	@FXML
-	public Tab tabCanvas; // I don't like making this public but meh
+	//@FXML
+	//public Tab tabCanvas; // I don't like making this public but meh
 
 	@FXML private TabPane tabPane;
 	@FXML private Label lblTriggers;
@@ -100,13 +109,13 @@ public class MainController extends Application {
 	private Map<Label, VBox> labelPaneMap;
 	@FXML private Pane paneIntervention;
 	@FXML private Pane paneFrame;
-	@FXML private TabPane tabPaneDesign;
+	//@FXML private TabPane tabPaneDesign;
 	@FXML private Pane paneAndroid;
 
 	@FXML private Tab tabFramework;
 	@FXML private Tab tabSurvey;
 	@FXML private Tab tabUsers;
-	@FXML private Tab tabDesign;
+//	@FXML private Tab tabDesign;
 	@FXML private SplitPane splitPane;
 
 	@FXML private Pane paneIcons;
@@ -150,7 +159,7 @@ public class MainController extends Application {
 	public static MainController currentGUI;
 	@FXML private ImageView imgTrash;
 
-	public boolean isOverTrash(double mouseX, double mouseY){
+	boolean isOverTrash(double mouseX, double mouseY){
 		return imgTrash.getBoundsInParent().contains(mouseX,mouseY);
 	}
 
@@ -211,6 +220,22 @@ public class MainController extends Application {
 
 
 	}
+	public static void hackTooltipStartTiming(Tooltip tooltip) {
+	    try {
+	        Field fieldBehavior = tooltip.getClass().getDeclaredField("BEHAVIOR");
+	        fieldBehavior.setAccessible(true);
+	        Object objBehavior = fieldBehavior.get(tooltip);
+
+	        Field fieldTimer = objBehavior.getClass().getDeclaredField("activationTimer");
+	        fieldTimer.setAccessible(true);
+	        Timeline objTimer = (Timeline) fieldTimer.get(objBehavior);
+
+	        objTimer.getKeyFrames().clear();
+	        objTimer.getKeyFrames().add(new KeyFrame(new Duration(125)));
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	}
 @FXML private ScrollPane paneMain;
 
 	private void loadProjectsIntoMenu() {
@@ -227,6 +252,44 @@ public class MainController extends Application {
 	public void printHeight(){
 		System.out.println("TRIGGER PANE HEIGHT IS " + paneTriggers.getHeight());
 	}
+	ArrayList<ImageView> infoIcons = new ArrayList<ImageView>();
+
+	public ImageView createInfoIcon(){
+		ImageView infoIcon = new ImageView();
+		infoIcons.add(infoIcon);
+		infoIcon.setImage(new Image("/img/icons/information-icon.png"));
+		infoIcon.setFitHeight(14);
+		infoIcon.setFitWidth(14);
+		infoIcon.setOpacity(0);
+		infoIcon.setOnMouseEntered(event->infoIcon.setCursor(Cursor.HAND));
+		return infoIcon;
+	}
+	private VBox createBoxyBox(ViewElement elem){
+		Label newlable = new Label(elem.name.get());
+
+		HBox box = new HBox();
+		box.setSpacing(7);
+		ImageView infoIcon = createInfoIcon();
+		VBox boxybox = new VBox();
+		boxybox.setSpacing(5);
+		boxybox.setOnMouseEntered(event->{infoIcons.forEach(info->info.setOpacity(0));infoIcon.setOpacity(100);});
+		boxybox.setOnMouseExited(event->{Point2D point = new Point2D(event.getSceneX(),event.getSceneY());
+											if(!boxybox.localToScene(boxybox.getBoundsInLocal()).contains(point)){infoIcon.setOpacity(0);}});
+		boxybox.prefWidthProperty().bind(paneFrame.widthProperty());		
+		box.setFillHeight(true);
+		box.getChildren().addAll(infoIcon,newlable);
+		boxybox.getChildren().addAll(box,elem);
+		box.setPadding(new Insets(0,0,0,-15));
+		Tooltip t = new Tooltip(elem.description);
+		hackTooltipStartTiming(t); //A wonderful wonderful method someone else made
+		Tooltip.install(
+			    infoIcon,
+			    t
+			);
+		newlable.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
+
+		return boxybox;
+	}
 	@FXML private ContextMenu mnuContext;
 	@FXML private VBox vboxFrame;
 	@SuppressWarnings("unchecked")
@@ -239,46 +302,31 @@ public class MainController extends Application {
 		dateStage.initModality(Modality.APPLICATION_MODAL);
 		System.out.println("HERE");
 		
-		
 		try {
 				ArrayList<ViewElement> elements = new ArrayList<ViewElement>();
 				for(String trigName : Trigger.triggerNames){
 					ViewElement trigger = ViewElement.create(trigName);
 					elements.add(trigger);
-					Label newlable = new Label(trigger.name.get());
-					newlable.setFont(Font.font("Calibri", FontWeight.BOLD, 14));
-					paneTriggers.getChildren().addAll(newlable,trigger);
-					trigger.heightProperty().addListener(new ChangeListener<Number>(){
-
-						@Override
-						public void changed(ObservableValue<? extends Number> observable, Number oldValue,
-								Number newValue) {
-
-								System.out.println("The actual TRIGGER height changed from " + oldValue + " to " + newValue);
-						}
-						
-					});
+					VBox boxybox = createBoxyBox(trigger);		
+					paneTriggers.getChildren().add(boxybox);
 				}
 				for(String actName : Action.actionNames){
 					ViewElement action = ViewElement.create(actName);
 					elements.add(action);
-					Label newlable = new Label(action.name.get());
-					newlable.setFont(Font.font("Calibri", FontWeight.BOLD, 14));
-					paneActions.getChildren().addAll(newlable,action);
+					VBox boxybox = createBoxyBox(action);		
+					paneActions.getChildren().add(boxybox);
 				}
 				for(String exprName : Expression.exprNames){
 					ViewElement expr = ViewElement.create(exprName);
 					elements.add(expr);
-					Label newlable = new Label(expr.name.get());
-					newlable.setFont(Font.font("Calibri", FontWeight.BOLD, 14));
-					paneConditions.getChildren().addAll(newlable,expr);
+					VBox boxybox = createBoxyBox(expr);		
+					paneConditions.getChildren().add(boxybox);
 				}
 				for(String uiElem : UIElement.uiElements){
 					ViewElement uielement = ViewElement.create(uiElem);
 					elements.add(uielement);
-					Label newlable = new Label(uielement.name.get());
-					newlable.setFont(Font.font("Calibri", FontWeight.BOLD, 14));
-					paneUI.getChildren().addAll(newlable,uielement);
+					VBox boxybox = createBoxyBox(uielement);		
+					paneUI.getChildren().add(boxybox);
 				}
 				for(ViewElement element : elements){
 					element.setPadding(new Insets(10, 0, 10, 0));
@@ -297,8 +345,8 @@ public class MainController extends Application {
 		SingleSelectionModel<Tab> selectionModel = tabPane.getSelectionModel();
 		selectionModel.selectedItemProperty().addListener(tabListener);
 
-		SingleSelectionModel<Tab> canvasOrDesign = tabPaneDesign.getSelectionModel();
-		canvasOrDesign.selectedItemProperty().addListener(canvasOrDesignTabListener);
+	//	SingleSelectionModel<Tab> canvasOrDesign = tabPaneDesign.getSelectionModel();
+	//	canvasOrDesign.selectedItemProperty().addListener(canvasOrDesignTabListener);
 
 		labelPaneMap = new HashMap<Label, VBox>();
 		labelPaneMap.put(lblActions, paneActions);
@@ -341,16 +389,16 @@ public class MainController extends Application {
 		isNewProject = false;
 
 		currentproject = proj; // Sets this project as the current one
-		paneIntervention = new Pane();
-		tabCanvas.setText(proj.getname() + " Configuration");
-		tabDesign.setText("UI Design");
-		System.out.println("11 Height here is " + paneTriggers.getHeight());
+	//	paneIntervention = new Pane();
+		//tabCanvas.setText(proj.getname() + " Configuration");
+		//tabDesign.setText("UI Design");
+	//	System.out.println("11 Height here is " + paneTriggers.getHeight());
 		primaryStage.setTitle("Jeeves - " + proj.getname());
-		tabCanvas.setContent(paneIntervention);
-		System.out.println("Height here is " + paneTriggers.getHeight());
+		//tabCanvas.setContent(paneIntervention);
+	//	System.out.println("Height here is " + paneTriggers.getHeight());
 		patientController.loadPatients(); //Reset so we have the patients for THIS project
 		resetPanes();
-		System.out.println("22 Height here is " + paneTriggers.getHeight());
+	//	System.out.println("22 Height here is " + paneTriggers.getHeight());
 
 	}
 
@@ -358,8 +406,8 @@ public class MainController extends Application {
 		isNewProject = true;
 
 		currentproject = new FirebaseProject();
-		tabCanvas.setText("New ESM Study");
-		paneIntervention = new Pane();
+		//tabCanvas.setText("New ESM Study");
+		//paneIntervention = new Pane();
 		//Add the global variables
 		String[] globalVarNames = new String[]{"Missed Surveys","Completed Surveys","Last Survey Score", "Survey Score Difference"};
 		for(String name : globalVarNames){
@@ -369,7 +417,7 @@ public class MainController extends Application {
 			currentproject.getvariables().add(var);
 		}
 		loadVariables();
-		tabCanvas.setContent(paneIntervention);
+		//tabCanvas.setContent(paneIntervention);
 
 		resetPanes();
 		//Every study should have these on it
@@ -383,10 +431,12 @@ public class MainController extends Application {
 		currentsurveys.clear();
 		currentvariables.clear();
 		currentelements.clear();
+		if( canvas != null &&canvas.mouseHandler != null)
+		paneIntervention.removeEventHandler(MouseEvent.ANY, canvas.mouseHandler);
 		paneIntervention.getChildren().remove(canvas);
 		canvas = new ViewCanvas();
 		paneIntervention.getChildren().add(canvas);
-
+	//	paneIntervention.setStyle("-fx-background-color: blue");
 		canvas.addEventHandlers();
 		paneAndroid.getChildren().clear();
 
@@ -411,6 +461,7 @@ public class MainController extends Application {
 		loadVariables();
 		tabPane.getSelectionModel().select(tabFramework);
 		//mnuBar.setOnMousePressed(handler->{mnuBar.requestFocus();});
+		System.out.println("canvas parent is " + canvas.getParent());
 
 	}
 
@@ -489,25 +540,25 @@ public class MainController extends Application {
 					divider.setPosition(0.7);
 			}
 		};
-		canvasOrDesignTabListener = new ChangeListener<Tab>() {
-			@Override
-			public void changed(ObservableValue<? extends Tab> arg0,
-					Tab arg1, Tab arg2) {
-				if (arg2.equals(tabDesign)) {
-					vboxConfig.setVisible(false);
-					paneIcons.setPrefHeight(vboxDesign.getHeight());
-					vboxDesign.setVisible(true);
-					showMenu(lblUIElements);
-				}
-				if (arg2.equals(tabCanvas)) {
-					vboxConfig.setVisible(true);
-					paneIcons.setPrefHeight(vboxConfig.getHeight());
-					vboxDesign.setVisible(false);
-					showMenu(lblTriggers);
-
-				}
-			}
-		};
+//		canvasOrDesignTabListener = new ChangeListener<Tab>() {
+//			@Override
+//			public void changed(ObservableValue<? extends Tab> arg0,
+//					Tab arg1, Tab arg2) {
+//				if (arg2.equals(tabDesign)) {
+//					vboxConfig.setVisible(false);
+//					paneIcons.setPrefHeight(vboxDesign.getHeight());
+//					vboxDesign.setVisible(true);
+//					showMenu(lblUIElements);
+//				}
+//				if (arg2.equals(tabCanvas)) {
+//					vboxConfig.setVisible(true);
+//					paneIcons.setPrefHeight(vboxConfig.getHeight());
+//					vboxDesign.setVisible(false);
+//					showMenu(lblTriggers);
+//
+//				}
+//			}
+//		};
 
 
 		firebase.getprojects().addListener(new ListChangeListener<FirebaseProject>() {

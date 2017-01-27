@@ -55,7 +55,7 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 	}
 	public ClockTriggerSetTimes(FirebaseTrigger data) {
 		super(data);
-		name.setValue("SET TIMES TRIGGER");
+		name.setValue("Set Times Trigger");
 		description = "Execute actions at a specific list of times";
 		if(paneDate.getChildren().isEmpty())
 			paneDate.getChildren().add(new CalendarEveryday());

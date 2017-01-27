@@ -95,7 +95,7 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 
 	public SensorTrigger(FirebaseTrigger data) {
 		super(data);
-		name.setValue("SENSOR TRIGGER");
+		name.setValue("Sensor Trigger");
 		description = "Execute actions based on externally sensed values";
 		cboSensor.setOnMouseClicked(event->manualChange = true);
 		styleTextCombo(cboClassifications);
