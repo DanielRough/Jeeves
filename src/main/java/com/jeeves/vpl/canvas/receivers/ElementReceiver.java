@@ -61,25 +61,32 @@ public class ElementReceiver extends Pane implements IReceiver {
 
 		mentered = event -> {
 			event.consume();
+			if(! (event.getGestureSource() instanceof ViewElement))
+				return;
 			if (!isValidElement((ViewElement) event.getGestureSource()))
 				return;
 
 		};
 		mexited = event -> {
 			event.consume();
+			if(! (event.getGestureSource() instanceof ViewElement))
+				return;
 			if (!isValidElement((ViewElement) event.getGestureSource()))
 				return;
 
 		};
 		mreleased = event -> {
 			event.consume();
+			if(!(event.getGestureSource() instanceof UIElement))
+				return;
 			UIElement elem = (UIElement) event.getGestureSource();
 			
 			addElement(elem, event.getSceneX(), event.getSceneY());
 
 		};
 		draggedhandler = event -> {
-
+			if(!(event.getGestureSource() instanceof UIElement))
+				return;
 			((UIElement) (event.getGestureSource())).dragged = true;
 			hoveredIndex = Math.min((int) ((event.getY() - 55) / 50),
 					childList.size());

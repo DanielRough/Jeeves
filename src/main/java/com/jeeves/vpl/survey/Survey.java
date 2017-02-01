@@ -31,6 +31,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.effect.Bloom;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
@@ -145,6 +146,14 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 	private Label paneInfoDragged;
 	@FXML
 	private ScrollPane paneScroller;
+	@FXML
+	private HBox hboxCondition;
+	@FXML 
+	private HBox hboxSaveAs;
+	@FXML
+	private ImageView imgCondition;
+	@FXML
+	private ImageView imgSaveAs;
 	private boolean containsQs = false;
 	void refreshVariables(){
 		cboVars.getItems().clear();
@@ -241,8 +250,8 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 
 		bloom.setThreshold(0.75);
 
+	
 		
-
 
 		qTypeHandler = new EventHandler<MouseEvent>() {
 
@@ -281,6 +290,45 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 			addConditionListeners();
 			addQuestionBoxListeners();
 			
+			hboxCondition.addEventHandler(MouseEvent.ANY, new EventHandler<MouseEvent>(){
+
+				@Override
+				public void handle(MouseEvent arg0) {
+					if(arg0.getEventType().equals(MouseEvent.MOUSE_ENTERED)){
+						imgCondition.setVisible(true);
+					}
+					else if(arg0.getEventType().equals(MouseEvent.MOUSE_EXITED)){
+						imgCondition.setVisible(false);
+					}
+				}
+				
+			});
+			hboxSaveAs.addEventHandler(MouseEvent.ANY, new EventHandler<MouseEvent>(){
+
+				@Override
+				public void handle(MouseEvent arg0) {
+					if(arg0.getEventType().equals(MouseEvent.MOUSE_ENTERED)){
+						imgSaveAs.setVisible(true);
+					}
+					else if(arg0.getEventType().equals(MouseEvent.MOUSE_EXITED)){
+						imgSaveAs.setVisible(false);
+					}				
+				}
+				
+			});
+			
+			Tooltip t = new Tooltip("Use this option to declare that this question is based on the response of a previous question");
+			MainController.hackTooltipStartTiming(t); //A wonderful wonderful method someone else made
+			Tooltip.install(
+					imgCondition,
+				    t
+				);
+			Tooltip t2 = new Tooltip("Use this option to assign the patient's answer to a 'patient attribute' \n(Patient attributes can be created from the Conditions section of the Framework tab)");
+			MainController.hackTooltipStartTiming(t2); //A wonderful wonderful method someone else made
+			Tooltip.install(
+					imgSaveAs,
+				    t2
+				);
 			cboVars.setCellFactory(new Callback<ListView<UserVariable>, ListCell<UserVariable>>() {
 				 @Override
 				 public ListCell<UserVariable> call(ListView<UserVariable> param) {
@@ -434,10 +482,11 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 						QuestionView view = (QuestionView) event.getGestureSource();
 					//	if(lstRegQ.getChildren().contains(view))return;
 					//	removeQ(view);
-						lstRegQ.getChildren().add(index, QuestionView.create(view.getModel(), getMyInstance()));
-						view.removeEventHandler(MouseEvent.ANY, qTypeHandler);
+						QuestionView newview = QuestionView.create(view.getModel(), getMyInstance());
+						lstRegQ.getChildren().add(index, newview);
+						newview.removeEventHandler(MouseEvent.ANY, qTypeHandler);
 						lstRegQ.setPrefHeight(lstRegQ.getPrefHeight() + view.getHeight());
-						view.isReadOnly = false;
+						newview.isReadOnly = false;
 
 						if (index >= getModel().getquestions().size())
 							index -= 1;
@@ -451,9 +500,10 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 						containsQs = true;
 						paneScroller.setStyle("");
 
-						view.setManaged(true);
-						view.setMouseTransparent(false);
-						view.showDelete();
+						newview.setManaged(true);
+						newview.setMouseTransparent(false);
+						System.out.println("HOOOOOO");
+						newview.showDelete();
 						lstRegQ.getChildren().forEach(child -> {
 							child.setMouseTransparent(false);
 						});
@@ -559,6 +609,12 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 			imgPane.setStyle("-fx-background-color: white");
 			flowPaneQuestionTypes.getChildren().add(imgPane);
 			view.setReadOnly();
+			Tooltip t = new Tooltip(view.description);
+			MainController.hackTooltipStartTiming(t); //A wonderful wonderful method someone else made
+			Tooltip.install(
+					imgPane,
+				    t
+				);
 			imgPane.addEventHandler(MouseEvent.ANY,new EventHandler<MouseEvent>(){
 				public void handle(MouseEvent event){
 					if(event.isSecondaryButtonDown()){event.consume();return;}
@@ -607,6 +663,8 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 
 		if (questions == null)
 			return;
+		if(!questions.isEmpty())
+			lstRegQ.getChildren().clear(); //Get rid of intoductory pane
 		int index = 0;
 		for (FirebaseQuestion newquestion : questions) {
 			QuestionView question = QuestionView.create(newquestion, this);

@@ -25,6 +25,7 @@ public class QuestionDateTime extends QuestionView{
 		super(model,survey);
 		setImage("/img/icons/imgdate.png");
 		setQuestionText("Date/Time");
+		this.description = "User selects a date and/or time";
 	}
 
 	public void handleCheckQ(){

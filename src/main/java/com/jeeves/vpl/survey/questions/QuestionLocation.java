@@ -16,6 +16,7 @@ public class QuestionLocation extends QuestionView{
 		super(model, survey);
 		setImage("/img/icons/imggeo.png");
 		setQuestionText("Location");
+		this.description = "User selects a location using a Google map";
 		}
 
 	public void loadOptions(){

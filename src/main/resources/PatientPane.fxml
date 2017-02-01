@@ -61,7 +61,7 @@
             </AnchorPane>
          </children>
       </Group>
-      <TitledPane animated="false" layoutX="283.0" layoutY="289.0" prefHeight="335.0" prefWidth="597.0" text="Survey stats">
+      <TitledPane animated="false" collapsible="false" layoutX="283.0" layoutY="289.0" prefHeight="335.0" prefWidth="597.0" text="Survey stats">
          <content>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>

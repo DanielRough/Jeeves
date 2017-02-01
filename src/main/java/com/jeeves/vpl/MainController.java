@@ -24,7 +24,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
-import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -47,7 +46,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -121,7 +119,7 @@ public class MainController extends Application {
 	@FXML private Pane paneIcons;
 
 	@FXML private VBox vboxConfig;
-	@FXML private VBox vboxDesign;
+//	@FXML private VBox vboxDesign;
 
 	private FirebaseDB firebase;
 	private Stage primaryStage;
@@ -231,7 +229,7 @@ public class MainController extends Application {
 	        Timeline objTimer = (Timeline) fieldTimer.get(objBehavior);
 
 	        objTimer.getKeyFrames().clear();
-	        objTimer.getKeyFrames().add(new KeyFrame(new Duration(125)));
+	        objTimer.getKeyFrames().add(new KeyFrame(new Duration(250)));
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }
@@ -301,7 +299,18 @@ public class MainController extends Application {
 		dateStage.setTitle("Edit dates");
 		dateStage.initModality(Modality.APPLICATION_MODAL);
 		System.out.println("HERE");
-		
+		Divider d1 = splitPane.getDividers().get(1);
+		d1.positionProperty().addListener(new ChangeListener<Number>(){
+
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0,
+					Number arg1, Number arg2) {
+				System.out.println("double value is " + arg2.doubleValue());
+				imgTrash.setLayoutX(arg2.doubleValue()*myPane.getWidth()-37);
+			}
+			
+		});
+	//	imgTrash.layoutXProperty().bind(splitPane.getDividers().get(1).positionProperty()); //Trash can gets dragged around with the divider
 		try {
 				ArrayList<ViewElement> elements = new ArrayList<ViewElement>();
 				for(String trigName : Trigger.triggerNames){
@@ -595,9 +604,9 @@ public class MainController extends Application {
 				if(arg0.getEventType() == MouseEvent.MOUSE_PRESSED)
 					myPane.getChildren().add(clicked.getDraggable());
 				if (arg0.getEventType() == MouseEvent.MOUSE_RELEASED) {
-					if(canvas.getIsMouseOver() == false){
+					//if(canvas.getIsMouseOver() == false){
 						myPane.getChildren().remove(clicked.getDraggable());
-					}
+				//	}
 					ViewElement draggable = null;
 					//annoying exception for user variables
 					if(clicked instanceof UserVariable){
@@ -724,6 +733,13 @@ public class MainController extends Application {
 			lbl.setUserData("unselected");
 			lbl.setTextFill(Color.BLACK);
 		});
+//		if(label.equals(lblUIElements)){
+//			ObservableList<Node> items = splitPane.getItems();
+//			Node item2 = items.get(1);
+//			Node item3 = items.get(2);
+//			items.set(1, item3);
+//			items.set(2, item2);
+//		}
 		label.setUserData("selected");
 		label.setTextFill(Color.ORANGE);
 		labelPaneMap.entrySet().forEach(pane -> {

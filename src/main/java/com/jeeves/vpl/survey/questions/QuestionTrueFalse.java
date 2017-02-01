@@ -24,6 +24,7 @@ public class QuestionTrueFalse extends QuestionView{
 		super(model,survey);
 		setImage("/img/icons/imgbool.png");
 		setQuestionText("True/False");
+		this.description = "User chooses yes or no";
 	}
 
 	public String getImagePath(){

@@ -116,6 +116,8 @@ public class PatientController extends Pane{
 			tblPatients.getColumns().clear();
 			tblPatients.getColumns().addAll(firstNameCol, emailCol, phoneCol);
 			loadPatients();
+			tblPatients.setPlaceholder(new Label("No patients currently assigned to this study"));
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -153,6 +155,7 @@ public class PatientController extends Pane{
 			if(patient.getCurrentStudy() != null && patient.getCurrentStudy().equals(name))
 				allowedPatients.add(patient);
 		});
+
 		tblPatients.setItems(allowedPatients); //This is hacky but I'll get back to it k?
 		changeyMethod();
 	}

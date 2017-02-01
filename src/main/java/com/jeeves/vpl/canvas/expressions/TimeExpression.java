@@ -92,7 +92,7 @@ public void fxmlInit(){
 }
 public TimeExpression(FirebaseExpression data) {
 	super(data);
-	name.setValue("Time expression");
+	name.setValue("Date expression");
 	description = "Returns true if the time falls within this date";
 	addListeners();
 

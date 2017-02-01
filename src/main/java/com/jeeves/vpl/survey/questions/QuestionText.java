@@ -26,6 +26,7 @@ public class QuestionText extends QuestionView{
 		super(question, survey);
 		setImage("/img/icons/imgfreetext.png");
 		setQuestionText("Open Text");
+		this.description = "User answers with text";
 	}
 
 	@Override

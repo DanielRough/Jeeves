@@ -29,6 +29,7 @@ public class QuestionLikert extends QuestionView {
 		super(model,survey);
 		setImage("/img/icons/imgscale.png");
 		setQuestionText("Likert Scale");
+		this.description = "User answers by selecting from a scale";
 	}
 	@FXML private RadioButton rdioButton5;
 	@FXML private RadioButton rdioButton7;

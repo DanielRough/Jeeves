@@ -50,6 +50,7 @@ import javafx.stage.StageStyle;
 		private int questionType;
 		public String imagePath;
 		protected Survey mySurvey;
+		public String description; 
 		public int myIndex;
 		boolean isReadOnly;
 		public Pane optionsPane;
@@ -69,6 +70,10 @@ import javafx.stage.StageStyle;
 	     public void setReadOnly(){
 	    	 isReadOnly = true;
 
+	     }
+	     
+	     public String getDescription(){
+	    	 return description;
 	     }
 	     
 	     public void showDelete(){

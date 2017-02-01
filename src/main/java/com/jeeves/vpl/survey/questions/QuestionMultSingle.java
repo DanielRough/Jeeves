@@ -30,6 +30,7 @@ public class QuestionMultSingle extends QuestionView{
 		System.out.println("HIYAAAAAAAAA");
 		setImage("/img/icons/imgsingle.png");
 		setQuestionText("Select One");
+		this.description = "User chooses one answer from a list of options";
 	}
 	public String getImagePath(){
 		return "/img/icons/imgsingle.png";

@@ -38,7 +38,7 @@ public class WaitingAction extends Action { // NO_UCD (unused code)
 
 	public WaitingAction(FirebaseAction data) {
 		super(data);
-		this.name.setValue("Wait for");
+		this.name.setValue("Wait");
 		this.description = "Wait for a set amount of time before executing the next action";
 		cboWaitGranularity.getItems().addAll("seconds", "minutes", "hours");
 	//	cboWaitGranularity.setValue("seconds");

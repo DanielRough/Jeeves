@@ -19,6 +19,7 @@ public class QuestionNumber extends QuestionView {
 		super(model,survey);
 		setImage("/img/icons/imgnumeric.png");
 		setQuestionText("Numeric");
+		this.description = "User chooses a number";
 	}
 	public String getImagePath(){
 		return "/img/icons/imgnumeric.png";

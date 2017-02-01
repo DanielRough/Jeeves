@@ -9,7 +9,7 @@ public class BeginTrigger extends Trigger{ // NO_UCD (use default)
 
 	public BeginTrigger(FirebaseTrigger data) {
 		super(data);
-		name.setValue("BEGIN TRIGGER");
+		name.setValue("Begin Trigger");
 		description = "Do stuff when the study begins again";
 		addListeners();	}
 

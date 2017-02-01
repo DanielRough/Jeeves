@@ -45,6 +45,7 @@ public class QuestionMultMany extends QuestionView{
 		super(model,survey);
 		setImage("/img/icons/imgmany.png");
 		setQuestionText("Select Many");
+		this.description = "User can select multiple answers from a list of options";
 		}
 
 	@FXML private Pane paneMultChoiceM;

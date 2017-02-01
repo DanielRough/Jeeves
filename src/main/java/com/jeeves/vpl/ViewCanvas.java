@@ -16,6 +16,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 import com.jeeves.vpl.canvas.receivers.ActionReceiver;
+import com.jeeves.vpl.canvas.uielements.UIElement;
 
 public class ViewCanvas extends Group{ // NO_UCD (use default)
 	private Rectangle bigRect = new Rectangle(-10000, -10000, 20000, 20000);
@@ -97,8 +98,9 @@ public class ViewCanvas extends Group{ // NO_UCD (use default)
 			}
 			if (event.getEventType().equals(MouseDragEvent.MOUSE_DRAG_RELEASED)) {
 				System.out.println("AAAARGH");
-				if (!(getChildren().contains(event.getGestureSource()))) {
+				if (event.getGestureSource() instanceof ViewElement && !(event.getGestureSource() instanceof UIElement) && !(getChildren().contains(event.getGestureSource()))) {
 					ViewElement dragged = (ViewElement) event.getGestureSource();
+					System.out.println("WTF");
 					if (dragged instanceof ViewElement){
 						Point2D releasePoint = sceneToLocal(event.getSceneX(),event.getSceneY());
 						addChild(dragged, releasePoint.getX(), releasePoint.getY());
