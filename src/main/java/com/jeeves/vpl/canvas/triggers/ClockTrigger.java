@@ -26,8 +26,8 @@ public abstract class ClockTrigger extends Trigger{ // NO_UCD (use default)
 	protected static final String DATE_FROM = "dateFrom";
 	protected static final String DATE_TO = "dateTo";
 	protected Stage dateStage;
-	protected long dateFrom;
-	protected long dateTo;
+//	protected long dateFrom;
+//	protected long dateTo;
 	protected Pane datePane;
 	protected NewDatePane newDatePane;
 	public ClockTrigger(FirebaseTrigger data) {
@@ -35,13 +35,13 @@ public abstract class ClockTrigger extends Trigger{ // NO_UCD (use default)
 	}
 
 	public void setDateFrom(long dateFrom){
-		model.getparams().put(DATE_FROM, dateFrom);
-		this.dateFrom = dateFrom;
+		params.put(DATE_FROM, dateFrom);
+	//	this.dateFrom = dateFrom;
 		
 	}
 	public void setDateTo(long dateTo){
-		model.getparams().put(DATE_TO, dateTo);
-		this.dateTo = dateTo;
+		params.put(DATE_TO, dateTo);
+	//	this.dateTo = dateTo;
 	}
 	
 	public void addListeners(){
@@ -49,39 +49,39 @@ public abstract class ClockTrigger extends Trigger{ // NO_UCD (use default)
 		dateStage = MainController.currentGUI.dateStage; //Ugly, will change also
 
 		newDatePane = MainController.currentGUI.root; //Ugly, will change
-		newDatePane.getPckFrom().valueProperty().addListener(new ChangeListener<LocalDate>(){
-
-			@Override
-			public void changed(ObservableValue<? extends LocalDate> arg0,
-					LocalDate arg1, LocalDate arg2) {
-				setDateFrom(arg2.toEpochDay());
-			}
-			
-		});
-		newDatePane.getPckTo().valueProperty().addListener(new ChangeListener<LocalDate>(){
-
-			@Override
-			public void changed(ObservableValue<? extends LocalDate> arg0,
-					LocalDate arg1, LocalDate arg2) {
-				setDateTo(arg2.toEpochDay());
-			}
-			
-		});
-		newDatePane.getToggleGroup().selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
-
-			@Override
-			public void changed(ObservableValue<? extends Toggle> arg0,
-					Toggle arg1, Toggle arg2) {
-				if(arg2.equals(newDatePane.btnEveryday)){
-					setDateFrom(0);
-					setDateTo(0);
-				}
-				else{
-					
-				}
-			}
-			
-		});
+//		newDatePane.getPckFrom().valueProperty().addListener(new ChangeListener<LocalDate>(){
+//
+//			@Override
+//			public void changed(ObservableValue<? extends LocalDate> arg0,
+//					LocalDate arg1, LocalDate arg2) {
+//				setDateFrom(arg2.toEpochDay());
+//			}
+//			
+//		});
+//		newDatePane.getPckTo().valueProperty().addListener(new ChangeListener<LocalDate>(){
+//
+//			@Override
+//			public void changed(ObservableValue<? extends LocalDate> arg0,
+//					LocalDate arg1, LocalDate arg2) {
+//				setDateTo(arg2.toEpochDay());
+//			}
+//			
+//		});
+//		newDatePane.getToggleGroup().selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
+//
+//			@Override
+//			public void changed(ObservableValue<? extends Toggle> arg0,
+//					Toggle arg1, Toggle arg2) {
+//				if(arg2.equals(newDatePane.btnEveryday)){
+//					setDateFrom(0);
+//					setDateTo(0);
+//				}
+//				else{
+//					
+//				}
+//			}
+//			
+//		});
 
 	}
 }

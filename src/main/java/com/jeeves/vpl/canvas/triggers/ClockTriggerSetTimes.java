@@ -39,6 +39,8 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 	@FXML protected Button btnRemoveTime;
 	@FXML protected VBox paneTimes;
 	@FXML protected Pane paneDate;
+	protected long dateFrom;
+	protected long dateTo;
 	private int timeCount;
 	
 	public Node[] getWidgets(){
@@ -48,7 +50,14 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 	public ClockTriggerSetTimes() {
 		this(new FirebaseTrigger());
 	}
-
+	public void setDateFrom(long dateFrom){
+		super.setDateFrom(dateFrom);
+		this.dateFrom = dateFrom;
+	}
+	public void setDateTo(long dateTo){
+		super.setDateTo(dateTo);
+		this.dateTo = dateTo;
+	}
 	public void fxmlInit(){
 		super.fxmlInit();
 		super.datePane = paneDate;
@@ -64,7 +73,7 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 	public void addListeners(){
 		super.addListeners();
 		paneDate.setOnMouseClicked(event->{
-			newDatePane.setParams(dateStage, paneDate, dateFrom, dateTo);
+			newDatePane.setParams(dateStage, paneDate, this,dateFrom, dateTo);
 
 			Point2D point = getInstance().localToScreen(event.getX(),event.getY());
 			Rectangle2D bounds = Screen.getPrimary().getBounds();
@@ -131,6 +140,7 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 	public void handleRemoveTime() {
 		ObservableList<Node> times = paneTimes.getChildren();
 		if(times.isEmpty())return;
+		System.out.println("ohaohoaho");
 		TimeReceiver lastReceiver = (TimeReceiver)times.get(times.size()-1);
 		paneTimes.getChildren().remove(lastReceiver);
 		timeCount--;

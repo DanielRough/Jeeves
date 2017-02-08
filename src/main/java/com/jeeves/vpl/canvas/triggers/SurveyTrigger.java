@@ -91,13 +91,13 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 			public void changed(ObservableValue<? extends String> arg0,
 					String arg1, String arg2) {
 				if(arg2 != null) //aaaaaaaargh
-				model.getparams().put("selectedSurvey", cboSurvey.getValue());
+					params.put("selectedSurvey", cboSurvey.getValue());
 				
 			}
 			
 		};
 		cboSurvey.valueProperty().addListener(listener);
-		cboCompMissed.valueProperty().addListener(selected->model.getparams().put("result",cboCompMissed.getValue()));
+		cboCompMissed.valueProperty().addListener(selected->params.put("result",cboCompMissed.getValue()));
 		txtMissedTimes.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>(){
 
 			@Override
@@ -115,7 +115,7 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 
 			@Override
 			public void handle(KeyEvent arg0) {
-				model.getparams().put("missed", txtMissedTimes.getText());				
+				params.put("missed", txtMissedTimes.getText());				
 			}
 		});
 	}

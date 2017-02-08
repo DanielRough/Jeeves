@@ -45,6 +45,8 @@ public class ClockTriggerRandom extends ClockTrigger { // NO_UCD (use default)
 	private TimeReceiver timeReceiverTo;
 	@FXML protected Pane paneRandomFrom;
 	@FXML protected Pane paneRandomTo;
+	protected long dateFrom;
+	protected long dateTo;
 	@FXML protected TextField txtFieldRandom;
 	@FXML protected ComboBox<String> cboRandom;
 //	@FXML protected ImageView imgCalendar;
@@ -54,7 +56,14 @@ public class ClockTriggerRandom extends ClockTrigger { // NO_UCD (use default)
 		return new Node[]{paneRandomFrom,paneRandomTo,txtFieldRandom,cboRandom};
 	}
 
-
+	public void setDateFrom(long dateFrom){
+		super.setDateFrom(dateFrom);
+		this.dateFrom = dateFrom;
+	}
+	public void setDateTo(long dateTo){
+		super.setDateTo(dateTo);
+		this.dateTo = dateTo;
+	}
 	public ClockTriggerRandom() {
 		this(new FirebaseTrigger());
 	}
@@ -83,7 +92,7 @@ public class ClockTriggerRandom extends ClockTrigger { // NO_UCD (use default)
 		super.addListeners();	
 		paneDate.setOnMouseClicked(event->{
 			
-			newDatePane.setParams(dateStage, paneDate, dateFrom, dateTo);
+			newDatePane.setParams(dateStage, paneDate, this,dateFrom, dateTo);
 
 			Point2D point = getInstance().localToScreen(event.getX(),event.getY());
 			Rectangle2D bounds = Screen.getPrimary().getBounds();

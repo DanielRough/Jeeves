@@ -38,6 +38,8 @@ public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 	protected Pane paneIntervalTo;
 	@FXML
 	protected Pane pane;
+	protected long dateFrom;
+	protected long dateTo;
 	private TimeReceiver timeReceiverFrom;
 	private TimeReceiver timeReceiverTo;
 	@FXML
@@ -52,10 +54,18 @@ public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 public ClockTriggerInterval() {
 	this(new FirebaseTrigger());
 }
+public void setDateFrom(long dateFrom){
+	super.setDateFrom(dateFrom);
+	this.dateFrom = dateFrom;
+}
+public void setDateTo(long dateTo){
+	super.setDateTo(dateTo);
+	this.dateTo = dateTo;
+}
 	public void addListeners() {
 		super.addListeners();
 		paneDate.setOnMouseClicked(event->{	
-			newDatePane.setParams(dateStage, paneDate, dateFrom, dateTo);
+			newDatePane.setParams(dateStage, paneDate, this, dateFrom, dateTo);
 			Point2D point = getInstance().localToScreen(event.getX(),event.getY());
 			Rectangle2D bounds = Screen.getPrimary().getBounds();
 			double initX = point.getX();

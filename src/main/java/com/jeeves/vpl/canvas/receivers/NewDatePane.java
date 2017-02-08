@@ -4,9 +4,6 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import com.jeeves.vpl.CalendarEveryday;
-import com.jeeves.vpl.CalendarFromTo;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
@@ -20,6 +17,10 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+
+import com.jeeves.vpl.CalendarEveryday;
+import com.jeeves.vpl.CalendarFromTo;
+import com.jeeves.vpl.canvas.triggers.ClockTrigger;
 
 public class NewDatePane extends Pane{
 	private ToggleGroup group;
@@ -37,6 +38,7 @@ public class NewDatePane extends Pane{
 	private CalendarEveryday everydayPane;
 	private long dateFrom;
 	private long dateTo;
+	private ClockTrigger trigger;
 	
 	public DatePicker getPckFrom(){
 		return pckFrom;
@@ -47,11 +49,12 @@ public class NewDatePane extends Pane{
 	public ToggleGroup getToggleGroup(){
 		return group;
 	}
-	public void setParams(Stage stage, Pane paneDate, long dateFrom, long dateTo){
+	public void setParams(Stage stage, Pane paneDate, ClockTrigger trigger, long dateFrom, long dateTo){
 		this.stage = stage;
 		this.paneDate = paneDate;
 		this.dateFrom = dateFrom;
 		this.dateTo = dateTo;
+		this.trigger = trigger;
 		setup();
 	}
 	public NewDatePane(){
@@ -102,6 +105,39 @@ public class NewDatePane extends Pane{
 		}
 		else
 			group.selectToggle(btnEveryday);
+		getPckFrom().valueProperty().addListener(new ChangeListener<LocalDate>(){
+			
+						@Override
+						public void changed(ObservableValue<? extends LocalDate> arg0,
+								LocalDate arg1, LocalDate arg2) {
+							trigger.setDateFrom(arg2.toEpochDay());
+						}
+						
+					});
+					getPckTo().valueProperty().addListener(new ChangeListener<LocalDate>(){
+			
+						@Override
+						public void changed(ObservableValue<? extends LocalDate> arg0,
+								LocalDate arg1, LocalDate arg2) {
+							trigger.setDateTo(arg2.toEpochDay());
+						}
+						
+					});
+					getToggleGroup().selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
+			
+						@Override
+						public void changed(ObservableValue<? extends Toggle> arg0,
+								Toggle arg1, Toggle arg2) {
+							if(arg2.equals(btnEveryday)){
+								trigger.setDateFrom(0);
+								trigger.setDateTo(0);
+							}
+							else{
+								
+							}
+						}
+						
+					});
 		
 	}
 	@FXML

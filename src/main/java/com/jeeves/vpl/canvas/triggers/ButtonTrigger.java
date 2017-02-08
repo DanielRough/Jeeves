@@ -53,7 +53,7 @@ public class ButtonTrigger extends Trigger {  // NO_UCD (unused code)
 				System.out.println("A value is " + value);
 				if(button.gettext().equals(value)){
 					cboButton.setValue(value); //reset it if the original survey we had selected didn't change
-					model.getparams().put("selectedButton", value);
+					params.put("selectedButton", value);
 				}
 				}
 
@@ -65,7 +65,7 @@ public class ButtonTrigger extends Trigger {  // NO_UCD (unused code)
 			@Override
 			public void changed(ObservableValue<? extends String> arg0,
 					String arg1, String arg2) {
-				model.getparams().put("selectedButton", arg2);
+				params.put("selectedButton", arg2);
 			}
 		});
 	}

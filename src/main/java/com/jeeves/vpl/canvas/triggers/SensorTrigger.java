@@ -51,7 +51,7 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 				for(Sensor s : sensors){
 					if(s.getname().equals(arg2)){
 						setSelectedSensor(s);
-					model.getparams().put("selectedSensor", arg2);
+					params.put("selectedSensor", arg2);
 					break;
 					}
 				}				
@@ -59,7 +59,7 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 		});
 
 		cboClassifications.valueProperty().addListener(
-				(ChangeListener<String>) (arg0, arg1, arg2) -> model.getparams().put("result", arg2));
+				(ChangeListener<String>) (arg0, arg1, arg2) -> params.put("result", arg2));
 	}
 	@Override
 	public String getViewPath() {
