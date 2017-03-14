@@ -7,9 +7,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.jeeves.vpl.ViewElement;
+import com.jeeves.vpl.canvas.expressions.UserVariable;
+import com.jeeves.vpl.firebase.FirebaseQuestion;
+import com.jeeves.vpl.firebase.FirebaseSurvey;
+import com.jeeves.vpl.firebase.FirebaseVariable;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -31,7 +38,6 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
 import javafx.scene.effect.Bloom;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
@@ -47,12 +53,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
-
-import com.jeeves.vpl.Main;
-import com.jeeves.vpl.ViewElement;
-import com.jeeves.vpl.canvas.expressions.UserVariable;
-import com.jeeves.vpl.firebase.FirebaseQuestion;
-import com.jeeves.vpl.firebase.FirebaseSurvey;
 
 public class Survey extends ViewElement<FirebaseSurvey> {
 	@FXML
@@ -155,25 +155,22 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 	@FXML
 	private ImageView imgSaveAs;
 	private boolean containsQs = false;
-	void refreshVariables(){
-		cboVars.getItems().clear();
-		gui.currentvariables.forEach(entry -> {
-			if (entry.isCustom) {
-				UserVariable uservar = new UserVariable(entry);
-				cboVars.getItems().add(uservar);
-				uservar.removeHander();
-			}
-		});
-	}
+
 	void addProperties() {
 
-		gui.currentvariables.addListener(new ListChangeListener<Object>() {
+		gui.registerVarListener(new ListChangeListener<FirebaseVariable>() {
 			@Override
-			public void onChanged(Change<?> c) {
-				refreshVariables();
-			}
+			public void onChanged(Change<? extends FirebaseVariable> c) {
+				ObservableList<FirebaseVariable> vars = gui.getVariables();
+				cboVars.getItems().clear();
+				vars.forEach(entry -> {
+					if (entry.isCustom) {
+						UserVariable uservar = new UserVariable(entry);
+						cboVars.getItems().add(uservar);
+						uservar.removeHander();
+					}
+				});			}
 		});
-		refreshVariables();
 		
 		chkExpiry.selectedProperty().addListener(new ChangeListener<Boolean>() {
 
@@ -316,19 +313,6 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 				}
 				
 			});
-			
-			Tooltip t = new Tooltip("Use this option to declare that this question is based on the response of a previous question");
-			Main.hackTooltipStartTiming(t); //A wonderful wonderful method someone else made
-			Tooltip.install(
-					imgCondition,
-				    t
-				);
-			Tooltip t2 = new Tooltip("Use this option to assign the patient's answer to a 'patient attribute' \n(Patient attributes can be created from the Conditions section of the Framework tab)");
-			Main.hackTooltipStartTiming(t2); //A wonderful wonderful method someone else made
-			Tooltip.install(
-					imgSaveAs,
-				    t2
-				);
 			cboVars.setCellFactory(new Callback<ListView<UserVariable>, ListCell<UserVariable>>() {
 				 @Override
 				 public ListCell<UserVariable> call(ListView<UserVariable> param) {
@@ -609,12 +593,6 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 			imgPane.setStyle("-fx-background-color: white");
 			flowPaneQuestionTypes.getChildren().add(imgPane);
 			view.setReadOnly();
-			Tooltip t = new Tooltip(view.description);
-			Main.hackTooltipStartTiming(t); //A wonderful wonderful method someone else made
-			Tooltip.install(
-					imgPane,
-				    t
-				);
 			imgPane.addEventHandler(MouseEvent.ANY,new EventHandler<MouseEvent>(){
 				public void handle(MouseEvent event){
 					if(event.isSecondaryButtonDown()){event.consume();return;}

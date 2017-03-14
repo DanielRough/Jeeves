@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.firebase.database.IgnoreExtraProperties;
-import com.jeeves.vpl.canvas.actions.IAction;
 
 /**
  * Created by Daniel on 26/05/15.
@@ -14,7 +13,7 @@ import com.jeeves.vpl.canvas.actions.IAction;
 @JsonTypeInfo(use=JsonTypeInfo.Id.MINIMAL_CLASS, include= JsonTypeInfo.As.PROPERTY, property="@class")
 @IgnoreExtraProperties
 
-public class FirebaseAction extends FirebaseElement implements Serializable,IAction {
+public class FirebaseAction extends FirebaseElement implements Serializable {
 
     public void execute(){
 

@@ -78,6 +78,7 @@ public class PatientController extends Pane{
 	@SuppressWarnings({ "rawtypes", "unchecked"})
 	public PatientController(Main gui, FirebaseDB firebase){
 		this.firebase = firebase; 
+		this.gui = gui;
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setController(this);
 		listener = new ChangeListener<FirebasePatient>() {
@@ -114,7 +115,7 @@ public class PatientController extends Pane{
 			getChildren().add(root);
 			tblPatients.getColumns().clear();
 			tblPatients.getColumns().addAll(firstNameCol, emailCol, phoneCol);
-			loadPatients();
+		//	loadPatients();
 			tblPatients.setPlaceholder(new Label("No patients currently assigned to this study"));
 
 			} catch (Exception e) {

@@ -60,6 +60,7 @@ import javafx.stage.StageStyle;
 		private Pane parent;
 		public EventHandler<MouseEvent> releasedHandler;
 		private QuestionView draggable;
+		private Main gui;
 		public int getMyIndex(){
 			return myIndex;
 		}
@@ -111,6 +112,7 @@ import javafx.stage.StageStyle;
 		public abstract void loadOptions();
 		
 		public QuestionView(int questionType, Survey survey){
+		gui = Main.getContext();
 		loadOptions();
 		FXMLLoader surveyLoader = new FXMLLoader();
 		surveyLoader.setController(this);

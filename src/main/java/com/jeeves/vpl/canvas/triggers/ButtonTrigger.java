@@ -36,9 +36,9 @@ public class ButtonTrigger extends Trigger {  // NO_UCD (unused code)
 		super.addListeners();
 		cboButton.getItems().clear();
 
-		ObservableList<FirebaseUI> uielements = gui.currentelements; //UGH THIS IS HORRIBLE PLEASE FIX //myCanvas.getProject().getUIElements();
+		ObservableList<FirebaseUI> uielements = gui.getUIElements(); //UGH THIS IS HORRIBLE PLEASE FIX //myCanvas.getProject().getUIElements();
 		uielements.forEach(survey->{cboButton.getItems().add(survey.gettext());		cboButton.getSelectionModel().selectFirst();});
-		uielements.addListener(new ListChangeListener<FirebaseUI>(){
+		gui.registerElementListener(new ListChangeListener<FirebaseUI>(){
 
 			@Override
 			public void onChanged(javafx.collections.ListChangeListener.Change<? extends FirebaseUI> c) {

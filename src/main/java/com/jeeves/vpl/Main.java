@@ -120,11 +120,11 @@ public class Main extends Application {
 	private Map<Label, VBox> labelPaneMap;
 	private FirebaseDB firebase;
 	private Stage primaryStage;
-	private ListChangeListener<Node> canvasListener;
-	private ListChangeListener<Node> receiverListener;
+//	private ListChangeListener<Node> canvasListener;
+//	private ListChangeListener<Node> receiverListener;
 	//private ListChangeListener<FirebaseSurvey> surveyListener;
 	private EventHandler<MouseEvent> viewElementHandler;
-	private ChangeListener<Tab> tabListener;
+//	private ChangeListener<Tab> tabListener;
 	private FirebaseProject currentproject; // The currently selected project
 	private ViewCanvas canvas; // The canvas group that contains the project
 	private ElementReceiver receiver; //Where UI elements go
@@ -137,8 +137,21 @@ public class Main extends Application {
 	private ObservableList<ObservableValue<String>> surveynames = FXCollections.observableList(new ArrayList<ObservableValue<String>>());
 	
 	private ObservableList<FirebaseSurvey> currentsurveys = FXCollections.observableList(new ArrayList<FirebaseSurvey>()); 
+	public ObservableList<FirebaseSurvey> getSurveys(){return currentsurveys;}
+	public void registerSurveyListener(ListChangeListener<FirebaseSurvey> listener){
+		currentsurveys.addListener(listener);
+	}
 	private ObservableList<FirebaseVariable> currentvariables = FXCollections.observableList(new ArrayList<FirebaseVariable>());
+	public ObservableList<FirebaseVariable> getVariables(){return currentvariables;}
+
+	public void registerVarListener(ListChangeListener<FirebaseVariable> listener){
+		currentvariables.addListener(listener);
+	}
 	private ObservableList<FirebaseUI> currentelements = FXCollections.observableList(new ArrayList<FirebaseUI>());
+	public ObservableList<FirebaseUI> getUIElements(){return currentelements;}
+	public void registerElementListener(ListChangeListener<FirebaseUI> listener){
+		currentelements.addListener(listener);
+	}
 	private static Main currentGUI;
 
 	public static Main getContext(){
@@ -176,7 +189,15 @@ public class Main extends Application {
 		this.primaryStage = primaryStage;
 		firebase = new FirebaseDB();
 		firebase.addListeners();
-		addListeners();
+		firebase.getprojects().addListener(new ListChangeListener<FirebaseProject>() {
+			@Override
+			public void onChanged(
+					javafx.collections.ListChangeListener.Change<? extends FirebaseProject> c) {
+				loadProjectsIntoMenu();
+
+			}
+		});
+	//	addListeners();
 		primaryStage.setTitle("Jeeves - New Project");
 		Platform.setImplicitExit(false);
 		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/maingui.fxml"));
@@ -198,16 +219,17 @@ public class Main extends Application {
 		tabSurvey.setContent(surveyController);
 		patientController = new PatientController(this,firebase);
 		tabUsers.setContent(patientController);
-		
+		currentproject = new FirebaseProject();
+		isNewProject = true;
+
 		Platform.runLater(new Runnable(){
 			public void run(){
 				loadCanvasElements();
+				loadVariables();
+				resetPanes();
 			}
 		});
-		isNewProject = true;
-		currentproject = new FirebaseProject();
-		loadVariables();
-		resetPanes();
+
 
 	}
 	
@@ -243,6 +265,31 @@ public class Main extends Application {
 			}
 			
 		});
+		viewElementHandler = new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent arg0) {
+				ViewElement clicked = ((ViewElement)arg0.getSource());
+				if(arg0.isSecondaryButtonDown())return;
+				if(arg0.getEventType() == MouseEvent.MOUSE_PRESSED)
+					myPane.getChildren().add(clicked.getDraggable());
+				if (arg0.getEventType() == MouseEvent.MOUSE_RELEASED) {
+					//if(canvas.getIsMouseOver() == false){
+						myPane.getChildren().remove(clicked.getDraggable());
+				//	}
+					ViewElement draggable = null;
+					//annoying exception for user variables
+					if(clicked instanceof UserVariable){
+						draggable = (UserVariable) UserVariable.create(((FirebaseExpression)clicked.getModel()));
+					}
+					else
+						draggable = ViewElement
+						.create(clicked.getClass().getName());
+					clicked.setDraggable(draggable); // DJRNEW
+				}
+			}
+
+		};
 		try {
 				ArrayList<ViewElement> elements = new ArrayList<ViewElement>();
 				for(String trigName : Trigger.triggerNames){
@@ -278,7 +325,17 @@ public class Main extends Application {
 
 	
 		SingleSelectionModel<Tab> selectionModel = tabPane.getSelectionModel();
-		selectionModel.selectedItemProperty().addListener(tabListener);
+		selectionModel.selectedItemProperty().addListener(new ChangeListener<Tab>() {
+			@Override
+			public void changed(ObservableValue<? extends Tab> arg0,
+					Tab arg1, Tab arg2) {
+				Divider divider = splitPane.getDividers().get(0);
+				if (arg2 != null && arg2.equals(tabFramework))
+					divider.setPosition(0.3);
+				else
+					divider.setPosition(0.7);
+			}
+		});
 
 		labelPaneMap = new HashMap<Label, VBox>();
 		labelPaneMap.put(lblActions, paneActions);
@@ -310,7 +367,6 @@ public class Main extends Application {
 	}
 
 	private void resetPanes(){
-	//	currentsurveys.removeListener(surveyListener); //Hopefully this will stop all surveys being removed when project is loaded wtice in a row
 		currentsurveys.clear();
 		currentvariables.clear();
 		currentelements.clear();
@@ -327,7 +383,21 @@ public class Main extends Application {
 		paneAndroid.getChildren().clear();
 
 		receiver = new ElementReceiver(paneAndroid.getPrefWidth(), paneAndroid.getPrefHeight());
-		receiver.getChildElements().addListener(receiverListener);
+		receiver.getChildElements().addListener(new ListChangeListener<Node>() {
+			@Override
+			public void onChanged(javafx.collections.ListChangeListener.Change<? extends Node> arg0) {
+				currentelements.clear();
+				currentproject.getuidesign().clear();
+				receiver.getChildElements().forEach(child->{currentproject.getuidesign().add((FirebaseUI)child.getModel());
+				currentelements.add((FirebaseUI)child.getModel());
+				((FirebaseUI)child.getModel()).getMyTextProperty().addListener(change->{
+					receiver.getChildElements().remove(child);
+					receiver.getChildElements().add(child);
+				});
+				});
+			}
+
+		});
 		receiver.setProject(currentproject);
 		paneAndroid.getChildren().add(receiver);
 		setProject();
@@ -410,103 +480,6 @@ public class Main extends Application {
 
 		});
 
-	}
-
-
-
-	private void addListeners(){
-
-		tabListener = new ChangeListener<Tab>() {
-			@Override
-			public void changed(ObservableValue<? extends Tab> arg0,
-					Tab arg1, Tab arg2) {
-				Divider divider = splitPane.getDividers().get(0);
-				if (arg2 != null && arg2.equals(tabFramework))
-					divider.setPosition(0.3);
-				else
-					divider.setPosition(0.7);
-			}
-		};
-
-
-		firebase.getprojects().addListener(new ListChangeListener<FirebaseProject>() {
-			@Override
-			public void onChanged(
-					javafx.collections.ListChangeListener.Change<? extends FirebaseProject> c) {
-				loadProjectsIntoMenu();
-
-			}
-		});
-
-		canvasListener = new ListChangeListener<Node>() {
-			@Override
-			public void onChanged(
-					javafx.collections.ListChangeListener.Change<? extends Node> arg0) {
-				while (arg0.next()) {
-					if (arg0.wasAdded()) {
-						List addedlist = arg0.getAddedSubList();
-						currentproject.add((ViewElement) addedlist.get(0));
-					} else if (arg0.wasRemoved()) {
-						List removedlist = arg0.getRemoved();
-						currentproject.remove((ViewElement) removedlist.get(0));
-					}
-				}
-			}
-		};
-
-		viewElementHandler = new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent arg0) {
-				ViewElement clicked = ((ViewElement)arg0.getSource());
-				if(arg0.isSecondaryButtonDown())return;
-				if(arg0.getEventType() == MouseEvent.MOUSE_PRESSED)
-					myPane.getChildren().add(clicked.getDraggable());
-				if (arg0.getEventType() == MouseEvent.MOUSE_RELEASED) {
-					//if(canvas.getIsMouseOver() == false){
-						myPane.getChildren().remove(clicked.getDraggable());
-				//	}
-					ViewElement draggable = null;
-					//annoying exception for user variables
-					if(clicked instanceof UserVariable){
-						draggable = (UserVariable) UserVariable.create(((FirebaseExpression)clicked.getModel()));
-					}
-					else
-						draggable = ViewElement
-						.create(clicked.getClass().getName());
-					clicked.setDraggable(draggable); // DJRNEW
-				}
-			}
-
-		};
-
-//		surveyListener = new ListChangeListener<FirebaseSurvey>(){
-//
-//			@Override
-//			public void onChanged(
-//					javafx.collections.ListChangeListener.Change<? extends FirebaseSurvey> arg0) {
-//				currentproject.getsurveys().clear();
-//				currentsurveys.forEach(survey->currentproject.getsurveys().add(survey));
-//			}
-//
-//		};
-
-		//Listen on adding UI elements
-		receiverListener = new ListChangeListener<Node>() {
-			@Override
-			public void onChanged(javafx.collections.ListChangeListener.Change<? extends Node> arg0) {
-				currentelements.clear();
-				currentproject.getuidesign().clear();
-				receiver.getChildElements().forEach(child->{currentproject.getuidesign().add((FirebaseUI)child.getModel());
-				currentelements.add((FirebaseUI)child.getModel());
-				((FirebaseUI)child.getModel()).getMyTextProperty().addListener(change->{
-					receiver.getChildElements().remove(child);
-					receiver.getChildElements().add(child);
-				});
-				});
-			}
-
-		};
 	}
 
 

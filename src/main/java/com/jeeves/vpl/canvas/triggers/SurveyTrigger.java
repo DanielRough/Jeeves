@@ -44,43 +44,38 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 		cboCompMissed.setValue("completed");
 	}
 	
-	public void changeSurveys(){
-		ObservableList<FirebaseSurvey> surveys = gui.currentsurveys;
-		String value = cboSurvey.getValue();
-		cboSurvey.getItems().clear();
-		surveys.forEach(survey->{
-			if(getInstance().isReadOnly)return;
-		cboSurvey.getItems().add(survey.getname());
-		if(survey.getname().equals(value))cboSurvey.setValue(value);
-		survey.name.addListener(new ChangeListener<String>(){
-
-			@Override
-			public void changed(ObservableValue<? extends String> arg0,
-					String arg1, String arg2) {
-				int index = cboSurvey.getSelectionModel().getSelectedIndex();
-				cboSurvey.getItems().clear();
-				surveys.forEach(survey2->{cboSurvey.getItems().add(survey2.getname());});
-				
-				if(index >=0)
-					cboSurvey.setValue(surveys.get(index).getname());
-				
-			}
-			
-		});});
-	}
 	@Override
 	public void addListeners(){
 		super.addListeners();
-		ObservableList<FirebaseSurvey> surveys = gui.currentsurveys;
+		ObservableList<FirebaseSurvey> surveys = gui.getSurveys();
 		cboSurvey.getItems().clear();
 		surveys.forEach(survey->{cboSurvey.getItems().add(survey.getname());});
-		changeSurveys();
-		surveys.addListener(new ListChangeListener<FirebaseSurvey>(){
-
+		//changeSurveys();
+		gui.registerSurveyListener(new ListChangeListener<FirebaseSurvey>(){
 			@Override
 			public void onChanged(
 					javafx.collections.ListChangeListener.Change<? extends FirebaseSurvey> change) {  
-				changeSurveys();
+				String value = cboSurvey.getValue();
+				cboSurvey.getItems().clear();
+				surveys.forEach(survey->{
+					if(getInstance().isReadOnly)return;
+				cboSurvey.getItems().add(survey.getname());
+				if(survey.getname().equals(value))cboSurvey.setValue(value);
+				survey.name.addListener(new ChangeListener<String>(){
+
+					@Override
+					public void changed(ObservableValue<? extends String> arg0,
+							String arg1, String arg2) {
+						int index = cboSurvey.getSelectionModel().getSelectedIndex();
+						cboSurvey.getItems().clear();
+						surveys.forEach(survey2->{cboSurvey.getItems().add(survey2.getname());});
+						
+						if(index >=0)
+							cboSurvey.setValue(surveys.get(index).getname());
+						
+					}
+					
+				});});
 			}
 
 		});

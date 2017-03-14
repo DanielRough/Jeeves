@@ -35,21 +35,8 @@ public class SurveyAction extends Action { // NO_UCD (unused code)
 	public void setData(FirebaseAction model) {
 		super.setData(model);
 		Map<String, Object> params = model.getparams();
-		ObservableList<FirebaseSurvey> surveys = gui.currentsurveys;
-
-		surveys.addListener(new ListChangeListener<FirebaseSurvey>() {
-
-			@Override
-			public void onChanged(
-					javafx.collections.ListChangeListener.Change<? extends FirebaseSurvey> c) {
-				changeSurveys();
-
-			}
-
-		});
 		if(params.containsKey("survey")){
 			cboSurveyName.setValue(params.get("survey").toString());
-
 		}
 	}
 
@@ -59,47 +46,43 @@ public class SurveyAction extends Action { // NO_UCD (unused code)
 				.getSimpleName());
 	}
 
-	public void changeSurveys(){
-		ObservableList<FirebaseSurvey> surveys = gui.currentsurveys;
-		String value = cboSurveyName.getValue();
-		cboSurveyName.getItems().clear();
-		surveys.forEach(survey->{cboSurveyName.getItems().add(survey.getname());
-		if(survey.getname().equals(value))cboSurveyName.setValue(value);
-		survey.name.addListener(new ChangeListener<String>(){
-
-			@Override
-			public void changed(ObservableValue<? extends String> arg0,
-					String arg1, String arg2) {
-				int index = cboSurveyName.getSelectionModel().getSelectedIndex();
-				cboSurveyName.getItems().clear();
-				surveys.forEach(survey2->{cboSurveyName.getItems().add(survey2.getname());});
-				
-				if(index >=0)
-					cboSurveyName.setValue(surveys.get(index).getname());
-				
-			}
-			
-		});});
-	}
 	@Override
 	protected void addListeners() {
 		super.addListeners();
-		ObservableList<FirebaseSurvey> surveys = gui.currentsurveys;
 		cboSurveyName.getItems().clear();
-		surveys.forEach(survey -> {
-			cboSurveyName.getItems().add(survey.getname());
-			cboSurveyName.getSelectionModel().selectFirst();
-		});
-		surveys.addListener(new ListChangeListener<FirebaseSurvey>() {
+//		surveys.forEach(survey -> {
+//			cboSurveyName.getItems().add(survey.getname());
+//			cboSurveyName.getSelectionModel().selectFirst();
+//		});
+		gui.registerSurveyListener(new ListChangeListener<FirebaseSurvey>() {
 
 			@Override
 			public void onChanged(
 					javafx.collections.ListChangeListener.Change<? extends FirebaseSurvey> c) {
-				changeSurveys();
+				ObservableList<FirebaseSurvey> surveys = gui.getSurveys();
+				String value = cboSurveyName.getValue();
+				cboSurveyName.getItems().clear();
+				surveys.forEach(survey->{cboSurveyName.getItems().add(survey.getname());
+				if(survey.getname().equals(value))cboSurveyName.setValue(value);
+				survey.name.addListener(new ChangeListener<String>(){
 
+					@Override
+					public void changed(ObservableValue<? extends String> arg0,
+							String arg1, String arg2) {
+						int index = cboSurveyName.getSelectionModel().getSelectedIndex();
+						cboSurveyName.getItems().clear();
+						surveys.forEach(survey2->{cboSurveyName.getItems().add(survey2.getname());});
+						
+						if(index >=0)
+							cboSurveyName.setValue(surveys.get(index).getname());
+						
+					}
+					
+				});});
 			}
 
 		});
+		
 	 selectionListener = new ChangeListener<String>(){
 
 			@Override

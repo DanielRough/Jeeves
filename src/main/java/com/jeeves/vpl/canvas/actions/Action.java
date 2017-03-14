@@ -72,7 +72,6 @@ public abstract class Action extends ViewElement<FirebaseAction> {
 				@Override
 				public void onChanged(
 						javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
-					//model.settriggerId(getSaltString()); //Again, update, must reset 
 					if(change.wasAdded()){
 						model.getparams().put(change.getKey(), change.getValueAdded());
 					}
