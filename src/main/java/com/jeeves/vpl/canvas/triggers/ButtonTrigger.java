@@ -11,7 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ToggleGroup;
 
-import com.jeeves.vpl.MainController;
+import com.jeeves.vpl.Main;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
 import com.jeeves.vpl.firebase.FirebaseUI;
 
@@ -36,7 +36,7 @@ public class ButtonTrigger extends Trigger {  // NO_UCD (unused code)
 		super.addListeners();
 		cboButton.getItems().clear();
 
-		ObservableList<FirebaseUI> uielements = MainController.currentGUI.currentelements; //UGH THIS IS HORRIBLE PLEASE FIX //myCanvas.getProject().getUIElements();
+		ObservableList<FirebaseUI> uielements = gui.currentelements; //UGH THIS IS HORRIBLE PLEASE FIX //myCanvas.getProject().getUIElements();
 		uielements.forEach(survey->{cboButton.getItems().add(survey.gettext());		cboButton.getSelectionModel().selectFirst();});
 		uielements.addListener(new ListChangeListener<FirebaseUI>(){
 

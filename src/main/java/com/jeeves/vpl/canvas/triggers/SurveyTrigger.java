@@ -13,7 +13,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 
-import com.jeeves.vpl.MainController;
+import com.jeeves.vpl.Main;
 import com.jeeves.vpl.firebase.FirebaseSurvey;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
 
@@ -45,7 +45,7 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 	}
 	
 	public void changeSurveys(){
-		ObservableList<FirebaseSurvey> surveys = MainController.currentGUI.currentsurveys;
+		ObservableList<FirebaseSurvey> surveys = gui.currentsurveys;
 		String value = cboSurvey.getValue();
 		cboSurvey.getItems().clear();
 		surveys.forEach(survey->{
@@ -71,7 +71,7 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 	@Override
 	public void addListeners(){
 		super.addListeners();
-		ObservableList<FirebaseSurvey> surveys = MainController.currentGUI.currentsurveys;
+		ObservableList<FirebaseSurvey> surveys = gui.currentsurveys;
 		cboSurvey.getItems().clear();
 		surveys.forEach(survey->{cboSurvey.getItems().add(survey.getname());});
 		changeSurveys();

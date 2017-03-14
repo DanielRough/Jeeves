@@ -18,7 +18,6 @@ import com.jeeves.vpl.firebase.FirebaseAction;
  */
 public abstract class Action extends ViewElement<FirebaseAction> {
 	public ObservableMap<String,Object> params = FXCollections.observableHashMap();
-
 	public static String[] actionNames = {
 			"com.jeeves.vpl.canvas.actions.PromptAction",
 			"com.jeeves.vpl.canvas.actions.SendTextAction",

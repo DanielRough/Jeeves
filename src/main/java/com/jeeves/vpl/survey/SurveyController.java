@@ -2,7 +2,7 @@ package com.jeeves.vpl.survey;
 
 import java.net.URL;
 
-import com.jeeves.vpl.MainController;
+import com.jeeves.vpl.Main;
 import com.jeeves.vpl.firebase.FirebaseSurvey;
 
 import javafx.beans.value.ChangeListener;

@@ -2,7 +2,7 @@ package com.jeeves.vpl.canvas.triggers;
 
 import java.time.LocalDate;
 
-import com.jeeves.vpl.MainController;
+import com.jeeves.vpl.Main;
 import com.jeeves.vpl.canvas.receivers.NewDatePane;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
 
@@ -46,9 +46,9 @@ public abstract class ClockTrigger extends Trigger{ // NO_UCD (use default)
 	
 	public void addListeners(){
 		super.addListeners();
-		dateStage = MainController.currentGUI.dateStage; //Ugly, will change also
+		dateStage = gui.getDateStage(); //Ugly, will change also
 
-		newDatePane = MainController.currentGUI.root; //Ugly, will change
+		newDatePane = gui.getDatePane(); //Ugly, will change
 //		newDatePane.getPckFrom().valueProperty().addListener(new ChangeListener<LocalDate>(){
 //
 //			@Override

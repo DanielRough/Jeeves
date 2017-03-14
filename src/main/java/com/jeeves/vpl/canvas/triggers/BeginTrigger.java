@@ -1,8 +1,7 @@
-package com.jeeves.vpl;
+package com.jeeves.vpl.canvas.triggers;
 
 import javafx.scene.Node;
 
-import com.jeeves.vpl.canvas.triggers.Trigger;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
 
 public class BeginTrigger extends Trigger{ // NO_UCD (use default)

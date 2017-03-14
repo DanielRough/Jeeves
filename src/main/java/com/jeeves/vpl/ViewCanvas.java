@@ -29,11 +29,11 @@ public class ViewCanvas extends Group{ // NO_UCD (use default)
 	private Point2D minPoint;
 	private double minX = 0;
 	private double minY = 0;
-	Pane rectPane = new Pane();
+	private Pane rectPane = new Pane();
 	
-	protected ActionReceiver receiver;
-	protected double initialHeight;
-	protected ActionHolder parent;
+	private ActionReceiver receiver;
+	private double initialHeight;
+	private ActionHolder parent;
 
 	
 	private boolean isMouseOver;

@@ -14,7 +14,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 
-import com.jeeves.vpl.MainController;
+import com.jeeves.vpl.Main;
 import com.jeeves.vpl.firebase.FirebaseAction;
 
 public class SendTextAction extends Action { // NO_UCD (unused code)
@@ -83,7 +83,7 @@ public class SendTextAction extends Action { // NO_UCD (unused code)
 			@Override
 			public void handle(MouseEvent arg0) {
 				smsText.setVisible(true);
-				MainController.currentGUI.getMainPane().getChildren().add(smsText);
+				gui.getMainPane().getChildren().add(smsText);
 				smsText.toFront();
 				Bounds txtMsgBounds = txtMessage.localToScene(txtMessage.getBoundsInLocal());
 				smsText.setLayoutX(txtMsgBounds.getMinX());
@@ -101,7 +101,7 @@ public class SendTextAction extends Action { // NO_UCD (unused code)
 					Boolean arg1, Boolean arg2) {
 				if(arg2.equals(false)){
 					smsText.setVisible(false);
-					MainController.currentGUI.getMainPane().getChildren().remove(smsText);
+					gui.getMainPane().getChildren().remove(smsText);
 				}
 				}
 			

@@ -175,7 +175,7 @@
                      <children>
                         <ImageView fx:id="imgPhone" fitHeight="482.0" fitWidth="261.0" layoutX="14.0" layoutY="75.0" mouseTransparent="true" pickOnBounds="true">
                            <image>
-                              <Image url="@../../../../resources/img/icons/Nexus_4.png" />
+                              <Image url="@img/icons/phone.png" />
                            </image>
                         </ImageView>
                         <Pane fx:id="paneAndroid" layoutX="37.0" layoutY="187.0" prefHeight="307.0" prefWidth="215.0" style="-fx-background-color: white;" />
@@ -202,7 +202,7 @@
 		</SplitPane>
       <ImageView fx:id="imgTrash" fitHeight="99.0" fitWidth="65.0" layoutX="1135.0" layoutY="640.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../../../bin/img/icons/recycle.png" />
+            <Image url="@img/icons/recycle.png" />
          </image>
       </ImageView>
 	</children>

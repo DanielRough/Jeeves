@@ -24,13 +24,16 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 
 public abstract class Trigger extends ViewElement<FirebaseTrigger> implements ActionHolder{
-	private ArrayList<Action> actions;// = new ArrayList<Action>();
-	//protected Map<String,Object> params = new HashMap<String,Object>();
-	protected ObservableMap<String,Object> params = FXCollections.observableHashMap();
+	private ArrayList<Action> actions;
 	private ActionReceiver childReceiver;
+
+	
+	protected ObservableMap<String,Object> params = FXCollections.observableHashMap();
 	private double receiverheight = 0.0;
 	boolean loading = true;
-	public static final String[] triggerNames = {"com.jeeves.vpl.canvas.triggers.ButtonTrigger",
+	public static final String[] triggerNames = {
+			"com.jeeves.vpl.canvas.triggers.BeginTrigger",
+			"com.jeeves.vpl.canvas.triggers.ButtonTrigger",
 			"com.jeeves.vpl.canvas.triggers.ClockTriggerInterval",
 			"com.jeeves.vpl.canvas.triggers.ClockTriggerRandom",
 			"com.jeeves.vpl.canvas.triggers.ClockTriggerSetTimes",

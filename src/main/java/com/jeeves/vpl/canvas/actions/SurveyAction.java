@@ -10,7 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 
-import com.jeeves.vpl.MainController;
+import com.jeeves.vpl.Main;
 import com.jeeves.vpl.firebase.FirebaseAction;
 import com.jeeves.vpl.firebase.FirebaseSurvey;
 
@@ -35,7 +35,7 @@ public class SurveyAction extends Action { // NO_UCD (unused code)
 	public void setData(FirebaseAction model) {
 		super.setData(model);
 		Map<String, Object> params = model.getparams();
-		ObservableList<FirebaseSurvey> surveys = MainController.currentGUI.currentsurveys;
+		ObservableList<FirebaseSurvey> surveys = gui.currentsurveys;
 
 		surveys.addListener(new ListChangeListener<FirebaseSurvey>() {
 
@@ -60,7 +60,7 @@ public class SurveyAction extends Action { // NO_UCD (unused code)
 	}
 
 	public void changeSurveys(){
-		ObservableList<FirebaseSurvey> surveys = MainController.currentGUI.currentsurveys;
+		ObservableList<FirebaseSurvey> surveys = gui.currentsurveys;
 		String value = cboSurveyName.getValue();
 		cboSurveyName.getItems().clear();
 		surveys.forEach(survey->{cboSurveyName.getItems().add(survey.getname());
@@ -84,7 +84,7 @@ public class SurveyAction extends Action { // NO_UCD (unused code)
 	@Override
 	protected void addListeners() {
 		super.addListeners();
-		ObservableList<FirebaseSurvey> surveys = MainController.currentGUI.currentsurveys;
+		ObservableList<FirebaseSurvey> surveys = gui.currentsurveys;
 		cboSurveyName.getItems().clear();
 		surveys.forEach(survey -> {
 			cboSurveyName.getItems().add(survey.getname());

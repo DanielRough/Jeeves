@@ -15,7 +15,7 @@ import javafx.stage.Stage;
 
 public class SaveAsPane extends Pane{ // NO_UCD (use default)
 	private Stage stage;
-	private MainController currentGUI;
+	private Main currentGUI;
 	private FirebaseProject project;
 	@FXML private TextField txtSaveAsName;
 	@FXML private Button btnSave;
@@ -27,7 +27,7 @@ public class SaveAsPane extends Pane{ // NO_UCD (use default)
 		project.setname(txtSaveAsName.getText());
 		//currentGUI.tabCanvas.setText(txtSaveAsName.getText() + " Configuration");
 		firebase.addProject(oldname,project);
-		currentGUI.isNewProject = false;
+		currentGUI.setNewProject(false);
 
 		stage.close();
 	}
@@ -35,7 +35,7 @@ public class SaveAsPane extends Pane{ // NO_UCD (use default)
 	public void handleCloseClick(Event e){
 		stage.close();
 	}
-	public SaveAsPane(MainController gui, Stage stage,FirebaseProject project, FirebaseDB firebase) {
+	public SaveAsPane(Main gui, Stage stage,FirebaseProject project, FirebaseDB firebase) {
 		this.firebase = firebase;
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setController(this);

@@ -48,7 +48,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
 
-import com.jeeves.vpl.MainController;
+import com.jeeves.vpl.Main;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.expressions.UserVariable;
 import com.jeeves.vpl.firebase.FirebaseQuestion;
@@ -157,7 +157,7 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 	private boolean containsQs = false;
 	void refreshVariables(){
 		cboVars.getItems().clear();
-		MainController.currentGUI.currentvariables.forEach(entry -> {
+		gui.currentvariables.forEach(entry -> {
 			if (entry.isCustom) {
 				UserVariable uservar = new UserVariable(entry);
 				cboVars.getItems().add(uservar);
@@ -167,7 +167,7 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 	}
 	void addProperties() {
 
-		MainController.currentGUI.currentvariables.addListener(new ListChangeListener<Object>() {
+		gui.currentvariables.addListener(new ListChangeListener<Object>() {
 			@Override
 			public void onChanged(Change<?> c) {
 				refreshVariables();
@@ -318,13 +318,13 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 			});
 			
 			Tooltip t = new Tooltip("Use this option to declare that this question is based on the response of a previous question");
-			MainController.hackTooltipStartTiming(t); //A wonderful wonderful method someone else made
+			Main.hackTooltipStartTiming(t); //A wonderful wonderful method someone else made
 			Tooltip.install(
 					imgCondition,
 				    t
 				);
 			Tooltip t2 = new Tooltip("Use this option to assign the patient's answer to a 'patient attribute' \n(Patient attributes can be created from the Conditions section of the Framework tab)");
-			MainController.hackTooltipStartTiming(t2); //A wonderful wonderful method someone else made
+			Main.hackTooltipStartTiming(t2); //A wonderful wonderful method someone else made
 			Tooltip.install(
 					imgSaveAs,
 				    t2
@@ -610,7 +610,7 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 			flowPaneQuestionTypes.getChildren().add(imgPane);
 			view.setReadOnly();
 			Tooltip t = new Tooltip(view.description);
-			MainController.hackTooltipStartTiming(t); //A wonderful wonderful method someone else made
+			Main.hackTooltipStartTiming(t); //A wonderful wonderful method someone else made
 			Tooltip.install(
 					imgPane,
 				    t
@@ -620,7 +620,7 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 					if(event.isSecondaryButtonDown()){event.consume();return;}
 					setOnDragDetected(event1 ->{if(event1.isSecondaryButtonDown())return; view.startFullDrag();});
 				if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
-					MainController.currentGUI.getMainPane().getChildren().add(view);
+					gui.getMainPane().getChildren().add(view);
 					if(containsQs == false){
 						paneScroller.setStyle("-fx-border-color: #71a4eb; -fx-border-width: 5");
 						paneInfo.getChildren().forEach(child->child.setVisible(false));
@@ -646,7 +646,7 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 					setEffect(null);
 				}
 				else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
-					MainController.currentGUI.getMainPane().getChildren().remove(view);
+					gui.getMainPane().getChildren().remove(view);
 					imgPane.getChildren().add(view);
 					view.setVisible(false);
 					//draggable.setEffect(null);

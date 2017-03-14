@@ -37,10 +37,11 @@ public class VariablePane extends Pane{ // NO_UCD (use default)
 	@FXML private TextField txtName;
 	private FirebaseVariable variable;
 	private Stage stage;
-	ExpressionReceiver time;
-	TextField text;
-	RadioButton trueButton;
-	RadioButton falseButton;
+	private ExpressionReceiver time;
+	private TextField text;
+	private RadioButton trueButton;
+	private RadioButton falseButton;
+	private Main gui;
 	/**
 	 * Check all fields are filled in correctly, works for subclasses of this popup too
 	 */
@@ -83,8 +84,8 @@ switch(cboVarType.getValue()){
 	@FXML
 	public void handleSaveClick(Event e) { // NO_UCD (unused code)
 		if(!verify())return;
-		MainController.currentGUI.addVariable(variable);
-		MainController.currentGUI.loadVariables();
+		gui.addVariable(variable);
+		gui.loadVariables();
 		stage.hide();
 	}
 	@FXML
@@ -131,7 +132,7 @@ switch(cboVarType.getValue()){
 	  return true;  
 	}
 	public VariablePane(Stage stage) {
-		
+		Main gui = Main.getContext();
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setController(this);
 		URL location = this.getClass().getResource("/newvarpopup.fxml");

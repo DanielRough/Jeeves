@@ -62,6 +62,7 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane{
 	public ViewElement getDraggable(){
 		return draggable;
 	}
+	protected Main gui;
 	public EventHandler<MouseEvent> draggedHandler;
 	public EventHandler<MouseEvent> mainHandler;
 	private EventHandler<MouseEvent> sidebarElemHandler;
@@ -127,6 +128,7 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane{
 	public abstract void fxmlInit();
 	
 	public ViewElement(T data,Class<T> typeParameterClass) {
+		this.gui = Main.getContext();
 		this.model= data;
 		fxmlInit();
 		if(data.getname() != null) //Data is null if it's a new element{
@@ -169,7 +171,7 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane{
 				draggable.setLayoutX(event.getSceneX());
 				draggable.setLayoutY(event.getSceneY());//Should hopefully add it to the main pane
 				draggable.setEffect(shadow);
-				draggable.currentCanvas = MainController.currentGUI.getViewCanvas(); //I don't like this much
+				draggable.currentCanvas = gui.getViewCanvas(); //I don't like this much
 				setEffect(null);
 			} else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
 				draggable.setLayoutX(event.getSceneX());
@@ -177,7 +179,7 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane{
 			} else if (event.getEventType().equals(MouseEvent.MOUSE_ENTERED)) {
 				setCursor(Cursor.HAND);
 		     	setEffect(shadow);
-		     	MainController.currentGUI.mnuFile.hide();
+		     	gui.hideMenu();
 			} 
 			else if (event.getEventType().equals(MouseEvent.MOUSE_EXITED)){
 				setEffect(null);
@@ -230,7 +232,7 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane{
 				//When the mouse is released
 				else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
 					if(event.getButton().equals(MouseButton.SECONDARY))return;
-					if(MainController.currentGUI.isOverTrash(event.getSceneX(), event.getSceneY())){
+					if(gui.isOverTrash(event.getSceneX(), event.getSceneY())){
 						currentCanvas.removeChild(getInstance());
 						if(getInstance().getReceiver() != null){
 							getInstance().getReceiver().removeChild(getInstance()); //Make sure it's totally gotten rid of
@@ -245,7 +247,7 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane{
 				} 
 				else if (event.getEventType().equals(MouseEvent.MOUSE_ENTERED)){
 					setCursor(Cursor.HAND);
-					MainController.currentGUI.mnuFile.hide();
+					gui.hideMenu();
 				}}
 		};
 
@@ -272,7 +274,7 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane{
 		model.settype(getInstance().getClass().getName());
 		model.setname(getName());
 		model.setdescription(getDescription());
-		currentCanvas = MainController.currentGUI.getViewCanvas();
+		currentCanvas = gui.getViewCanvas();
 	}
 
 	//The element's position is an X,Y coordinate on the Canvas

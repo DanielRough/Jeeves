@@ -2,7 +2,7 @@ package com.jeeves.vpl.survey;
 
 import java.util.Map;
 
-import com.jeeves.vpl.MainController;
+import com.jeeves.vpl.Main;
 import com.jeeves.vpl.firebase.FirebaseQuestion;
 import com.jeeves.vpl.survey.questions.QuestionDateTime;
 import com.jeeves.vpl.survey.questions.QuestionLikert;
@@ -256,7 +256,7 @@ import javafx.stage.StageStyle;
 //						parent.getChildren().add(parent.getChildren().indexOf(getInstance()),duplicate);
 //						}
 					    index = parent.getChildren().indexOf(getInstance());
-						MainController.currentGUI.getMainPane().getChildren().add(getInstance());
+					    gui.getMainPane().getChildren().add(getInstance());
 						setLayoutX(event.getSceneX());
 						setLayoutY(event.getSceneY());
 					}
@@ -279,7 +279,7 @@ import javafx.stage.StageStyle;
 						else{
 							if((!isReadOnly && wasDragged == false) || wasDetected == false)
 								parent.getChildren().add(index,getInstance());
-							MainController.currentGUI.getMainPane().getChildren().remove(getInstance());
+							gui.getMainPane().getChildren().remove(getInstance());
 						setCursor(Cursor.HAND);
 						setManaged(true);
 						setMouseTransparent(false);
@@ -289,7 +289,7 @@ import javafx.stage.StageStyle;
 					} 
 					else if (event.getEventType().equals(MouseEvent.MOUSE_ENTERED)){
 						setCursor(Cursor.HAND);
-						MainController.currentGUI.mnuFile.hide();
+						gui.hideMenu();
 					}}
 			};
 

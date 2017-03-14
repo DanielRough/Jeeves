@@ -68,20 +68,21 @@ public class PatientController extends Pane{
 	@FXML private Label lblMissed;
 	private Map<String,FirebaseSurvey> incompleteSurveys;
 	private Map<String,FirebaseSurvey> completedSurveys;
-	ChangeListener<FirebasePatient> listener; 
+	private ChangeListener<FirebasePatient> listener; 
 	private FirebasePatient selectedPatient;
 	private FirebaseDB firebase;
-	ObservableList<FirebasePatient> allowedPatients = FXCollections.observableArrayList();
-	int selectedIndex = 0;
+	private ObservableList<FirebasePatient> allowedPatients = FXCollections.observableArrayList();
+	private int selectedIndex = 0;
+	private Main gui;
 	
-	public PatientController(MainController controller, FirebaseDB firebase){
+	@SuppressWarnings({ "rawtypes", "unchecked"})
+	public PatientController(Main gui, FirebaseDB firebase){
 		this.firebase = firebase; 
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setController(this);
 		listener = new ChangeListener<FirebasePatient>() {
 			@Override
 			public void changed(ObservableValue<? extends FirebasePatient> observable, FirebasePatient oldValue, FirebasePatient newValue) {
-				//Check whether item is selected and set value of selected item to Label
 				changeyMethod();
 				System.out.println("wooha");
 			}
@@ -90,14 +91,12 @@ public class PatientController extends Pane{
 		TableColumn firstNameCol = new TableColumn("First Name");
 		 firstNameCol.setCellValueFactory(new Callback<CellDataFeatures<FirebasePatient, String>, ObservableValue<String>>() {
 		     public ObservableValue<String> call(CellDataFeatures<FirebasePatient, String> p) {
-		         // p.getValue() returns the Person instance for a particular TableView row
 		         return new ReadOnlyObjectWrapper(p.getValue().getName());
 		     }
 		  });
 		TableColumn emailCol = new TableColumn("Email");
 		emailCol.setCellValueFactory(new Callback<CellDataFeatures<FirebasePatient, String>, ObservableValue<String>>() {
 		     public ObservableValue<String> call(CellDataFeatures<FirebasePatient, String> p) {
-		         // p.getValue() returns the Person instance for a particular TableView row
 		         return new ReadOnlyObjectWrapper(p.getValue().getEmail());
 		     }
 		  });
@@ -124,7 +123,7 @@ public class PatientController extends Pane{
 	//	getStylesheets().add(ViewElement.class.getResource("ButtonsDemo.css").toExternalForm());
 	}
 	public void loadPatients(){
-		FirebaseProject proj = MainController.currentGUI.getCurrentProject();
+		FirebaseProject proj = gui.getCurrentProject();
 		if(proj == null)return;
 		String name = proj.getname();
 		firebase.getpatients().addListener(new ListChangeListener<FirebasePatient>(){
@@ -199,13 +198,6 @@ public class PatientController extends Pane{
 
 		Platform.runLater(new Runnable(){
 			public void run(){
-				System.out.println("OOOOOOOOH");
-				MainController.currentGUI.printHeight();
-
-					
-	//	if(selectedIndex > 0 || tblPatients.getSelectionModel().getSelectedItem() != null) 
-	//	{    
-			
 			TableViewSelectionModel<FirebasePatient> selectionModel = tblPatients.getSelectionModel();
 			if(selectionModel.getSelectedItem() != null){
 				selectedPatient = selectionModel.getSelectedItem();
@@ -283,8 +275,6 @@ public class PatientController extends Pane{
 		//	txtFname.setOnKeyReleased(event->selectedPatient.setFirstName(txtFname.getText()));
 
 			grpInfo.setDisable(false);
-			System.out.println("WWWAYYYYYY");
-			MainController.currentGUI.printHeight();
 
 		}
 			
