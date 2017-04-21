@@ -1,0 +1,208 @@
+.text-area .scroll-bar:vertical {
+	-fx-opacity: 0;
+}
+
+.blueprint {
+	-fx-background-image: url("paper.jpg");
+	-fx-background-repeat: repeat;
+	-fx-background-position: center center;
+	/*       -fx-effect: dropshadow( gaussian , rgba(0,0,128,0.5) , 30, 0.5, 0, 0 );*/
+}
+
+.if_control {
+	-fx-border-radius: 0 15 0 0;
+	-fx-background-radius: 0 15 0 0;
+	-fx-background-color: #3366ff;
+	-fx-background: #3366ff;
+	-fx-fill: #3366ff;
+}
+
+.if_control_join{
+	-fx-background-color: #3366ff;
+	-fx-background: #3366ff;
+	-fx-fill: #3366ff;
+}
+
+.action {
+	-fx-background-color: linear-gradient(#660198, #4B0082);
+	-fx-border-radius: 0 15 15 0;
+	-fx-background-radius: 0 15 15 0;
+}
+
+.action_join {
+	-fx-background-color: linear-gradient(#660198, #4B0082);
+}
+
+.action .label {
+	-fx-text-fill: white;
+	-fx-text-alignment: center;
+	-fx-alignment: center;
+}
+
+.action .choice-box .label {
+	-fx-text-fill: black;
+	-fx-font-size: 13px;
+}
+.addQuestionPane{
+	-fx-border-color: grey;
+    -fx-border-insets: 0;
+	-fx-border-width: 1;
+	-fx-border-style: dashed;
+}
+.drop_shadow {
+	-fx-effect: dropshadow(three-pass-box, #29befe, 15, 0.8, 0, 0);
+}
+.trigger {
+	-fx-background-color: #223768;
+	-fx-background: #223768;
+	-fx-fill: #223768;
+	-fx-border-radius: 10 10 0 0;
+	-fx-background-radius: 10 10 0 0;
+}
+
+.Numeric {
+	-fx-background-color: radial-gradient(center 50% -40%, radius 200%, #b8ee36 45%, #80c800 50%);
+	-fx-fill: radial-gradient(center 50% -40%, radius 200%, #b8ee36 45%, #80c800 50%);
+	-fx-border-color: darkgreen;
+	-fx-border-width: 0;
+		  -fx-text-fill: white;
+	  -fx-alignment: center;
+-fx-text-alignment: center;
+}
+
+.Numeric .label {
+	-fx-text-fill: black;
+	-fx-font-family: 'Calibri';
+	-fx-alignment: center;
+	-fx-font-weight: bold; 
+	-fx-padding: 0 15 0 15;
+	-fx-text-alignment: center;
+}
+
+.Boolean {
+	-fx-background-color: radial-gradient(center 50% -40%, radius 200%, #00FFFF 45%, #00BFFF 50%);
+	-fx-border-color: darkcyan;
+	-fx-border-width: 0;
+	-fx-border-radius: 20 20 20 20;
+	-fx-background-radius: 20 20 20 20;
+		  -fx-text-fill: white;
+	  -fx-alignment: center;
+-fx-text-alignment: center;
+}
+
+.Boolean .label {
+	-fx-text-fill: black;
+	-fx-font-weight: bold; 
+	-fx-font-family: 'Calibri';
+	-fx-alignment: center;
+	-fx-text-alignment: center;
+	
+}
+
+.Location {
+	-fx-background-color: radial-gradient(center 50% -40%, radius 200%, #e73827 45%, #f0796e 50%);
+	-fx-border-radius: 20 20 20 20;
+	-fx-border-width: 0;
+	-fx-background-radius: 20 20 20 20;
+		  -fx-text-fill: white;
+	  -fx-alignment: center;
+-fx-text-alignment: center;
+}
+
+.Location .label {
+	-fx-text-fill: black;
+	-fx-font-family: 'Calibri';
+	-fx-alignment: center;
+		-fx-font-weight: bold; 
+		-fx-padding: 0 15 0 15;
+	
+	-fx-text-alignment: center;
+}
+
+.Date {
+	-fx-border-radius: 20 20 20 20;
+	-fx-background-radius: 20 20 20 20;
+	-fx-background-color: #681077;
+	  -fx-text-fill: white;
+	  -fx-alignment: center;
+-fx-text-alignment: center;
+	}
+
+.Date . label{
+	-fx-font-family: 'Calibri';
+	-fx-alignment: center;
+		-fx-font-weight: bold; 
+		-fx-padding: 0 15 0 15;
+	-fx-text-alignment: center;
+		-fx-text-fill: white;
+	-fx-font-weight: bold;
+}
+
+.Time {
+	-fx-border-radius: 20 20 20 20;
+	-fx-background-radius: 20 20 20 20;
+	-fx-background-color: #223768;
+	  -fx-text-fill: white;
+	  -fx-alignment: center;
+-fx-text-alignment: center;
+	}
+
+.Time . label{
+	-fx-font-family: 'Calibri';
+	-fx-alignment: center;
+		-fx-font-weight: bold; 
+		-fx-padding: 0 15 0 15;
+	-fx-text-alignment: center;
+		-fx-text-fill: white;
+	-fx-font-weight: bold;
+}
+.timevar {
+	-fx-border-radius: 20 20 20 20;
+	-fx-background-radius: 20 20 20 20;
+	-fx-background-color: #223768;
+	-fx-effect: innershadow(three-pass-box, rgba(0, 0, 0, 0.7), 6, 0.0, 0, 2);
+	-fx-text-fill: white;
+	-fx-font-weight: bold;
+}
+.datevar {
+	-fx-border-radius: 20 20 20 20;
+	-fx-background-radius: 20 20 20 20;
+	-fx-background-color: #681077;
+	-fx-effect: innershadow(three-pass-box, rgba(0, 0, 0, 0.7), 6, 0.0, 0, 2);
+	-fx-text-fill: white;
+	-fx-font-weight: bold;
+}
+/*For choice boxes */
+.styled-select {
+	-fx-background-color: #223768;
+	-fx-background-insets: 0 0 -1 0, 0, 1;
+	-fx-border-radius: 15;
+	-fx-background-radius: 15;
+}
+
+.shadowy {
+	-fx-effect: innershadow(three-pass-box, rgba(0, 0, 0, 0.7), 6, 0.0, 0, 2);
+}
+
+.mycell {
+	-fx-text-fill: white;
+	-fx-font-size: 8px;
+	-fx-color: white;
+}
+
+.styled-select select {
+	-fx-text-fill: white;
+	-fx-background-color: transparent;
+	-fx-font-size: 12px;
+}
+
+.styled-select .list-view {
+	-fx-background-color: #223768;
+}
+
+.styled-select .list-cell {
+	-fx-font-size: 12px;
+	-fx-text-fill: white;
+	-fx-background-color: transparent;
+	-fx-padding: 1 5 2 5;
+}

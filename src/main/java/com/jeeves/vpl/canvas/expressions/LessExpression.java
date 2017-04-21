@@ -1,30 +1,20 @@
 package com.jeeves.vpl.canvas.expressions;
 
 import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
-import com.jeeves.vpl.firebase.FirebaseExpression;
+
+import static com.jeeves.vpl.Constants.*;
 
 public class LessExpression extends Expression  { // NO_UCD (unused code)
-	ExpressionReceiver var1;
-	ExpressionReceiver var2;
-
-public LessExpression() {
-	this(new FirebaseExpression());
-}
-	public LessExpression(FirebaseExpression data) {
-		super(data);
-		name.setValue("Is Less Than");
-		description = "Returns true if two expressions are equal, false otherwise";
-		addListeners();
-
-	}
+	public static final String NAME = "is this less than that?";
+	public static final String DESC = "returns true if the left number is less than the right number";
 	@Override
 	public void setup() {
-		this.varType = Expression.VAR_BOOLEAN;
-		operand.setText("<");
-		var1 = new ExpressionReceiver(Expression.VAR_NUMERIC);
-		var2 = new ExpressionReceiver(Expression.VAR_NUMERIC);
-		receivers.add(var1);
-		receivers.add(var2);
+		name = NAME;
+		description = DESC;
+		this.varType = VAR_BOOLEAN;
+		operand.setText("is less than");
+		receivers.add(new ExpressionReceiver(VAR_NUMERIC));
+		receivers.add(new ExpressionReceiver(VAR_NUMERIC));
 
 	}
 }

@@ -11,28 +11,25 @@ import com.google.firebase.database.IgnoreExtraProperties;
 /**
  * Created by Daniel on 12/07/16.
  */
+@SuppressWarnings("serial")
 @IgnoreExtraProperties
-public class FirebaseUI extends FirebaseElement implements Serializable{
+public class FirebaseUI extends FirebaseElement implements Serializable {
+	private String text;
+	@Exclude
+	private StringProperty textProperty = new SimpleStringProperty();
 
-    public String gettext() {
-        return text;
-    }
-    
-    @Exclude
-    private StringProperty textProperty = new SimpleStringProperty();
-    
-    @Exclude
-    public StringProperty getMyTextProperty(){
-    	return textProperty;
-    }
-    public void settext(String text){
-    	this.text = text;
+	public String gettext() {
+		return text;
+	}
 
-    	textProperty.set(text);
-    }
+	@Exclude
+	public StringProperty getMyTextProperty() {
+		return textProperty;
+	}
 
-
-    private String text;
-
+	public void settext(String text) {
+		this.text = text;
+		textProperty.set(text);
+	}
 
 }

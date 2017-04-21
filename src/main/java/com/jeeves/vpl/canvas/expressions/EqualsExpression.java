@@ -1,34 +1,21 @@
 package com.jeeves.vpl.canvas.expressions;
 
+import static com.jeeves.vpl.Constants.VAR_BOOLEAN;
+import static com.jeeves.vpl.Constants.VAR_NUMERIC;
+
 import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
-import com.jeeves.vpl.firebase.FirebaseExpression;
 
 public class EqualsExpression extends Expression  { // NO_UCD (unused code)
-	ExpressionReceiver var1;
-	ExpressionReceiver var2;
-
-	public EqualsExpression() {
-		this(new FirebaseExpression());
-	}
-	public EqualsExpression(FirebaseExpression data) {
-		super(data);
-		name.setValue("Is Equal");
-		description = "Returns true if two expressions are equal, false otherwise";
-		addListeners();
-		
-	}
+	public static final String NAME = "are this and that equal?";
+	public static final String DESC = "evaluates to true if the two contained expressions/attributes are equal";
 	@Override
 	public void setup() {
-		this.varType = Expression.VAR_BOOLEAN;
-		operand.setText("==");
-		var1 = new ExpressionReceiver(Expression.VAR_NUMERIC);
-		var2 = new ExpressionReceiver(Expression.VAR_NUMERIC);
-		receivers.add(var1);
-		receivers.add(var2);
+		name = NAME;
+		description = DESC;
+		this.varType = VAR_BOOLEAN;
+		operand.setText("is equal to");
+		receivers.add(new ExpressionReceiver(VAR_NUMERIC));
+		receivers.add(new ExpressionReceiver(VAR_NUMERIC));
 
-	}
-	@Override
-	public void addListeners() {
-		super.addListeners();
 	}
 }

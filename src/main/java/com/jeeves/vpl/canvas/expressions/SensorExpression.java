@@ -1,17 +1,19 @@
 package com.jeeves.vpl.canvas.expressions;
 
-
-	import javafx.beans.value.ChangeListener;
+import static com.jeeves.vpl.Constants.*;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.stage.Popup;
 
-import com.jeeves.vpl.Sensor;
 import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
 import com.jeeves.vpl.firebase.FirebaseExpression;
+
 public class SensorExpression extends Expression  { // NO_UCD (unused code)
+	public static final String NAME = "Does this sensor return that result?";
+	public static final String DESC = "Returns true if the specified sensor returns a particular result";
 		private ComboBox<String> cboSensor;
 		private ComboBox<String> cboClassifications;
 		private String sensorname;
@@ -42,7 +44,6 @@ public SensorExpression() {
 
 		public SensorExpression(FirebaseExpression data) {
 			super(data);
-			Sensor[] sensors = Sensor.sensors;
 			for(Sensor s : sensors){
 				cboSensor.getItems().add(s.getname());
 			}
@@ -60,8 +61,6 @@ public SensorExpression() {
 
 			cboClassifications.valueProperty().addListener(
 					(ChangeListener<String>) (arg0, arg1, arg2) -> model.getparams().put("result", arg2));
-			name.setValue("Sensor expression");
-			description = "Returns true if the selected sensor returns the selected value, false otherwise";
 			addListeners();
 
 		}
@@ -71,7 +70,6 @@ public SensorExpression() {
 			 params = model.getparams();
 			if(params.containsKey("selectedSensor")){
 			String sensorName = params.get("selectedSensor").toString();
-			Sensor[] sensors = Sensor.sensors;
 			for(Sensor s : sensors){
 				if(s.getname().equals(sensorName))
 					setSelectedSensor(s);
@@ -92,7 +90,9 @@ public SensorExpression() {
 		}
 		@Override
 		public void setup() {
-			this.varType = Expression.VAR_BOOLEAN;
+			name = NAME;
+			description = DESC;
+			this.varType = VAR_BOOLEAN;
 			operand.setText("returns");
 			box.getStyleClass().add(this.varType);
 
@@ -118,7 +118,7 @@ public SensorExpression() {
 				else if(classifications.length > 0)
 					cboClassifications.setValue((String)classifications[0]);
 				if(sensor.getname().equals("Location")){ //a merciless hack that I'll eventually fix
-					locReceiver = new ExpressionReceiver(Expression.VAR_LOCATION);
+					locReceiver = new ExpressionReceiver(VAR_LOCATION);
 					box.getChildren().remove(cboClassifications);
 					box.getChildren().add(locReceiver);
 				}

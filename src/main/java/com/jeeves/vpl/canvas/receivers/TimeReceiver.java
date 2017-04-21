@@ -1,18 +1,33 @@
 package com.jeeves.vpl.canvas.receivers;
 
+import java.net.URL;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Popup;
 
-public class TimeReceiver extends ExpressionReceiver{
+import com.jeeves.vpl.TextUtils;
+import com.jeeves.vpl.ViewElement;
 
+public class TimeReceiver extends ExpressionReceiver{
+	protected TextField text; 
 	public TimeReceiver(String receiveType) {
 		super(receiveType);
+	}
+	//
+	public TextField getTextField(){
+		return text;
 	}
 
 	public String getText() {
@@ -21,6 +36,31 @@ public class TimeReceiver extends ExpressionReceiver{
 			return Integer.toString(Integer.parseInt(hoursmins[0])*60 + Integer.parseInt(hoursmins[1]));
 	}
 	
+	public void defineHandlers(){
+		mentered = event -> {
+			if(handleEntered(event))
+			captureRect.setOpacity(0.7);
+		};
+		 mexited = event -> {
+			if(handleExited(event))
+			captureRect.setOpacity(0);
+		};
+		mreleased = event -> {
+			if(!handleReleased(event))return;
+			captureRect.setOpacity(0);
+			EventHandler<MouseEvent> removeEvent = new EventHandler<MouseEvent>(){
+				@Override
+				public void handle(MouseEvent arg0) {
+					ViewElement child = (ViewElement)arg0.getSource();
+					captureRect.setOpacity(0);
+					child.removeEventHandler(MouseEvent.MOUSE_PRESSED, this);
+					captureRect.setWidth(text.getPrefWidth());
+				}
+			};
+			((ViewElement)event.getGestureSource()).addEventHandler(MouseEvent.MOUSE_PRESSED, removeEvent);
+		};
+		
+	}
 	public void setTextFromActual(String hours, String mins){
 		int hrs,mns;
 		try{
@@ -48,16 +88,25 @@ public class TimeReceiver extends ExpressionReceiver{
 				text.setText(newtext);
 			}
 		}
+	public String padWithZeroes(int number){
+		if(number>9)
+			return Integer.toString(number);
+		else
+			return "0" + Integer.toString(number);
+	}
 	
+	@Override
 	public void setReceiveType(String type) {
-		captureRect.setFill(Color.TRANSPARENT);
+		this.receiveType = type;
+		captureRect.setFill(Color.DARKCYAN);
 		captureRect.setArcWidth(20);
 		captureRect.setArcHeight(20);
 		captureRect.setOpacity(0);
-
+		text = new TextField(); 
+		getChildren().add(text);
 		text.toBack();
-
-		text.setPrefWidth(20);
+		text.setMinHeight(20);
+		text.setPrefHeight(20);
 		text.getStyleClass().add("timevar");
 		captureRect.setOnMouseClicked(event -> {
 			text.requestFocus();
@@ -107,14 +156,92 @@ public class TimeReceiver extends ExpressionReceiver{
 			@Override
 			public void changed(ObservableValue<? extends String> arg0,
 					String arg1, String arg2) {
-				text.setPrefWidth(TextUtils.computeTextWidth(text.getFont(), text.getText(), 0.0D) + 15);
-				captureRect.setWidth(text.getPrefWidth() + 6);
-				value = text.getText();
+				text.setPrefWidth(TextUtils.computeTextWidth(text.getFont(), text.getText(), 0.0D) + 20);
+				captureRect.setWidth(text.getPrefWidth());
 			}	
 		});
 		text.setText("00:00");
 
 		autosize();
+	}
+	public class NewTimePane extends Pane{
+
+		//private Stage stage;
+		@FXML private TextField txtHours;
+		@FXML private TextField txtMins;
+		
+		public NewTimePane(){
+			FXMLLoader fxmlLoader = new FXMLLoader();
+			fxmlLoader.setController(this);
+			URL location = this.getClass().getResource("/PopupNewTime.fxml");
+			fxmlLoader.setLocation(location);
+			try {
+				Node root = (Node) fxmlLoader.load();
+				getChildren().add(root);	
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+		//	getStylesheets().add(ViewElement.class.getResource("Styles.css").toExternalForm());
+		
+			txtHours.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>(){
+
+				@Override
+				public void handle(KeyEvent arg0) {
+					String ch = arg0.getCharacter();
+					int x = 0;
+					try {
+						x = Integer.parseInt(ch);
+						int hours = Integer.parseInt(txtHours.getText() + x);
+						if(hours > 23){
+							arg0.consume();
+							return;
+						}
+					} catch (NumberFormatException e) {
+						arg0.consume();
+						return;
+					}
+
+				}
+				
+			});
+			txtHours.textProperty().addListener(listen->{
+				int hours = Integer.parseInt(txtHours.getText());
+				if(hours>2)
+					txtMins.requestFocus();
+			});
+			txtMins.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>(){
+
+				@Override
+				public void handle(KeyEvent arg0) {
+					if(txtMins.getText().length() == 2){
+						arg0.consume();
+						return;
+					}
+					String ch = arg0.getCharacter();
+					int x = 0;
+					try {
+						x = Integer.parseInt(ch);
+						int mins = Integer.parseInt(txtMins.getText() + x);
+						if(mins > 59){
+							arg0.consume();
+							return;
+						}
+					} catch (NumberFormatException e) {
+						arg0.consume();
+
+						return;
+					}				
+				}
+				
+			});
+		}
+		
+		public TextField getTxtHours(){
+			return txtHours;
+		}
+		public TextField getTxtMins(){
+			return txtMins;
+		}
 	}
 }
 

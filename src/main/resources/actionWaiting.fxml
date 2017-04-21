@@ -7,18 +7,18 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<Pane fx:id="pane" minHeight="30.0" prefHeight="30.0" styleClass="time_button" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<Pane fx:id="pane" minHeight="30.0" prefHeight="30.0" styleClass="action" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Pane layoutX="-14.0" layoutY="9.0" prefHeight="12.0" prefWidth="15.0" styleClass="time_buttonmark2" />
-      <HBox fx:id="hbox" alignment="CENTER_LEFT" fillHeight="false" layoutY="1.0" spacing="10.0">
+      <Pane layoutX="-14.0" layoutY="9.0" prefHeight="12.0" prefWidth="15.0" styleClass="action_join" />
+      <HBox fx:id="hbox" alignment="CENTER_LEFT" fillHeight="false" layoutY="1.0" spacing="5.0">
          <children>
-            <Label minWidth="-Infinity" prefHeight="27.0" prefWidth="73.0" text="wait for">
+            <Label minWidth="-Infinity" prefHeight="27.0" prefWidth="67.0" text="wait for">
                <font>
-                  <Font size="13.0" />
+                  <Font name="System Bold" size="13.0" />
                </font>
             </Label>
             <TextField fx:id="txtWaitTime" prefWidth="25.0" />
-            <ComboBox fx:id="cboWaitGranularity" prefHeight="11.0" stylesheets="@ButtonsDemo.css">
+            <ComboBox fx:id="cboWaitGranularity" prefHeight="11.0" stylesheets="@Styles.css">
                <styleClass>
                   <String fx:value="styled-select" />
                   <String fx:value="shadowy" />
@@ -27,6 +27,6 @@
       </HBox>
    </children>
    <stylesheets>
-      <URL value="@ButtonsDemo.css" />
+      <URL value="@Styles.css" />
    </stylesheets>
 </Pane>

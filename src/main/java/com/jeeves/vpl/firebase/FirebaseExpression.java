@@ -10,9 +10,16 @@ import com.google.firebase.database.IgnoreExtraProperties;
 /**
  * Created by Daniel on 10/06/15.
  */
+@SuppressWarnings("serial")
 @JsonTypeInfo(use=JsonTypeInfo.Id.MINIMAL_CLASS, include= JsonTypeInfo.As.PROPERTY, property="@class",defaultImpl = FirebaseExpression.class)
 @IgnoreExtraProperties
 public class FirebaseExpression extends FirebaseElement implements Serializable{
+	 private List<FirebaseExpression> variables = new ArrayList<FirebaseExpression>();
+	    private String vartype;
+	    private String value;
+	    private long index;
+	    private boolean isValue;
+	    private boolean isCustom;
 
   
 
@@ -45,14 +52,6 @@ public class FirebaseExpression extends FirebaseElement implements Serializable{
 		this.isValue = isValue;
 	}
 
-
-    private List<FirebaseExpression> variables = new ArrayList<FirebaseExpression>();
-    private String vartype;
-
-    private String value;
-    private long index;
-    private boolean isValue;
-
     public long getindex(){
         return index;
     }
@@ -60,7 +59,6 @@ public class FirebaseExpression extends FirebaseElement implements Serializable{
     public boolean getisValue(){
         return isValue;
     }
-    public boolean isCustom;
 
     public boolean getisCustom(){
         return isCustom;

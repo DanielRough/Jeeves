@@ -1,25 +1,26 @@
 package com.jeeves.vpl.survey.questions;
 
-import java.io.IOException;
+import static com.jeeves.vpl.survey.QuestionEditor.*;
+
 import java.util.Map;
 
-import com.jeeves.vpl.firebase.FirebaseQuestion;
-import com.jeeves.vpl.survey.QuestionView;
-import com.jeeves.vpl.survey.Survey;
-
-import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
+
+import com.jeeves.vpl.firebase.FirebaseQuestion;
 
 public class QuestionNumber extends QuestionView {
 
-	public QuestionView clone(){
-		return new QuestionNumber(super.getModel(),mySurvey);
-	}
-	public QuestionNumber(FirebaseQuestion model, Survey survey) {
-		super(model,survey);
-		setImage("/img/icons/imgnumeric.png");
-		setQuestionText("Numeric");
-		this.description = "User chooses a number";
+//	public QuestionView clone(){
+//		return new QuestionNumber(super.getModel());
+//	}
+//	public QuestionNumber(FirebaseQuestion model) {
+//		super(model);
+//		setImage("/img/icons/imgnumeric.png");
+//	//	setQuestionText("Numeric");
+//		//this.description = "User chooses a number";
+//	}
+	public String getLabel(){
+		return "Enter a numeric value into a text box";
 	}
 	public String getImagePath(){
 		return "/img/icons/imgnumeric.png";
@@ -49,32 +50,34 @@ public class QuestionNumber extends QuestionView {
 	}
 
 
-	@Override
-	public void showCheckQOpts() {
-		mySurvey.cboLessMore.setVisible(true);
-		mySurvey.txtNumAnswer.setVisible(true);
-		mySurvey.cboLessMore.getSelectionModel().clearSelection();
-		mySurvey.txtNumAnswer.clear();
-
-	}
-	@Override
-	public void handleCheckQ(String scon) {
-		System.out.println("scon is " + scon);
-
-		if(!scon.isEmpty()){
-			mySurvey.cboLessMore.getSelectionModel().select(scon);
-			System.out.println("scon is " + scon);
-			String[] components = scon.split(";");
-			mySurvey.cboLessMore.setValue(components[0]);
-			System.out.println("Components[0] is " + components[0]);
-			if(components.length>1)
-			mySurvey.txtNumAnswer.setText(components[1]);	
-		}
-		else{
-			mySurvey.cboLessMore.getSelectionModel().clearSelection();
-			mySurvey.txtNumAnswer.clear();
-		}
-		}
+//	@Override
+//	public void showCheckQOpts() {
+//		clearFields();
+//		cboLessMore.setVisible(true);
+//		txtNumAnswer.setVisible(true);
+//		cboLessMore.getSelectionModel().clearSelection();
+//		txtNumAnswer.clear();
+//	}
+//	@Override
+//	public void handleCheckQ(String scon) {
+//		System.out.println("scon is " + scon);
+//
+//		if(!scon.isEmpty()){
+//		//	cboLessMore.getSelectionModel().select(scon);
+//			System.out.println("scon is " + scon);
+//			String[] components = scon.split(";");
+//			addToCboLessMore(components[0]);
+//			System.out.println("Components[0] is " + components[0]);
+//			if(components.length>1)
+//				setNumAnswerProperty(components[1]);
+//		//	txtNumAnswer.setText(components[1]);	
+//		}
+//		else{
+////			cboLessMore.getSelectionModel().clearSelection();
+////			txtNumAnswer.clear();
+//			clearFields();
+//		}
+//		}
 
 	@Override
 	public void showEditOpts(Map<String,Object> opts) {

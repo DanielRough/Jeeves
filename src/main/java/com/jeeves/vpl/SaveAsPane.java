@@ -2,6 +2,7 @@ package com.jeeves.vpl;
 
 import java.net.URL;
 
+import com.jeeves.vpl.firebase.FirebaseDB;
 import com.jeeves.vpl.firebase.FirebaseProject;
 
 import javafx.event.Event;
@@ -15,7 +16,7 @@ import javafx.stage.Stage;
 
 public class SaveAsPane extends Pane{ // NO_UCD (use default)
 	private Stage stage;
-	private Main currentGUI;
+//	private Main currentGUI;
 	private FirebaseProject project;
 	@FXML private TextField txtSaveAsName;
 	@FXML private Button btnSave;
@@ -27,7 +28,7 @@ public class SaveAsPane extends Pane{ // NO_UCD (use default)
 		project.setname(txtSaveAsName.getText());
 		//currentGUI.tabCanvas.setText(txtSaveAsName.getText() + " Configuration");
 		firebase.addProject(oldname,project);
-		currentGUI.setNewProject(false);
+		//currentGUI.setNewProject(false);
 
 		stage.close();
 	}
@@ -39,18 +40,18 @@ public class SaveAsPane extends Pane{ // NO_UCD (use default)
 		this.firebase = firebase;
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setController(this);
-		URL location = this.getClass().getResource("/saveaspopup.fxml");
+		URL location = this.getClass().getResource("/PopupSaveAs.fxml");
 		fxmlLoader.setLocation(location);
 		try {
 			Node root = (Node) fxmlLoader.load();
 			getChildren().add(root);	
 			this.stage = stage;
-			this.currentGUI = gui;
+			//this.currentGUI = gui;
 			this.project = project;
 		} catch (Exception e) {
 				e.printStackTrace();
 			}
-	//	getStylesheets().add(ViewElement.class.getResource("ButtonsDemo.css").toExternalForm());
+	//	getStylesheets().add(ViewElement.class.getResource("Styles.css").toExternalForm());
 		txtSaveAsName.textProperty().addListener(listen->{if(txtSaveAsName.getText().equals(""))btnSave.setDisable(true);else btnSave.setDisable(false);});
 	}
 }

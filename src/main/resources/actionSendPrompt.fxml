@@ -10,18 +10,18 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<Pane fx:id="pane" maxHeight="30.0" minHeight="30.0" prefHeight="30.0" styleClass="time_button" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<Pane fx:id="pane" maxHeight="30.0" minHeight="30.0" prefHeight="30.0" styleClass="action" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <children>
-    <Label alignment="CENTER" contentDisplay="CENTER" layoutY="3.0" prefHeight="26.0" prefWidth="149.0" text="send user a prompt:" textAlignment="CENTER" textFill="BLACK" wrapText="true">
+    <Label alignment="CENTER" contentDisplay="CENTER" layoutY="3.0" prefHeight="26.0" prefWidth="101.0" text="send prompt:" textAlignment="CENTER" textFill="BLACK" wrapText="true">
       <font>
-        <Font size="13.0" fx:id="x1" />
+        <Font name="System Bold" size="13.0" fx:id="x1" />
       </font>
     </Label>
-      <Pane layoutX="-14.0" layoutY="9.0" prefHeight="12.0" prefWidth="15.0" styleClass="time_buttonmark2" />
-      <TextField fx:id="txtPrompt" layoutX="139.0" layoutY="5.0" maxHeight="25.0" prefHeight="25.0" promptText="Enter prompt text here" styleClass="textyfield" />
-      <TextArea fx:id="smsText" layoutX="139.0" layoutY="5.0" prefHeight="112.0" prefWidth="83.0" stylesheets="@ButtonsDemo.css" visible="false" wrapText="true" />
+      <Pane layoutX="-14.0" layoutY="9.0" prefHeight="12.0" prefWidth="15.0" styleClass="action_join" />
+      <TextField fx:id="txtPrompt" layoutX="99.0" layoutY="2.0" maxHeight="20.0" prefHeight="25.0" promptText="Enter prompt text here" />
+      <TextArea fx:id="smsText" layoutX="139.0" layoutY="5.0" prefHeight="112.0" prefWidth="83.0" stylesheets="@Styles.css" visible="false" wrapText="true" />
   </children>
   <stylesheets>
-    <URL value="@ButtonsDemo.css" />
+    <URL value="@Styles.css" />
   </stylesheets>
 </Pane>

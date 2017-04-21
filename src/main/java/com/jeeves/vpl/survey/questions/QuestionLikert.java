@@ -5,15 +5,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.jeeves.vpl.survey.QuestionEditor.*;
+
 import com.jeeves.vpl.firebase.FirebaseQuestion;
-import com.jeeves.vpl.survey.QuestionView;
-import com.jeeves.vpl.survey.Survey;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -22,15 +23,16 @@ import javafx.scene.layout.Pane;
 
 public class QuestionLikert extends QuestionView {
 	
-	public QuestionView clone(){
-		return new QuestionLikert(super.getModel(),mySurvey);
-	}
-	public QuestionLikert(FirebaseQuestion model,Survey survey) {
-		super(model,survey);
-		setImage("/img/icons/imgscale.png");
-		setQuestionText("Likert Scale");
-		this.description = "User answers by selecting from a scale";
-	}
+//	public QuestionView clone(){
+//		return new QuestionLikert(super.getModel());
+//	}
+//	
+//	public QuestionLikert(FirebaseQuestion model) {
+//		super(model);
+//		setImage("/img/icons/imgscale.png");
+////		setQuestionText("Likert Scale");
+//	//	this.description = "User answers by selecting from a scale";
+//	}
 	@FXML private RadioButton rdioButton5;
 	@FXML private RadioButton rdioButton7;
 	@FXML private TextField txtLikert1;
@@ -47,10 +49,13 @@ public class QuestionLikert extends QuestionView {
 	public String getImagePath(){
 		return "/img/icons/imgscale.png";
 	}
+	public String getLabel(){
+		return "Select from a Likert Scale";
+	}
 	public void loadOptions(){
 		FXMLLoader surveyLoader = new FXMLLoader();
 		surveyLoader.setController(this);
-		surveyLoader.setLocation(getClass().getResource("/scaleopts.fxml"));
+		surveyLoader.setLocation(getClass().getResource("/OptionsLikert.fxml"));
 		 try {
 			 optionsPane = (Pane) surveyLoader.load();
 			 addEventHandlers();
@@ -100,27 +105,26 @@ public class QuestionLikert extends QuestionView {
 			field.textProperty().addListener(change->handleUpdateScale());
 		}
 	}
-
-	@Override
-	public void showCheckQOpts() {
-		mySurvey.cboLessMore.setVisible(true);
-		mySurvey.txtNumAnswer.setVisible(true);
-		mySurvey.cboLessMore.getSelectionModel().clearSelection();
-		mySurvey.txtNumAnswer.clear();
-	}
-	@Override
-	public void handleCheckQ(String scon) {
-
-		if(!scon.isEmpty()){
-		String[] components = scon.split(";");
-		mySurvey.cboLessMore.setValue(components[0]);
-		mySurvey.txtNumAnswer.setText(components[1]);			
-		}
-		else{
-			mySurvey.cboLessMore.getSelectionModel().clearSelection();
-			mySurvey.txtNumAnswer.clear();
-		}
-		}
+//
+//	@Override
+//	public void showCheckQOpts() {
+//		cboLessMore.setVisible(true);
+//		txtNumAnswer.setVisible(true);
+//		clearFields();
+//	}
+//	@Override
+//	public void handleCheckQ(String scon) {
+//
+//		if(!scon.isEmpty()){
+//		String[] components = scon.split(";");
+//		cboLessMore.setValue(components[0]);
+//		txtNumAnswer.setText(components[1]);			
+//		}
+//		else{
+//			clearFields();
+//
+//		}
+//		}
 	private void handleUpdateScale(){
 		String number = rdioButton5.isSelected() ? "5" : "7";
 		Map<String,Object> qScaleVals = new HashMap<String,Object>();
@@ -151,6 +155,7 @@ public class QuestionLikert extends QuestionView {
 				else if(number.equals("7"))rdioButton7.setSelected(true);
 			}
 			if(opts.containsKey("labels")){
+				@SuppressWarnings("unchecked")
 				ArrayList<String> labels = (ArrayList<String>)opts.get("labels");
 				int count = 0;
 				for(String label : labels){
@@ -172,4 +177,6 @@ public class QuestionLikert extends QuestionView {
 		// getting
 		// silly
 	}
+
+
 }

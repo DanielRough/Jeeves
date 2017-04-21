@@ -1,6 +1,4 @@
 package com.jeeves.vpl.canvas.uielements;
-
-import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -13,10 +11,12 @@ import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.firebase.FirebaseUI;
 
 public class UIButton extends UIElement{ // NO_UCD (unused code)
+	public static final String NAME = "button";
+	public static final String DESC = "A button that the patient can press";
 	@FXML private StackPane panePane;
 	@FXML private Button btnButton;
 	@Override
-	public ViewElement getInstance() {
+	public ViewElement<FirebaseUI> getInstance() {
 		return this;
 	}
 
@@ -24,17 +24,16 @@ public class UIButton extends UIElement{ // NO_UCD (unused code)
 	public Node[] getWidgets() {
 		return new Node[]{btnButton};
 	}
-	
-
-	public UIButton(){
-		this(new FirebaseUI());
-	}
-	public UIButton(FirebaseUI data){
-		super(data);
-		this.name.setValue("BUTTON"); 
-		btnButton.setMaxWidth(215);
-		addListeners();
-	}
+//	
+//
+//	public UIButton(){
+//		this(new FirebaseUI());
+//	}
+//	public UIButton(FirebaseUI data){
+//		super(data);
+//		btnButton.setMaxWidth(215);
+//		addListeners();
+//	}
 
 	public String getText(){
 		return btnButton.getText();
@@ -47,7 +46,7 @@ public class UIButton extends UIElement{ // NO_UCD (unused code)
 
 	@Override
 	public String getViewPath() {
-		return String.format("/uiButton.fxml", this.getClass().getSimpleName());
+		return String.format("/UIButton.fxml", this.getClass().getSimpleName());
 	}
 	
 	public void setText(String text){
@@ -59,10 +58,10 @@ public class UIButton extends UIElement{ // NO_UCD (unused code)
 	public Control getChild() {
 		return btnButton;
 	}
-
-	public StringProperty getTextProperty(){
-		return btnButton.textProperty();
-	}
+//
+//	public StringProperty getTextProperty(){
+//		return btnButton.textProperty();
+//	}
 	@Override
 	protected void addListeners() {
 		super.addListeners();
@@ -75,5 +74,11 @@ public class UIButton extends UIElement{ // NO_UCD (unused code)
 			}
 			
 		});
+	}
+
+	public void fxmlInit(){
+		super.fxmlInit();
+		name = NAME;
+		description = DESC;
 	}
 }

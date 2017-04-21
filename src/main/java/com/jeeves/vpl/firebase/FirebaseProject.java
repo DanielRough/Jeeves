@@ -15,25 +15,40 @@ import com.jeeves.vpl.survey.Survey;
 /**
  * Created by Daniel on 28/04/2016.
  */
+
+@SuppressWarnings({ "serial", "rawtypes" })
 @IgnoreExtraProperties
-public class FirebaseProject implements Serializable{
-
-    public String getdescription() {
-        return description;
-    }
+public class FirebaseProject implements Serializable {
 
 
-    public String getname() {
-        return name;
-    }
+	private String description;
+	private String name;
+	private List<FirebaseSurvey> surveys = new ArrayList<>();
+	private List<FirebaseTrigger> triggers = new ArrayList<>();
+	private List<FirebaseUI> uidesign = new ArrayList<>();
+	private String type;
+	private List<FirebaseVariable> variables = new ArrayList<>();
+	private List<FirebaseExpression> expressions = new ArrayList<>();
+	private String researcherno;
+	private long maxNotifications;
+	
+	public String getdescription() {
+		return description;
+	}
 
-    public void setname(String name){
-    	this.name = name;
-    }
-    public String gettype() {
-        return type;
-    }
-    public void add(ViewElement elem){
+	public String getname() {
+		return name;
+	}
+
+	public void setname(String name) {
+		this.name = name;
+	}
+
+	public String gettype() {
+		return type;
+	}
+
+	public void add(ViewElement elem) {
 		FirebaseElement model = elem.getModel();
 		if (elem instanceof Trigger)
 			gettriggers().add((FirebaseTrigger) model);
@@ -45,10 +60,9 @@ public class FirebaseProject implements Serializable{
 			getvariables().add((FirebaseVariable) model);
 		else if (elem instanceof Survey)
 			getsurveys().add((FirebaseSurvey) model);
-    }
+	}
 
-    
-    public void remove(ViewElement elem){
+	public void remove(ViewElement elem) {
 		FirebaseElement model = elem.getModel();
 		if (elem instanceof Trigger)
 			gettriggers().remove((FirebaseTrigger) model);
@@ -60,32 +74,42 @@ public class FirebaseProject implements Serializable{
 			getvariables().remove((FirebaseVariable) model);
 		else if (elem instanceof Survey)
 			getsurveys().remove((FirebaseSurvey) model);
-    }
-    public String getresearcherno() { return researcherno; }
-    public void setresearcherno(String researcherno){ this.researcherno = researcherno;}
-    private String description;
-    String name;
-    private List<FirebaseSurvey> surveys = new ArrayList<>();
-    private List<FirebaseTrigger> triggers = new ArrayList<>();
-    private List<FirebaseUI> uidesign = new ArrayList<>();
-    String type;
-    private List<FirebaseVariable> variables = new ArrayList<>();
-    private List<FirebaseExpression> expressions = new ArrayList<>();
+	}
 
-    String researcherno;
-    long maxNotifications;
+	public String getresearcherno() {
+		return researcherno;
+	}
 
-    public FirebaseProject() {
-        // empty default constructor, necessary for Firebase to be able to deserialize blog posts
-    }
-    public List<FirebaseSurvey> getsurveys() {
-        return surveys;
-    }
-    public List<FirebaseTrigger> gettriggers() {
-        return triggers;
-    }
-    public List<FirebaseVariable> getvariables() { return variables; }
-    public List<FirebaseUI> getuidesign(){ return uidesign; }
-    public List<FirebaseExpression> getexpressions() { return expressions; }
-    public long getmaxNotifications(){ return maxNotifications;}
+	public void setresearcherno(String researcherno) {
+		this.researcherno = researcherno;
+	}
+
+	public FirebaseProject() {
+		// empty default constructor, necessary for Firebase to be able to
+		// deserialize blog posts
+	}
+
+	public List<FirebaseSurvey> getsurveys() {
+		return surveys;
+	}
+
+	public List<FirebaseTrigger> gettriggers() {
+		return triggers;
+	}
+
+	public List<FirebaseVariable> getvariables() {
+		return variables;
+	}
+
+	public List<FirebaseUI> getuidesign() {
+		return uidesign;
+	}
+
+	public List<FirebaseExpression> getexpressions() {
+		return expressions;
+	}
+
+	public long getmaxNotifications() {
+		return maxNotifications;
+	}
 }

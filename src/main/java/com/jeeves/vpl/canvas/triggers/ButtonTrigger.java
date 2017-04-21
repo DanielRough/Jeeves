@@ -1,7 +1,5 @@
 package com.jeeves.vpl.canvas.triggers;
 
-import java.util.Map;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -11,7 +9,6 @@ import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ToggleGroup;
 
-import com.jeeves.vpl.Main;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
 import com.jeeves.vpl.firebase.FirebaseUI;
 
@@ -23,7 +20,8 @@ import com.jeeves.vpl.firebase.FirebaseUI;
  * @author Daniel
  */
 public class ButtonTrigger extends Trigger {  // NO_UCD (unused code)
-	
+	public static final String NAME = "On app button pressed";
+	public static final String DESC = "Schedule actions to take place when patient presses an app button";
 	@FXML private ComboBox<String> cboButton;
 	String value;
 	final ToggleGroup group = new ToggleGroup();
@@ -31,7 +29,11 @@ public class ButtonTrigger extends Trigger {  // NO_UCD (unused code)
 		return new Node[]{cboButton};
 	}
 
-	
+	public void fxmlInit(){
+		super.fxmlInit();
+		name = NAME;
+		description = DESC;
+	}
 	public void addListeners() {
 		super.addListeners();
 		cboButton.getItems().clear();
@@ -47,10 +49,10 @@ public class ButtonTrigger extends Trigger {  // NO_UCD (unused code)
 			//	cboButton.setValue("");
 				for(FirebaseUI button : uielements){
 				if(button.gettext() == null)continue;
-				if(button.getname().equals("LABEL"))continue; //We don't count labels
+			//	if(button.getname().equals("LABEL"))continue; //We don't count labels
 				cboButton.getItems().add(button.gettext());
 				
-				System.out.println("A value is " + value);
+			//	System.out.println("A value is " + value);
 				if(button.gettext().equals(value)){
 					cboButton.setValue(value); //reset it if the original survey we had selected didn't change
 					params.put("selectedButton", value);
@@ -70,17 +72,15 @@ public class ButtonTrigger extends Trigger {  // NO_UCD (unused code)
 		});
 	}
 
-	public ButtonTrigger() {
-		this(new FirebaseTrigger());
-	}
-	public ButtonTrigger(FirebaseTrigger data) {
-		super(data);
-		name.setValue("Button Trigger");
-		description = "Initiate actions when a user presses a UI button";
-		if(cboButton.getItems()!= null && cboButton.getItems().size()>0)
-			cboButton.getSelectionModel().clearAndSelect(0);
-		addListeners();
-	}
+//	public ButtonTrigger() {
+//		this(new FirebaseTrigger());
+//	}
+//	public ButtonTrigger(FirebaseTrigger data) {
+//		super(data);
+//		if(cboButton.getItems()!= null && cboButton.getItems().size()>0)
+//			cboButton.getSelectionModel().clearAndSelect(0);
+//		addListeners();
+//	}
 	
 	@Override
 	public void setData(FirebaseTrigger model) {
@@ -96,6 +96,6 @@ public class ButtonTrigger extends Trigger {  // NO_UCD (unused code)
 	}
 	@Override
 	public String getViewPath() {
-		return String.format("/ButtonTrigger.fxml", this.getClass().getSimpleName());
+		return String.format("/TriggerButton.fxml", this.getClass().getSimpleName());
 	}
 }

@@ -11,7 +11,11 @@ import javafx.scene.control.ComboBox;
 import com.jeeves.vpl.canvas.receivers.DateReceiver;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 
+import static com.jeeves.vpl.Constants.*;
+
 public class TimeExpression extends Expression { // NO_UCD (unused code)
+	public static final String NAME = "Are we at this time right now?";
+	public static final String DESC = "Returns true if the current time is within the specified bounds of the expression time";
 	private ComboBox<String> cboTimeDiff;
 	private ComboBox<String> cboBeforeAfter;
 	private DateReceiver exprTimeVar;
@@ -55,22 +59,14 @@ public void addListeners(){
 			model.getparams().put("beforeAfter", arg2);			
 		}
 	});
-	exprTimeVar.text.textProperty().addListener(new ChangeListener<String>(){
-
-		@Override
-		public void changed(ObservableValue<? extends String> arg0,
-				String arg1, String arg2) {
-			model.getparams().put("timeVar", arg2);
-		}
-		
-	});
-//	exprTimeVar.getChildElements().addListener(new ListChangeListener<ViewElement>(){
+	
+	//DJR again, don't need this listener here, the expression knows its own time and that should be enough
+//	exprTimeVar.text.textProperty().addListener(new ChangeListener<String>(){
 //
 //		@Override
-//		public void onChanged(
-//				javafx.collections.ListChangeListener.Change<? extends ViewElement> arg0) {
-//			model.getparams().put("timevar", exprTimeVar.getChildElements().get(0));
-//			
+//		public void changed(ObservableValue<? extends String> arg0,
+//				String arg1, String arg2) {
+//			model.getparams().put("timeVar", arg2);
 //		}
 //		
 //	});
@@ -81,10 +77,14 @@ public void fxmlInit(){
 	cboTimeDiff = new ComboBox<String>();
 	cboBeforeAfter = new ComboBox<String>();
 	cboTimeDiff.getStyleClass().addAll("shadowy","styled-select");
-	exprTimeVar = new DateReceiver(Expression.VAR_CLOCK);
+	exprTimeVar = new DateReceiver(VAR_DATE);
+	cboTimeDiff.getItems().addAll("1 month","1 week","1 day");
+	cboBeforeAfter.getItems().addAll("before","after");
+	cboTimeDiff.getSelectionModel().clearAndSelect(0);
+	cboBeforeAfter.getSelectionModel().clearAndSelect(0);
 	styleTextCombo(cboBeforeAfter);
 
-	setup();
+//	setup();
 	box.getChildren().clear();
 	box.getChildren().addAll(cboTimeDiff,cboBeforeAfter,exprTimeVar);
 	box.setSpacing(20);
@@ -92,24 +92,16 @@ public void fxmlInit(){
 }
 public TimeExpression(FirebaseExpression data) {
 	super(data);
-	name.setValue("Date expression");
-	description = "Returns true if the time falls within this date";
 	addListeners();
 
 }
 	@Override
 	public void setup() {
-		this.varType = Expression.VAR_BOOLEAN;
+		name = NAME;
+		description = DESC;
+		this.varType = VAR_BOOLEAN;
 		operand.setText("is");
 		box.getStyleClass().add(this.varType);
-		cboTimeDiff.getItems().addAll("1 month","1 week","1 day");
-		cboBeforeAfter.getItems().addAll("before","after");
-		cboTimeDiff.getSelectionModel().clearAndSelect(0);
-		cboBeforeAfter.getSelectionModel().clearAndSelect(0);
-	}
-
-	@Override
-	public void updatePane() {
 
 	}
 

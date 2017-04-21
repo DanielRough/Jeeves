@@ -1,20 +1,36 @@
 package com.jeeves.vpl.canvas.receivers;
 
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import com.jeeves.vpl.TextUtils;
+import com.jeeves.vpl.ViewElement;
+
 public class DateReceiver extends ExpressionReceiver{
 
+	protected TextField text; 
 
 	public DateReceiver(String receiveType) {
 		super(receiveType);
@@ -29,15 +45,20 @@ public class DateReceiver extends ExpressionReceiver{
 		}
 	
 	public void setReceiveType(String type) {
-		captureRect.setFill(Color.TRANSPARENT);
+		this.receiveType = type;
+
+		captureRect.setFill(Color.DARKCYAN);
 		captureRect.setArcWidth(20);
 		captureRect.setArcHeight(20);
 		captureRect.setOpacity(0);
-
+//
+		text = new TextField(); 
+		getChildren().add(text);
 		text.toBack();
-
 		text.setPrefWidth(20);
-		text.getStyleClass().add("timevar");
+		text.setMinHeight(20);
+		text.setPrefHeight(20);
+		text.getStyleClass().add("datevar");
 		captureRect.setOnMousePressed(event -> {
 			event.consume();
 			Stage stage = new Stage(StageStyle.UNDECORATED);
@@ -57,9 +78,9 @@ public class DateReceiver extends ExpressionReceiver{
 			@Override
 			public void changed(ObservableValue<? extends String> arg0,
 					String arg1, String arg2) {
-				text.setPrefWidth(TextUtils.computeTextWidth(text.getFont(), text.getText(), 0.0D) + 15);
-				captureRect.setWidth(text.getPrefWidth() + 6);
-				value = text.getText();
+				text.setPrefWidth(TextUtils.computeTextWidth(text.getFont(), text.getText(), 0.0D) + 20);
+				captureRect.setWidth(text.getPrefWidth());
+				//value = text.getText();
 			}	
 		});
 		DateFormat df = new SimpleDateFormat("dd/MM/yy");
@@ -67,6 +88,63 @@ public class DateReceiver extends ExpressionReceiver{
 		text.setText(df.format(dateobj));
 
 		autosize();
+	}
+	public void defineHandlers(){
+		mentered = event -> {
+			if(handleEntered(event))
+			captureRect.setOpacity(0.7);
+		};
+		 mexited = event -> {
+			if(handleExited(event))
+			captureRect.setOpacity(0);
+		};
+		mreleased = event -> {
+			if(!handleReleased(event))return;
+			captureRect.setOpacity(0);
+			EventHandler<MouseEvent> removeEvent = new EventHandler<MouseEvent>(){
+				@Override
+				public void handle(MouseEvent arg0) {
+					ViewElement child = (ViewElement)arg0.getSource();
+					captureRect.setOpacity(0);
+					child.removeEventHandler(MouseEvent.MOUSE_PRESSED, this);
+					captureRect.setWidth(text.getPrefWidth());
+				}
+			};
+			((ViewElement)event.getGestureSource()).addEventHandler(MouseEvent.MOUSE_PRESSED, removeEvent);
+		};
+		
+	}
+	public class NewSingleDatePane extends Pane{
+		public Stage stage;
+		public TextField texty;
+		@FXML private DatePicker pckPicker;
+		public NewSingleDatePane(Stage stage, TextField texty){
+			FXMLLoader fxmlLoader = new FXMLLoader();
+			fxmlLoader.setController(this);
+			URL location = getClass().getResource("/PopupNewDate.fxml");
+			fxmlLoader.setLocation(location);
+			try {
+				Node root = (Node) fxmlLoader.load();
+				getChildren().add(root);	
+				this.stage = stage;
+				this.texty = texty;
+				pckPicker.setValue(LocalDate.parse(texty.getText(),DateTimeFormatter.ofPattern("dd/MM/yy")));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			//getStylesheets().add(ViewElement.class.getResource("Styles.css").toExternalForm());
+		}
+		
+		@FXML
+		public void closePane(Event e){
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
+			if(pckPicker.getValue() != null)
+			{
+			String formattedString = pckPicker.getValue().format(formatter);
+			texty.setText(formattedString);
+			}
+			stage.hide();
+		}
 	}
 }
 

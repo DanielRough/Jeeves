@@ -1,7 +1,4 @@
 package com.jeeves.vpl.canvas.triggers;
-
-import java.util.Map;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -13,12 +10,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.stage.Popup;
 
-import com.jeeves.vpl.Sensor;
-import com.jeeves.vpl.canvas.expressions.Expression;
 import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
+import com.jeeves.vpl.canvas.receivers.TimeReceiver;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
 
+import static com.jeeves.vpl.Constants.*;
+
 public class SensorTrigger extends Trigger { // NO_UCD (unused code)
+	public static final String NAME = "On sensor result";
+	public static final String DESC = "Schedule actions to take place when a phone sensor returns a particular result";
 	@FXML protected Button btnLeft;
 	@FXML protected Button btnRight;
 	@FXML protected ComboBox<String> cboSensor;
@@ -27,22 +27,26 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 	@FXML protected ImageView imgSensorImage;
 	@FXML protected HBox hboxBox;
 	private ExpressionReceiver locReceiver;
-	public boolean manualChange = false;
-	protected String result = "";
-
 	ChangeListener<String> sensorlistener;
 	Popup pop = new Popup();
 	public Node[] getWidgets(){
 		return new Node[]{cboSensor,cboClassifications};
 	}
-
-	public SensorTrigger() {
-		this(new FirebaseTrigger());
+//
+//	public SensorTrigger() {
+//		this(new FirebaseTrigger());
+//	}
+	public void fxmlInit(){
+		super.fxmlInit();
+		name = NAME;
+		description = DESC;
+		for(Sensor s : sensors){
+		cboSensor.getItems().add(s.getname());
+	}
 	}
 	public void addListeners(){
 		super.addListeners();
-		Sensor[] sensors = Sensor.sensors;
-
+		
 		cboSensor.valueProperty().addListener(new ChangeListener<String>(){
 			@Override
 			public void changed(ObservableValue<? extends String> arg0,
@@ -63,7 +67,7 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 	}
 	@Override
 	public String getViewPath() {
-		return String.format("/SensorTrigger.fxml", this.getClass().getSimpleName());
+		return String.format("/TriggerSensor.fxml", this.getClass().getSimpleName());
 	}
 
 	@Override
@@ -76,9 +80,7 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 			sensorName = params.get("selectedSensor").toString();
 		else 
 			return;
-		locReceiver= new ExpressionReceiver(Expression.VAR_NUMERIC);
-
-		Sensor[] sensors = Sensor.sensors;
+		locReceiver= new ExpressionReceiver(VAR_NUMERIC);
 		for(Sensor s : sensors){
 			if(s.getname().equals(sensorName)){
 				setSelectedSensor(s);
@@ -93,23 +95,21 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 		setResult(result);
 	}
 
-	public SensorTrigger(FirebaseTrigger data) {
-		super(data);
-		name.setValue("Sensor Trigger");
-		description = "Execute actions based on externally sensed values";
-		cboSensor.setOnMouseClicked(event->manualChange = true);
-		styleTextCombo(cboClassifications);
-		cboClassifications.getStyleClass().add("choice-box-menu-item");
-		Sensor[] sensors = Sensor.sensors;
-		for(Sensor s : sensors){
-			cboSensor.getItems().add(s.getname());
-		}
-		addListeners();
-
-	}
+//	public SensorTrigger(FirebaseTrigger data) {
+//		super(data);
+////		cboSensor.setOnMouseClicked(event->manualChange = true);
+//		styleTextCombo(cboClassifications);
+//		cboClassifications.getStyleClass().add("choice-box-menu-item");
+//		//Sensor[] sensors = Sensor.sensors;
+//		for(Sensor s : sensors){
+//			cboSensor.getItems().add(s.getname());
+//		}
+//		addListeners();
+//
+//	}
 	protected void setResult(String result) {
 		if(result != null && !result.equals("")){
-			this.result = result;
+	//		this.result = result;
 			cboClassifications.setValue(result);
 		}
 	}
@@ -127,7 +127,7 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 			else if(classifications.length > 0)
 					cboClassifications.setValue((String)classifications[0]);
 			if(locReceiver == null)
-				locReceiver= new ExpressionReceiver(Expression.VAR_NUMERIC);
+				locReceiver= new ExpressionReceiver(VAR_NUMERIC);
 
 			if(sensor.getname().equals("Location") && !hboxBox.getChildren().contains(locReceiver)){ //a merciless hack that I'll eventually fix
 				hboxBox.getChildren().remove(cboClassifications);
@@ -138,5 +138,6 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 				hboxBox.getChildren().remove(locReceiver);
 			}
 	}
+
 
 }

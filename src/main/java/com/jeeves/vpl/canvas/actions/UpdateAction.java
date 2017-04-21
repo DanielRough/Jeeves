@@ -1,7 +1,5 @@
 package com.jeeves.vpl.canvas.actions;
 
-import java.util.Map;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -20,7 +18,12 @@ import com.jeeves.vpl.canvas.receivers.VariableReceiver;
 import com.jeeves.vpl.firebase.FirebaseAction;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 
+import static com.jeeves.vpl.Constants.*;
+
+@SuppressWarnings("rawtypes")
 public class UpdateAction extends Action { // NO_UCD (unused code)
+	public static final String NAME = "Update patient attribute";
+	public static final String DESC = "Set one of the patient's attributes to a new value";
 	@FXML
 	private HBox hbox;
 	private Expression value;
@@ -34,31 +37,31 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 	private RadioButton trueButton;
 	@FXML
 	private RadioButton falseButton;
-
-	public UpdateAction() {
-		this(new FirebaseAction());
-	}
-	public UpdateAction(FirebaseAction data) {
-		super(data);
-		this.name.setValue("Update User Attribute");
-		this.description = "Set the value of an attribute of a user";
-		
-		addListeners();
-	}
+//
+//	public UpdateAction() {
+//		this(new FirebaseAction());
+//	}
+//	public UpdateAction(FirebaseAction data) {
+//		super(data);
+//		
+//		addListeners();
+//	}
 	public Node[] getWidgets() {
 		return new Node[] { valuereceiver, variablereceiver };
 	}
 
 	public void fxmlInit(){
 		super.fxmlInit();
-		variablereceiver = new VariableReceiver(Expression.VAR_ANY);
+		name = NAME;
+		description = DESC;
+		variablereceiver = new VariableReceiver(VAR_ANY);
 		hbox.getChildren().add(1, variablereceiver);
-		valuereceiver = new ExpressionReceiver(Expression.VAR_NONE);
+		valuereceiver = new ExpressionReceiver(VAR_NONE);
 		hbox.getChildren().add(3, valuereceiver);
 
 		hbox.setSpacing(5);
-		hbox.setPadding(new Insets(5, 5, 5, 5));
-		hbox.getStyleClass().remove("time_button");
+		//hbox.setPadding(new Insets(5, 5, 5, 5));
+		hbox.getStyleClass().remove("action");
 
 		trueButton.setToggleGroup(group);
 		falseButton.setToggleGroup(group);
@@ -75,7 +78,7 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 			variable = ((Expression) child);
 			model.getvars().clear();
 			model.getvars().add(0,variable.getModel());
-			if (variable.varType.equals(Expression.VAR_BOOLEAN)) {
+			if (variable.getVarType().equals(VAR_BOOLEAN)) {
 				hbox.getChildren().removeAll(trueButton, falseButton, valuereceiver);
 				hbox.getChildren().addAll(trueButton, falseButton);
 				trueButton.setToggleGroup(group);
@@ -84,22 +87,23 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 				hbox.getChildren().removeAll(valuereceiver, trueButton, falseButton);
 				hbox.getChildren().add(valuereceiver);
 			}
-			variablereceiver.setReceiveType(variable.varType);
-			valuereceiver.setReceiveType(variable.varType);
+			variablereceiver.setReceiveType(variable.getVarType());
+			valuereceiver.setReceiveType(variable.getVarType());
 
 		} else {
 			variable = (null);
-			valuereceiver.setReceiveType(Expression.VAR_NONE);
+			valuereceiver.setReceiveType(VAR_NONE);
 			hbox.getChildren().remove(variablereceiver);
-			variablereceiver = new VariableReceiver(Expression.VAR_ANY);
+			variablereceiver = new VariableReceiver(VAR_ANY);
 			hbox.getChildren().add(1, variablereceiver);
 			hbox.getChildren().removeAll(valuereceiver, trueButton, falseButton);
-			valuereceiver = new ExpressionReceiver(Expression.VAR_NONE);
+			valuereceiver = new ExpressionReceiver(VAR_NONE);
 			model.getvars().clear();
 			hbox.getChildren().add(valuereceiver);
 			addListeners();
 		}
 	}
+	
 	protected void addListeners() {
 super.addListeners();
 		variablereceiver.getChildElements().addListener((ListChangeListener<ViewElement>) arg0 -> {
@@ -115,7 +119,7 @@ super.addListeners();
 				FirebaseExpression expr= new FirebaseExpression();
 				expr.setIsValue(true);;
 				expr.setIndex(1);
-				expr.setVartype(Expression.VAR_BOOLEAN);
+				expr.setVartype(VAR_BOOLEAN);
 				if(arg2.equals(trueButton)){
 					expr.setValue("true");
 				}
@@ -125,7 +129,7 @@ super.addListeners();
 			}
 			
 		});
-		if(mylistener!=null) //?ARGH
+		if(mylistener!=null) 
 		valuereceiver.getChildElements().removeListener(mylistener);
 
 		mylistener = new ListChangeListener<ViewElement>(){
@@ -153,33 +157,32 @@ super.addListeners();
 		};
 		//System.out.println("How often is this added?");
 		valuereceiver.getChildElements().addListener(mylistener);
-		valuereceiver.text.textProperty().addListener(new ChangeListener<String>(){
-
-			@Override
-			public void changed(ObservableValue<? extends String> arg0,
-					String arg1, String arg2) {
-				FirebaseExpression expr= new FirebaseExpression();
-				expr.setIsValue(true);
-				expr.setValue(arg2);
-				expr.setIndex(1);
-				expr.setVartype(Expression.VAR_NUMERIC);
-				model.getvars().add(1,expr);
-			}
-			
-		});
+//DJR again another case of a listener I likely don't need
+		//		valuereceiver.text.textProperty().addListener(new ChangeListener<String>(){
+//
+//			@Override
+//			public void changed(ObservableValue<? extends String> arg0,
+//					String arg1, String arg2) {
+//				FirebaseExpression expr= new FirebaseExpression();
+//				expr.setIsValue(true);
+//				expr.setValue(arg2);
+//				expr.setIndex(1);
+//				expr.setVartype(Expression.VAR_NUMERIC);
+//				model.getvars().add(1,expr);
+//			}
+//			
+//		});
 	}
 
 	public void setData(FirebaseAction model) {
 		super.setData(model);
-		Map<String,Object> params = model.getparams();
-	//	System.out.println("vars size is " + model.getvars().size());
 
 		if(model.getvars().isEmpty())return;
 		FirebaseExpression variable = model.getvars().get(0);//(FirebaseExpression)params.get("variable");
 		variablereceiver.addChild(Expression.create(variable), 0, 0); //I cannot foresee this working tbh
 		variablereceiver.setReceiveType(variable.getvartype());
 
-		if(variable.getvartype().equals(Expression.VAR_BOOLEAN)){
+		if(variable.getvartype().equals(VAR_BOOLEAN)){
 			hbox.getChildren().removeAll(trueButton, falseButton, valuereceiver);
 			hbox.getChildren().addAll(trueButton, falseButton);
 			trueButton.setToggleGroup(group);
@@ -191,22 +194,24 @@ super.addListeners();
 		FirebaseExpression value = model.getvars().get(1);//(FirebaseExpression)params.get("value");
 		if(value.getisValue() == false)
 			valuereceiver.addChild(Expression.create(value), 0, 0); //I cannot foresee this working tbh
-		else if(value.getvartype().equals(Expression.VAR_BOOLEAN)){
+		else if(value.getvartype().equals(VAR_BOOLEAN)){
 			boolean result = Boolean.parseBoolean(value.getvalue());
 			if(result)
 				trueButton.setSelected(true);
 			else
 				falseButton.setSelected(true);
 		}
-		else
-			valuereceiver.setText(value.getvalue()); //And we set this text here
+//		else
+//			valuereceiver.setText(value.getvalue()); //And we set this text here
 	//	updateReceivers();
 
 	}
 
 	@Override
 	public String getViewPath() {
-		return String.format("/actionUpdateModel.fxml", this.getClass().getSimpleName());
+		return String.format("/ActionUpdateModel.fxml", this.getClass().getSimpleName());
 	}
+
+
 
 }

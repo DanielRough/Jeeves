@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.jeeves.vpl.firebase.FirebaseQuestion;
-import com.jeeves.vpl.survey.QuestionView;
-import com.jeeves.vpl.survey.Survey;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -19,17 +17,18 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import static com.jeeves.vpl.survey.QuestionEditor.*;
 
 public class QuestionMultMany extends QuestionView{
 
-	public QuestionView clone(){
-		return new QuestionMultMany(super.getModel(),mySurvey);
-	}
-	
+//	public QuestionView clone(){
+//		return new QuestionMultMany(super.getModel());
+//	}
+//	
 	public void loadOptions(){
 		FXMLLoader surveyLoader = new FXMLLoader();
 		surveyLoader.setController(this);
-		surveyLoader.setLocation(getClass().getResource("/multMopts.fxml"));
+		surveyLoader.setLocation(getClass().getResource("/OptionsMultiChoiceMany.fxml"));
 		 try {
 			 optionsPane = (Pane) surveyLoader.load();
 			 addEventHandlers();
@@ -41,13 +40,15 @@ public class QuestionMultMany extends QuestionView{
 	public String getImagePath(){
 		return "/img/icons/imgmany.png";
 	}
-	public QuestionMultMany(FirebaseQuestion model, Survey survey) {
-		super(model,survey);
-		setImage("/img/icons/imgmany.png");
-		setQuestionText("Select Many");
-		this.description = "User can select multiple answers from a list of options";
-		}
-
+//	public QuestionMultMany(FirebaseQuestion model) {
+//		super(model);
+//		setImage("/img/icons/imgmany.png");
+//	//	setQuestionText("Select Many");
+//		//this.description = "User can select multiple answers from a list of options";
+//		}
+	public String getLabel(){
+		return "Select multiple options from a list";
+	}
 	@FXML private Pane paneMultChoiceM;
 	@FXML private VBox paneChoiceOptsM;
 	@FXML private Button btnAddOptM;
@@ -102,29 +103,30 @@ public class QuestionMultMany extends QuestionView{
 		});
 	}
 
-	@Override
-	public void showCheckQOpts() {
-		mySurvey.cboMultiChoice.setVisible(true);
-		Map<String,Object> opts = (Map<String,Object>)model.getparams().get("options");
-		mySurvey.cboMultiChoice.getItems().clear();
-		if(opts != null)
-			opts.values().forEach(mval ->{mySurvey.cboMultiChoice.getItems().add(mval.toString());});	
-		mySurvey.cboMultiChoice.getSelectionModel().clearSelection();
-
-		
-	}
-	@Override
-	public void handleCheckQ(String scon) {
-		// TODO Auto-generated method stub
-
-			
-		if(!scon.isEmpty())
-			mySurvey.cboMultiChoice.getSelectionModel().select(scon);
-		else
-			mySurvey.cboMultiChoice.getSelectionModel().clearSelection();
-
-
-	}
+//	@SuppressWarnings("unchecked")
+//	@Override
+//	public void showCheckQOpts() {
+//		cboMultiChoice.setVisible(true);
+//		Map<String,Object> opts = (Map<String,Object>)model.getparams().get("options");
+//		cboMultiChoice.getItems().clear();
+//		if(opts != null)
+//			opts.values().forEach(mval ->{cboMultiChoice.getItems().add(mval.toString());});	
+//		cboMultiChoice.getSelectionModel().clearSelection();
+//
+//		
+//	}
+//	@Override
+//	public void handleCheckQ(String scon) {
+//		// TODO Auto-generated method stub
+//
+//			
+//		if(!scon.isEmpty())
+//			cboMultiChoice.getSelectionModel().select(scon);
+//		else
+//			cboMultiChoice.getSelectionModel().clearSelection();
+//
+//
+//	}
 
 	@Override
 	public void showEditOpts(Map<String,Object> opts) {

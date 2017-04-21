@@ -14,10 +14,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 
-import com.jeeves.vpl.Main;
 import com.jeeves.vpl.firebase.FirebaseAction;
 
 public class SendTextAction extends Action { // NO_UCD (unused code)
+	public static final String NAME = "Send SMS";
+	public static final String DESC = "Send a text message to a specified recipient";
 	private String messagetext;
 	@FXML
 	private TextField txtMessage;
@@ -26,22 +27,21 @@ public class SendTextAction extends Action { // NO_UCD (unused code)
 	@FXML public HBox hboxSMS;
 	private TextArea smsText;
 	
-	public SendTextAction() {
-		this(new FirebaseAction());
-	}
-	public SendTextAction(FirebaseAction data) {
-		super(data);
-		this.name.setValue("Send SMS");
-		this.description = "Sends an SMS with the given text to the specified recipient";
-
-		addListeners();
-	}
+//	public SendTextAction() {
+//		this(new FirebaseAction());
+//	}
+//	public SendTextAction(FirebaseAction data) {
+//		super(data);
+//		addListeners();
+//	}
 	public Node[] getWidgets() {
 		return new Node[] { txtMessage, cboRecipient };
 	}
 
 	public void fxmlInit(){
 		super.fxmlInit();
+		name = NAME;
+		description = DESC;
 		smsText = new TextArea();
 		cboRecipient.getItems().clear();
 		cboRecipient.getItems().addAll("Last sender", "Emergency contact",
@@ -63,14 +63,13 @@ public class SendTextAction extends Action { // NO_UCD (unused code)
 
 	@Override
 	public String getViewPath() {
-		return String.format("/actionSendText.fxml", this.getClass()
+		return String.format("/ActionSendText.fxml", this.getClass()
 				.getSimpleName());
 	}
 
 	public void setRecipient(String rec) {
 		cboRecipient.getItems().clear();
-		cboRecipient.getItems().addAll("Last sender", "Emergency contact","User",
-				"Researcher");
+		cboRecipient.getItems().addAll("Last sender", "Emergency contact","User", "Researcher");
 		cboRecipient.setValue(rec);
 	}
 
@@ -127,5 +126,7 @@ public class SendTextAction extends Action { // NO_UCD (unused code)
 			}
 		});
 	}
+
+
 
 }

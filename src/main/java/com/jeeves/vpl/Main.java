@@ -1,18 +1,19 @@
 package com.jeeves.vpl;
 
+import static com.jeeves.vpl.Constants.VAR_NUMERIC;
+import static com.jeeves.vpl.Constants.actionNames;
+import static com.jeeves.vpl.Constants.exprNames;
+import static com.jeeves.vpl.Constants.triggerNames;
+import static com.jeeves.vpl.Constants.uiElements;
+import static com.jeeves.vpl.Constants.questionNames;
+
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -24,7 +25,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -41,11 +41,11 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -55,24 +55,24 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.util.Duration;
 
-import com.jeeves.vpl.canvas.actions.Action;
+import com.jeeves.vpl.Constants.ElementType;
 import com.jeeves.vpl.canvas.expressions.Expression;
 import com.jeeves.vpl.canvas.expressions.UserVariable;
 import com.jeeves.vpl.canvas.receivers.ElementReceiver;
-import com.jeeves.vpl.canvas.receivers.NewDatePane;
-import com.jeeves.vpl.canvas.triggers.BeginTrigger;
+import com.jeeves.vpl.canvas.receivers.QuestionReceiver;
 import com.jeeves.vpl.canvas.triggers.Trigger;
 import com.jeeves.vpl.canvas.uielements.UIElement;
+import com.jeeves.vpl.firebase.FirebaseDB;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 import com.jeeves.vpl.firebase.FirebaseProject;
+import com.jeeves.vpl.firebase.FirebaseQuestion;
 import com.jeeves.vpl.firebase.FirebaseSurvey;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
 import com.jeeves.vpl.firebase.FirebaseUI;
 import com.jeeves.vpl.firebase.FirebaseVariable;
-import com.jeeves.vpl.survey.SurveyController;
-
+import com.jeeves.vpl.survey.SurveyPane;
+import com.jeeves.vpl.survey.questions.QuestionView;
 /**
  * The controller class for our main GUI. A lot of boggy setup code in here but
  * it gets the job done. This is like a combination of the View/Controller,
@@ -89,21 +89,23 @@ public class Main extends Application {
 	@FXML private Label lblActions;
 	@FXML private Label lblConditions;
 
-	@FXML private Label lblUIElements;
+	//@FXML private Label lblUIElements;
 	@FXML private MenuBar mnuBar;
 	@FXML private Menu mnuFile;
 	@FXML private VBox paneTriggers;
 	@FXML private VBox paneActions;
 	@FXML private VBox paneConditions;
-	@FXML private VBox paneUI;
+	@FXML private VBox vboxUIElements;
 	@FXML private VBox vboxSurveyVars;
 	@FXML private VBox paneVariables;
-
+	@FXML private VBox paneQuestions;
+	
 	@FXML private ImageView imgPhone;
 	@FXML private Button btnAddVar;
 	@FXML private Pane paneIntervention;
 	@FXML private Pane paneFrame;
 	@FXML private Pane paneAndroid;
+
 	@FXML private Tab tabFramework;
 	@FXML private Tab tabSurvey;
 	@FXML private Tab tabUsers;
@@ -114,68 +116,68 @@ public class Main extends Application {
 	@FXML private ContextMenu mnuContext;
 	@FXML private VBox vboxFrame;
 	@FXML private ScrollPane paneMain;
+	@FXML private HBox surveyBox;
 
-	
-	private boolean isNewProject = true;
+	//private boolean isNewProject = true;
 	private Map<Label, VBox> labelPaneMap;
 	private FirebaseDB firebase;
 	private Stage primaryStage;
-//	private ListChangeListener<Node> canvasListener;
-//	private ListChangeListener<Node> receiverListener;
-	//private ListChangeListener<FirebaseSurvey> surveyListener;
+
 	private EventHandler<MouseEvent> viewElementHandler;
-//	private ChangeListener<Tab> tabListener;
 	private FirebaseProject currentproject; // The currently selected project
 	private ViewCanvas canvas; // The canvas group that contains the project
 	private ElementReceiver receiver; //Where UI elements go
 	private AnchorPane myPane; // The main pane
-	private PatientController patientController;
-	private SurveyController surveyController;
-	private Stage dateStage;
-	private NewDatePane root;
-	private ListProperty<ObservableValue<String>> listProperty = new SimpleListProperty<ObservableValue<String>>();
-	private ObservableList<ObservableValue<String>> surveynames = FXCollections.observableList(new ArrayList<ObservableValue<String>>());
-	
+	private PatientPane patientController;
+	private SurveyPane surveyController;
+
+	//private Stage dateStage;
+	//private NewDatePane root;
+	//	private ListProperty<ObservableValue<String>> listProperty = new SimpleListProperty<ObservableValue<String>>();
+	//	private ObservableList<ObservableValue<String>> surveynames = FXCollections.observableList(new ArrayList<ObservableValue<String>>());
+
 	private ObservableList<FirebaseSurvey> currentsurveys = FXCollections.observableList(new ArrayList<FirebaseSurvey>()); 
+	private ObservableList<FirebaseVariable> currentvariables = FXCollections.observableList(new ArrayList<FirebaseVariable>());
+	private ObservableList<FirebaseUI> currentelements = FXCollections.observableList(new ArrayList<FirebaseUI>());
+
+
+	private static Main currentGUI;
+	public static Main getContext(){
+		return currentGUI;
+	}
+	//	public Stage getDateStage(){
+	//		return dateStage;
+	//	}
+	//	public NewDatePane getDatePane(){
+	//		return root;
+	//	}
 	public ObservableList<FirebaseSurvey> getSurveys(){return currentsurveys;}
 	public void registerSurveyListener(ListChangeListener<FirebaseSurvey> listener){
 		currentsurveys.addListener(listener);
 	}
-	private ObservableList<FirebaseVariable> currentvariables = FXCollections.observableList(new ArrayList<FirebaseVariable>());
 	public ObservableList<FirebaseVariable> getVariables(){return currentvariables;}
 
 	public void registerVarListener(ListChangeListener<FirebaseVariable> listener){
 		currentvariables.addListener(listener);
 	}
-	private ObservableList<FirebaseUI> currentelements = FXCollections.observableList(new ArrayList<FirebaseUI>());
 	public ObservableList<FirebaseUI> getUIElements(){return currentelements;}
 	public void registerElementListener(ListChangeListener<FirebaseUI> listener){
 		currentelements.addListener(listener);
 	}
-	private static Main currentGUI;
 
-	public static Main getContext(){
-		return currentGUI;
-	}
-	public Stage getDateStage(){
-		return dateStage;
-	}
-	public NewDatePane getDatePane(){
-		return root;
-	}
 	public ViewCanvas getViewCanvas(){
 		return canvas;
 	}
 	public void hideMenu(){
 		mnuFile.hide();
 	}
-	public void setNewProject(boolean isNew){
-		this.isNewProject = isNew;
-	}
+	//	public void setNewProject(boolean isNew){
+	//		this.isNewProject = isNew;
+	//	}
 	public AnchorPane getMainPane(){
 		return myPane;
 	}
-	
+
 	boolean isOverTrash(double mouseX, double mouseY){
 		return imgTrash.getBoundsInParent().contains(mouseX,mouseY);
 	}
@@ -197,10 +199,10 @@ public class Main extends Application {
 
 			}
 		});
-	//	addListeners();
+		//	addListeners();
 		primaryStage.setTitle("Jeeves - New Project");
 		Platform.setImplicitExit(false);
-		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/maingui.fxml"));
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/Main.fxml"));
 		fxmlLoader.setController(this);
 		try {
 			myPane = (AnchorPane) fxmlLoader.load();
@@ -214,32 +216,34 @@ public class Main extends Application {
 		primaryStage.setScene(scene);
 		splitPane.lookupAll(".split-pane-divider").stream().forEach(div -> div.setMouseTransparent(true));
 
-		listProperty.set(surveynames);
-		surveyController = new SurveyController(currentsurveys);
-		tabSurvey.setContent(surveyController);
-		patientController = new PatientController(this,firebase);
+		//	listProperty.set(surveynames);
+		surveyController = new SurveyPane(currentsurveys);
+		//surveyBox.getChildren().add(surveyController);
+		//tabSurvey.setContent(surveyController);
+		patientController = new PatientPane(this,firebase);
 		tabUsers.setContent(patientController);
 		currentproject = new FirebaseProject();
-		isNewProject = true;
+		//	isNewProject = true;
 
 		Platform.runLater(new Runnable(){
 			public void run(){
+				resetPanes();
 				loadCanvasElements();
 				loadVariables();
-				resetPanes();
+
 			}
 		});
 
 
 	}
-	
+
 	private void loadProjectsIntoMenu() {
 		mnuStudies.getItems().clear();
 		firebase.getprojects().forEach(project -> {
 			MenuItem item = new MenuItem(project.getname());
 			mnuStudies.getItems().add(item);
 			item.setOnAction(action -> {
-				isNewProject = false;
+				//			isNewProject = false;
 				currentproject = project; // Sets this project as the current one
 				primaryStage.setTitle("Jeeves - " + project.getname());
 				patientController.loadPatients(); //Reset so we have the patients for THIS project
@@ -247,23 +251,61 @@ public class Main extends Application {
 		});
 	}
 
+	private VBox createBoxyBox(ViewElement elem){
+		Label newlable = new Label(elem.getName());
+		HBox box = new HBox();
+		box.setSpacing(3);
+	//	ImageView infoIcon = createInfoIcon();
+		VBox boxybox = new VBox();
+	//	boxybox.setSpacing(3);
+		//boxybox.setOnMouseEntered(event->{infoIcons.forEach(info->info.setOpacity(0));infoIcon.setOpacity(100);});
+		//boxybox.setOnMouseExited(event->{Point2D point = new Point2D(event.getSceneX(),event.getSceneY());
+	//										if(!boxybox.localToScene(boxybox.getBoundsInLocal()).contains(point)){infoIcon.setOpacity(0);}});
+		boxybox.prefWidthProperty().bind(paneFrame.widthProperty());		
+		box.setFillHeight(true);
+		box.getChildren().addAll(newlable);
+		boxybox.getChildren().addAll(box,elem);
+		//box.setPadding(new Insets(0,0,0,-15));
+		Tooltip t = new Tooltip(elem.description);
+	//	hackTooltipStartTiming(t); //A wonderful wonderful method someone else made
+		//Tooltip.install(
+	//		    infoIcon,
+	//		    t
+	//		);
+		newlable.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
+
+		return boxybox;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void setElementParent(ViewElement draggable){
+		if(draggable.getType() == ElementType.UIELEMENT)
+			draggable.parentPane = receiver;
+
+		else
+			draggable.parentPane = canvas;
+	}
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void loadCanvasElements() {
-		dateStage = new Stage(StageStyle.UNDECORATED);
-		root = new NewDatePane();
-		Scene scene = new Scene(root);
-		dateStage.setScene(scene);
-		dateStage.setTitle("Edit dates");
-		dateStage.initModality(Modality.APPLICATION_MODAL);
+		//	dateStage = new Stage(StageStyle.UNDECORATED);
+		//	root = new NewDatePane();
+		//	Scene scene = new Scene(root);
+		//	dateStage.setScene(scene);
+		//	dateStage.setTitle("Edit dates");
+		//	dateStage.initModality(Modality.APPLICATION_MODAL);
 		Divider d1 = splitPane.getDividers().get(1);
+		
 		d1.positionProperty().addListener(new ChangeListener<Number>(){
 
 			@Override
 			public void changed(ObservableValue<? extends Number> arg0,
 					Number arg1, Number arg2) {
-				imgTrash.setLayoutX(arg2.doubleValue()*myPane.getWidth()-37);
+				if(arg2.doubleValue() < 0.7)
+					d1.setPosition(0.7);
+				else
+					imgTrash.setLayoutX(arg2.doubleValue()*myPane.getWidth()-37);
 			}
-			
+
 		});
 		viewElementHandler = new EventHandler<MouseEvent>() {
 
@@ -275,55 +317,91 @@ public class Main extends Application {
 					myPane.getChildren().add(clicked.getDraggable());
 				if (arg0.getEventType() == MouseEvent.MOUSE_RELEASED) {
 					//if(canvas.getIsMouseOver() == false){
-						myPane.getChildren().remove(clicked.getDraggable());
-				//	}
-					ViewElement draggable = null;
+					myPane.getChildren().remove(clicked.getDraggable());
+					//	}
+					ViewElement<FirebaseVariable> draggable = null;
 					//annoying exception for user variables
-					if(clicked instanceof UserVariable){
-						draggable = (UserVariable) UserVariable.create(((FirebaseExpression)clicked.getModel()));
-					}
+					if(clicked.getType() == ElementType.VARIABLE)
+						draggable = (UserVariable) new UserVariable(((FirebaseVariable)clicked.getModel()));
 					else
-						draggable = ViewElement
-						.create(clicked.getClass().getName());
+						draggable = ViewElement.create(clicked.getClass().getName());
+					setElementParent(draggable);
 					clicked.setDraggable(draggable); // DJRNEW
+
 				}
 			}
 
 		};
 		try {
-				ArrayList<ViewElement> elements = new ArrayList<ViewElement>();
-				for(String trigName : Trigger.triggerNames){
-					ViewElement trigger = ViewElement.create(trigName);
-					elements.add(trigger);
-					paneTriggers.getChildren().add(trigger);
-				}
-				for(String actName : Action.actionNames){
-					ViewElement action = ViewElement.create(actName);
-					elements.add(action);
-					paneActions.getChildren().add(action);
-				}
-				for(String exprName : Expression.exprNames){
-					ViewElement expr = ViewElement.create(exprName);
-					elements.add(expr);
-					paneConditions.getChildren().add(expr);
-				}
-				for(String uiElem : UIElement.uiElements){
-					ViewElement uielement = ViewElement.create(uiElem);
-					elements.add(uielement);
-					paneUI.getChildren().add(uielement);
-				}
-				for(ViewElement element : elements){
-					element.setPadding(new Insets(10, 0, 10, 0));
-					ViewElement draggable = ViewElement.create(element.getClass().getName());
-					element.setDraggable(draggable); // DJRNEW
-					element.setReadOnly();
-					element.setHandler(viewElementHandler);
-				}
+			ArrayList<ViewElement> elements = new ArrayList<ViewElement>();
+			for(String trigName : triggerNames){
+				ViewElement trigger = ViewElement.create(trigName);
+				elements.add(trigger);
+				VBox boxybox = createBoxyBox(trigger);	
+				paneTriggers.getChildren().add(boxybox);
+			}
+			for(String actName : actionNames){
+				ViewElement<FirebaseVariable> action = ViewElement.create(actName);
+				elements.add(action);
+				VBox boxybox = createBoxyBox(action);	
+				paneActions.getChildren().add(boxybox);
+			}
+			for(String exprName : exprNames){
+				ViewElement<FirebaseVariable> expr = ViewElement.create(exprName);
+				elements.add(expr);
+				VBox boxybox = createBoxyBox(expr);	
+				paneConditions.getChildren().add(boxybox);
+			}
+			for(String uiElem : uiElements){
+				ViewElement<FirebaseVariable> uielement = ViewElement.create(uiElem);
+				elements.add(uielement);
+				vboxUIElements.getChildren().add(uielement);
+		//		paneUI.getChildren().add(uielement);
+			}
+			for (String qName : questionNames) {
+				ViewElement<FirebaseQuestion> question = ViewElement.create(qName);
+//				FirebaseQuestion q = new FirebaseQuestion();
+//				q.setquestionType(i);
+//				QuestionView view = QuestionView.create(q);
+				elements.add(question);
+				paneQuestions.getChildren().add(question);
+			//	flowPaneQuestionTypes.getChildren().add(view);
+			//	QuestionView draggable = QuestionView.create(q);
+			//	ViewElement<FirebaseQuestion> draggable = ViewElement.create(view.getClass().getName());
+//				view.setReadOnly();
+//				view.setDraggable(draggable); // DJRNEW
+			//	views.add(view);
+//				setElementParent(draggable);
+//				view.setReadOnly();
+//				element.setHandler(viewElementHandler);
+//				view.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>(){
+	//
+//					@Override
+//					public void handle(MouseEvent arg0) {
+//						// TODO Auto-generated method stub
+//						if(containsQs == false){
+//							paneScroller.setStyle("-fx-border-color: #71a4eb; -fx-border-width: 5");
+//							paneInfo.getChildren().forEach(child->child.setVisible(false));
+//							paneInfoDragged.setVisible(true);
+//							}
+//					}
+//				});
+			}
+			for(ViewElement element : elements){
+				element.setPadding(new Insets(0, 0, 10, 0));
+				System.out.println("Element name is " + element.getClass().getName());
+				ViewElement<FirebaseVariable> draggable = ViewElement.create(element.getClass().getName());
+				element.setDraggable(draggable); // DJRNEW
+				setElementParent(draggable);
+				element.setReadOnly();
+				element.setHandler(viewElementHandler);
+			}
+			loadVariables();
 		} catch (Exception e){
 			e.printStackTrace();
 		}
 
-	
+
 		SingleSelectionModel<Tab> selectionModel = tabPane.getSelectionModel();
 		selectionModel.selectedItemProperty().addListener(new ChangeListener<Tab>() {
 			@Override
@@ -341,7 +419,7 @@ public class Main extends Application {
 		labelPaneMap.put(lblActions, paneActions);
 		labelPaneMap.put(lblConditions, paneConditions);
 		labelPaneMap.put(lblTriggers, paneTriggers);
-		labelPaneMap.put(lblUIElements, paneUI);		
+	//	labelPaneMap.put(lblUIElements, paneUI);		
 		lblTriggers.setUserData("selected");
 		DropShadow ds = new DropShadow( 20, Color.AQUA );
 
@@ -370,18 +448,18 @@ public class Main extends Application {
 		currentsurveys.clear();
 		currentvariables.clear();
 		currentelements.clear();
-		
-		
+
+
 		if( canvas != null &&canvas.mouseHandler != null)
-		paneIntervention.removeEventHandler(MouseEvent.ANY, canvas.mouseHandler);
+			paneIntervention.removeEventHandler(MouseEvent.ANY, canvas.mouseHandler);
 		paneIntervention.getChildren().remove(canvas);
 		canvas = new ViewCanvas();
 		paneIntervention.getChildren().add(canvas);
 		canvas.addEventHandlers();
-		
-		
-		paneAndroid.getChildren().clear();
 
+
+		paneAndroid.getChildren().clear();
+	//	QuestionReceiver myreceiver = new QuestionReceiver(paneAndroid.getPrefWidth(),paneAndroid.getPrefHeight());
 		receiver = new ElementReceiver(paneAndroid.getPrefWidth(), paneAndroid.getPrefHeight());
 		receiver.getChildElements().addListener(new ListChangeListener<Node>() {
 			@Override
@@ -398,8 +476,10 @@ public class Main extends Application {
 			}
 
 		});
-		receiver.setProject(currentproject);
 		paneAndroid.getChildren().add(receiver);
+
+		//	receiver.setProject(currentproject);
+	//	paneAndroid.getChildren().add(receiver);
 		setProject();
 
 
@@ -407,14 +487,16 @@ public class Main extends Application {
 		currentelements.addAll(currentproject.getuidesign());
 		currentsurveys.addAll(currentproject.getsurveys());
 
-		
-	//	currentsurveys.addListener(surveyListener);
-		tabSurvey.setContent(new SurveyController(currentsurveys));
 
-		loadVariables();
+		//	currentsurveys.addListener(surveyListener);
+		surveyBox.getChildren().add(new SurveyPane(currentsurveys));
+	//	tabSurvey.setContent(new SurveyPane(currentsurveys));
+
+
 		tabPane.getSelectionModel().select(tabFramework);
 
 	}
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	void setProject() {
 
 		ArrayList<ViewElement> views = new ArrayList<ViewElement>();
@@ -427,7 +509,7 @@ public class Main extends Application {
 			views.add(exprview);
 		}
 		for (FirebaseVariable var : currentproject.getvariables()) {
-			UserVariable varview = (UserVariable) UserVariable.create(var);
+			UserVariable varview = new UserVariable(var);
 			views.add(varview);
 		}
 		for (FirebaseUI var : currentproject.getuidesign()) {
@@ -440,6 +522,7 @@ public class Main extends Application {
 			element.previouslyAdded = true; //This is a bit hacky but stops the boxes popping up when we load a new project
 			receiver.addChild(element, 0, 0);
 		}
+
 		views.forEach(view -> {
 			Point2D pos = view.getPosition();
 			canvas.addChild(view, pos.getX(), pos.getY());
@@ -452,12 +535,12 @@ public class Main extends Application {
 		currentvariables.clear();
 		vboxSurveyVars.getChildren().clear();
 		//Load our default variables
-		
+
 		String[] globalVarNames = new String[]{"Missed Surveys","Completed Surveys","Last Survey Score", "Survey Score Difference"};
 		for(String name : globalVarNames){
 			FirebaseVariable var = new FirebaseVariable();
 			var.setname(name);
-			var.setVartype(Expression.VAR_NUMERIC);
+			var.setVartype(VAR_NUMERIC);
 			currentproject.getvariables().add(var);
 		}
 		currentproject.getvariables().forEach(variable -> {
@@ -471,7 +554,8 @@ public class Main extends Application {
 			}
 			if (alreadyExists == false) {
 				currentvariables.add(variable);
-				ViewElement draggable = (UserVariable) UserVariable.create(variable);
+				ViewElement<FirebaseVariable> draggable = new UserVariable(variable);
+				//ViewElement<FirebaseVariable> draggable = new UserVariable(variable);
 				global.setDraggable(draggable); // DJRNEW
 				global.setReadOnly();
 				global.setHandler(viewElementHandler);
@@ -499,12 +583,12 @@ public class Main extends Application {
 
 	@FXML
 	public void saveStudyMenu(Event e) {
-		if (isNewProject) {
-			saveAsStudyMenu(e);
-			return;
-		} else {
-			firebase.addProject("",this.currentproject);
-		}
+		//		if (isNewProject) {
+		saveAsStudyMenu(e);
+		return;
+		//		} else {
+		//			firebase.addProject("",this.currentproject);
+		//		}
 
 	}
 
@@ -518,17 +602,17 @@ public class Main extends Application {
 		stage.initOwner(splitPane.getScene().getWindow());
 		stage.showAndWait();
 	}
-
-	@FXML
-	public void openSettings(Event e) {
-		Stage stage = new Stage(StageStyle.UNDECORATED);
-		SettingsPane root = new SettingsPane(stage, currentproject);
-		stage.setScene(new Scene(root));
-		stage.setTitle("Adjust settings");
-		stage.initModality(Modality.APPLICATION_MODAL);
-		stage.initOwner(splitPane.getScene().getWindow());
-		stage.showAndWait();
-	}
+	//
+	//	@FXML
+	//	public void openSettings(Event e) {
+	//		Stage stage = new Stage(StageStyle.UNDECORATED);
+	//		SettingsPane root = new SettingsPane(stage, currentproject);
+	//		stage.setScene(new Scene(root));
+	//		stage.setTitle("Adjust settings");
+	//		stage.initModality(Modality.APPLICATION_MODAL);
+	//		stage.initOwner(splitPane.getScene().getWindow());
+	//		stage.showAndWait();
+	//	}
 
 	@FXML
 	public void quitStudyMenu(Event e) {
@@ -580,7 +664,7 @@ public class Main extends Application {
 			paneVariables.setVisible(true);
 			paneVariables.toFront();
 			divider.setPosition((30 + paneVariables.getBoundsInParent()
-			.getMaxX()) / splitPane.getWidth());
+					.getMaxX()) / splitPane.getWidth());
 		} else {
 			paneVariables.setVisible(false);
 			paneVariables.toBack();

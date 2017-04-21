@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.jeeves.vpl.firebase.FirebaseQuestion;
-import com.jeeves.vpl.survey.QuestionView;
-import com.jeeves.vpl.survey.Survey;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -19,18 +17,21 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import static com.jeeves.vpl.survey.QuestionEditor.*;
 
 public class QuestionMultSingle extends QuestionView{
 
-	public QuestionView clone(){
-		return new QuestionMultSingle(super.getModel(),mySurvey);
-	}
-	public QuestionMultSingle(FirebaseQuestion model, Survey survey) {
-		super(model,survey);
-		System.out.println("HIYAAAAAAAAA");
-		setImage("/img/icons/imgsingle.png");
-		setQuestionText("Select One");
-		this.description = "User chooses one answer from a list of options";
+//	public QuestionView clone(){
+//		return new QuestionMultSingle(super.getModel());
+//	}
+//	public QuestionMultSingle(FirebaseQuestion model) {
+//		super(model);
+//		setImage("/img/icons/imgsingle.png");
+//	//	setQuestionText("Select One");
+//	//	this.description = "User chooses one answer from a list of options";
+//	}
+	public String getLabel(){
+		return "Select one option from a list";
 	}
 	public String getImagePath(){
 		return "/img/icons/imgsingle.png";
@@ -44,7 +45,7 @@ public class QuestionMultSingle extends QuestionView{
 	public void loadOptions(){
 		FXMLLoader surveyLoader = new FXMLLoader();
 		surveyLoader.setController(this);
-		surveyLoader.setLocation(getClass().getResource("/multSopts.fxml"));
+		surveyLoader.setLocation(getClass().getResource("/OptionsMultiChoiceSingle.fxml"));
 		 try {
 			 optionsPane = (Pane) surveyLoader.load();
 			 addEventHandlers();
@@ -104,32 +105,33 @@ public class QuestionMultSingle extends QuestionView{
 	}
 
 
-	@Override
-	public void showCheckQOpts() {
-		
-		mySurvey.cboMultiChoice.setVisible(true);
-		mySurvey.cboMultiChoice.getItems().clear();
-		Map<String,Object> opts = (Map<String,Object>)model.getparams().get("options");
-
-		if(opts != null)
-			opts.values().forEach(mval ->{mySurvey.cboMultiChoice.getItems().add(mval.toString());});		
-		mySurvey.cboMultiChoice.getSelectionModel().clearSelection();
-
-		
-	}
-	@Override
-	public void handleCheckQ(String scon) {
+//	@SuppressWarnings("unchecked")
+//	@Override
+//	public void showCheckQOpts() {
+//		
+//		cboMultiChoice.setVisible(true);
+//		cboMultiChoice.getItems().clear();
 //		Map<String,Object> opts = (Map<String,Object>)model.getparams().get("options");
-//		mySurvey.cboMultiChoice.getItems().clear();
-//		System.out.println("EEERHMAGERD SCON IS " + scon);
 //
 //		if(opts != null)
-//			opts.values().forEach(mval ->{mySurvey.cboMultiChoice.getItems().add(mval.toString());});		
-		if(!scon.isEmpty())
-			mySurvey.cboMultiChoice.getSelectionModel().select(scon);
-		else
-			mySurvey.cboMultiChoice.getSelectionModel().clearSelection();
-	}
+//			opts.values().forEach(mval ->{cboMultiChoice.getItems().add(mval.toString());});		
+//		cboMultiChoice.getSelectionModel().clearSelection();
+//
+//		
+//	}
+//	@Override
+//	public void handleCheckQ(String scon) {
+////		Map<String,Object> opts = (Map<String,Object>)model.getparams().get("options");
+////		mySurvey.cboMultiChoice.getItems().clear();
+////		System.out.println("EEERHMAGERD SCON IS " + scon);
+////
+////		if(opts != null)
+////			opts.values().forEach(mval ->{mySurvey.cboMultiChoice.getItems().add(mval.toString());});		
+//		if(!scon.isEmpty())
+//			cboMultiChoice.getSelectionModel().select(scon);
+//		else
+//			cboMultiChoice.getSelectionModel().clearSelection();
+//	}
 
 	@Override
 	public void showEditOpts(Map<String,Object> opts) {

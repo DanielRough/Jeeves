@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<Pane fx:id="pane" minHeight="84.0" prefHeight="114.0" prefWidth="166.0" styleClass="trigger" stylesheets="@Styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox layoutX="6.0" layoutY="56.0" prefWidth="147.0" stylesheets="@Styles.css">
+         <children>
+      <VBox fx:id="paneTimes" fillWidth="false" prefHeight="-1.0" />
+            <HBox alignment="CENTER" spacing="10.0">
+               <children>
+                  <Button fx:id="btnAddTime" alignment="CENTER" contentDisplay="CENTER" layoutX="66.0" layoutY="13.0" mnemonicParsing="false" onAction="#handleAddTime" prefHeight="22.0" prefWidth="65.0" text="add time" textAlignment="CENTER" wrapText="true">
+                     <padding>
+                        <Insets bottom="1.0" />
+                     </padding>
+                     <font>
+                        <Font size="11.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="btnRemoveTime" layoutX="66.0" layoutY="43.0" mnemonicParsing="false" onAction="#handleRemoveTime" prefHeight="22.0" prefWidth="65.0" text="remove time" textAlignment="CENTER" wrapText="true">
+                     <font>
+                        <Font size="11.0" />
+                     </font>
+                     <padding>
+                        <Insets bottom="1.0" />
+                     </padding>
+                  </Button>
+               </children>
+            </HBox>
+            <Pane layoutY="76.0" prefHeight="19.0" prefWidth="142.0" styleClass="trigger">
+               <children>
+                  <Label prefWidth="93.0" text="at these times" textFill="WHITE">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                     <padding>
+                        <Insets bottom="10.0" top="5.0" />
+                     </padding>
+                  </Label>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
+            </Pane>
+         </children>
+         <padding>
+            <Insets left="5.0" top="10.0" />
+         </padding>
+      </VBox>
+      <HBox styleClass="trigger">
+         <children>
+            <VBox layoutY="8.0" spacing="3.0">
+               <children>
+                  <Label id="txtSensorName" contentDisplay="CENTER" layoutY="8.0" prefHeight="17.0" prefWidth="76.0" text="start date" textFill="WHITE" visible="true">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets left="5.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Pane fx:id="paneStartDate" layoutY="30.0" prefHeight="20.0" />
+               </children>
+            </VBox>
+            <VBox layoutX="88.0" layoutY="8.0" spacing="3.0">
+               <children>
+                  <Label id="txtSensorName" contentDisplay="CENTER" layoutX="88.0" layoutY="8.0" prefHeight="17.0" prefWidth="76.0" stylesheets="@Styles.css" text="end date" textFill="WHITE" visible="true">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets left="5.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Pane fx:id="paneEndDate" layoutX="88.0" layoutY="30.0" prefHeight="20.0" />
+               </children>
+            </VBox>
+         </children>
+         <padding>
+            <Insets left="5.0" top="10.0" />
+         </padding>
+      </HBox>
+   </children>
+</Pane>

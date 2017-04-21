@@ -7,6 +7,7 @@ import java.util.Random;
 
 import com.jeeves.vpl.ActionHolder;
 import com.jeeves.vpl.ViewElement;
+import com.jeeves.vpl.Constants.ElementType;
 import com.jeeves.vpl.canvas.actions.Action;
 import com.jeeves.vpl.canvas.receivers.ActionReceiver;
 import com.jeeves.vpl.firebase.FirebaseAction;
@@ -22,24 +23,17 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
+@SuppressWarnings("rawtypes")
 
-public abstract class Trigger extends ViewElement<FirebaseTrigger> implements ActionHolder{
+public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 	private ArrayList<Action> actions;
 	private ActionReceiver childReceiver;
 
 	
 	protected ObservableMap<String,Object> params = FXCollections.observableHashMap();
-	private double receiverheight = 0.0;
-	boolean loading = true;
-	public static final String[] triggerNames = {
-			"com.jeeves.vpl.canvas.triggers.BeginTrigger",
-			"com.jeeves.vpl.canvas.triggers.ButtonTrigger",
-			"com.jeeves.vpl.canvas.triggers.ClockTriggerInterval",
-			"com.jeeves.vpl.canvas.triggers.ClockTriggerRandom",
-			"com.jeeves.vpl.canvas.triggers.ClockTriggerSetTimes",
-			"com.jeeves.vpl.canvas.triggers.SensorTrigger",
-			"com.jeeves.vpl.canvas.triggers.SurveyTrigger"
-	};
+//	private double receiverheight = 0.0;
+	private boolean loading = true;
+
 	public ActionReceiver getMyReceiver(){
 		return childReceiver;
 	}		private Node root;
@@ -56,6 +50,9 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> implements Ac
 		return null;
 	}
 	
+	public Trigger(){
+		super(FirebaseTrigger.class);
+	}
 	protected static String getSaltString() {
         String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         StringBuilder salt = new StringBuilder();
@@ -80,6 +77,7 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> implements Ac
 	}
 
 	public void fxmlInit(){
+		this.type = ElementType.TRIGGER;
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setController(this);
 		fxmlLoader.setLocation(getClass().getResource(getViewPath()));
@@ -123,45 +121,45 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> implements Ac
 			
 		});
 
-		childReceiver.getChildElements().addListener(
-				(ListChangeListener<ViewElement>) arg0 -> {
-					if(loading == false)
-						model.settriggerId(getSaltString()); //Need to update ID if actions change
-					System.out.println("ACTIONS CHANGED");
-					ArrayList<Action> newActions = new ArrayList<Action>();
-					if(model.getactions() == null)
-						model.setactions(new ArrayList<FirebaseAction>());
-					model.getactions().clear();
-					childReceiver.getChildElements().forEach(
-							element ->{newActions.add((Action) element);
-							model.getactions().add((FirebaseAction)element.getModel());
-							((Action)element).setActionHolder(this);
-							
-							});
-					
-							
-					this.actions = newActions;
-					actions.forEach(myaction ->{
-						myaction.params.addListener(new MapChangeListener<String,Object>(){
-
-							@Override
-							public void onChanged(
-									javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
-								System.out.println("PARAMS CHANGED");
-								model.settriggerId(getSaltString()); //Again, update, must reset 
-
-							}
-							
-						});
-					});
-					updateActionsHeight();
-				});
+//		childReceiver.getChildElements().addListener(
+//				(ListChangeListener<ViewElement>) arg0 -> {
+//					if(loading == false)
+//						model.settriggerId(getSaltString()); //Need to update ID if actions change
+//					System.out.println("ACTIONS CHANGED");
+//					ArrayList<Action> newActions = new ArrayList<Action>();
+//					if(model.getactions() == null)
+//						model.setactions(new ArrayList<FirebaseAction>());
+//					model.getactions().clear();
+//					childReceiver.getChildElements().forEach(
+//							element ->{newActions.add((Action) element);
+//							model.getactions().add((FirebaseAction)element.getModel());
+//							((Action)element).setActionHolder(this);
+//							
+//							});
+//					
+//							
+//					this.actions = newActions;
+//					actions.forEach(myaction ->{
+//						myaction.params.addListener(new MapChangeListener<String,Object>(){
+//
+//							@Override
+//							public void onChanged(
+//									javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
+//								System.out.println("PARAMS CHANGED");
+//								model.settriggerId(getSaltString()); //Again, update, must reset 
+//
+//							}
+//							
+//						});
+//					});
+//					updateActionsHeight();
+//				});
 		childReceiver.heightProperty().addListener(new ChangeListener<Number>(){
 
 			@Override
 			public void changed(ObservableValue<? extends Number> observable,
 					Number oldValue, Number newValue) {
-				setPrefHeight(newValue.doubleValue()+80);
+		//		setPrefHeight(newValue.doubleValue()+80);
 			}
 			
 		});
@@ -183,7 +181,6 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> implements Ac
 		double posX = model.getxPos();
 		double posY = model.getyPos();
 		Point2D position = new Point2D(posX,posY);
-		@SuppressWarnings("unchecked")
 		List<FirebaseAction> onReceive = model.getactions();
 		this.position = position;
 		actions = new ArrayList<Action>();
@@ -191,20 +188,20 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> implements Ac
 		for (FirebaseAction action : onReceive) {
 			
 			Action actionobj = Action.create(action);
-			actionobj.setReceiver(childReceiver);
+	//		actionobj.setReceiver(childReceiver);
 			actions.add(actionobj);
-			actionobj.setActionHolder(this);
+	//		actionobj.setActionHolder(this);
 
 		}
 	}
 	public abstract String getViewPath();
-
-
-	public void updateActionsHeight(){
-		double newreceiverheight = 0.0;
-		for(Action a : actions)
-			newreceiverheight += a.getInitHeight();
-		childReceiver.heightChanged(newreceiverheight-receiverheight);
-		receiverheight = newreceiverheight;
-	}
+//
+//
+//	public void updateActionsHeight(){
+//		double newreceiverheight = 0.0;
+//		for(Action a : actions)
+//			newreceiverheight += a.getInitHeight();
+//		childReceiver.heightChanged(newreceiverheight-receiverheight);
+//		receiverheight = newreceiverheight;
+//	}
 }

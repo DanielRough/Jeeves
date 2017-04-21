@@ -12,9 +12,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 
-import com.jeeves.vpl.canvas.receivers.TextUtils;
+import com.jeeves.vpl.TextUtils;
 import com.jeeves.vpl.firebase.FirebaseAction;
 
+import static com.jeeves.vpl.Constants.*;
 /**
  * Action to remain in the execution of a trigger temporarily
  * 
@@ -22,6 +23,8 @@ import com.jeeves.vpl.firebase.FirebaseAction;
  *
  */
 public class WaitingAction extends Action { // NO_UCD (unused code)
+	public static final String NAME = "Wait";
+	public static final String DESC = "Add a delay between actions happening";
 	@FXML
 	private ComboBox<String> cboWaitGranularity;
 	@FXML
@@ -38,8 +41,6 @@ public class WaitingAction extends Action { // NO_UCD (unused code)
 
 	public WaitingAction(FirebaseAction data) {
 		super(data);
-		this.name.setValue("Wait");
-		this.description = "Wait for a set amount of time before executing the next action";
 		cboWaitGranularity.getItems().addAll("seconds", "minutes", "hours");
 	//	cboWaitGranularity.setValue("seconds");
 		addListeners();
@@ -74,13 +75,15 @@ public class WaitingAction extends Action { // NO_UCD (unused code)
 
 	public void fxmlInit(){
 		super.fxmlInit();
+		name = NAME;
+		description = DESC;
 //		valuereceiver= new ExpressionReceiver(Expression.VAR_NUMERIC);
 //		hbox.getChildren().add(1, valuereceiver);		
 
 	}
 	@Override
 	public String getViewPath() {
-		return String.format("/actionWaiting.fxml", this.getClass().getSimpleName());
+		return String.format("/ActionWaiting.fxml", this.getClass().getSimpleName());
 	}
 
 	@Override
@@ -103,8 +106,7 @@ public class WaitingAction extends Action { // NO_UCD (unused code)
 			@Override
 			public void handle(KeyEvent arg0) {
 				try{
-					Long isValid = Long.parseLong(arg0.getCharacter());
-					
+					Long.parseLong(arg0.getCharacter());
 				}
 				catch(NumberFormatException e){
 					arg0.consume();
@@ -128,4 +130,6 @@ public class WaitingAction extends Action { // NO_UCD (unused code)
 			};
 			cboWaitGranularity.valueProperty().addListener(selectionListener);
 	}
+
+
 }

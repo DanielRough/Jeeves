@@ -1,32 +1,32 @@
 package com.jeeves.vpl.survey.questions;
 
-import java.io.IOException;
 import java.util.Map;
 
 import com.jeeves.vpl.firebase.FirebaseQuestion;
-import com.jeeves.vpl.survey.QuestionView;
-import com.jeeves.vpl.survey.Survey;
 
-import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
+import static com.jeeves.vpl.survey.QuestionEditor.*;
 
 public class QuestionTrueFalse extends QuestionView{
 	
-	public QuestionView clone(){
-		return new QuestionTrueFalse(super.getModel(),mySurvey);
-	}
-	
+//	public QuestionView clone(){
+//		return new QuestionTrueFalse(super.getModel());
+//	}
+//	
 	public void loadOptions(){
 		optionsPane = new Pane();
 
 	}
-	public QuestionTrueFalse(FirebaseQuestion model, Survey survey) {
-		super(model,survey);
-		setImage("/img/icons/imgbool.png");
-		setQuestionText("True/False");
-		this.description = "User chooses yes or no";
-	}
+//	public QuestionTrueFalse(FirebaseQuestion model) {
+//		super(model);
+//		setImage("/img/icons/imgbool.png");
+//	//	setQuestionText("True/False");
+////		this.description = "User chooses yes or no";
+//	}
 
+	public String getLabel(){
+		return "Choose true or false";
+	}
 	public String getImagePath(){
 		return "/img/icons/imgbool.png";
 	}
@@ -36,28 +36,28 @@ public class QuestionTrueFalse extends QuestionView{
 		
 	}
 
-	@Override
-	public void showCheckQOpts() {
-		mySurvey.rdioTrue.setVisible(true);
-		mySurvey.rdioFalse.setVisible(true);
-		mySurvey.rdioFalse.setSelected(false);
-		mySurvey.rdioTrue.setSelected(false);
-
-	}
-	@Override
-	public void handleCheckQ(String scon) {
-
-		if(!scon.isEmpty()){
-		if(Boolean.parseBoolean(scon))
-			mySurvey.rdioTrue.setSelected(true);
-		else
-			mySurvey.rdioFalse.setSelected(true);		
-		}
-		else{
-			mySurvey.rdioFalse.setSelected(false);
-			mySurvey.rdioTrue.setSelected(false);
-		}
-		}
+//	@Override
+//	public void showCheckQOpts() {
+//		rdioTrue.setVisible(true);
+//		rdioFalse.setVisible(true);
+//		rdioFalse.setSelected(false);
+//		rdioTrue.setSelected(false);
+//
+//	}
+//	@Override
+//	public void handleCheckQ(String scon) {
+//
+//		if(!scon.isEmpty()){
+//		if(Boolean.parseBoolean(scon))
+//			rdioTrue.setSelected(true);
+//		else
+//			rdioFalse.setSelected(true);		
+//		}
+//		else{
+//			rdioFalse.setSelected(false);
+//			rdioTrue.setSelected(false);
+//		}
+//		}
 
 	@Override
 	public void showEditOpts(Map<String,Object> opts) {

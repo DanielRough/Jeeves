@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 
 import com.jeeves.vpl.ViewElement;
+import com.jeeves.vpl.Constants.ElementType;
 import com.jeeves.vpl.firebase.FirebaseAction;
 
 /**
@@ -18,14 +19,15 @@ import com.jeeves.vpl.firebase.FirebaseAction;
  */
 public abstract class Action extends ViewElement<FirebaseAction> {
 	public ObservableMap<String,Object> params = FXCollections.observableHashMap();
-	public static String[] actionNames = {
-			"com.jeeves.vpl.canvas.actions.PromptAction",
-			"com.jeeves.vpl.canvas.actions.SendTextAction",
-			"com.jeeves.vpl.canvas.actions.SpeakerAction",
-			"com.jeeves.vpl.canvas.actions.SurveyAction",
-			"com.jeeves.vpl.canvas.actions.UpdateAction",
-			"com.jeeves.vpl.canvas.actions.WaitingAction",
-	};
+	public abstract String getViewPath();
+
+	public Action(){
+		super(FirebaseAction.class);
+	}
+	protected Action(FirebaseAction data) {
+		super(data,FirebaseAction.class);
+		
+	}
 	
 	public static Action create(FirebaseAction exprmodel){
 		String classname = exprmodel.gettype();
@@ -37,13 +39,11 @@ public abstract class Action extends ViewElement<FirebaseAction> {
 		return null;
 	}
 	
-	protected Action(FirebaseAction data) {
-		super(data,FirebaseAction.class);
-		
-	}
+
 
 	public void fxmlInit(){
-		setInitHeight(30);
+		this.type = ElementType.ACTION;
+	//	setInitHeight(30);
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setController(this);
 		fxmlLoader.setLocation(getClass().getResource(getViewPath()));
@@ -58,11 +58,10 @@ public abstract class Action extends ViewElement<FirebaseAction> {
 	public Action getInstance() {
 		return this;
 	}
-	public abstract String getViewPath();
 
-	public void setData(FirebaseAction data){
-		super.setData(data);
-	}
+//	public void setData(FirebaseAction data){
+//		super.setData(data);
+//	}
 
 	protected void addListeners(){
 		super.addListeners();

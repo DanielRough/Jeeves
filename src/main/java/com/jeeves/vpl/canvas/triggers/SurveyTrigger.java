@@ -1,7 +1,5 @@
 package com.jeeves.vpl.canvas.triggers;
 
-import java.util.Map;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -13,7 +11,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 
-import com.jeeves.vpl.Main;
 import com.jeeves.vpl.firebase.FirebaseSurvey;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
 
@@ -24,7 +21,8 @@ import com.jeeves.vpl.firebase.FirebaseTrigger;
  * @author Daniel
  */
 public class SurveyTrigger extends Trigger { // NO_UCD (use default)
-
+	public static final String NAME = "On survey completed/ignored";
+	public static final String DESC = "Schedule actions to take place when a user has completed or ignored a survey a certain number of times";
 	@FXML private ComboBox<String> cboSurvey;
 	@FXML private TextField txtMissedTimes;
 	@FXML private ComboBox<String> cboCompMissed;
@@ -33,12 +31,14 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 		return new Node[]{cboSurvey,cboCompMissed,txtMissedTimes};
 	}
 
-	public SurveyTrigger() {
-		this(new FirebaseTrigger());
-	}
-	
+//	public SurveyTrigger() {
+//		this(new FirebaseTrigger());
+//	}
+//	
 	public void fxmlInit(){
 		super.fxmlInit();
+		name = NAME;
+		description = DESC;
 		cboCompMissed.getItems().clear();
 		cboCompMissed.getItems().addAll("completed","missed");
 		cboCompMissed.setValue("completed");
@@ -115,15 +115,13 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 		});
 	}
 
-	public SurveyTrigger(FirebaseTrigger model) {
-		super(model);
-		name.setValue("Survey Trigger");
-		description = "Initiate actions when a user has completed/ignored a survey";
-		if(cboSurvey.getItems()!= null && cboSurvey.getItems().size()>0)
-			cboSurvey.setValue(cboSurvey.getItems().get(0));
-		addListeners();
-		
-	}
+//	public SurveyTrigger(FirebaseTrigger model) {
+//		super(model);
+//		if(cboSurvey.getItems()!= null && cboSurvey.getItems().size()>0)
+//			cboSurvey.setValue(cboSurvey.getItems().get(0));
+//		addListeners();
+//		
+//	}
 
 	@Override
 	public void setData(FirebaseTrigger model){
@@ -141,6 +139,6 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 	}
 	@Override
 	public String getViewPath() {
-		return String.format("/SurveyTrigger.fxml", this.getClass().getSimpleName());
+		return String.format("/TriggerSurvey.fxml", this.getClass().getSimpleName());
 	}
 }

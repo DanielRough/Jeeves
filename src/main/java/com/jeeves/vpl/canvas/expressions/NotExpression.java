@@ -1,24 +1,18 @@
 package com.jeeves.vpl.canvas.expressions;
 
 import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
-import com.jeeves.vpl.firebase.FirebaseExpression;
+
+import static com.jeeves.vpl.Constants.*;
 
 public class NotExpression extends Expression { // NO_UCD (unused code)
-
-public NotExpression() {
-	this(new FirebaseExpression());
-}
-	public NotExpression(FirebaseExpression data) {
-		super(data);
-		name.setValue("Is Not");
-		description = "Returns true if either of two expressions are true, false otherwise";
-		addListeners();
-
-	}
+	public static final String NAME = "is this false?";
+	public static final String DESC = "returns true if the contained expression/attribute is false";
 	@Override
 	public void setup() {
-		this.varType = Expression.VAR_BOOLEAN;
+		name = NAME;
+		description = DESC;
+		this.varType = VAR_BOOLEAN;
 		operand.setText("is false");
-		receivers.add(new ExpressionReceiver(Expression.VAR_BOOLEAN));
+		receivers.add(new ExpressionReceiver(VAR_BOOLEAN));
 	}
 }

@@ -2,6 +2,8 @@ package com.jeeves.vpl.survey;
 
 import java.net.URL;
 
+import com.jeeves.vpl.survey.questions.QuestionView;
+
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,27 +12,28 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class QuestionDeletePane extends Pane{
-	private QuestionView parent;
+	private QuestionView question;
+	private Survey survey;
 	private Stage stage;
 
 	@FXML
 	public void cancel(Event e){
-		
 		stage.close();
-
 	}
 	
 	@FXML
 	public void delete(Event e){
-		parent.removeFromSurvey();
+		survey.removeQuestion(question);
+		//parent.removeFromSurvey();
 		stage.close();
 
 	}
-	public QuestionDeletePane(QuestionView parent, Stage stage){
-		this.parent = parent;
+	public QuestionDeletePane(Survey survey, QuestionView question, Stage stage){
+		this.question = question;
+		this.survey = survey;
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setController(this);
-		URL location = this.getClass().getResource("/qdelete.fxml");
+		URL location = this.getClass().getResource("/PopupDeleteQuestion.fxml");
 		fxmlLoader.setLocation(location);
 		try {
 			Node root = (Node) fxmlLoader.load();

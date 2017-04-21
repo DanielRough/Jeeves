@@ -8,31 +8,30 @@ import com.google.firebase.database.IgnoreExtraProperties;
 /**
  * Created by Daniel on 29/04/2016.
  */
+@SuppressWarnings("serial")
 @IgnoreExtraProperties
-public class FirebaseTrigger extends FirebaseElement implements Serializable{
+public class FirebaseTrigger extends FirebaseElement implements Serializable {
+	private long clocktype = 0;
+	private String triggerId;
+	private List<FirebaseAction> actions;
 
-    public long getclocktype() {
-        return clocktype;
-    }
+	public long getclocktype() {
+		return clocktype;
+	}
 
+	public List<FirebaseAction> getactions() {
+		return actions;
+	}
 
-    private long clocktype = 0;
+	public void setactions(List<FirebaseAction> actions) {
+		this.actions = actions;
+	}
 
+	public void settriggerId(String triggerId) {
+		this.triggerId = triggerId;
+	}
 
-    public List<FirebaseAction> getactions() {
-        return actions;
-    }
-
-    public void setactions(List<FirebaseAction> actions){
-    	this.actions = actions;
-    }
-    private String triggerId;
-    
-    public void settriggerId(String triggerId){
-    	this.triggerId = triggerId;
-    }
-    public String gettriggerId(){
-    	return triggerId;
-    }
-    private List<FirebaseAction> actions;
+	public String gettriggerId() {
+		return triggerId;
+	}
 }

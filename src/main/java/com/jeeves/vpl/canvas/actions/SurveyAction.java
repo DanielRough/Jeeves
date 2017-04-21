@@ -10,23 +10,27 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 
-import com.jeeves.vpl.Main;
 import com.jeeves.vpl.firebase.FirebaseAction;
 import com.jeeves.vpl.firebase.FirebaseSurvey;
 
 public class SurveyAction extends Action { // NO_UCD (unused code)
+	public static final String NAME = "Send a survey";
+	public static final String DESC = "Notify patient that a survey is to be completed";
 	@FXML
 	private ComboBox<String> cboSurveyName;
 	ChangeListener<String> selectionListener;
-	
-	public SurveyAction() {
-		this(new FirebaseAction());
-	}
-	public SurveyAction(FirebaseAction data) {
-		super(data);
-		name.setValue("Send Survey");
-		description = "Send a notification to complete a survey";
-		addListeners();
+//	
+//	public SurveyAction() {
+//		this(new FirebaseAction());
+//	}
+//	public SurveyAction(FirebaseAction data) {
+//		super(data);
+//		addListeners();
+//	}
+	public void fxmlInit(){
+		super.fxmlInit();
+		name = NAME;
+		description = DESC;
 	}
 	public Node[] getWidgets() {
 		return new Node[] { cboSurveyName };
@@ -42,7 +46,7 @@ public class SurveyAction extends Action { // NO_UCD (unused code)
 
 	@Override
 	public String getViewPath() {
-		return String.format("/actionSendSurvey.fxml", this.getClass()
+		return String.format("/ActionSendSurvey.fxml", this.getClass()
 				.getSimpleName());
 	}
 
@@ -89,7 +93,6 @@ public class SurveyAction extends Action { // NO_UCD (unused code)
 			public void changed(ObservableValue<? extends String> arg0,
 					String arg1, String arg2) {
 				if(arg2 != null) //aaaaaaaargh
-
 					params.put("survey", arg2);
 			}
 			

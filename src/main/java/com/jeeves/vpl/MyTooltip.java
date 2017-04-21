@@ -1,23 +1,5 @@
 package com.jeeves.vpl;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.geometry.Insets;
-import javafx.geometry.Point2D;
-import javafx.scene.Cursor;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.util.Duration;
-
 public class MyTooltip {
 //
 //	ArrayList<ImageView> infoIcons = new ArrayList<ImageView>();

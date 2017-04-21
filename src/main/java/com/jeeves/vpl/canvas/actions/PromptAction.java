@@ -12,32 +12,31 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 
-import com.jeeves.vpl.Main;
 import com.jeeves.vpl.firebase.FirebaseAction;
 
 public class PromptAction extends Action { // NO_UCD (unused code)
+	public final String NAME = "Send Prompt";
+	public final String DESC = "Notify patient with a textual message";
 	private String prompttext;
-	@FXML
-	private TextField txtPrompt;
-
+	@FXML private TextField txtPrompt;
 	private TextArea smsText;
-
-	public PromptAction() {
-		this(new FirebaseAction());
-	}
-	public PromptAction(FirebaseAction data) {
-		super(data);
-		this.name.setValue("Send Prompt");
-		this.description = "Show the specified text on the phone screen with a notification";
-		addListeners();
-
-	}
+//
+//	public PromptAction() {
+//		this(new FirebaseAction());
+//	}
+//	public PromptAction(FirebaseAction data) {
+//		super(data);
+//		addListeners();
+//
+//	}
 	public Node[] getWidgets() {
 		return new Node[] { txtPrompt };
 	}
 
 	public void fxmlInit(){
 		super.fxmlInit();
+		name = NAME;
+		description = DESC;
 		smsText = new TextArea();
 
 	}
@@ -54,7 +53,7 @@ public class PromptAction extends Action { // NO_UCD (unused code)
 
 	@Override
 	public String getViewPath() {
-		return String.format("/actionSendPrompt.fxml", this.getClass().getSimpleName());
+		return String.format("/ActionSendPrompt.fxml", this.getClass().getSimpleName());
 	}
 
 
@@ -84,12 +83,9 @@ public class PromptAction extends Action { // NO_UCD (unused code)
 			@Override
 			public void changed(ObservableValue<? extends Boolean> arg0,
 					Boolean arg1, Boolean arg2) {
-				System.out.println("ARG1 IS " + arg1 + " and ARG2 IS " + arg2);
 
 				if(arg2.equals(false)){ //This keeps getting called twice, no bloody idea
 					gui.getMainPane().getChildren().remove(smsText);
-					System.out.println("hellohello");
-				//	getChildren().add(smsText);
 					smsText.setVisible(false);
 
 				}
@@ -109,5 +105,7 @@ public class PromptAction extends Action { // NO_UCD (unused code)
 			}
 		});
 	}
+
+
 
 }

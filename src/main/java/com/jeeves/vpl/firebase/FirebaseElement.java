@@ -10,11 +10,16 @@ import javafx.beans.property.StringProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.firebase.database.IgnoreExtraProperties;
 
+@SuppressWarnings("serial")
 @JsonTypeInfo(use=JsonTypeInfo.Id.MINIMAL_CLASS, include= JsonTypeInfo.As.PROPERTY, property="@class")
 @IgnoreExtraProperties
-public  class FirebaseElement implements Serializable{
+public class FirebaseElement implements Serializable{
 
-
+    private String description;
+    protected Map<String,Object> params = new HashMap<String,Object>();
+    private String type;
+    private long xPos;
+    private long yPos;
 	public StringProperty name = new SimpleStringProperty();
 	
     public String getdescription() {
@@ -57,12 +62,7 @@ public  class FirebaseElement implements Serializable{
     public void setyPos(long yPos){
     	this.yPos = yPos;
     }
-    private String description;
- //   private String name;
-    protected Map<String,Object> params = new HashMap<String,Object>();
-    private String type;
-    private long xPos;
-    private long yPos;
+
 
     @Override 
     public String toString(){
