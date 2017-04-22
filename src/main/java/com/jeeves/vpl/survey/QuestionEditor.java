@@ -276,6 +276,8 @@ public class QuestionEditor extends Pane{
 	} 
 
 	public void removeConditionListeners(){
+		if(txtAnswer == null)System.out.println("text aner is null!");
+		if(freeTextListener == null)System.out.println("FREELISTEN IS NULL");
 		txtAnswer.textProperty().removeListener(freeTextListener);
 		txtNumAnswer.textProperty().addListener(numTextListener);
 		cboMultiChoice.getSelectionModel().selectedItemProperty().addListener(multiChoiceListener);
@@ -288,7 +290,8 @@ public class QuestionEditor extends Pane{
 //		setSelectedQuestion(entry);
 		selectedQuestionModel = entry.getModel();
 		populateQ(entry.getModel());
-		vboxOpts.getChildren().remove(3,vboxOpts.getChildren().size()); //leave the qtext
+	//	vboxOpts.getChildren().remove(3);
+		vboxOpts.getChildren().remove(2,vboxOpts.getChildren().size()); //leave the qtext
 		if(listener != null)
 			txtQText.textProperty().removeListener(listener);
 		listener = new ChangeListener<String>(){

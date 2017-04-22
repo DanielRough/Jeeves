@@ -27,7 +27,7 @@
             <Font size="14.0" />
          </font>
       </CheckBox>
-      <Pane fx:id="paneEditor" disable="true" layoutX="365.0" layoutY="77.0" opacity="0.56" prefHeight="446.0" prefWidth="308.0" />
+      <Pane fx:id="paneEditor" disable="true" layoutX="338.0" layoutY="77.0" prefHeight="446.0" prefWidth="308.0" />
       <Label layoutX="443.0" layoutY="13.0" text="minutes">
          <font>
             <Font size="14.0" />
@@ -38,7 +38,7 @@
             <Font size="14.0" />
          </font>
       </Label>
-      <Label disable="true" layoutX="476.0" layoutY="51.0" text="Edit Question">
+      <Label layoutX="450.0" layoutY="51.0" text="Edit Question">
          <font>
             <Font size="14.0" />
          </font>

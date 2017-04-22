@@ -4,6 +4,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jeeves.vpl.ViewElement;
+import com.jeeves.vpl.canvas.receivers.QuestionReceiver;
+import com.jeeves.vpl.firebase.FirebaseQuestion;
+import com.jeeves.vpl.firebase.FirebaseSurvey;
+import com.jeeves.vpl.survey.questions.QuestionView;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -15,6 +21,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -30,12 +37,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-
-import com.jeeves.vpl.ViewElement;
-import com.jeeves.vpl.canvas.receivers.QuestionReceiver;
-import com.jeeves.vpl.firebase.FirebaseQuestion;
-import com.jeeves.vpl.firebase.FirebaseSurvey;
-import com.jeeves.vpl.survey.questions.QuestionView;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 public class Survey extends ViewElement<FirebaseSurvey> {
 	@FXML private CheckBox chkExpiry;
 	@FXML private Label lblExpiry;
@@ -208,8 +212,16 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 	//	lstRegQ.setPrefHeight(lstRegQ.getPrefHeight() + view.getHeight());
 		view.setReadOnly(false);
 		view.addButtons();
-		view.getEditButton().setOnAction(event->editor.populateQuestion(view));
+		view.getEditButton().setOnAction(event->{editor.populateQuestion(view);paneEditor.setDisable(false);});
+		view.getDeleteButton().setOnAction(event->{
+				Stage stage = new Stage(StageStyle.UNDECORATED);
+				QuestionDeletePane root = new QuestionDeletePane(this,view,stage);
+				stage.setScene(new Scene(root));
+				stage.initModality(Modality.APPLICATION_MODAL);
+				stage.showAndWait();
+			});
 	}
+	int counter = 0;
 	public void addQuestionBoxListeners(){
 		receiver = new QuestionReceiver(paneReceiver.getPrefWidth(),paneReceiver.getPrefHeight());
 		receiver.getChildElements().addListener(new ListChangeListener<Node>() {
@@ -218,13 +230,17 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 				currentelements.clear();
 			//	currentproject.getuidesign().clear();
 				model.getquestions().clear();
-				receiver.getChildElements().forEach(child->{model.getquestions().add((FirebaseQuestion)child.getModel());
-				currentelements.add((FirebaseQuestion)child.getModel());
-//				((FirebaseQuestion)child.getModel()).getMyTextProperty().addListener(change->{
-//					receiver.getChildElements().remove(child);
-//					receiver.getChildElements().add(child);
-//				});
-				});
+				
+				for(int i = 0; i < receiver.getChildElements().size(); i++){
+					ViewElement child = receiver.getChildElements().get(i);
+					model.getquestions().add((FirebaseQuestion)child.getModel());
+					currentelements.add((FirebaseQuestion)child.getModel());
+//					((FirebaseQuestion)child.getModel()).getMyTextProperty().addListener(change->{
+//						receiver.getChildElements().remove(child);
+//						receiver.getChildElements().add(child);
+					addQuestion(counter,(QuestionView)child);
+				}
+				
 			}
 
 		});
