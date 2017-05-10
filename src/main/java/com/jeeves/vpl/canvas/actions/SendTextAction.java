@@ -27,13 +27,7 @@ public class SendTextAction extends Action { // NO_UCD (unused code)
 	@FXML public HBox hboxSMS;
 	private TextArea smsText;
 	
-//	public SendTextAction() {
-//		this(new FirebaseAction());
-//	}
-//	public SendTextAction(FirebaseAction data) {
-//		super(data);
-//		addListeners();
-//	}
+
 	public Node[] getWidgets() {
 		return new Node[] { txtMessage, cboRecipient };
 	}

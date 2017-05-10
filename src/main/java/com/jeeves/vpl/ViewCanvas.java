@@ -92,7 +92,6 @@ public class ViewCanvas extends Group implements ParentPane{ // NO_UCD (use defa
 				if (event.getGestureSource() instanceof ViewElement && !(event.getGestureSource() instanceof UIElement) && !(getChildren().contains(event.getGestureSource()))) {
 					ViewElement dragged = (ViewElement) event.getGestureSource();
 					if (dragged instanceof ViewElement){
-						//Point2D releasePoint = sceneToLocal(event.getSceneX(),event.getSceneY());
 						addChild(dragged, event.getSceneX(), event.getSceneY());
 					}
 				}

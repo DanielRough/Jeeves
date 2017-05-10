@@ -1,8 +1,12 @@
 package com.jeeves.vpl;
 
+import java.util.ArrayList;
+
+import javafx.event.EventHandler;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
 
 public class Constants {
@@ -18,7 +22,6 @@ public class Constants {
 		EXPRESSION, ACTION, CTRL_ACTION, TRIGGER, VARIABLE, UIELEMENT, QUESTION;
 	}
 
-	
 	//Database constants
 	public static final String DBNAME = "JeevesData";
 	public static final String PATIENTS_COLL = "patients";
@@ -117,6 +120,32 @@ public class Constants {
 	public static final int GEO = 6;
 	public static final int BOOLEAN = 7;
 	public static final int NUMERIC = 8;
+	
+
+	public static final String[] CHILD_COLOURS = new String[]{
+		"lightcyan",
+		"pink",
+		"lemonchiffon",
+		"palegreen",
+		"lavender",
+		"sandybrown",
+		"white"
+	};
+	public static ArrayList<Integer> CONSTRAINT_NUMS = new ArrayList<Integer>();
+	
+	//A static event handler for ensuring we don't enter non-numeric characters into a numeric text box
+	public static EventHandler<KeyEvent> numberHandler = new EventHandler<KeyEvent>() {
+		@Override
+		public void handle(KeyEvent arg0) {
+			if (arg0.getEventType().equals(KeyEvent.KEY_TYPED))
+				try {
+					Long.parseLong(arg0.getCharacter());
+				} catch (NumberFormatException e) {
+					arg0.consume();
+					return;
+				}
+		}
+	};
 	
 	//Finally, a static method to style the combo boxes
 	public static void styleTextCombo(ComboBox<String> combo){

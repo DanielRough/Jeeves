@@ -20,6 +20,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Pane;
+import static com.jeeves.vpl.Constants.*;
 
 public class QuestionLikert extends QuestionView {
 	
@@ -176,6 +177,10 @@ public class QuestionLikert extends QuestionView {
 		getModel().setAssign(chkAssignScore.isSelected()); // This is
 		// getting
 		// silly
+	}
+	@Override
+	public int getQuestionType() {
+		return SCALE;
 	}
 
 

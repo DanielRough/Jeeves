@@ -18,6 +18,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import static com.jeeves.vpl.survey.QuestionEditor.*;
+import static com.jeeves.vpl.Constants.*;
 
 public class QuestionMultMany extends QuestionView{
 
@@ -135,6 +136,10 @@ public class QuestionMultMany extends QuestionView{
 		for (Object opt : opts.values()){
 			handleAddOpt(paneChoiceOptsM,opt.toString());
 		}
+	}
+	@Override
+	public int getQuestionType() {
+		return MULT_MANY;
 	}
 
 }

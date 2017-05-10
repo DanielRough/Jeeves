@@ -5,7 +5,7 @@ import java.util.Map;
 import com.jeeves.vpl.firebase.FirebaseQuestion;
 
 import javafx.scene.layout.Pane;
-import static com.jeeves.vpl.survey.QuestionEditor.*;
+import static com.jeeves.vpl.Constants.*;
 
 public class QuestionTrueFalse extends QuestionView{
 	
@@ -14,7 +14,6 @@ public class QuestionTrueFalse extends QuestionView{
 //	}
 //	
 	public void loadOptions(){
-		optionsPane = new Pane();
 
 	}
 //	public QuestionTrueFalse(FirebaseQuestion model) {
@@ -68,6 +67,11 @@ public class QuestionTrueFalse extends QuestionView{
 	public void addEventHandlers() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public int getQuestionType() {
+		return BOOLEAN;
 	}
 
 }

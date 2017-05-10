@@ -121,48 +121,35 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 			
 		});
 
-//		childReceiver.getChildElements().addListener(
-//				(ListChangeListener<ViewElement>) arg0 -> {
-//					if(loading == false)
-//						model.settriggerId(getSaltString()); //Need to update ID if actions change
-//					System.out.println("ACTIONS CHANGED");
-//					ArrayList<Action> newActions = new ArrayList<Action>();
-//					if(model.getactions() == null)
-//						model.setactions(new ArrayList<FirebaseAction>());
-//					model.getactions().clear();
-//					childReceiver.getChildElements().forEach(
-//							element ->{newActions.add((Action) element);
-//							model.getactions().add((FirebaseAction)element.getModel());
-//							((Action)element).setActionHolder(this);
-//							
-//							});
-//					
-//							
-//					this.actions = newActions;
-//					actions.forEach(myaction ->{
-//						myaction.params.addListener(new MapChangeListener<String,Object>(){
-//
-//							@Override
-//							public void onChanged(
-//									javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
-//								System.out.println("PARAMS CHANGED");
-//								model.settriggerId(getSaltString()); //Again, update, must reset 
-//
-//							}
-//							
-//						});
-//					});
-//					updateActionsHeight();
-//				});
-		childReceiver.heightProperty().addListener(new ChangeListener<Number>(){
+		childReceiver.getChildElements().addListener(
+				(ListChangeListener<ViewElement>) arg0 -> {
+					if(loading == false)
+						model.settriggerId(getSaltString()); //Need to update ID if actions change
+					System.out.println("ACTIONS CHANGED");
+					ArrayList<Action> newActions = new ArrayList<Action>();
+					if(model.getactions() == null)
+						model.setactions(new ArrayList<FirebaseAction>());
+					model.getactions().clear();
+					childReceiver.getChildElements().forEach(
+							element ->{newActions.add((Action) element);
+							model.getactions().add((FirebaseAction)element.getModel());							
+							});
+					
+							
+					this.actions = newActions;
+					actions.forEach(myaction ->{
+						myaction.params.addListener(new MapChangeListener<String,Object>(){
+							@Override
+							public void onChanged(
+									javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
+								System.out.println("PARAMS CHANGED");
+								model.settriggerId(getSaltString()); //Again, update, must reset 
+							}
+						
+						});
+					});
+				});
 
-			@Override
-			public void changed(ObservableValue<? extends Number> observable,
-					Number oldValue, Number newValue) {
-		//		setPrefHeight(newValue.doubleValue()+80);
-			}
-			
-		});
 
 	}
 

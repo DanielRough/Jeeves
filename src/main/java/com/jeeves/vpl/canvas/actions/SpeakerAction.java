@@ -17,14 +17,7 @@ public class SpeakerAction extends Action { // NO_UCD (unused code)
 	@FXML
 	private ComboBox<String> cboVolumeOn;
 
-//	public SpeakerAction() {
-//		this(new FirebaseAction());
-//	}
-//	public SpeakerAction(FirebaseAction data) {
-//		super(data);
-//		addListeners();
-//
-//	}
+
 	public void fxmlInit(){
 		super.fxmlInit();
 		name = NAME;

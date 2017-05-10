@@ -5,6 +5,7 @@ import java.util.Map;
 import com.jeeves.vpl.firebase.FirebaseQuestion;
 
 import javafx.scene.layout.Pane;
+import static com.jeeves.vpl.Constants.*;
 
 public class QuestionLocation extends QuestionView{
 //
@@ -19,7 +20,6 @@ public class QuestionLocation extends QuestionView{
 		return "Choose a location on a map";
 	}
 	public void loadOptions(){
-		optionsPane = new Pane();
 
 	}
 	public String getImagePath(){
@@ -50,5 +50,9 @@ public class QuestionLocation extends QuestionView{
 //		// TODO Auto-generated method stub
 //		
 //	}
+	@Override
+	public int getQuestionType() {
+		return GEO;
+	}
 
 }

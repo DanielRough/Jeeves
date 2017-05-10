@@ -1,6 +1,7 @@
 package com.jeeves.vpl.firebase;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.google.firebase.database.IgnoreExtraProperties;
@@ -16,10 +17,37 @@ public class FirebaseQuestion extends FirebaseElement implements Serializable {
 	private String questionText;
 	private String assignedVar;
 	private String image;
-
+	private long questionId;
+	private FirebaseQuestion conditionQuestion;
+	private String conditionConstraints;
+	
+	//Maybe each FirebaseQuestion could have another reference to a FirebaseQuestion that acts as its condition question?
+	
+	public String getconditionConstraints(){
+		return conditionConstraints;
+	}
+	public void setconditionConstraints(String constraints){
+		this.conditionConstraints = constraints;
+	}
+	public FirebaseQuestion getconditionQuestion(){
+		return conditionQuestion;
+	}
+	public void setconditionQuestion(FirebaseQuestion q){
+		this.conditionQuestion = q;
+	}
+	
+	public long getquestionId(){
+		return questionId;
+	}
+	
+	public void setquestionId(long id){
+		this.questionId = id;
+	}
+	
 	public long getquestionType() {
 		return questionType;
 	}
+
 
 	public void setquestionType(long type) {
 
@@ -60,6 +88,11 @@ public class FirebaseQuestion extends FirebaseElement implements Serializable {
 
 	public void setOptions(Map<String, Object> options) {
 		params.put("options", options);
+	}
+	public Map<String,Object> getOptions(){
+		if(params.containsKey("options"))
+		return (Map<String,Object>)params.get("options");
+		return new HashMap<String,Object>();
 	}
 
 }

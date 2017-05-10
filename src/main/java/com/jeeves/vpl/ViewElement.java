@@ -38,6 +38,8 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane{
 	protected String name;
 	protected String description;
 	public ParentPane parentPane;
+	
+	
 	//public StringProperty name = new SimpleStringProperty();
 //	public String description;
 //	public String getName(){
@@ -93,7 +95,6 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane{
 	public ViewElement(Class<T> typeParameterClass){
 		this.gui = Main.getContext();
 	//	currentCanvas = gui.getViewCanvas();
-		fxmlInit();
 		try {
 			//	 if(data.getname() == null)
 				this.model = typeParameterClass.newInstance();
@@ -101,6 +102,8 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane{
 				e.printStackTrace();
 			}		//if(data.getname() != null) //Data is null if it's a new element{
 		//setData(data);
+		fxmlInit();
+
 		addListeners();	
 		initEventHandlers();
 	}
@@ -222,7 +225,7 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane{
 
 					System.out.println("Adding child at " + event.getSceneX() + "," + event.getSceneY());
 					parentPane.addChild(getInstance(), event.getSceneX(), event.getSceneY());
-					
+			//		parentPane.getChildren().add(getInstance());
 				//	}
 					event.consume();
 				//	contextMenu.hide();
@@ -249,6 +252,7 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane{
 					if(event.getButton().equals(MouseButton.SECONDARY))return;
 					if(gui.isOverTrash(event.getSceneX(), event.getSceneY())){
 						parentPane.removeChild(getInstance());
+//						parentPane.getChildren().remove(getInstance());
 						//DJR Receiver should be able to handle this itself
 
 //						if(getInstance().getReceiver() != null){
@@ -310,9 +314,8 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane{
 	protected void addListeners(){
 		layoutXProperty().addListener(listener->model.setxPos((long)getLayoutX()));
 		layoutYProperty().addListener(listener->{model.setyPos((long)getLayoutY());});
-//		model.settype(getInstance().getClass().getName());
-//		model.setname(getName());
-//		model.setdescription(getDescription());
+		model.settype(getInstance().getClass().getName());
+		model.setname(getName());
 //		currentCanvas = gui.getViewCanvas();
 	}
 

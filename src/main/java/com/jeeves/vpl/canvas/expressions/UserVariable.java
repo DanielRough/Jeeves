@@ -88,6 +88,7 @@ public class UserVariable extends ViewElement<FirebaseVariable> implements Typed
 		this.type = ElementType.VARIABLE;
 		label = new Label();
 		setPrefHeight(20);
+		label.setPadding(new Insets(0,15,0,15));
 
 	}
 //	public void setVarType(String type){

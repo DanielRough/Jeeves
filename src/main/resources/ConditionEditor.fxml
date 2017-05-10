@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="5.0" style="-fx-background-color: lightorange;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <HBox fx:id="hboxCondition" alignment="CENTER_LEFT">
+         <children>
+            <CheckBox fx:id="chkAskOnCondition" mnemonicParsing="false" prefHeight="36.0" prefWidth="177.0" text="Ask this if answer to:" wrapText="true">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </CheckBox>
+            <ImageView fx:id="imgCondition" fitHeight="14.0" fitWidth="14.0" pickOnBounds="true" preserveRatio="true" visible="false">
+               <image>
+                  <Image url="@img/icons/information-icon.png" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
+      <Pane fx:id="paneCondition" prefHeight="58.0" prefWidth="287.0">
+         <children>
+            <Label layoutX="240.0" layoutY="-10.0" prefHeight="25.0" prefWidth="33.0" text="was">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txtNumAnswer" layoutX="135.0" layoutY="25.0" prefHeight="25.0" prefWidth="42.0" visible="false" />
+            <TextField fx:id="txtAnswer" layoutY="25.0" prefHeight="25.0" visible="false" />
+            <ComboBox fx:id="cboQuestionText" disable="true" layoutY="-10.0" prefHeight="25.0" prefWidth="229.0" />
+            <RadioButton fx:id="rdioTrue" layoutX="7.0" layoutY="25.0" mnemonicParsing="false" text="true" visible="false" />
+            <RadioButton fx:id="rdioFalse" layoutX="62.0" layoutY="25.0" mnemonicParsing="false" text="false" visible="false" />
+            <ComboBox fx:id="cboLessMore" layoutX="-1.0" layoutY="25.0" prefHeight="25.0" prefWidth="135.0" visible="false" />
+            <ComboBox fx:id="cboMultiChoice" layoutX="-1.0" layoutY="25.0" prefWidth="150.0" visible="false" />
+            <HBox fx:id="hboxDateOpts" alignment="CENTER_LEFT" layoutX="6.0" layoutY="25.0" spacing="5.0" visible="false">
+               <children>
+                  <ComboBox fx:id="cboBeforeAfter" layoutX="6.0" layoutY="25.0" prefHeight="26.0" prefWidth="124.0" visible="false" />
+                  <Pane fx:id="paneDateTimeReceiver" prefWidth="135.0" visible="false" />
+               </children>
+            </HBox>
+         </children>
+      </Pane>
+   </children>
+</VBox>

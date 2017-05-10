@@ -23,6 +23,22 @@ public class ExpressionReceiver extends Receiver {
 	protected String receiveType;
 	protected String value; //The value is for when we don't have an Expression in the receiver
 
+	@Override
+	public void defineHandlers(){
+		super.defineHandlers();
+
+		mentered = event -> {
+			event.consume();
+			if (!isValidElement((ViewElement) event.getGestureSource()))
+				return;
+			getStyleClass().add("drop_shadow");
+		};
+		mexited = event -> {
+			event.consume();
+			if (!isValidElement((ViewElement) event.getGestureSource()))
+				return;
+			getStyleClass().remove("drop_shadow");		};
+	}
 	public ExpressionReceiver(String receiveType) {
 		super();
 		captureRect.setWidth(20);

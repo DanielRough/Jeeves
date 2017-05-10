@@ -20,15 +20,7 @@ public class PromptAction extends Action { // NO_UCD (unused code)
 	private String prompttext;
 	@FXML private TextField txtPrompt;
 	private TextArea smsText;
-//
-//	public PromptAction() {
-//		this(new FirebaseAction());
-//	}
-//	public PromptAction(FirebaseAction data) {
-//		super(data);
-//		addListeners();
-//
-//	}
+
 	public Node[] getWidgets() {
 		return new Node[] { txtPrompt };
 	}

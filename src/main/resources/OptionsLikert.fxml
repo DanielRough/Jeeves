@@ -27,41 +27,41 @@
             </RadioButton>
          </children>
       </VBox>
-      <VBox spacing="5.0">
+      <VBox prefHeight="228.0" prefWidth="159.0" spacing="5.0">
          <children>
-            <TextField fx:id="txtLikert1" promptText="Label 1">
+            <TextField fx:id="txtLikert1" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="20.0" prefWidth="159.0" promptText="Label 1">
                <font>
-                  <Font size="14.0" />
+                  <Font size="12.0" />
                </font>
             </TextField>
-            <TextField fx:id="txtLikert2" promptText="Label 2">
+            <TextField fx:id="txtLikert2" minHeight="-Infinity" prefHeight="20.0" promptText="Label 2">
                <font>
-                  <Font size="14.0" />
+                  <Font size="12.0" />
                </font>
             </TextField>
-            <TextField fx:id="txtLikert3" promptText="Label 3">
+            <TextField fx:id="txtLikert3" minHeight="-Infinity" prefHeight="20.0" promptText="Label 3">
                <font>
-                  <Font size="14.0" />
+                  <Font size="12.0" />
                </font>
             </TextField>
-            <TextField fx:id="txtLikert4" promptText="Label 4">
+            <TextField fx:id="txtLikert4" minHeight="-Infinity" prefHeight="20.0" promptText="Label 4">
                <font>
-                  <Font size="14.0" />
+                  <Font size="12.0" />
                </font>
             </TextField>
-            <TextField fx:id="txtLikert5" promptText="Label 5">
+            <TextField fx:id="txtLikert5" minHeight="-Infinity" prefHeight="20.0" promptText="Label 5">
                <font>
-                  <Font size="14.0" />
+                  <Font size="12.0" />
                </font>
             </TextField>
-            <TextField fx:id="txtLikert6" promptText="Label 6" visible="false">
+            <TextField fx:id="txtLikert6" minHeight="-Infinity" prefHeight="20.0" promptText="Label 6" visible="false">
                <font>
-                  <Font size="14.0" />
+                  <Font size="12.0" />
                </font>
             </TextField>
-            <TextField fx:id="txtLikert7" promptText="Label 7" visible="false">
+            <TextField fx:id="txtLikert7" minHeight="-Infinity" prefHeight="20.0" promptText="Label 7" visible="false">
                <font>
-                  <Font size="14.0" />
+                  <Font size="12.0" />
                </font>
             </TextField>
          </children>

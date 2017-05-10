@@ -65,7 +65,7 @@
 	-fx-fill: radial-gradient(center 50% -40%, radius 200%, #b8ee36 45%, #80c800 50%);
 	-fx-border-color: darkgreen;
 	-fx-border-width: 0;
-		  -fx-text-fill: white;
+
 	  -fx-alignment: center;
 -fx-text-alignment: center;
 }
@@ -85,7 +85,7 @@
 	-fx-border-width: 0;
 	-fx-border-radius: 20 20 20 20;
 	-fx-background-radius: 20 20 20 20;
-		  -fx-text-fill: white;
+	
 	  -fx-alignment: center;
 -fx-text-alignment: center;
 }
@@ -99,12 +99,15 @@
 	
 }
 
+.Boolean .var .label  {
+	-fx-padding: 0 15 0 15;
+}
+
 .Location {
 	-fx-background-color: radial-gradient(center 50% -40%, radius 200%, #e73827 45%, #f0796e 50%);
 	-fx-border-radius: 20 20 20 20;
 	-fx-border-width: 0;
 	-fx-background-radius: 20 20 20 20;
-		  -fx-text-fill: white;
 	  -fx-alignment: center;
 -fx-text-alignment: center;
 }

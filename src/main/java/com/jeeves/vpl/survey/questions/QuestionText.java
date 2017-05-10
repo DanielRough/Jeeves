@@ -6,6 +6,7 @@ import com.jeeves.vpl.firebase.FirebaseQuestion;
 
 import javafx.scene.layout.Pane;
 import static com.jeeves.vpl.survey.QuestionEditor.*;
+import static com.jeeves.vpl.Constants.*;
 
 public class QuestionText extends QuestionView{
 //
@@ -16,7 +17,6 @@ public class QuestionText extends QuestionView{
 		return "/img/icons/imgfreetext.png";
 	}
 	public void loadOptions(){
-		optionsPane = new Pane();
 
 	}
 //	public QuestionText(FirebaseQuestion question) {
@@ -55,6 +55,10 @@ public class QuestionText extends QuestionView{
 	public void showEditOpts(Map<String,Object> opts) {
 		// TODO Auto-generated method stub
 		
+	}
+	@Override
+	public int getQuestionType() {
+		return OPEN_ENDED;
 	}
 
 	

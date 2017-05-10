@@ -35,7 +35,9 @@ public class DateReceiver extends ExpressionReceiver{
 	public DateReceiver(String receiveType) {
 		super(receiveType);
 	}
-
+	public TextField getTextField(){
+		return text;
+	}
 	public String getText() {
 			return text.getText();
 	}
@@ -92,12 +94,11 @@ public class DateReceiver extends ExpressionReceiver{
 	public void defineHandlers(){
 		mentered = event -> {
 			if(handleEntered(event))
-			captureRect.setOpacity(0.7);
-		};
+				getStyleClass().add("drop_shadow");
+			};
 		 mexited = event -> {
 			if(handleExited(event))
-			captureRect.setOpacity(0);
-		};
+				getStyleClass().remove("drop_shadow");		};
 		mreleased = event -> {
 			if(!handleReleased(event))return;
 			captureRect.setOpacity(0);

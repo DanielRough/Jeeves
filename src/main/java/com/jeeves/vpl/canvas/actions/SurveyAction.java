@@ -19,14 +19,7 @@ public class SurveyAction extends Action { // NO_UCD (unused code)
 	@FXML
 	private ComboBox<String> cboSurveyName;
 	ChangeListener<String> selectionListener;
-//	
-//	public SurveyAction() {
-//		this(new FirebaseAction());
-//	}
-//	public SurveyAction(FirebaseAction data) {
-//		super(data);
-//		addListeners();
-//	}
+
 	public void fxmlInit(){
 		super.fxmlInit();
 		name = NAME;

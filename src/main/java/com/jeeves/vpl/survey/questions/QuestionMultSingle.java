@@ -18,6 +18,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import static com.jeeves.vpl.survey.QuestionEditor.*;
+import static com.jeeves.vpl.Constants.*;
 
 public class QuestionMultSingle extends QuestionView{
 
@@ -140,6 +141,10 @@ public class QuestionMultSingle extends QuestionView{
 		for (Object opt : opts.values()){
 			handleAddOpt(paneChoiceOptsS,opt.toString());
 		}		
+	}
+	@Override
+	public int getQuestionType() {
+		return MULT_SINGLE;
 	}
 
 }
