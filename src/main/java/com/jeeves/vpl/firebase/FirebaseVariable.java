@@ -9,6 +9,6 @@ import com.google.firebase.database.IgnoreExtraProperties;
  */
 @SuppressWarnings("serial")
 @IgnoreExtraProperties
-public class FirebaseVariable extends FirebaseExpression implements Serializable{
+public class FirebaseVariable extends FirebaseExpression implements Serializable {
 
 }

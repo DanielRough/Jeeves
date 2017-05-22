@@ -18,13 +18,13 @@ public class FirebaseUI extends FirebaseElement implements Serializable {
 	@Exclude
 	private StringProperty textProperty = new SimpleStringProperty();
 
-	public String gettext() {
-		return text;
-	}
-
 	@Exclude
 	public StringProperty getMyTextProperty() {
 		return textProperty;
+	}
+
+	public String gettext() {
+		return text;
 	}
 
 	public void settext(String text) {

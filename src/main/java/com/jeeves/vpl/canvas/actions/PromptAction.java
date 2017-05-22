@@ -15,46 +15,26 @@ import javafx.scene.input.MouseEvent;
 import com.jeeves.vpl.firebase.FirebaseAction;
 
 public class PromptAction extends Action { // NO_UCD (unused code)
-	public final String NAME = "Send Prompt";
 	public final String DESC = "Notify patient with a textual message";
+	public final String NAME = "Send Prompt";
 	private String prompttext;
-	@FXML private TextField txtPrompt;
 	private TextArea smsText;
+	@FXML
+	private TextField txtPrompt;
 
-	public Node[] getWidgets() {
-		return new Node[] { txtPrompt };
+	public PromptAction() {
+		this(new FirebaseAction());
 	}
 
-	public void fxmlInit(){
-		super.fxmlInit();
-		name = NAME;
-		description = DESC;
-		smsText = new TextArea();
-
+	public PromptAction(FirebaseAction data) {
+		super(data);
 	}
-
-	public void setData(FirebaseAction model) {
-		super.setData(model);
-		Map<String,Object> params = model.getparams();
-		if(!params.containsKey("msgtext"))return;
-		prompttext = params.get("msgtext").toString();
-		txtPrompt.setText(prompttext);
-		smsText.setText(prompttext);
-
-	}
-
-	@Override
-	public String getViewPath() {
-		return String.format("/ActionSendPrompt.fxml", this.getClass().getSimpleName());
-	}
-
 
 	@Override
 	public void addListeners() {
 		super.addListeners();
-		
-		
-		txtPrompt.setOnMouseClicked(new EventHandler<MouseEvent>(){
+
+		txtPrompt.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent arg0) {
@@ -64,40 +44,67 @@ public class PromptAction extends Action { // NO_UCD (unused code)
 				Bounds txtMsgBounds = localToScene(txtPrompt.getBoundsInParent());
 				smsText.setLayoutX(txtMsgBounds.getMinX());
 				smsText.setLayoutY(txtMsgBounds.getMinY());
-				smsText.requestFocus(); 
-				smsText.setPrefWidth(Math.max(txtPrompt.getWidth(),smsText.getWidth()));
-				
+				smsText.requestFocus();
+				smsText.setPrefWidth(Math.max(txtPrompt.getWidth(), smsText.getWidth()));
+
 			}
-			
+
 		});
-		smsText.focusedProperty().addListener(new ChangeListener<Boolean>(){
+		smsText.focusedProperty().addListener(new ChangeListener<Boolean>() {
 
 			@Override
-			public void changed(ObservableValue<? extends Boolean> arg0,
-					Boolean arg1, Boolean arg2) {
+			public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
 
-				if(arg2.equals(false)){ //This keeps getting called twice, no bloody idea
+				if (arg2.equals(false)) { 
 					gui.getMainPane().getChildren().remove(smsText);
 					smsText.setVisible(false);
 
 				}
 			}
-			
+
 		});
 		smsText.textProperty().addListener(new ChangeListener<String>() {
 
 			@Override
-			public void changed(ObservableValue<? extends String> arg0,
-					String arg1, String arg2) {
-				
-				smsText.setPrefWidth(Math.max(smsText.getWidth(),txtPrompt.getWidth()));
-				smsText.setPrefColumnCount(arg2.length()+1);
+			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
+
+				smsText.setPrefWidth(Math.max(smsText.getWidth(), txtPrompt.getWidth()));
+				smsText.setPrefColumnCount(arg2.length() + 1);
 				params.put("msgtext", smsText.getText());// }
 				txtPrompt.setText(smsText.getText());
 			}
 		});
 	}
 
+	@Override
+	public void fxmlInit() {
+		super.fxmlInit();
+		name = NAME;
+		description = DESC;
+		smsText = new TextArea();
 
+	}
+
+	@Override
+	public String getViewPath() {
+		return String.format("/ActionSendPrompt.fxml", this.getClass().getSimpleName());
+	}
+
+	@Override
+	public Node[] getWidgets() {
+		return new Node[] { txtPrompt };
+	}
+
+	@Override
+	public void setData(FirebaseAction model) {
+		super.setData(model);
+		Map<String, Object> params = model.getparams();
+		if (!params.containsKey("msgtext"))
+			return;
+		prompttext = params.get("msgtext").toString();
+		txtPrompt.setText(prompttext);
+		smsText.setText(prompttext);
+
+	}
 
 }

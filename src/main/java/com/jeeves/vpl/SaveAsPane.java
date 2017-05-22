@@ -14,44 +14,50 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
-public class SaveAsPane extends Pane{ // NO_UCD (use default)
-	private Stage stage;
-//	private Main currentGUI;
-	private FirebaseProject project;
-	@FXML private TextField txtSaveAsName;
-	@FXML private Button btnSave;
+public class SaveAsPane extends Pane { // NO_UCD (use default)
+	@FXML
+	private Button btnSave;
+	private Main currentGUI;
 	private FirebaseDB firebase;
-	
+	private FirebaseProject project;
+	private Stage stage;
 	@FXML
-	public void handleSaveAsClick(Event e){
-		String oldname = project.getname();
-		project.setname(txtSaveAsName.getText());
-		//currentGUI.tabCanvas.setText(txtSaveAsName.getText() + " Configuration");
-		firebase.addProject(oldname,project);
-		//currentGUI.setNewProject(false);
+	private TextField txtSaveAsName;
 
-		stage.close();
-	}
-	@FXML
-	public void handleCloseClick(Event e){
-		stage.close();
-	}
-	public SaveAsPane(Main gui, Stage stage,FirebaseProject project, FirebaseDB firebase) {
+	public SaveAsPane(Main gui, Stage stage, FirebaseProject project, FirebaseDB firebase) {
 		this.firebase = firebase;
+		this.currentGUI = gui;
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setController(this);
 		URL location = this.getClass().getResource("/PopupSaveAs.fxml");
 		fxmlLoader.setLocation(location);
 		try {
 			Node root = (Node) fxmlLoader.load();
-			getChildren().add(root);	
+			getChildren().add(root);
 			this.stage = stage;
-			//this.currentGUI = gui;
 			this.project = project;
 		} catch (Exception e) {
-				e.printStackTrace();
-			}
-	//	getStylesheets().add(ViewElement.class.getResource("Styles.css").toExternalForm());
-		txtSaveAsName.textProperty().addListener(listen->{if(txtSaveAsName.getText().equals(""))btnSave.setDisable(true);else btnSave.setDisable(false);});
+			e.printStackTrace();
+		}
+		txtSaveAsName.textProperty().addListener(listen -> {
+			if (txtSaveAsName.getText().equals(""))
+				btnSave.setDisable(true);
+			else
+				btnSave.setDisable(false);
+		});
+	}
+
+	@FXML
+	public void handleCloseClick(Event e) {
+		stage.close();
+	}
+
+	@FXML
+	public void handleSaveAsClick(Event e) {
+		String oldname = project.getname();
+		project.setname(txtSaveAsName.getText());
+		firebase.addProject(oldname, project);
+		currentGUI.setNewProject(false);
+		stage.close();
 	}
 }

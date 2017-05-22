@@ -11,60 +11,61 @@ import com.google.firebase.database.IgnoreExtraProperties;
  * Created by Daniel on 10/06/15.
  */
 @SuppressWarnings("serial")
-@JsonTypeInfo(use=JsonTypeInfo.Id.MINIMAL_CLASS, include= JsonTypeInfo.As.PROPERTY, property="@class",defaultImpl = FirebaseExpression.class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class", defaultImpl = FirebaseExpression.class)
 @IgnoreExtraProperties
-public class FirebaseExpression extends FirebaseElement implements Serializable{
-	 private List<FirebaseExpression> variables = new ArrayList<FirebaseExpression>();
-	    private String vartype;
-	    private String value;
-	    private long index;
-	    private boolean isValue;
-	    private boolean isCustom;
+public class FirebaseExpression extends FirebaseElement implements Serializable {
+	private long index;
+	private boolean isCustom;
+	private boolean isValue;
+	private String value;
+	private List<FirebaseExpression> variables = new ArrayList<FirebaseExpression>();
+	private String vartype;
 
-  
-
-    public List<FirebaseExpression> getvariables() {
-        return variables;
-    }
-
-    public String getvartype() {
-        return vartype;
-    }
-   
-    public String getvalue(){return value; }
-
-   
-	public void setVariables(List<FirebaseExpression> variables) {
-		this.variables = variables;
+	public long getindex() {
+		return index;
 	}
-	public void setVartype(String vartype) {
-		this.vartype = vartype;
+
+	public boolean getisCustom() {
+		return isCustom;
 	}
-	
-	public void setValue(String value) {
-		this.value = value;
+
+	public boolean getisValue() {
+		return isValue;
 	}
-	
+
+	public String getvalue() {
+		return value;
+	}
+
+	public List<FirebaseExpression> getvariables() {
+		return variables;
+	}
+
+	public String getvartype() {
+		return vartype;
+	}
+
 	public void setIndex(long index) {
 		this.index = index;
 	}
+
+	public void setisCustom(boolean isCustom) {
+		this.isCustom = isCustom;
+	}
+
 	public void setIsValue(boolean isValue) {
 		this.isValue = isValue;
 	}
 
-    public long getindex(){
-        return index;
-    }
+	public void setValue(String value) {
+		this.value = value;
+	}
 
-    public boolean getisValue(){
-        return isValue;
-    }
+	public void setVariables(List<FirebaseExpression> variables) {
+		this.variables = variables;
+	}
 
-    public boolean getisCustom(){
-        return isCustom;
-    }
-
-    public void setisCustom(boolean isCustom){
-    	this.isCustom = isCustom;
-    }
+	public void setVartype(String vartype) {
+		this.vartype = vartype;
+	}
 }

@@ -1,5 +1,11 @@
 package com.jeeves.vpl.firebase;
 
+import static com.jeeves.vpl.Constants.DBNAME;
+import static com.jeeves.vpl.Constants.DB_URL;
+import static com.jeeves.vpl.Constants.PATIENTS_COLL;
+import static com.jeeves.vpl.Constants.PROJECTS_COLL;
+import static com.jeeves.vpl.Constants.SERVICE_JSON;
+
 import java.util.Map;
 
 import com.google.firebase.FirebaseApp;
@@ -12,36 +18,20 @@ import com.google.firebase.database.ValueEventListener;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import static com.jeeves.vpl.Constants.*;
 
 public class FirebaseDB {
 
 	private DatabaseReference dbRef;// = myFirebaseRef.child(DBNAME);
 	private DatabaseReference firebaseRef;
-	private ObservableList<FirebaseProject> newprojects = FXCollections
-			.observableArrayList();
-	private ObservableList<FirebasePatient> newpatients = FXCollections
-			.observableArrayList();
-
+	private ObservableList<FirebasePatient> newpatients = FXCollections.observableArrayList();
+	private ObservableList<FirebaseProject> newprojects = FXCollections.observableArrayList();
+	
 	public FirebaseDB() {
-		FirebaseOptions options = new FirebaseOptions.Builder()
-				.setDatabaseUrl(DB_URL)
-				.setServiceAccount(
-						FirebaseDB.class.getResourceAsStream(SERVICE_JSON))// new
-																			// FileInputStream("/Users/Daniel/Documents/workspace/NewJeeves/Jeeves-9b9326e90601.json"))
+		FirebaseOptions options = new FirebaseOptions.Builder().setDatabaseUrl(DB_URL)
+				.setServiceAccount(FirebaseDB.class.getResourceAsStream(SERVICE_JSON))// new
+																						// FileInputStream("/Users/Daniel/Documents/workspace/NewJeeves/Jeeves-9b9326e90601.json"))
 				.build();
 		FirebaseApp.initializeApp(options);
-	}
-
-	// public void setUsername(String username){
-	// this.username = username;
-	// }
-	public ObservableList<FirebaseProject> getprojects() {
-		return newprojects;
-	}
-
-	public ObservableList<FirebasePatient> getpatients() {
-		return newpatients;
 	}
 
 	public void addListeners() {
@@ -49,15 +39,17 @@ public class FirebaseDB {
 		dbRef = firebaseRef.child(DBNAME);
 		dbRef.addValueEventListener(new ValueEventListener() {
 			@Override
+			public void onCancelled(DatabaseError arg0) {
+			}
+
+			@Override
 			public void onDataChange(DataSnapshot arg0) {
 				FirebaseMain appdata = arg0.getValue(FirebaseMain.class);
 				newprojects.clear();
 				newpatients.clear();
 				if (appdata != null) {
-					Map<String, FirebaseProject> projects = appdata
-							.getprojects();
-					Map<String, FirebasePatient> patients = appdata
-							.getpatients();
+					Map<String, FirebaseProject> projects = appdata.getprojects();
+					Map<String, FirebasePatient> patients = appdata.getpatients();
 					if (projects != null)
 						for (String key : projects.keySet())
 							newprojects.add(projects.get(key));
@@ -65,10 +57,32 @@ public class FirebaseDB {
 						newpatients.addAll(patients.values());
 				}
 			}
+		});
+	}
 
-			@Override
-			public void onCancelled(DatabaseError arg0) {
-			}
+	public boolean addPatient(FirebasePatient object) {
+		DatabaseReference globalRef = firebaseRef.child(DBNAME).child(PATIENTS_COLL).child(object.getUid());
+		globalRef.setValue(object);
+		return true;
+	}
+
+	public void resetProject(String name){
+		DatabaseReference globalRef = firebaseRef.child(DBNAME).child(PROJECTS_COLL).child(name);
+		globalRef.addListenerForSingleValueEvent(new ValueEventListener() {
+		   @Override
+		   public void onDataChange(DataSnapshot dataSnapshot) {
+			   Map<String, FirebaseProject> value = (Map<String, FirebaseProject>) dataSnapshot.getValue();
+		       newprojects.forEach(proj->{if(proj.getname().equals(name)){proj = value.get(name);System.out.println("RESET PROJECT FROM DATABSE");}});
+		       
+		   }
+
+		@Override
+		public void onCancelled(DatabaseError arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+	
 		});
 	}
 
@@ -76,24 +90,29 @@ public class FirebaseDB {
 
 		DatabaseReference globalRef = null;
 		if (oldname == null || oldname.equals(""))
-			globalRef = firebaseRef.child(DBNAME).child(PROJECTS_COLL)
-					.child(object.getname());
+			globalRef = firebaseRef.child(DBNAME).child(PROJECTS_COLL).child(object.getname());
 		else {
-			globalRef = firebaseRef.child(DBNAME).child(PROJECTS_COLL)
-					.child(oldname); // Update an old one
+			globalRef = firebaseRef.child(DBNAME).child(PROJECTS_COLL).child(oldname); // Update
+																						// an
+																						// old
+																						// one
 			globalRef.removeValue();
-			globalRef = firebaseRef.child(DBNAME).child(PROJECTS_COLL)
-					.child(object.getname());
+			globalRef = firebaseRef.child(DBNAME).child(PROJECTS_COLL).child(object.getname());
 		}
 		globalRef.setValue(object);
 		return true;
 	}
 
-	public boolean addPatient(FirebasePatient object) {
-		DatabaseReference globalRef = firebaseRef.child(DBNAME)
-				.child(PATIENTS_COLL).child(object.getUid());
-		globalRef.setValue(object);
-		return true;
+	public ObservableList<FirebasePatient> getpatients() {
+		return newpatients;
+	}
+
+	// public void setUsername(String username){
+	// this.username = username;
+	// }
+	
+	public ObservableList<FirebaseProject> getprojects() {
+		return newprojects;
 	}
 
 }

@@ -56,14 +56,25 @@ import com.jeeves.vpl.firebase.FirebaseSurvey;
 
 public class PatientPane extends Pane {
 
-	@FXML
-	private TableView<FirebasePatient> tblPatients;
+	private ObservableList<FirebasePatient> allowedPatients = FXCollections.observableArrayList();
+	private Map<String, FirebaseSurvey> completedSurveys;
+	private FirebaseDB firebase;
 	@FXML
 	private Group grpInfo;
+	private Main gui;
+	private Map<String, FirebaseSurvey> incompleteSurveys;
 	@FXML
-	private TextField txtFname;
+	private Label lblCompleted;
 	@FXML
-	private TextField txtLname;
+	private Label lblMissed;
+	private ChangeListener<FirebasePatient> listener;
+	@FXML
+	private ListView<String> lstMessages;
+
+	private int selectedIndex = 0;
+	private FirebasePatient selectedPatient;
+	@FXML
+	private TableView<FirebasePatient> tblPatients;
 	@FXML
 	private TextField txtAddress1;
 	@FXML
@@ -73,23 +84,14 @@ public class PatientPane extends Pane {
 	@FXML
 	private TextField txtAddress4;
 	@FXML
-	private TextField txtPhone;
-	@FXML
 	private TextField txtEmail;
+	@FXML
+	private TextField txtFname;
+	@FXML
+	private TextField txtLname;
 
 	@FXML
-	private Label lblCompleted;
-	@FXML
-	private Label lblMissed;
-	private Map<String, FirebaseSurvey> incompleteSurveys;
-	private Map<String, FirebaseSurvey> completedSurveys;
-	private ChangeListener<FirebasePatient> listener;
-	private FirebasePatient selectedPatient;
-	private FirebaseDB firebase;
-	private ObservableList<FirebasePatient> allowedPatients = FXCollections
-			.observableArrayList();
-	private int selectedIndex = 0;
-	private Main gui;
+	private TextField txtPhone;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public PatientPane(Main gui, FirebaseDB firebase) {
@@ -99,37 +101,39 @@ public class PatientPane extends Pane {
 		fxmlLoader.setController(this);
 		listener = new ChangeListener<FirebasePatient>() {
 			@Override
-			public void changed(
-					ObservableValue<? extends FirebasePatient> observable,
-					FirebasePatient oldValue, FirebasePatient newValue) {
+			public void changed(ObservableValue<? extends FirebasePatient> observable, FirebasePatient oldValue,
+					FirebasePatient newValue) {
 				update();
 			}
 		};
 		URL location = this.getClass().getResource("/PatientPane.fxml");
 		TableColumn firstNameCol = new TableColumn("First Name");
-		firstNameCol
-				.setCellValueFactory(new Callback<CellDataFeatures<FirebasePatient, String>, ObservableValue<String>>() {
-					public ObservableValue<String> call(
-							CellDataFeatures<FirebasePatient, String> p) {
+		firstNameCol.setCellValueFactory(
+				new Callback<CellDataFeatures<FirebasePatient, String>, ObservableValue<String>>() {
+					@Override
+					public ObservableValue<String> call(CellDataFeatures<FirebasePatient, String> p) {
 						return new ReadOnlyObjectWrapper(p.getValue().getName());
 					}
 				});
 		TableColumn emailCol = new TableColumn("Email");
-		emailCol.setCellValueFactory(new Callback<CellDataFeatures<FirebasePatient, String>, ObservableValue<String>>() {
-			public ObservableValue<String> call(
-					CellDataFeatures<FirebasePatient, String> p) {
-				return new ReadOnlyObjectWrapper(p.getValue().getEmail());
-			}
-		});
+		emailCol.setCellValueFactory(
+				new Callback<CellDataFeatures<FirebasePatient, String>, ObservableValue<String>>() {
+					@Override
+					public ObservableValue<String> call(CellDataFeatures<FirebasePatient, String> p) {
+						return new ReadOnlyObjectWrapper(p.getValue().getEmail());
+					}
+				});
 		TableColumn phoneCol = new TableColumn("Phone");
-		phoneCol.setCellValueFactory(new Callback<CellDataFeatures<FirebasePatient, String>, ObservableValue<String>>() {
-			public ObservableValue<String> call(
-					CellDataFeatures<FirebasePatient, String> p) {
-				// p.getValue() returns the Person instance for a particular
-				// TableView row
-				return new ReadOnlyObjectWrapper(p.getValue().getPhoneNo());
-			}
-		});
+		phoneCol.setCellValueFactory(
+				new Callback<CellDataFeatures<FirebasePatient, String>, ObservableValue<String>>() {
+					@Override
+					public ObservableValue<String> call(CellDataFeatures<FirebasePatient, String> p) {
+						// p.getValue() returns the Person instance for a
+						// particular
+						// TableView row
+						return new ReadOnlyObjectWrapper(p.getValue().getPhoneNo());
+					}
+				});
 
 		fxmlLoader.setLocation(location);
 		try {
@@ -137,173 +141,11 @@ public class PatientPane extends Pane {
 			getChildren().add(root);
 			tblPatients.getColumns().clear();
 			tblPatients.getColumns().addAll(firstNameCol, emailCol, phoneCol);
-			tblPatients.setPlaceholder(new Label(
-					"No patients currently assigned to this study"));
+			tblPatients.setPlaceholder(new Label("No patients currently assigned to this study"));
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	public void loadPatients() {
-		FirebaseProject proj = gui.getCurrentProject();
-		if (proj == null)
-			return;
-		String name = proj.getname();
-		firebase.getpatients().addListener(
-				new ListChangeListener<FirebasePatient>() {
-					@Override
-					public void onChanged(
-							javafx.collections.ListChangeListener.Change<? extends FirebasePatient> c) {
-						Platform.runLater(new Runnable() {
-							public void run() {
-								loadPatientTable();
-								allowedPatients.clear();
-								firebase.getpatients()
-										.forEach(
-												patient -> {
-													if (patient
-															.getCurrentStudy() != null
-															&& patient
-																	.getCurrentStudy()
-																	.equals(name))
-														allowedPatients
-																.add(patient);
-
-												});
-								update();
-
-							}
-						});
-
-					}
-				});
-		loadPatientTable();
-		firebase.getpatients().forEach(
-				patient -> {
-					if (patient.getCurrentStudy() != null
-							&& patient.getCurrentStudy().equals(name))
-						allowedPatients.add(patient);
-				});
-
-		tblPatients.setItems(allowedPatients); // This is hacky but I'll get
-												// back to it k?
-		update();
-	}
-
-	@FXML
-	private void updateInfo(Event e) {
-		selectedPatient.setName(txtFname.getText());
-		selectedPatient.setEmail(txtEmail.getText());
-		selectedPatient.setPhoneNo(txtPhone.getText());
-		String address = txtAddress1.getText() + ";" + txtAddress2.getText()
-				+ ";" + txtAddress3.getText() + ";" + txtAddress4.getText();
-		selectedPatient.setaddress(address);
-		firebase.addPatient(selectedPatient);
-	}
-
-	// @FXML
-	// public void addPatient(Event e){
-	// Stage stage = new Stage(StageStyle.UNDECORATED);
-	// NewPatientPane root = new NewPatientPane(stage);
-	// Scene scene = new Scene(root);
-	// stage.setScene(scene);
-	// stage.setTitle("Add Patient");
-	// stage.initModality(Modality.APPLICATION_MODAL);
-	// stage.showAndWait();
-	// }
-
-	@FXML
-	private ListView<String> lstMessages;
-
-	private void loadPatientTable() {
-		tblPatients.getSelectionModel().selectedItemProperty()
-				.addListener(listener);
-	}
-
-	private void update() {
-
-		Platform.runLater(new Runnable() {
-			public void run() {
-				TableViewSelectionModel<FirebasePatient> selectionModel = tblPatients
-						.getSelectionModel();
-				if (selectionModel.getSelectedItem() != null) {
-					selectedPatient = selectionModel.getSelectedItem();
-					selectedIndex = selectionModel.getSelectedIndex();
-				} else {
-					tblPatients.getSelectionModel().selectedItemProperty()
-							.removeListener(listener);
-					tblPatients.getSelectionModel().clearAndSelect(
-							selectedIndex);
-					selectedPatient = selectionModel.getSelectedItem();
-					tblPatients.getSelectionModel().selectedItemProperty()
-							.addListener(listener);
-				}
-				lstMessages.getItems().clear();
-				if (selectedPatient == null)
-					return;
-
-				Map<String, Object> feedback = selectedPatient.getfeedback();
-				Date date = new Date();
-				DateFormat df = new SimpleDateFormat("dd MMM yyyy kk:mm:ss z");
-				df.setTimeZone(TimeZone.getTimeZone("GMT"));
-
-				if (feedback != null) {
-					Iterator<Entry<String, Object>> feeds = feedback.entrySet()
-							.iterator();
-					ObservableList<String> items = FXCollections
-							.observableArrayList();
-					while (feeds.hasNext()) {
-						Entry<String, Object> feed = feeds.next();
-						date.setTime(Long.parseLong(feed.getKey()));
-						String message = df.format(date) + ":    "
-								+ feed.getValue();
-						items.add(message);
-					}
-					lstMessages.setItems(items);
-				}
-				
-				incompleteSurveys = selectedPatient.getincomplete();
-				completedSurveys = selectedPatient.getcomplete();
-				if (incompleteSurveys.isEmpty())
-					lblMissed.setText("0");
-
-				else {
-					int incomplete = 0;
-					Iterator<FirebaseSurvey> incompleteIter = incompleteSurveys
-							.values().iterator();
-					while (incompleteIter.hasNext()) {
-						incomplete++;
-					}
-					lblMissed.setText(Integer.toString(incomplete));
-				}
-
-				if (completedSurveys.isEmpty())
-					lblCompleted.setText("0");
-				else
-					lblCompleted.setText(Integer.toString(completedSurveys
-							.size()));
-
-				txtFname.setText(selectedPatient.getName());
-				txtEmail.setText(selectedPatient.getEmail());
-				txtPhone.setText(selectedPatient.getPhoneNo());
-
-				String address = selectedPatient.getAddress();
-				if (address != null) {
-					String[] lines = address.split(";");
-					if (lines.length > 0)
-						txtAddress1.setText(lines[0]);
-					if (lines.length > 1)
-						txtAddress2.setText(lines[1]);
-					if (lines.length > 2)
-						txtAddress3.setText(lines[2]);
-					if (lines.length > 3)
-						txtAddress4.setText(lines[3]);
-				}
-
-				grpInfo.setDisable(false);
-			}
-		});
 	}
 
 	@FXML
@@ -312,9 +154,7 @@ public class PatientPane extends Pane {
 		try {
 			FileChooser fileChooser = new FileChooser();
 			fileChooser.setInitialFileName("results.xls");
-			fileChooser.getExtensionFilters().add(
-					new FileChooser.ExtensionFilter("Excel spreadsheet(*.xls)",
-							"*.xls"));
+			fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel spreadsheet(*.xls)", "*.xls"));
 
 			fileChooser.setTitle("Save Image");
 			Workbook wb = new HSSFWorkbook();
@@ -328,7 +168,7 @@ public class PatientPane extends Pane {
 					file = new File(file.getAbsolutePath() + ".xls");
 				}
 				try {
-					if (completedSurveys.isEmpty()){
+					if (completedSurveys.isEmpty()) {
 						wb.close();
 						return;
 					}
@@ -336,24 +176,20 @@ public class PatientPane extends Pane {
 					HashMap<String, Sheet> sheets = new HashMap<String, Sheet>();
 					// Is this horrendously convoluted? Perhaps. Hopefully it
 					// won't slow things down
-					Collection<FirebaseSurvey> surveys = completedSurveys
-							.values();
-					ArrayList<FirebaseSurvey> surveylist = new ArrayList<FirebaseSurvey>(
-							surveys);
+					Collection<FirebaseSurvey> surveys = completedSurveys.values();
+					ArrayList<FirebaseSurvey> surveylist = new ArrayList<FirebaseSurvey>(surveys);
 					surveylist.sort(new Comparator<FirebaseSurvey>() {
 
 						@Override
 						public int compare(FirebaseSurvey o1, FirebaseSurvey o2) {
-							return (int) (o1.gettimeFinished() - o2
-									.gettimeFinished());
+							return (int) (o1.gettimeFinished() - o2.gettimeFinished());
 						}
 					});
 
 					Sheet s = null;
 					CreationHelper createHelper = wb.getCreationHelper();
 					CellStyle cellStyle = wb.createCellStyle();
-					cellStyle.setDataFormat(createHelper.createDataFormat()
-							.getFormat("m/d/yy h:mm"));
+					cellStyle.setDataFormat(createHelper.createDataFormat().getFormat("m/d/yy h:mm"));
 					for (FirebaseSurvey nextsurvey : surveylist) {
 						date.setTime(nextsurvey.gettimeFinished());
 						String surveyname = nextsurvey.getname();
@@ -370,8 +206,7 @@ public class PatientPane extends Pane {
 
 						c.setCellValue(date);
 						c.setCellStyle(cellStyle);
-						List<Map<String, String>> answers = nextsurvey
-								.getanswers();
+						List<Map<String, String>> answers = nextsurvey.getanswers();
 						int answercounter = 1;
 						for (Map<String, String> answer : answers) {
 							if (answer != null) { // Really weird how some of
@@ -397,5 +232,144 @@ public class PatientPane extends Pane {
 			ex.printStackTrace();
 		}
 
+	}
+
+	// @FXML
+	// public void addPatient(Event e){
+	// Stage stage = new Stage(StageStyle.UNDECORATED);
+	// NewPatientPane root = new NewPatientPane(stage);
+	// Scene scene = new Scene(root);
+	// stage.setScene(scene);
+	// stage.setTitle("Add Patient");
+	// stage.initModality(Modality.APPLICATION_MODAL);
+	// stage.showAndWait();
+	// }
+
+	public void loadPatients() {
+		FirebaseProject proj = gui.getCurrentProject();
+		if (proj == null)
+			return;
+		String name = proj.getname();
+		firebase.getpatients().addListener(new ListChangeListener<FirebasePatient>() {
+			@Override
+			public void onChanged(javafx.collections.ListChangeListener.Change<? extends FirebasePatient> c) {
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						loadPatientTable();
+						allowedPatients.clear();
+						firebase.getpatients().forEach(patient -> {
+							if (patient.getCurrentStudy() != null && patient.getCurrentStudy().equals(name))
+								allowedPatients.add(patient);
+
+						});
+						update();
+
+					}
+				});
+
+			}
+		});
+		loadPatientTable();
+		firebase.getpatients().forEach(patient -> {
+			if (patient.getCurrentStudy() != null && patient.getCurrentStudy().equals(name))
+				allowedPatients.add(patient);
+		});
+
+		tblPatients.setItems(allowedPatients); // This is hacky but I'll get
+												// back to it k?
+		update();
+	}
+
+	private void loadPatientTable() {
+		tblPatients.getSelectionModel().selectedItemProperty().addListener(listener);
+	}
+
+	private void update() {
+
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				TableViewSelectionModel<FirebasePatient> selectionModel = tblPatients.getSelectionModel();
+				if (selectionModel.getSelectedItem() != null) {
+					selectedPatient = selectionModel.getSelectedItem();
+					selectedIndex = selectionModel.getSelectedIndex();
+				} else {
+					tblPatients.getSelectionModel().selectedItemProperty().removeListener(listener);
+					tblPatients.getSelectionModel().clearAndSelect(selectedIndex);
+					selectedPatient = selectionModel.getSelectedItem();
+					tblPatients.getSelectionModel().selectedItemProperty().addListener(listener);
+				}
+				lstMessages.getItems().clear();
+				if (selectedPatient == null)
+					return;
+
+				Map<String, Object> feedback = selectedPatient.getfeedback();
+				Date date = new Date();
+				DateFormat df = new SimpleDateFormat("dd MMM yyyy kk:mm:ss z");
+				df.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+				if (feedback != null) {
+					Iterator<Entry<String, Object>> feeds = feedback.entrySet().iterator();
+					ObservableList<String> items = FXCollections.observableArrayList();
+					while (feeds.hasNext()) {
+						Entry<String, Object> feed = feeds.next();
+						date.setTime(Long.parseLong(feed.getKey()));
+						String message = df.format(date) + ":    " + feed.getValue();
+						items.add(message);
+					}
+					lstMessages.setItems(items);
+				}
+
+				incompleteSurveys = selectedPatient.getincomplete();
+				completedSurveys = selectedPatient.getcomplete();
+				if (incompleteSurveys.isEmpty())
+					lblMissed.setText("0");
+
+				else {
+					int incomplete = 0;
+					Iterator<FirebaseSurvey> incompleteIter = incompleteSurveys.values().iterator();
+					while (incompleteIter.hasNext()) {
+						incomplete++;
+					}
+					lblMissed.setText(Integer.toString(incomplete));
+				}
+
+				if (completedSurveys.isEmpty())
+					lblCompleted.setText("0");
+				else
+					lblCompleted.setText(Integer.toString(completedSurveys.size()));
+
+				txtFname.setText(selectedPatient.getName());
+				txtEmail.setText(selectedPatient.getEmail());
+				txtPhone.setText(selectedPatient.getPhoneNo());
+
+				String address = selectedPatient.getAddress();
+				if (address != null) {
+					String[] lines = address.split(";");
+					if (lines.length > 0)
+						txtAddress1.setText(lines[0]);
+					if (lines.length > 1)
+						txtAddress2.setText(lines[1]);
+					if (lines.length > 2)
+						txtAddress3.setText(lines[2]);
+					if (lines.length > 3)
+						txtAddress4.setText(lines[3]);
+				}
+
+				grpInfo.setDisable(false);
+			}
+		});
+	}
+
+	@FXML
+	private void updateInfo(Event e) {
+		selectedPatient.setName(txtFname.getText());
+		selectedPatient.setEmail(txtEmail.getText());
+		selectedPatient.setPhoneNo(txtPhone.getText());
+		String address = txtAddress1.getText() + ";" + txtAddress2.getText() + ";" + txtAddress3.getText() + ";"
+				+ txtAddress4.getText();
+		selectedPatient.setaddress(address);
+		firebase.addPatient(selectedPatient);
 	}
 }

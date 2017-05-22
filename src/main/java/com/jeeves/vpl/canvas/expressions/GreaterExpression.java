@@ -1,12 +1,22 @@
 package com.jeeves.vpl.canvas.expressions;
 
 import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
+import com.jeeves.vpl.firebase.FirebaseExpression;
 
 import static com.jeeves.vpl.Constants.*;
 
-public class GreaterExpression extends Expression  { // NO_UCD (unused code)
-	public static final String NAME = "is this more than that?";
+public class GreaterExpression extends Expression { // NO_UCD (unused code)
 	public static final String DESC = "returns true if the left number is more than the right number";
+	public static final String NAME = "greater than";
+
+	public GreaterExpression() {
+		this(new FirebaseExpression());
+	}
+
+	public GreaterExpression(FirebaseExpression data) {
+		super(data);
+	}
+
 	@Override
 	public void setup() {
 		name = NAME;

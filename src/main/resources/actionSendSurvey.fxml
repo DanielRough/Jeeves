@@ -21,7 +21,7 @@
             <Insets left="5.0" />
          </padding>
     </Label>
-    <ComboBox id="cboFiredSensor" fx:id="cboSurveyName" layoutX="86.0" layoutY="7.0" prefHeight="15.0">
+    <ComboBox id="cboFiredSensor" fx:id="cboSurveyName" layoutX="86.0" layoutY="7.0" minWidth="100.0" prefHeight="15.0">
       <items>
         <FXCollections fx:factory="observableArrayList" />
       </items>

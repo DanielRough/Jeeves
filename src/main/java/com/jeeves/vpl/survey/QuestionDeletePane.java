@@ -11,24 +11,12 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
-public class QuestionDeletePane extends Pane{
+public class QuestionDeletePane extends Pane {
 	private QuestionView question;
-	private Survey survey;
 	private Stage stage;
+	private Survey survey;
 
-	@FXML
-	public void cancel(Event e){
-		stage.close();
-	}
-	
-	@FXML
-	public void delete(Event e){
-		survey.removeQuestion(question);
-		//parent.removeFromSurvey();
-		stage.close();
-
-	}
-	public QuestionDeletePane(Survey survey, QuestionView question, Stage stage){
+	public QuestionDeletePane(Survey survey, QuestionView question, Stage stage) {
 		this.question = question;
 		this.survey = survey;
 		FXMLLoader fxmlLoader = new FXMLLoader();
@@ -37,10 +25,23 @@ public class QuestionDeletePane extends Pane{
 		fxmlLoader.setLocation(location);
 		try {
 			Node root = (Node) fxmlLoader.load();
-			getChildren().add(root);	
+			getChildren().add(root);
 			this.stage = stage;
 		} catch (Exception e) {
-				e.printStackTrace();
-			}
+			e.printStackTrace();
+		}
+	}
+
+	@FXML
+	public void cancel(Event e) {
+		stage.close();
+	}
+
+	@FXML
+	public void delete(Event e) {
+		survey.removeQuestion(question);
+		// parent.removeFromSurvey();
+		stage.close();
+
 	}
 }

@@ -17,61 +17,30 @@ import javafx.scene.layout.HBox;
 import com.jeeves.vpl.firebase.FirebaseAction;
 
 public class SendTextAction extends Action { // NO_UCD (unused code)
-	public static final String NAME = "Send SMS";
 	public static final String DESC = "Send a text message to a specified recipient";
-	private String messagetext;
+	public static final String NAME = "Send SMS";
 	@FXML
-	private TextField txtMessage;
+	public HBox hboxSMS;
 	@FXML
 	private ComboBox<String> cboRecipient;
-	@FXML public HBox hboxSMS;
+	private String messagetext;
 	private TextArea smsText;
-	
+	@FXML
+	private TextField txtMessage;
 
-	public Node[] getWidgets() {
-		return new Node[] { txtMessage, cboRecipient };
+	public SendTextAction() {
+		this(new FirebaseAction());
 	}
 
-	public void fxmlInit(){
-		super.fxmlInit();
-		name = NAME;
-		description = DESC;
-		smsText = new TextArea();
-		cboRecipient.getItems().clear();
-		cboRecipient.getItems().addAll("Last sender", "Emergency contact",
-				"Researcher");
-	}
-	public void setData(FirebaseAction model) {
-		super.setData(model);
-		Map<String, Object> params = model.getparams();
-
-		if(params.containsKey("msgtext")){
-		messagetext = params.get("msgtext").toString();
-		txtMessage.setText(messagetext);
-		smsText.setText(messagetext);
-		}
-		if(params.containsKey("recipient"))
-		setRecipient(params.get("recipient").toString());
-
+	public SendTextAction(FirebaseAction data) {
+		super(data);
 	}
 
 	@Override
-	public String getViewPath() {
-		return String.format("/ActionSendText.fxml", this.getClass()
-				.getSimpleName());
-	}
-
-	public void setRecipient(String rec) {
-		cboRecipient.getItems().clear();
-		cboRecipient.getItems().addAll("Last sender", "Emergency contact","User", "Researcher");
-		cboRecipient.setValue(rec);
-	}
-
-	@Override
-	protected void addListeners() {
+	public void addListeners() {
 		super.addListeners();
 		smsText.setWrapText(true);
-		txtMessage.setOnMouseClicked(new EventHandler<MouseEvent>(){
+		txtMessage.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent arg0) {
@@ -81,46 +50,80 @@ public class SendTextAction extends Action { // NO_UCD (unused code)
 				Bounds txtMsgBounds = txtMessage.localToScene(txtMessage.getBoundsInLocal());
 				smsText.setLayoutX(txtMsgBounds.getMinX());
 				smsText.setLayoutY(txtMsgBounds.getMinY());
-				smsText.requestFocus(); 
-				smsText.setPrefWidth(Math.max(txtMessage.getWidth(),smsText.getWidth()));
-				
+				smsText.requestFocus();
+				smsText.setPrefWidth(Math.max(txtMessage.getWidth(), smsText.getWidth()));
+
 			}
-			
+
 		});
-		smsText.focusedProperty().addListener(new ChangeListener<Boolean>(){
+		smsText.focusedProperty().addListener(new ChangeListener<Boolean>() {
 
 			@Override
-			public void changed(ObservableValue<? extends Boolean> arg0,
-					Boolean arg1, Boolean arg2) {
-				if(arg2.equals(false)){
+			public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+				if (arg2.equals(false)) {
 					smsText.setVisible(false);
 					gui.getMainPane().getChildren().remove(smsText);
 				}
-				}
-			
+			}
+
 		});
 		smsText.textProperty().addListener(new ChangeListener<String>() {
 
 			@Override
-			public void changed(ObservableValue<? extends String> arg0,
-					String arg1, String arg2) {
-			//	smsText.setPrefWidth(smsText.getWidth(),txtMessage.getWidth());
-				smsText.setPrefColumnCount(arg2.length()+1);
+			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
+				smsText.setPrefColumnCount(arg2.length() + 1);
 				params.put("msgtext", smsText.getText());// }
 				txtMessage.setText(smsText.getText());
 			}
 		});
-		cboRecipient.getSelectionModel().selectedItemProperty()
-		.addListener(new ChangeListener<String>() {
+		cboRecipient.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 
 			@Override
-			public void changed(ObservableValue<? extends String> arg0,
-					String arg1, String arg2) {
+			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
 				params.put("recipient", arg2);
 			}
 		});
 	}
 
+	@Override
+	public void fxmlInit() {
+		super.fxmlInit();
+		name = NAME;
+		description = DESC;
+		smsText = new TextArea();
+		cboRecipient.getItems().clear();
+		cboRecipient.getItems().addAll("Last sender", "Emergency contact", "Researcher");
+	}
 
+	@Override
+	public String getViewPath() {
+		return String.format("/ActionSendText.fxml", this.getClass().getSimpleName());
+	}
+
+	@Override
+	public Node[] getWidgets() {
+		return new Node[] { txtMessage, cboRecipient };
+	}
+
+	@Override
+	public void setData(FirebaseAction model) {
+		super.setData(model);
+		Map<String, Object> params = model.getparams();
+
+		if (params.containsKey("msgtext")) {
+			messagetext = params.get("msgtext").toString();
+			txtMessage.setText(messagetext);
+			smsText.setText(messagetext);
+		}
+		if (params.containsKey("recipient"))
+			setRecipient(params.get("recipient").toString());
+
+	}
+
+	public void setRecipient(String rec) {
+		cboRecipient.getItems().clear();
+		cboRecipient.getItems().addAll("Last sender", "Emergency contact", "User", "Researcher");
+		cboRecipient.setValue(rec);
+	}
 
 }

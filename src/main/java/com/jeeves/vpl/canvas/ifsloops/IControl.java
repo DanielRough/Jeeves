@@ -1,6 +1,5 @@
 package com.jeeves.vpl.canvas.ifsloops;
 
-
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -11,6 +10,5 @@ import com.jeeves.vpl.firebase.FirebaseAction;
  */
 public interface IControl extends Serializable { // NO_UCD (unused code)
 
-public ArrayList<FirebaseAction> getControlActions();
+	public ArrayList<FirebaseAction> getControlActions();
 }
-

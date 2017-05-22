@@ -1,5 +1,8 @@
 package com.jeeves.vpl;
 
+import com.jeeves.vpl.canvas.uielements.UIElement;
+import com.jeeves.vpl.survey.questions.QuestionView;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -15,39 +18,70 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-import com.jeeves.vpl.canvas.uielements.UIElement;
-
 @SuppressWarnings("rawtypes")
 
-public class ViewCanvas extends Group implements ParentPane{ // NO_UCD (use default)
+public class ViewCanvas extends Group implements ParentPane { 
+	public EventHandler<MouseEvent> mouseHandler;
 	private Rectangle bigRect = new Rectangle(-10000, -10000, 20000, 20000);
 	private ObservableList<ViewElement> currentChildren = FXCollections.observableArrayList();
-	private boolean mousepressed = false;
-	private double translatedX = 0;
-	private double translatedY = 0;
-	private double pressedX = 0;
-	private double pressedY = 0;
+	private boolean isMouseOver;
 	private Point2D minPoint;
 	private double minX = 0;
 	private double minY = 0;
+	private boolean mousepressed = false;
+	private double pressedX = 0;
+	private double pressedY = 0;
 	private Pane rectPane = new Pane();
-	private boolean isMouseOver;
-	public ViewCanvas(){
+	private double translatedX = 0;
+
+	private double translatedY = 0;
+
+	public ViewCanvas() {
 	}
-	
-	public void setIsMouseOver(boolean mouse){
-		this.isMouseOver = mouse;
+
+	@Override
+	public void addChild(ViewElement child, double mouseX, double mouseY) {
+
+		child.setMouseTransparent(false);
+		if (!getChildren().contains(child)) {
+
+			Point2D canvasPoint = sceneToLocal(new Point2D(mouseX, mouseY));
+			child.setLayoutX(canvasPoint.getX());
+			child.setLayoutY(canvasPoint.getY());
+			child.setPosition(canvasPoint);
+			getChildren().add(child);
+			child.toFront();
+			currentChildren.add(child);
+			child.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> isMouseOver = true); 
+		}
+
 	}
-	public boolean getIsMouseOver(){
+
+	public boolean getIsMouseOver() {
 		return isMouseOver;
 	}
-	void addChildrenListener(ListChangeListener<Node> list){
+
+	@Override
+	public void removeChild(ViewElement child) {
+
+		getChildren().remove(child);
+		currentChildren.remove(child);
+
+	}
+
+	public void setIsMouseOver(boolean mouse) {
+		this.isMouseOver = mouse;
+	}
+
+	void addChildrenListener(ListChangeListener<Node> list) {
 		getChildren().addListener(list);
 	}
-	public EventHandler<MouseEvent> mouseHandler;
-	void addEventHandlers(){
+
+	void addEventHandlers() {
 		EventHandler<ScrollEvent> scrollHandler = event -> {
-			if(mousepressed)return; //Does dodgy things when you try to click and scroll simultaneously
+			if (mousepressed)
+				return; // Does dodgy things when you try to click and scroll
+						// simultaneously
 			event.consume();
 			Point2D newpoint = localToScreen(0, 0);
 			double mousex = event.getX();
@@ -79,52 +113,50 @@ public class ViewCanvas extends Group implements ParentPane{ // NO_UCD (use defa
 			setTranslateY(getTranslateY() + yr * dh / 2);
 		};
 		setOnScroll(scrollHandler);
-		
+
 		EventHandler<MouseDragEvent> dragHandler = event -> {
-			
-			if(event.getEventType().equals(MouseDragEvent.MOUSE_DRAG_ENTERED)){
+
+			if (event.getEventType().equals(MouseDragEvent.MOUSE_DRAG_ENTERED)) {
 				isMouseOver = true;
-			}
-			else if(event.getEventType().equals(MouseDragEvent.MOUSE_DRAG_EXITED)){
+			} else if (event.getEventType().equals(MouseDragEvent.MOUSE_DRAG_EXITED)) {
 				isMouseOver = false;
 			}
 			if (event.getEventType().equals(MouseDragEvent.MOUSE_DRAG_RELEASED)) {
-				if (event.getGestureSource() instanceof ViewElement && !(event.getGestureSource() instanceof UIElement) && !(getChildren().contains(event.getGestureSource()))) {
+				// TODO: Change this awful shitty line
+				if (event.getGestureSource() instanceof ViewElement && !(event.getGestureSource() instanceof UIElement)
+						&& !(event.getGestureSource() instanceof QuestionView)
+						&& !(getChildren().contains(event.getGestureSource()))) {
 					ViewElement dragged = (ViewElement) event.getGestureSource();
-					if (dragged instanceof ViewElement){
+					if (dragged instanceof ViewElement) {
 						addChild(dragged, event.getSceneX(), event.getSceneY());
 					}
 				}
 			}
 		};
 		this.addEventFilter(MouseDragEvent.ANY, dragHandler);
-		if(mouseHandler != null)
-		getParent().removeEventHandler(MouseEvent.ANY, mouseHandler);
+		if (mouseHandler != null)
+			getParent().removeEventHandler(MouseEvent.ANY, mouseHandler);
 
-		//A mouse handler that allows us to pan the canvas
+		// A mouse handler that allows us to pan the canvas
 		mouseHandler = event -> {
-			if(event.isSecondaryButtonDown()){
+			if (event.isSecondaryButtonDown()) {
 				event.consume();
 				return;
 			}
-			if(event.getEventType().equals(MouseEvent.MOUSE_ENTERED)){
+			if (event.getEventType().equals(MouseEvent.MOUSE_ENTERED)) {
 				isMouseOver = true;
-			}
-			else if(event.getEventType().equals(MouseEvent.MOUSE_MOVED)){
+			} else if (event.getEventType().equals(MouseEvent.MOUSE_MOVED)) {
 				isMouseOver = true;
-			}
-			else if(event.getEventType().equals(MouseEvent.MOUSE_EXITED)){
+			} else if (event.getEventType().equals(MouseEvent.MOUSE_EXITED)) {
 				isMouseOver = false;
-			}
-			else if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
+			} else if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
 				isMouseOver = true;
 				requestFocus();
 				mousepressed = true;
 				pressedX = event.getX();
 				pressedY = event.getY();
-				System.out.println(localToScreen(0,0).getX());
 				if (minX == 0) {
-					minPoint = localToScreen(parentToLocal(0,0)); //Dumb
+					minPoint = localToScreen(parentToLocal(0, 0)); // Dumb
 					minX = minPoint.getX();
 					minY = minPoint.getY();
 				}
@@ -144,47 +176,21 @@ public class ViewCanvas extends Group implements ParentPane{ // NO_UCD (use defa
 				}
 				setTranslateX(translatedX + event.getX() - pressedX);
 				setTranslateY(translatedY + event.getY() - pressedY);
-			}
-			else if(event.getEventType().equals(MouseEvent.MOUSE_RELEASED))
+			} else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED))
 				mousepressed = false;
 			event.consume();
 		};
-		
+
 		getParent().addEventHandler(MouseEvent.ANY, mouseHandler);
 		setTranslateX(-5000);
 		setTranslateY(-5000);
 		this.toBack();
-		
+
 		bigRect = new Rectangle(0, 0, 20000, 20000);
 		bigRect.setFill(Color.TRANSPARENT);
 		rectPane.getChildren().add(bigRect);
 		getChildren().add(rectPane);
 		rectPane.getStyleClass().add("blueprint");
 		rectPane.toBack();
-	}
-
-
-	public void addChild(ViewElement child, double mouseX, double mouseY) {
-	//	System.out.println("DOES THIS HAPPEN");
-		child.setMouseTransparent(false);
-		if (!getChildren().contains(child)) {
-			Point2D canvasPoint = sceneToLocal(new Point2D(mouseX,mouseY));
-			child.setLayoutX(canvasPoint.getX());
-			child.setLayoutY(canvasPoint.getY());
-			child.setPosition(canvasPoint);
-			getChildren().add(child);
-			child.toFront();
-			currentChildren.add(child);
-		//	System.out.println("but perhaps this doesn't");
-			child.addEventHandler(MouseEvent.MOUSE_PRESSED, event->isMouseOver = true); //When we press a child on the canvas, this ensures that 'isMouseOver' is still set to true
-
-		}
-
-	}
-
-	public void removeChild(ViewElement child) {
-		getChildren().remove(child);
-		currentChildren.remove(child);
-
 	}
 }

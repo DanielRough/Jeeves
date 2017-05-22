@@ -20,7 +20,7 @@
         <menus>
           <Menu fx:id="mnuFile" mnemonicParsing="false" text="File">
             <items>
-                  <MenuItem mnemonicParsing="false" text="New Study" />
+                  <MenuItem mnemonicParsing="false" onAction="#newStudy" text="New Study" />
                   <Menu fx:id="mnuStudies" mnemonicParsing="false" text="Open" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" onAction="#saveStudyMenu" text="Save" />
@@ -108,13 +108,17 @@
                                                 <Insets left="20.0" />
                                              </padding>
                                           </VBox>
-                                          <VBox fx:id="paneVariables" alignment="TOP_CENTER" layoutX="175.0" layoutY="20.0" spacing="5.0" stylesheets="@Styles.css" visible="false">
+                                          <VBox fx:id="paneVariables" alignment="TOP_CENTER" fillWidth="false" layoutX="189.0" layoutY="20.0" prefHeight="196.0" prefWidth="184.0" spacing="5.0" stylesheets="@Styles.css" visible="false">
                                              <children>
-                                                <VBox fx:id="vboxSurveyVars" alignment="TOP_CENTER" fillWidth="false" spacing="10.0">
-                                                   <padding>
-                                                      <Insets bottom="5.0" left="20.0" right="20.0" top="5.0" />
-                                                   </padding>
-                                                </VBox>
+                                                <ScrollPane hbarPolicy="NEVER" prefHeight="165.0" prefViewportWidth="99.0" prefWidth="198.0">
+                                                   <content>
+                                                      <VBox fx:id="vboxSurveyVars" alignment="TOP_CENTER" fillWidth="false" spacing="10.0">
+                                                         <padding>
+                                                            <Insets bottom="5.0" left="20.0" right="20.0" top="5.0" />
+                                                         </padding>
+                                                      </VBox>
+                                                   </content>
+                                                </ScrollPane>
                                                 <Button fx:id="btnAddVar" mnemonicParsing="false" onAction="#addVariable" text="New Attribute" />
                                              </children>
                                           </VBox>
@@ -130,7 +134,7 @@
                      <content>
                         <HBox fx:id="surveyBox" fillHeight="false">
                            <children>
-                              <Pane prefHeight="679.0" prefWidth="220.0" style="-fx-border-color: lightblue;">
+                              <Pane maxWidth="220.0" minWidth="220.0" prefHeight="679.0" prefWidth="220.0" style="-fx-border-color: lightblue;">
                                  <children>
                                     <VBox fx:id="paneQuestions" layoutX="7.0" layoutY="50.0">
                                        <padding>
@@ -169,7 +173,11 @@
                               <Image url="@img/icons/phone.png" />
                            </image>
                         </ImageView>
-                        <Pane fx:id="paneAndroid" layoutX="165.0" layoutY="187.0" prefHeight="307.0" prefWidth="215.0" style="-fx-background-color: white;" />
+                        <ScrollPane hbarPolicy="NEVER" layoutX="165.0" layoutY="187.0" prefHeight="310.0" prefViewportHeight="310.0" prefViewportWidth="215.0" prefWidth="215.0">
+                           <content>
+                              <Pane fx:id="paneAndroid" layoutX="165.0" layoutY="187.0" style="-fx-background-color: white;" stylesheets="@Styles.css" />
+                           </content>
+                        </ScrollPane>
                         <Rectangle arcHeight="5.0" fill="#2914c6" height="21.0" layoutX="165.0" layoutY="134.0" mouseTransparent="true" stroke="#4c32f2" strokeType="OUTSIDE" width="213.0" />
                         <Rectangle arcHeight="5.0" fill="#4c32f2" height="39.0" layoutX="165.0" layoutY="147.0" mouseTransparent="true" stroke="#4c32f2" strokeType="OUTSIDE" width="214.0" />
                         <Label layoutX="200.0" layoutY="154.0" text="Jeeves" textFill="WHITE">

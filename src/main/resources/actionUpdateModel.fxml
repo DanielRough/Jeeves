@@ -13,7 +13,7 @@
 
 <Pane fx:id="pane" minHeight="30.0" prefHeight="30.0" styleClass="action" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <children>
-    <HBox fx:id="hbox" alignment="CENTER_LEFT" fillHeight="false" layoutX="8.0" prefHeight="30.0" prefWidth="204.0">
+    <HBox fx:id="hbox" alignment="CENTER_LEFT" fillHeight="false" layoutX="8.0" prefHeight="30.0">
          <children>
             <Label text="set attribute">
                <font>

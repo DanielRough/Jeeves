@@ -7,6 +7,9 @@ import java.util.Map;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 /**
  * Created by Daniel on 29/04/2016.
  */
@@ -14,38 +17,47 @@ import com.google.firebase.database.IgnoreExtraProperties;
 @IgnoreExtraProperties
 public class FirebaseSurvey extends FirebaseElement implements Serializable {
 
-	private long timeAlive;
-	private long expiryTime;
-	private long timeSent;
-	private long timeFinished;
-	private long score;
-	private List<FirebaseQuestion> questions = new ArrayList<FirebaseQuestion>();
-	private boolean begun; // Has the user begun completing the survey?
+	public StringProperty title = new SimpleStringProperty();
+	//
+	// public StringProperty gettitleproperty() {
+	// return title;
+	// }
 	private List<Map<String, String>> answers;
+	private boolean begun; // Has the user begun completing the survey?
+	private long expiryTime;
 	private String key;
+	private List<FirebaseQuestion> questions = new ArrayList<FirebaseQuestion>();
+	private long score;
+	private long timeAlive;
+	private long timeFinished;
+	private long timeSent;
 
 	public FirebaseSurvey() {
 
-	}
-
-	public long getexpiryTime() {
-		return expiryTime;
-	}
-
-	public void setexpiryTime(long expiryTime) {
-		this.expiryTime = expiryTime;
-	}
-
-	public List<FirebaseQuestion> getquestions() {
-		return questions;
 	}
 
 	public List<Map<String, String>> getanswers() {
 		return answers;
 	}
 
-	public long gettimeSent() {
-		return timeSent;
+	public boolean getbegun() {
+		return begun;
+	}
+
+	public long getexpiryTime() {
+		return expiryTime;
+	}
+
+	public String getkey() {
+		return key;
+	}
+
+	public List<FirebaseQuestion> getquestions() {
+		return questions;
+	}
+
+	public long getscore() {
+		return score;
 	}
 
 	public long gettimeAlive() {
@@ -56,36 +68,40 @@ public class FirebaseSurvey extends FirebaseElement implements Serializable {
 		return timeFinished;
 	}
 
-	public long getscore() {
-		return score;
+	public long gettimeSent() {
+		return timeSent;
 	}
 
-	public void setscore(long score) {
-		this.score = score;
-	}
-
-	public void setkey(String key) {
-		this.key = key;
-	}
-
-	public String getkey() {
-		return key;
+	public String gettitle() {
+		return title.get();
 	}
 
 	public void setanswers(List<Map<String, String>> answers) {
 		this.answers = answers;
 	}
 
+	public void setbegun() {
+		this.begun = true;
+	}
+
+	public void setexpiryTime(long expiryTime) {
+		this.expiryTime = expiryTime;
+	}
+
+	public void setkey(String key) {
+		this.key = key;
+	}
+
+	public void setscore(long score) {
+		this.score = score;
+	}
+
 	public void settimeFinished(long timeFinished) {
 		this.timeFinished = timeFinished;
 	}
 
-	public boolean getbegun() {
-		return begun;
-	}
-
-	public void setbegun() {
-		this.begun = true;
+	public void settitle(String title) {
+		this.title.set(title);
 	}
 
 }

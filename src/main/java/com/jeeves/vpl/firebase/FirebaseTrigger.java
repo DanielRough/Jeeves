@@ -11,27 +11,63 @@ import com.google.firebase.database.IgnoreExtraProperties;
 @SuppressWarnings("serial")
 @IgnoreExtraProperties
 public class FirebaseTrigger extends FirebaseElement implements Serializable {
-	private long clocktype = 0;
-	private String triggerId;
 	private List<FirebaseAction> actions;
+	private long clocktype = 0;
+	private FirebaseExpression dateFrom;
+	private FirebaseExpression dateTo;
+	private FirebaseExpression timeFrom;
+	private FirebaseExpression timeTo;
+	private String triggerId;
+
+	public List<FirebaseAction> getactions() {
+		return actions;
+	}
 
 	public long getclocktype() {
 		return clocktype;
 	}
 
-	public List<FirebaseAction> getactions() {
-		return actions;
+	public FirebaseExpression getdateFrom() {
+		return dateFrom;
+	}
+
+	public FirebaseExpression getdateTo() {
+		return dateTo;
+	}
+
+	public FirebaseExpression gettimeFrom() {
+		return timeFrom;
+	}
+
+	public FirebaseExpression gettimeTo() {
+		return timeTo;
+	}
+
+	public String gettriggerId() {
+		return triggerId;
 	}
 
 	public void setactions(List<FirebaseAction> actions) {
 		this.actions = actions;
 	}
 
-	public void settriggerId(String triggerId) {
-		this.triggerId = triggerId;
+	public void setdateFrom(FirebaseExpression dateFrom) {
+		this.dateFrom = dateFrom;
 	}
 
-	public String gettriggerId() {
-		return triggerId;
+	public void setdateTo(FirebaseExpression dateTo) {
+		this.dateTo = dateTo;
+	}
+
+	public void settimeFrom(FirebaseExpression timeFrom) {
+		this.timeFrom = timeFrom;
+	}
+
+	public void settimeTo(FirebaseExpression timeTo) {
+		this.timeTo = timeTo;
+	}
+
+	public void settriggerId(String triggerId) {
+		this.triggerId = triggerId;
 	}
 }

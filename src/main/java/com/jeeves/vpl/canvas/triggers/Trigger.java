@@ -5,16 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import com.jeeves.vpl.ActionHolder;
-import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.Constants.ElementType;
+import com.jeeves.vpl.ParentPane;
+import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.actions.Action;
 import com.jeeves.vpl.canvas.receivers.ActionReceiver;
 import com.jeeves.vpl.firebase.FirebaseAction;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.MapChangeListener;
@@ -23,60 +21,114 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
+
 @SuppressWarnings("rawtypes")
 
 public abstract class Trigger extends ViewElement<FirebaseTrigger> {
-	private ArrayList<Action> actions;
-	private ActionReceiver childReceiver;
-
-	
-	protected ObservableMap<String,Object> params = FXCollections.observableHashMap();
-//	private double receiverheight = 0.0;
-	private boolean loading = true;
-
-	public ActionReceiver getMyReceiver(){
-		return childReceiver;
-	}		private Node root;
-
-	
-	public static Trigger create(FirebaseTrigger exprmodel){
+	public static Trigger create(FirebaseTrigger exprmodel) {
 		String classname = exprmodel.gettype();
 
 		try {
-			return (Trigger)Class.forName(classname).getConstructor(FirebaseTrigger.class).newInstance(exprmodel);
+			return (Trigger) Class.forName(classname).getConstructor(FirebaseTrigger.class).newInstance(exprmodel);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
-	public Trigger(){
+	protected static String getSaltString() {
+		String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+		StringBuilder salt = new StringBuilder();
+		Random rnd = new Random();
+		while (salt.length() < 18) {
+			int index = (int) (rnd.nextFloat() * SALTCHARS.length());
+			salt.append(SALTCHARS.charAt(index));
+		}
+		String saltStr = salt.toString();
+		return saltStr;
+
+	}
+
+	private ArrayList<Action> actions;
+	private ActionReceiver childReceiver;
+
+	private boolean loading = true;
+
+	private Node root;
+
+	protected ObservableMap<String, Object> params;
+
+	public Trigger() {
 		super(FirebaseTrigger.class);
 	}
-	protected static String getSaltString() {
-        String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-        StringBuilder salt = new StringBuilder();
-        Random rnd = new Random();
-        while (salt.length() < 18) {
-            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
-            salt.append(SALTCHARS.charAt(index));
-        }
-        String saltStr = salt.toString();
-        return saltStr;
 
-    }
-	public Trigger(FirebaseTrigger data){
-		super(data,FirebaseTrigger.class);
-		this.model = data; 
-		if(model.gettriggerId() == null)
+
+	public Trigger(FirebaseTrigger data) {
+		super(data, FirebaseTrigger.class);
+		this.model = data;
+		int actionNumber = 0;
+		if (model.gettriggerId() == null)
 			model.settriggerId(getSaltString());
-		if(actions != null)
-			actions.forEach(action -> childReceiver.addChild(action, 0, 0));
-		loading = false; //To check whether we change the salt string on the first action initiation
+		if (actions != null)
+			for(Action a : actions){
+				System.out.println("Adding an action to " + childReceiver);
+				childReceiver.addChildAtIndex(a, actionNumber++);
+			}
+		loading = false; // To check whether we change the salt string on the
+							// first action initiation
 
 	}
 
-	public void fxmlInit(){
+	@Override
+	public void addListeners() {
+		super.addListeners();
+		params = FXCollections.observableHashMap();
+		params.addListener(new MapChangeListener<String, Object>() {
+
+			@Override
+			public void onChanged(
+					javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
+				model.settriggerId(getSaltString()); // Again, update, must
+														// reset
+				if (change.wasAdded()) {
+					model.getparams().put(change.getKey(), change.getValueAdded());
+				} else {
+					model.getparams().remove(change.getKey());
+				}
+			}
+
+		});
+
+		childReceiver.getChildElements().addListener((ListChangeListener<ViewElement>) arg0 -> {
+			if (loading == false)
+				model.settriggerId(getSaltString()); // Need to update ID if
+														// actions change
+			ArrayList<Action> newActions = new ArrayList<Action>();
+			if (model.getactions() == null)
+				model.setactions(new ArrayList<FirebaseAction>());
+			model.getactions().clear();
+			childReceiver.getChildElements().forEach(element -> {
+				newActions.add((Action) element);
+				model.getactions().add((FirebaseAction) element.getModel());
+			});
+
+			this.actions = newActions;
+			actions.forEach(myaction -> {
+				myaction.getparams().addListener(new MapChangeListener<String, Object>() {
+					@Override
+					public void onChanged(
+							javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
+						model.settriggerId(getSaltString()); // Again, update,
+																// must reset
+					}
+
+				});
+			});
+		});
+
+	}
+
+	@Override
+	public void fxmlInit() {
 		this.type = ElementType.TRIGGER;
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setController(this);
@@ -87,70 +139,24 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 			childReceiver = new ActionReceiver();
 			getChildren().add(childReceiver);
 
-			double layouty = Math.max(((Pane)root).getPrefHeight(), ((Pane)root).getMinHeight());
-			childReceiver.setLayoutY(layouty- 5);
+			double layouty = Math.max(((Pane) root).getPrefHeight(), ((Pane) root).getMinHeight());
+			childReceiver.setLayoutY(layouty - 5);
 			setPickOnBounds(false);
-			((Pane)root).heightProperty().addListener(listen->{double layout = ((Pane)root).getHeight();
-			childReceiver.setLayoutY(layout- 5);});
-			getChildren().forEach(child->child.setPickOnBounds(false));
+			((Pane) root).heightProperty().addListener(listen -> {
+				double layout = ((Pane) root).getHeight();
+				childReceiver.setLayoutY(layout - 5);
+			});
+			getChildren().forEach(child -> child.setPickOnBounds(false));
 
 		} catch (IOException exception) {
 			exception.printStackTrace();
 			throw new RuntimeException(exception);
 		}
-		
+
 	}
 
-	public void addListeners() {
-		super.addListeners();
-		if(params != null)
-		params.addListener(new MapChangeListener<String, Object>(){
-
-			@Override
-			public void onChanged(
-					javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
-				model.settriggerId(getSaltString()); //Again, update, must reset 
-				if(change.wasAdded()){
-					model.getparams().put(change.getKey(), change.getValueAdded());
-				}
-				else{
-					model.getparams().remove(change.getKey());
-				}
-				System.out.println("CHANGED PARAMS");
-			}
-			
-		});
-
-		childReceiver.getChildElements().addListener(
-				(ListChangeListener<ViewElement>) arg0 -> {
-					if(loading == false)
-						model.settriggerId(getSaltString()); //Need to update ID if actions change
-					System.out.println("ACTIONS CHANGED");
-					ArrayList<Action> newActions = new ArrayList<Action>();
-					if(model.getactions() == null)
-						model.setactions(new ArrayList<FirebaseAction>());
-					model.getactions().clear();
-					childReceiver.getChildElements().forEach(
-							element ->{newActions.add((Action) element);
-							model.getactions().add((FirebaseAction)element.getModel());							
-							});
-					
-							
-					this.actions = newActions;
-					actions.forEach(myaction ->{
-						myaction.params.addListener(new MapChangeListener<String,Object>(){
-							@Override
-							public void onChanged(
-									javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
-								System.out.println("PARAMS CHANGED");
-								model.settriggerId(getSaltString()); //Again, update, must reset 
-							}
-						
-						});
-					});
-				});
-
-
+	public ArrayList<Action> getActions() {
+		return actions;
 	}
 
 	@Override
@@ -158,37 +164,42 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 		return this;
 	}
 
-	
-	public ArrayList<Action> getActions(){
-		return actions;
+	@Override
+	public FirebaseTrigger getModel() {
+		return model;
 	}
-	protected void setData(FirebaseTrigger model){
+
+	public ActionReceiver getMyReceiver() {
+		return childReceiver;
+	}
+
+	public abstract String getViewPath();
+
+	@Override
+	public void setParentPane(ParentPane parent) {
+		super.setParentPane(parent);
+		actions.forEach(action -> {
+			action.setParentPane(parent);
+		});
+
+	}
+
+	@Override
+	protected void setData(FirebaseTrigger model) {
 		super.setData(model);
 		params = FXCollections.observableMap(model.getparams());
 		double posX = model.getxPos();
 		double posY = model.getyPos();
-		Point2D position = new Point2D(posX,posY);
+		Point2D position = new Point2D(posX, posY);
 		List<FirebaseAction> onReceive = model.getactions();
 		this.position = position;
 		actions = new ArrayList<Action>();
-		if(onReceive == null)return;
+		if (onReceive == null)
+			return;
 		for (FirebaseAction action : onReceive) {
-			
 			Action actionobj = Action.create(action);
-	//		actionobj.setReceiver(childReceiver);
 			actions.add(actionobj);
-	//		actionobj.setActionHolder(this);
-
 		}
 	}
-	public abstract String getViewPath();
-//
-//
-//	public void updateActionsHeight(){
-//		double newreceiverheight = 0.0;
-//		for(Action a : actions)
-//			newreceiverheight += a.getInitHeight();
-//		childReceiver.heightChanged(newreceiverheight-receiverheight);
-//		receiverheight = newreceiverheight;
-//	}
+
 }

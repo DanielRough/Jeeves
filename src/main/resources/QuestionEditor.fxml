@@ -59,7 +59,7 @@
             </ImageView>
          </children>
       </HBox>
-      <Pane fx:id="paneAssignToVar" prefHeight="72.0" prefWidth="287.0" stylesheets="@ButtonsDemo.css">
+      <Pane fx:id="paneAssignToVar" prefHeight="72.0" prefWidth="287.0">
          <children>
             <ComboBox fx:id="cboVars" cacheShape="false" layoutX="30.0" layoutY="2.0" prefHeight="33.0" prefWidth="150.0" scaleShape="false" stylesheets="@Styles.css" />
          </children>

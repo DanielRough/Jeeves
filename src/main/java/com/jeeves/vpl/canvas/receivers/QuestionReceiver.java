@@ -14,22 +14,34 @@ import com.jeeves.vpl.ParentPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.survey.questions.QuestionView;
 
-public class QuestionReceiver extends ExternalReceiver implements ParentPane{
+public class QuestionReceiver extends ExternalReceiver implements ParentPane {
 
-	public void addDummyView(Pane dummyView, int index){
-		container.getChildren().add(dummyView);
-		captureRect.setHeight(captureRect.getHeight() + 66);		
-		dummyView.setMouseTransparent(true);
+	public QuestionReceiver(double width, double height) {
+		container.getChildren().add(elements);
+		getChildren().add(container);
+
+		captureRect.setHeight(height);
+		captureRect.setWidth(width);
+		captureRect.setOpacity(0.3);
+		elements.setPrefWidth(width);
+		elements.setFillWidth(false);
+		elements.setAlignment(Pos.TOP_CENTER);
+
+		setPickOnBounds(false);
+		container.setPickOnBounds(false);
+		elements.setPickOnBounds(false);
 	}
 
 	@Override
-	public void addChildAtIndex(ViewElement child, int index){
-		QuestionView addedChild = (QuestionView)child;
+	public void addChildAtIndex(ViewElement child, int index) {
+
+		QuestionView addedChild = (QuestionView) child;
 		QuestionView parentQuestion = addedChild.getParentQuestion();
-		if(parentQuestion != null){
+		if (parentQuestion != null) {
 			int parentIndex = elements.getChildren().indexOf(parentQuestion);
-			if(index <= parentIndex){
-				index = addedChild.oldIndex; //Reset it to add it back to its old place
+			if (index <= parentIndex) {
+				index = addedChild.oldIndex; // Reset it to add it back to its
+												// old place
 				Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setTitle("Parent/Child Question Conflict");
 				alert.setHeaderText(null);
@@ -37,12 +49,13 @@ public class QuestionReceiver extends ExternalReceiver implements ParentPane{
 				alert.showAndWait();
 			}
 		}
-		
+
 		List<QuestionView> childQuestions = addedChild.getChildQuestions();
-		for(QuestionView parentchild : childQuestions){
+		for (QuestionView parentchild : childQuestions) {
 			int childIndex = elements.getChildren().indexOf(parentchild);
-			if(childIndex < index){
-				index = addedChild.oldIndex; //Can't have children coming before it!
+			if (childIndex < index) {
+				index = addedChild.oldIndex; // Can't have children coming
+												// before it!
 				Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setTitle("Parent/Child Question Conflict");
 				alert.setHeaderText(null);
@@ -52,10 +65,31 @@ public class QuestionReceiver extends ExternalReceiver implements ParentPane{
 			}
 		}
 
-
 		super.addChildAtIndex(child, index);
 		addedChild.setOldIndex(index);
-		((QuestionView)child).addButtons();
+		((QuestionView) child).addButtons();
+	}
+
+	@Override
+	public void addChildListeners() {
+		elements.getChildren().addListener(new ListChangeListener<Node>() {
+			@Override
+			public void onChanged(javafx.collections.ListChangeListener.Change<? extends Node> arg0) {
+				arg0.next();
+				if (arg0.wasAdded())
+					captureRect.setHeight(captureRect.getHeight() + 66);
+				else
+					captureRect.setHeight(captureRect.getHeight() - 66);
+
+			}
+
+		});
+	}
+
+	public void addDummyView(Pane dummyView, int index) {
+		container.getChildren().add(dummyView);
+		captureRect.setHeight(captureRect.getHeight() + 66);
+		dummyView.setMouseTransparent(true);
 	}
 
 	@Override
@@ -64,38 +98,5 @@ public class QuestionReceiver extends ExternalReceiver implements ParentPane{
 			return true;
 		return false;
 	}
-	public QuestionReceiver(double width, double height){
-	container.getChildren().add(elements);
-	getChildren().add(container);
 
-	captureRect.setHeight(height);
-	captureRect.setWidth(width);
-	captureRect.setOpacity(0.3);
-	elements.setPrefWidth(width);
-	elements.setFillWidth(false);
-	elements.setAlignment(Pos.TOP_CENTER);
-	
-	setPickOnBounds(false);
-	container.setPickOnBounds(false);
-	elements.setPickOnBounds(false);
-	}
-
-	@Override
-	public void addChildListeners() {
-		elements.getChildren().addListener(new ListChangeListener<Node>(){
-			@Override
-			public void onChanged(
-					javafx.collections.ListChangeListener.Change<? extends Node> arg0) {
-				arg0.next();
-				if(arg0.wasAdded())
-					captureRect.setHeight(captureRect.getHeight() + 66);	
-				else
-					captureRect.setHeight(captureRect.getHeight() - 66);
-
-			}
-			
-		});		
-	}
-
-	}
- 
+}

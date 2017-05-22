@@ -3,21 +3,31 @@ package com.jeeves.vpl.canvas.ifsloops;
 import javafx.scene.Node;
 
 import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
+import com.jeeves.vpl.firebase.FirebaseAction;
 
 import static com.jeeves.vpl.Constants.*;
+
 /**
- * This class represents an if statement. If the condition is true, execute the actions within
+ * This class represents an if statement. If the condition is true, execute the
+ * actions within
+ * 
  * @author Daniel
  *
  */
-public class IfControl extends Control { 
-	public static final String NAME = "if this is true do that";
+public class IfControl extends Control {
 	public static final String DESC = "This will execute its contained actions if the contained expression is true";
-	public Node[] getWidgets(){
-		return new Node[]{exprreceiver,childReceiver};
+	public static final String NAME = "if this is true do that";
+
+	public IfControl() {
+		this(new FirebaseAction());
 	}
-	
-	public void fxmlInit(){
+
+	public IfControl(FirebaseAction data) {
+		super(data);
+	}
+
+	@Override
+	public void fxmlInit() {
 		super.fxmlInit();
 		name = NAME;
 		description = DESC;
@@ -28,6 +38,11 @@ public class IfControl extends Control {
 	@Override
 	public String getViewPath() {
 		return String.format("/ControlIf.fxml", this.getClass().getSimpleName());
+	}
+
+	@Override
+	public Node[] getWidgets() {
+		return new Node[] { exprreceiver, childReceiver };
 	}
 
 }

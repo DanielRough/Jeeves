@@ -11,47 +11,29 @@ import javafx.scene.control.ComboBox;
 import com.jeeves.vpl.firebase.FirebaseAction;
 
 public class SpeakerAction extends Action { // NO_UCD (unused code)
-	public static final String NAME = "Adjust phone volume";
 	public static final String DESC = "Turn the patient's phone volume on or off";
-	private String volumeOn;
+	public static final String NAME = "Adjust phone volume";
 	@FXML
 	private ComboBox<String> cboVolumeOn;
+	private String volumeOn;
 
-
-	public void fxmlInit(){
-		super.fxmlInit();
-		name = NAME;
-		description = DESC;
-	}
-	public Node[] getWidgets() {
-		return new Node[] { cboVolumeOn };
+	public SpeakerAction() {
+		this(new FirebaseAction());
 	}
 
-	public void setData(FirebaseAction model) {
-		super.setData(model);
-		Map<String, Object> params = model.getparams();
-		if(params.isEmpty())return;
-		volumeOn = params.get("volume").toString();
-		cboVolumeOn.setValue(volumeOn);
+	public SpeakerAction(FirebaseAction data) {
+		super(data);
 	}
 
 	@Override
-	public String getViewPath() {
-		return String.format("/ActionSpeaker.fxml", this.getClass()
-				.getSimpleName());
-	}
-
-	@Override
-	protected void addListeners() {
+	public void addListeners() {
 		super.addListeners();
 		cboVolumeOn.getItems().addAll("On", "Off");
 
-		cboVolumeOn.getSelectionModel().selectedItemProperty()
-		.addListener(new ChangeListener<String>() {
+		cboVolumeOn.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 
 			@Override
-			public void changed(ObservableValue<? extends String> arg0,
-					String arg1, String arg2) {
+			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
 				params.put("volume", arg2);
 			}
 
@@ -59,5 +41,31 @@ public class SpeakerAction extends Action { // NO_UCD (unused code)
 
 	}
 
+	@Override
+	public void fxmlInit() {
+		super.fxmlInit();
+		name = NAME;
+		description = DESC;
+	}
+
+	@Override
+	public String getViewPath() {
+		return String.format("/ActionSpeaker.fxml", this.getClass().getSimpleName());
+	}
+
+	@Override
+	public Node[] getWidgets() {
+		return new Node[] { cboVolumeOn };
+	}
+
+	@Override
+	public void setData(FirebaseAction model) {
+		super.setData(model);
+		Map<String, Object> params = model.getparams();
+		if (params.isEmpty())
+			return;
+		volumeOn = params.get("volume").toString();
+		cboVolumeOn.setValue(volumeOn);
+	}
 
 }
