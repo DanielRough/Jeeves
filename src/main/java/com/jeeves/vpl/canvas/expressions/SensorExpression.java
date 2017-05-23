@@ -1,15 +1,21 @@
 package com.jeeves.vpl.canvas.expressions;
 
 import static com.jeeves.vpl.Constants.*;
+
+import java.util.List;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.stage.Popup;
 
+import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
 import com.jeeves.vpl.firebase.FirebaseExpression;
+import com.jeeves.vpl.firebase.FirebaseVariable;
 
 public class SensorExpression extends Expression { // NO_UCD (unused code)
 	public static final String DESC = "Returns true if the specified sensor returns a particular result";
@@ -21,6 +27,7 @@ public class SensorExpression extends Expression { // NO_UCD (unused code)
 	private String returnstatus;
 	private String sensorname;
 	protected String result = "";
+	private Sensor selectedSensor;
 	Popup pop = new Popup();
 
 	public SensorExpression() {
@@ -29,6 +36,7 @@ public class SensorExpression extends Expression { // NO_UCD (unused code)
 
 	public SensorExpression(FirebaseExpression data) {
 		super(data);
+
 		for (Sensor s : sensors) {
 			cboSensor.getItems().add(s.getname());
 		}
@@ -42,7 +50,9 @@ public class SensorExpression extends Expression { // NO_UCD (unused code)
 				}
 			}
 		});
-
+		locReceiver.getChildElements().addListener(
+				(ListChangeListener<ViewElement>) listener -> {listener.next(); if(listener.wasRemoved())return; model.getparams().put("result", locReceiver.getChildModel().getname());});// timeReceiverFrom.getChildElements().get(0).getModel())));		
+		
 		cboClassifications.valueProperty()
 				.addListener((ChangeListener<String>) (arg0, arg1, arg2) -> model.getparams().put("result", arg2));
 		addListeners();
@@ -103,6 +113,8 @@ public class SensorExpression extends Expression { // NO_UCD (unused code)
 	public void updatePane() {
 		cboSensor = new ComboBox<String>();
 		cboClassifications = new ComboBox<String>();
+		locReceiver = new ExpressionReceiver(VAR_LOCATION);
+
 		styleTextCombo(cboSensor);
 		styleTextCombo(cboClassifications);
 		setup();
@@ -123,13 +135,24 @@ public class SensorExpression extends Expression { // NO_UCD (unused code)
 
 	protected void setResult(String result) {
 		if (result != null && !result.equals("")) {
+			if(selectedSensor == locSensor){
+				gui.registerVarListener(listener->{
+					listener.next();
+					if(listener.wasAdded()){
+						List<FirebaseVariable> list = (List<FirebaseVariable>) listener.getAddedSubList();
+						if(list.get(0).getname().equals(result))
+							locReceiver.addChild(UserVariable.create(list.get(0)),0,0);
+					}
+				});
+				
+			}
 			this.result = result;
 			cboClassifications.setValue(result);
 		}
 	}
 
 	protected void setSelectedSensor(Sensor sensor) {
-
+		this.selectedSensor = sensor;
 		String[] classifications = (sensor.getvalues());
 		cboSensor.setValue(sensor.getname());
 		cboClassifications.getItems().clear();
@@ -141,7 +164,6 @@ public class SensorExpression extends Expression { // NO_UCD (unused code)
 			cboClassifications.setValue(classifications[0]);
 		if (sensor.getname().equals("Location")) { // a merciless hack that I'll
 													// eventually fix
-			locReceiver = new ExpressionReceiver(VAR_LOCATION);
 			box.getChildren().remove(cboClassifications);
 			box.getChildren().add(locReceiver);
 		} else {

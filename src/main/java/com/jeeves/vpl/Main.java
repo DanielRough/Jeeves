@@ -46,6 +46,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -59,6 +60,7 @@ import javafx.scene.control.SplitPane.Divider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseDragEvent;
@@ -186,7 +188,8 @@ public class Main extends Application {
 	private Main(Stage primaryStage) {
 		currentGUI = this;
 		this.primaryStage = primaryStage;
-		firebase = new FirebaseDB();
+		primaryStage.setResizable(false);
+		firebase = new FirebaseDB(this);
 		firebase.addListeners();
 		firebase.getprojects().addListener(new ListChangeListener<FirebaseProject>() {
 			@Override
@@ -361,6 +364,27 @@ public class Main extends Application {
 
 	@FXML
 	public void saveStudyMenu(Event e) {
+		//Do some validation on the survye names here
+		ArrayList<String> currentnames = new ArrayList<String>();
+		for(FirebaseSurvey survey : currentsurveys){
+			if(survey.gettitle().equals("New survey")){
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("No name given to survey");
+				alert.setHeaderText(null);
+				alert.setContentText("All surveys must have a title (not 'New survey!')");
+				alert.showAndWait();
+				return;
+			}
+			else if(currentnames.contains(survey.gettitle())){
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("Duplicate survey names");
+				alert.setHeaderText(null);
+				alert.setContentText("All surveys must have unique names");
+				alert.showAndWait();
+				return;
+			}
+			currentnames.add(survey.gettitle());
+		};
 		if (isNewProject) {
 			saveAsStudyMenu(e);
 			return;
@@ -552,6 +576,23 @@ public class Main extends Application {
 
 	}
 
+	public void setCurrentProject(FirebaseProject project){
+		currentproject = project;
+		primaryStage.setTitle("Jeeves - " + project.getname());
+		patientController.loadPatients(); // Reset so we have the
+											// patients for THIS project
+		resetPanes();
+		isNewProject = false;
+		for (ViewElement element : elements) {
+			ViewElement<FirebaseVariable> draggable = ViewElement.create(element.getClass().getName());
+			element.setDraggable(draggable); // DJRNEW
+			setElementParent(draggable);
+			element.setReadOnly();
+			element.setPickOnBounds(false);
+			element.setHandler(viewElementHandler);
+		}
+		loadVariables();
+	}
 	private void loadProjectsIntoMenu() {
 		mnuStudies.getItems().clear();
 		firebase.getprojects().forEach(project -> {
@@ -560,27 +601,13 @@ public class Main extends Application {
 			mnuStudies.getItems().add(item);
 			item.setOnAction(action -> {
 				// isNewProject = false;
-				if(currentproject.getname() != null)
-				firebase.resetProject(currentproject.getname()); //reset the other one if we have unsaved changes
-				System.out.println();
-				currentproject = project; // Sets this project as the current
-											// one
-				
-				primaryStage.setTitle("Jeeves - " + project.getname());
-				patientController.loadPatients(); // Reset so we have the
-													// patients for THIS project
-				resetPanes();
-				isNewProject = false;
-				for (ViewElement element : elements) {
-					ViewElement<FirebaseVariable> draggable = ViewElement.create(element.getClass().getName());
-					element.setDraggable(draggable); // DJRNEW
-					setElementParent(draggable);
-					element.setReadOnly();
-					element.setPickOnBounds(false);
-					element.setHandler(viewElementHandler);
-				}
-				loadVariables();
-			});
+				//if(currentproject.getname() != null)
+
+						firebase.loadProject(project.getname());
+
+				});
+				//currentproject = project; // Sets this project as the current
+
 		});
 	}
 
@@ -614,6 +641,18 @@ public class Main extends Application {
 			surveyBox.getChildren().remove(1);
 		surveyController = new SurveyPane();
 		surveyBox.getChildren().add(surveyController); // reset dat shit
+		surveyController.registerSurveyListener(new ListChangeListener<FirebaseSurvey>(){
+
+			@Override
+			public void onChanged(javafx.collections.ListChangeListener.Change<? extends FirebaseSurvey> c) {
+				c.next();
+				if(c.wasAdded()){
+					c.getAddedSubList().forEach(survey->{currentsurveys.add(survey);currentproject.getsurveys().add(survey);});
+					
+				}
+			}
+			
+		});
 		// receiver.setProject(currentproject);
 		// paneAndroid.getChildren().add(receiver);
 		setProject();
@@ -624,9 +663,18 @@ public class Main extends Application {
 				if (arg0.wasAdded()) {
 					ViewElement added = (ViewElement) arg0.getAddedSubList().get(0);
 					int index = receiver.getChildElements().indexOf(added);
-					currentproject.getuidesign().add(index, (FirebaseUI) added.getModel());
-					currentelements.add(index, (FirebaseUI) added.getModel());
-
+					FirebaseUI uiModel = (FirebaseUI) added.getModel();
+					
+					if(uiModel.gettext()!=null){
+						currentproject.getuidesign().add(index, uiModel);
+						currentelements.add(index, uiModel);
+					}
+					else
+					//We wait until we've set the text before we actually add it
+					uiModel.getMyTextProperty().addListener(listener ->{
+						currentproject.getuidesign().add(index, uiModel);
+						currentelements.add(index, uiModel);
+					});
 				} else {
 					List<ViewElement> removed = (List<ViewElement>) arg0.getRemoved();
 					removed.forEach(elem -> {

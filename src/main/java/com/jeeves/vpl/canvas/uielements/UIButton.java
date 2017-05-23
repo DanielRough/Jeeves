@@ -71,6 +71,8 @@ public class UIButton extends UIElement { // NO_UCD (unused code)
 	public void setText(String text) {
 		btnButton.setText(text);
 		model.settext(text);
+//		gui.getUIElements().remove(model);
+//		gui.getUIElements().add(model);
 	}
 
 	@Override

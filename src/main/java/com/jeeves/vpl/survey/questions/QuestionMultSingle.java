@@ -11,9 +11,11 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -82,6 +84,14 @@ public class QuestionMultSingle extends QuestionView {
 		remove.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
+				if(!getInstance().getChildQuestions().isEmpty()){
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setTitle("Duplicate survey names");
+					alert.setHeaderText(null);
+					alert.setContentText("All surveys must have unique names");
+					alert.showAndWait();
+					return;
+				}
 				choices.getChildren().remove(optionBox);
 				Map<String, Object> qOptions = new HashMap<String, Object>();
 				int optcount = 1;
@@ -89,21 +99,30 @@ public class QuestionMultSingle extends QuestionView {
 					HBox optbox = (HBox) opt;
 					TextField opttext = (TextField) optbox.getChildren().get(0);
 					qOptions.put("option" + Integer.toString(optcount++), opttext.getText());
-					model.setOptions(qOptions);
+					model.getparams().put("options",qOptions);
 				}
 			}
 		});
 
 		optionBox.getChildren().addAll(choice, remove);
 		choices.getChildren().add(optionBox);
-		choice.setOnKeyReleased((event) -> {
+		choice.setOnKeyPressed(handler->{
+			if(!getInstance().getChildQuestions().isEmpty()){
+				handler.consume();
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("Duplicate survey names");
+				alert.setHeaderText(null);
+				alert.setContentText("All surveys must have unique names");
+				alert.showAndWait();
+				return;
+			}
 			Map<String, Object> qOptions = new HashMap<String, Object>();
 			int optcount = 1;
 			for (Node opt : choices.getChildren()) {
 				HBox optbox = (HBox) opt;
 				TextField opttext = (TextField) optbox.getChildren().get(0);
 				qOptions.put("option" + Integer.toString(optcount++), opttext.getText());
-				model.setOptions(qOptions);
+				model.getparams().put("options",qOptions);
 			}
 		});
 	}

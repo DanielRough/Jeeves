@@ -1,6 +1,11 @@
 package com.jeeves.vpl.canvas.uielements;
 
 import java.io.IOException;
+import java.util.List;
+
+import com.jeeves.vpl.Constants.ElementType;
+import com.jeeves.vpl.ViewElement;
+import com.jeeves.vpl.firebase.FirebaseUI;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -9,10 +14,6 @@ import javafx.scene.control.Control;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-
-import com.jeeves.vpl.ViewElement;
-import com.jeeves.vpl.Constants.ElementType;
-import com.jeeves.vpl.firebase.FirebaseUI;
 
 public abstract class UIElement extends ViewElement<FirebaseUI> {
 	public static UIElement create(FirebaseUI exprmodel) {
@@ -67,9 +68,9 @@ public abstract class UIElement extends ViewElement<FirebaseUI> {
 
 	public abstract void setText(String text);
 
-	public void update() {
+	public void update(List<ViewElement> childList) {
 		Stage stage = new Stage(StageStyle.UNDECORATED);
-		UIPopupPane root = new UIPopupPane(stage);
+		UIPopupPane root = new UIPopupPane(stage,childList);
 		root.init(this);
 		stage.setScene(new Scene(root));
 		stage.setTitle("Add property");

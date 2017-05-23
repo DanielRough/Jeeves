@@ -10,6 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 
 /**
  * The main superclass that governs all the draggable elements in the visual
@@ -38,6 +39,8 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 	public double y;
 	private ViewElement draggable; // Self-referencing class, hm...
 	private boolean wasRemoved = false;
+	private boolean wasDragged = false;
+	public int oldIndex;
 	protected String description;
 	protected EventHandler<MouseEvent> draggedHandler;
 	protected Main gui;
@@ -119,6 +122,9 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 		return type;
 	}
 
+	public boolean getWasDragged(){
+		return wasDragged;
+	}
 	public boolean getWasRemoved() {
 		return wasRemoved;
 	}
@@ -133,6 +139,7 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 			}
 			event.consume();
 			startFullDrag();
+			wasDragged = true;
 			setMouseTransparent(true);
 		};
 		releasedHandler = event -> {
@@ -199,6 +206,7 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 				// An event for when we press the mouse
 				else if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
 					requestFocus();
+					wasDragged = false;
 					parentPane.addChild(getInstance(), event.getSceneX(), event.getSceneY());
 					event.consume();
 					setManaged(false);
@@ -284,6 +292,9 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 		}
 	}
 
+	public void setOldIndex(int index) {
+		this.oldIndex = index;
+	}
 	protected void addListeners() {
 		layoutXProperty().addListener(listener -> model.setxPos((long) getLayoutX()));
 		layoutYProperty().addListener(listener -> {
@@ -291,7 +302,7 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 		});
 		model.settype(getInstance().getClass().getName());
 		model.setname(getName());
-		// currentCanvas = gui.getViewCanvas();
+
 	}
 
 	protected void setData(T model) {

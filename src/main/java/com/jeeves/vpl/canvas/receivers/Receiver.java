@@ -81,7 +81,7 @@ public abstract class Receiver extends Pane {
 				// child.removeEventHandler(MouseEvent.MOUSE_PRESSED, this);
 				child.setOnMouseReleased(handler -> {
 					if (child.getWasRemoved() == false && (child.getType() == ElementType.QUESTION || child.getType() == ElementType.UIELEMENT))
-						addChildAtIndex(child, elements.getChildren().indexOf(child));
+						addChildAtIndex(child, child.oldIndex);
 				}); // Hopefully readds it automatically if it gets dragged out
 					// and released?
 
@@ -127,6 +127,8 @@ public abstract class Receiver extends Pane {
 
 	protected boolean handleReleased(MouseDragEvent event) {
 		if (isValidElement((ViewElement) event.getGestureSource())) {
+			
+			//Here we want to check if we dragged our question at all. If we didn't, just add it back where it was
 			addChild((ViewElement) event.getGestureSource(), event.getSceneX(), event.getSceneY());
 			event.consume();
 			return true;

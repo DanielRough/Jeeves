@@ -51,7 +51,7 @@ public class SendTextAction extends Action { // NO_UCD (unused code)
 				smsText.setLayoutX(txtMsgBounds.getMinX());
 				smsText.setLayoutY(txtMsgBounds.getMinY());
 				smsText.requestFocus();
-				smsText.setPrefWidth(Math.max(txtMessage.getWidth(), smsText.getWidth()));
+				smsText.setPrefWidth(200);
 
 			}
 

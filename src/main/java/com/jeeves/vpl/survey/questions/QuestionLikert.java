@@ -170,26 +170,6 @@ public class QuestionLikert extends QuestionView {
 			chkAssignScore.setSelected(false);
 	}
 
-	//
-	// @Override
-	// public void showCheckQOpts() {
-	// cboLessMore.setVisible(true);
-	// txtNumAnswer.setVisible(true);
-	// clearFields();
-	// }
-	// @Override
-	// public void handleCheckQ(String scon) {
-	//
-	// if(!scon.isEmpty()){
-	// String[] components = scon.split(";");
-	// cboLessMore.setValue(components[0]);
-	// txtNumAnswer.setText(components[1]);
-	// }
-	// else{
-	// clearFields();
-	//
-	// }
-	// }
 	private void handleUpdateScale() {
 		String number = rdioButton5.isSelected() ? "5" : "7";
 		Map<String, Object> qScaleVals = new HashMap<String, Object>();
@@ -200,8 +180,8 @@ public class QuestionLikert extends QuestionView {
 
 		}
 		qScaleVals.put("labels", labels);
-
-		model.setOptions(qScaleVals);
+		Map<String,Object> params = model.getparams();
+		params.put("options",qScaleVals);
 
 	}
 

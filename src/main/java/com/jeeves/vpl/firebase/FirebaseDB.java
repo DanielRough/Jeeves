@@ -15,7 +15,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.jeeves.vpl.Main;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -25,8 +27,9 @@ public class FirebaseDB {
 	private DatabaseReference firebaseRef;
 	private ObservableList<FirebasePatient> newpatients = FXCollections.observableArrayList();
 	private ObservableList<FirebaseProject> newprojects = FXCollections.observableArrayList();
-	
-	public FirebaseDB() {
+	private Main gui;
+	public FirebaseDB(Main gui) {
+		this.gui = gui;
 		FirebaseOptions options = new FirebaseOptions.Builder().setDatabaseUrl(DB_URL)
 				.setServiceAccount(FirebaseDB.class.getResourceAsStream(SERVICE_JSON))// new
 																						// FileInputStream("/Users/Daniel/Documents/workspace/NewJeeves/Jeeves-9b9326e90601.json"))
@@ -66,14 +69,19 @@ public class FirebaseDB {
 		return true;
 	}
 
-	public void resetProject(String name){
+	public void loadProject(String name){
 		DatabaseReference globalRef = firebaseRef.child(DBNAME).child(PROJECTS_COLL).child(name);
 		globalRef.addListenerForSingleValueEvent(new ValueEventListener() {
 		   @Override
 		   public void onDataChange(DataSnapshot dataSnapshot) {
-			   Map<String, FirebaseProject> value = (Map<String, FirebaseProject>) dataSnapshot.getValue();
-		       newprojects.forEach(proj->{if(proj.getname().equals(name)){proj = value.get(name);System.out.println("RESET PROJECT FROM DATABSE");}});
-		       
+			   @SuppressWarnings("unchecked")
+			   FirebaseProject proj = dataSnapshot.getValue(FirebaseProject.class);
+			   Platform.runLater(new Runnable(){
+				   public void run(){
+					   gui.setCurrentProject(proj);
+
+				   }
+			   });
 		   }
 
 		@Override

@@ -1,6 +1,7 @@
 package com.jeeves.vpl;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import javafx.event.EventHandler;
 import javafx.scene.control.ComboBox;
@@ -57,7 +58,7 @@ public class Constants {
 	// Sensor constants
 		private static Sensor accelSensor = new Sensor("Accelerometer", "/img/icons/accelerometer.png",
 				new String[] { "Stopped", "Started", "Moving", "Stationary" });
-		private static Sensor locSensor = new Sensor("Location", "/img/icons/location.jpg", new String[] {});
+		public static Sensor locSensor = new Sensor("Location", "/img/icons/location.jpg", new String[] {});
 
 		private static Sensor smsSensor = new Sensor("SMS", "/img/icons/sms.jpg",
 				new String[] { "Message Sent", "Message Received" });
@@ -146,5 +147,19 @@ public class Constants {
 				return cell;
 			}
 		});
+	}
+	
+	//Used for generating an ID in various elements
+	public static String getSaltString() {
+		String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+		StringBuilder salt = new StringBuilder();
+		Random rnd = new Random();
+		while (salt.length() < 18) {
+			int index = (int) (rnd.nextFloat() * SALTCHARS.length());
+			salt.append(SALTCHARS.charAt(index));
+		}
+		String saltStr = salt.toString();
+		return saltStr;
+
 	}
 }

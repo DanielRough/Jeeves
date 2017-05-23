@@ -1,5 +1,7 @@
 package com.jeeves.vpl.survey;
 
+import static com.jeeves.vpl.Constants.CONSTRAINT_NUMS;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -106,11 +108,15 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 					ViewElement added = (ViewElement) arg0.getAddedSubList().get(0);
 					int index = receiver.getChildElements().indexOf(added);
 					model.getquestions().add(index, (FirebaseQuestion) added.getModel());
-					surveyQuestions.add(index, (QuestionView) added);
+					//surveyQuestions.add(index, (QuestionView) added);
+					addQuestion(index,(QuestionView)added);
 					editor.populateQuestion((QuestionView) arg0.getAddedSubList().get(0));
 					paneEditor.setDisable(false);
 				} else {
 					QuestionView removed = (QuestionView) arg0.getRemoved().get(0);
+					surveyQuestions.remove(removed);
+					model.getquestions().remove(removed.getModel());
+
 					if (editor.getSelectedQuestion() != null && editor.getSelectedQuestion().equals(removed)) {
 						paneEditor.getChildren().remove(editor);
 						editor = new QuestionEditor(surveyQuestions);
@@ -205,6 +211,8 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 				question.getParentQuestion().removeChildQuestion(question);
 
 		}
+		else
+			System.out.println("Actually no we don't have this one");
 		// Time to referesh
 		editor.refresh();
 	}
@@ -230,9 +238,19 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 		for (FirebaseQuestion newquestion : questions) {
 			QuestionView question = QuestionView.create(newquestion);
 			question.setData(newquestion);
+			
 			receiver.addChildAtIndex(question, index);
-			addQuestion(index, question);
-
+			addQuestion(index++, question);
+			
+			//New stuff to set the parent question in here
+			FirebaseQuestion condition = newquestion.getconditionQuestion();
+			if(condition != null){
+				for(QuestionView q : this.surveyQuestions)
+					//TODO: Replace with IDs
+					if(q.getQuestionId().equals(condition.getquestionId())){
+						question.setParentQuestion(q);
+					}
+			}
 		}
 
 	}

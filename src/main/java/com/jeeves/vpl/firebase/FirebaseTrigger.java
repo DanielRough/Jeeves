@@ -15,9 +15,11 @@ public class FirebaseTrigger extends FirebaseElement implements Serializable {
 	private long clocktype = 0;
 	private FirebaseExpression dateFrom;
 	private FirebaseExpression dateTo;
+	private List<FirebaseExpression> times;
 	private FirebaseExpression timeFrom;
 	private FirebaseExpression timeTo;
 	private String triggerId;
+
 
 	public List<FirebaseAction> getactions() {
 		return actions;
@@ -39,6 +41,10 @@ public class FirebaseTrigger extends FirebaseElement implements Serializable {
 		return timeFrom;
 	}
 
+	public List<FirebaseExpression> gettimes(){
+		return times;
+	}
+	
 	public FirebaseExpression gettimeTo() {
 		return timeTo;
 	}
@@ -63,6 +69,10 @@ public class FirebaseTrigger extends FirebaseElement implements Serializable {
 		this.timeFrom = timeFrom;
 	}
 
+	public void settimes(List<FirebaseExpression> times){
+		this.times = times;
+	}
+	
 	public void settimeTo(FirebaseExpression timeTo) {
 		this.timeTo = timeTo;
 	}

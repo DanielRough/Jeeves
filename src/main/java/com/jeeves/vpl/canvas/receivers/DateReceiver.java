@@ -30,10 +30,10 @@ import javafx.stage.StageStyle;
 public class DateReceiver extends ExpressionReceiver {
 
 	public class NewSingleDatePane extends Pane {
-		public Stage stage;
-		public TextField texty;
 		@FXML
 		private DatePicker pckPicker;
+		public Stage stage;
+		public TextField texty;
 
 		public NewSingleDatePane(Stage stage, TextField texty) {
 			FXMLLoader fxmlLoader = new FXMLLoader();

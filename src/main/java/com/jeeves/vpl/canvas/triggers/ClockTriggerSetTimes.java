@@ -1,16 +1,24 @@
 package com.jeeves.vpl.canvas.triggers;
 
+import static com.jeeves.vpl.Constants.VAR_CLOCK;
+import static com.jeeves.vpl.Constants.VAR_DATE;
+
+import java.util.ArrayList;
+
+import com.jeeves.vpl.ViewElement;
+import com.jeeves.vpl.canvas.expressions.UserVariable;
+import com.jeeves.vpl.canvas.receivers.DateReceiver;
+import com.jeeves.vpl.canvas.receivers.TimeReceiver;
+import com.jeeves.vpl.firebase.FirebaseExpression;
+import com.jeeves.vpl.firebase.FirebaseTrigger;
+
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import com.jeeves.vpl.canvas.receivers.DateReceiver;
-import com.jeeves.vpl.canvas.receivers.TimeReceiver;
-import com.jeeves.vpl.firebase.FirebaseTrigger;
-
-import static com.jeeves.vpl.Constants.*;
 
 /**
  * This class represents a clock trigger that can be dragged around on the
@@ -79,11 +87,17 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 		TimeReceiver setTimeReceiver = new TimeReceiver(VAR_CLOCK);
 		pane.setPrefHeight(USE_COMPUTED_SIZE);
 		paneTimes.getChildren().add(setTimeReceiver);
-		String key = "time" + timeCount++;
-		params.put(key, setTimeReceiver.getText());
+		int myindex = paneTimes.getChildren().size()-1;
+		if(model.gettimes() == null)
+			model.settimes(new ArrayList<FirebaseExpression>());
+		model.gettimes().add(new FirebaseExpression());
 		setTimeReceiver.getTextField().textProperty().addListener(listen -> {
-			params.put(key, setTimeReceiver.getText());
+			model.gettimes().get(myindex).setvalue(setTimeReceiver.getText());
+			model.gettimes().get(myindex).setIsValue(true);
 		});
+		setTimeReceiver.getChildElements().addListener(
+				(ListChangeListener<ViewElement>) listener -> model.gettimes().set(myindex,setTimeReceiver.getChildModel()));// timeReceiverFrom.getChildElements().get(0).getModel())));
+		
 	}
 
 	@FXML
@@ -93,28 +107,35 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 			return;
 		TimeReceiver lastReceiver = (TimeReceiver) times.get(times.size() - 1);
 		paneTimes.getChildren().remove(lastReceiver);
-		timeCount--;
-		params.remove("time" + (times.size())); 
+		model.gettimes().remove(model.gettimes().size()-1);//remove the last one
 	}
+	int timeindex = 0;
 
 	@Override
 	public void setData(FirebaseTrigger model) {
 		super.setData(model);
-	
-		for (int i = 0; i < params.values().size(); i++) {
-			if (!params.containsKey("time" + i))
-				break;
-			String time = params.get("time" + i).toString();
-			String key = "time" + i;
+		timeindex = 0;
+		if(model.gettimes() != null)
+		for(FirebaseExpression time : model.gettimes()){
 			TimeReceiver newTimeReceiver = new TimeReceiver(VAR_CLOCK);
-			newTimeReceiver.setText(time);
-			timeCount++;
 			paneTimes.getChildren().add(newTimeReceiver);
+			if(time.getisValue()){
+				newTimeReceiver.setText(time.getvalue());
+			}
+			else{
+				UserVariable timevar = UserVariable.create(time);
+				newTimeReceiver.addChild(timevar, 0, 0);
+			}
+			
 			newTimeReceiver.getTextField().textProperty().addListener(listen -> {
-				params.put(key, newTimeReceiver.getText());
+				model.gettimes().get(timeindex).setvalue(newTimeReceiver.getText());
+				model.gettimes().get(timeindex).setIsValue(true);
 			});
-
+			newTimeReceiver.getChildElements().addListener(
+					(ListChangeListener<ViewElement>) listener -> model.gettimes().set(timeindex,newTimeReceiver.getChildModel()));// timeReceiverFrom.getChildElements().get(0).getModel())));
+			timeindex++;
 		}
+		
 	}
 
 	@Override

@@ -11,13 +11,7 @@ public class QuestionLocation extends QuestionView {
 		super();
 	}
 
-	//
-	// public QuestionLocation(FirebaseQuestion model) {
-	// super(model);
-	// setImage("/img/icons/imggeo.png");
-	// // setQuestionText("Location");
-	// //this.description = "User selects a location using a Google map";
-	// }
+
 	public QuestionLocation(FirebaseQuestion data) {
 		super(data);
 	}

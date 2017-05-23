@@ -21,7 +21,7 @@
                   <Insets left="5.0" />
                </HBox.margin>
             </Label>
-            <TextField fx:id="txtMessage" maxHeight="26.0" minWidth="-Infinity" prefHeight="26.0" prefWidth="49.0" promptText="SMS" />
+            <TextField fx:id="txtMessage" maxHeight="26.0" minWidth="-Infinity" prefHeight="26.0" prefWidth="100.0" promptText="SMS" />
             <Label alignment="CENTER" layoutX="212.0" text="to">
                <font>
                   <Font name="System Bold" size="13.0" />
@@ -30,15 +30,15 @@
                   <Insets left="2.0" right="2.0" />
                </padding>
             </Label>
+            <ComboBox fx:id="cboRecipient" prefHeight="15.0" stylesheets="@Styles.css">
+               <styleClass>
+                  <String fx:value="styled-select" />
+                  <String fx:value="shadowy" />
+               </styleClass>
+            </ComboBox>
          </children>
       </HBox>
-      <TextArea fx:id="smsText" layoutX="125.0" layoutY="3.0" prefHeight="163.0" prefWidth="104.0" stylesheets="@Styles.css" visible="false" />
-      <ComboBox fx:id="cboRecipient" layoutX="152.0" layoutY="5.0" prefHeight="15.0" stylesheets="@Styles.css">
-         <styleClass>
-            <String fx:value="styled-select" />
-            <String fx:value="shadowy" />
-         </styleClass>
-      </ComboBox>
+      <TextArea fx:id="smsText" layoutX="125.0" layoutY="3.0" prefHeight="163.0" prefWidth="200.0" stylesheets="@Styles.css" visible="false" />
    </children>
    <stylesheets>
       <URL value="@Styles.css" />

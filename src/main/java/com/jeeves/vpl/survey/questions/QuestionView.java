@@ -2,29 +2,35 @@ package com.jeeves.vpl.survey.questions;
 
 import static com.jeeves.vpl.Constants.CHILD_COLOURS;
 import static com.jeeves.vpl.Constants.CONSTRAINT_NUMS;
+import static com.jeeves.vpl.Constants.getSaltString;
 
+import java.util.HashMap;
 import java.util.Map;
-
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 
 import com.jeeves.vpl.Constants.ElementType;
 import com.jeeves.vpl.Main;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.firebase.FirebaseQuestion;
+
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 
 public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 	public static QuestionView create(FirebaseQuestion question) {
@@ -47,7 +53,7 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 	public int colourCode = -1;
 	@FXML
 	public Label lblQuestion;
-	public int oldIndex = 0;
+	//public int oldIndex = 0;
 	public double originalWidth = 0;
 	private Button btnDeleteQ;
 	private Button btnEdit;
@@ -58,7 +64,7 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 	// protected FirebaseQuestion model;
 	protected ObservableList<QuestionView> childQuestions;
 	protected Pane optionsPane;
-
+	private String questionId;
 	protected QuestionView parentQuestion;
 
 	HBox buttonBox;
@@ -106,6 +112,11 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 					break;
 				}
 			}
+			//let's start again
+			if(colourCode == -1){
+				CONSTRAINT_NUMS.clear();
+				colourCode = 0;
+			}
 			setColour(colourCode);
 			q.setColour(colourCode);
 
@@ -130,6 +141,7 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 
 		};
 		this.addEventHandler(MouseEvent.MOUSE_PRESSED, pressedHandler);
+		
 	}
 
 	@Override
@@ -146,6 +158,8 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 			getChildren().add(surveynode);
 			model = new FirebaseQuestion();
 			model.setquestionType(getQuestionType());
+			model.setquestionId(getSaltString());
+
 			setImage(getImagePath());
 			setQuestionText(getLabel());
 			// addListeners();
@@ -194,13 +208,20 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 	public String getParentConstraints() {
 		return model.getconditionConstraints();
 	}
-
-	public QuestionView getParentQuestion() {
+	
+	public QuestionView getParentQuestion(){
 		return parentQuestion;
 	}
 
+
+	public String getQuestionId(){
+		return this.questionId;
+	}
+	@SuppressWarnings("unchecked")
 	public Map<String, Object> getQuestionOptions() {
-		return model.getOptions();
+		if(model.getparams().get("options") == null)
+			return new HashMap<String,Object>();
+		return (Map<String,Object>)model.getparams().get("options");
 	}
 
 	public String getQuestionText() {
@@ -220,11 +241,19 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 
 	public void indent() {
 
-		lblQuestion.setMaxWidth(parentQuestion.lblQuestion.getWidth() - 30);
-		setPrefWidth(parentQuestion.getWidth() - 30);
+		Platform.runLater(new Runnable(){
+			public void run(){
+				lblQuestion.setMaxWidth(parentQuestion.lblQuestion.getWidth() - 30);
+				setPrefWidth(parentQuestion.getWidth() - 30);
+			}
+		});
+	}
+	
+	public void unindent() {
+		lblQuestion.setMaxWidth(100);
+		setPrefWidth(originalWidth);
 
 	}
-
 	public boolean isChild() {
 		return isChild;
 	}
@@ -264,24 +293,26 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 	public void setData(FirebaseQuestion model) {
 		this.model = model;
 		setQuestionText(model.getquestionText());
+		setQuestionId(model.getquestionId());
 	}
 
 	public void setImage(String image) {
 		imgEntry.setImage(new Image(getClass().getResourceAsStream(image)));
 	}
 
-	public void setOldIndex(int index) {
-		this.oldIndex = index;
-	}
 
 	public void setParentConstraints(String constraints) {
 		model.setconditionConstraints(constraints);
 	}
 
 	public void setParentQuestion(QuestionView q) {
-		if (originalWidth == 0)
-			originalWidth = getWidth(); // Set the original width
-
+		Platform.runLater(new Runnable(){
+			public void run(){
+				if (originalWidth == 0)
+					originalWidth = getWidth(); // Set the original width
+			}
+		});
+	
 		if (parentQuestion != null) // If we currently have a parent question
 			parentQuestion.removeChildQuestion(this);
 
@@ -296,6 +327,9 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 		}
 	}
 
+	public void setQuestionId(String id){
+		questionId = id;
+	}
 	public void setQuestionText(String text) {
 		lblQuestion.setText(text);
 		model.setquestionText(text);
@@ -317,10 +351,6 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 
 	public abstract void showEditOpts(Map<String, Object> opts);
 
-	public void unindent() {
-		lblQuestion.setMaxWidth(100);
-		setPrefWidth(originalWidth);
 
-	}
 
 }

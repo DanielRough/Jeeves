@@ -1,5 +1,7 @@
 package com.jeeves.vpl.survey.questions;
 
+import static com.jeeves.vpl.Constants.DATETIME;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +16,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import static com.jeeves.vpl.Constants.*;
 
 
 public class QuestionDateTime extends QuestionView {
@@ -25,7 +26,6 @@ public class QuestionDateTime extends QuestionView {
 	private CheckBox chkTime;
 	@FXML
 	private HBox hboxOptions;
-	private Map<String, Object> options;
 	@FXML
 	private RadioButton rdioAny;
 	@FXML
@@ -46,21 +46,22 @@ public class QuestionDateTime extends QuestionView {
 
 	@Override
 	public void addEventHandlers() {
+
 		chkDate.selectedProperty().addListener((x, y, z) -> {
 			if (chkDate.isSelected())
 				vboxDateOpts.setVisible(true);
 			else
 				vboxDateOpts.setVisible(false);
-			options.put("useDate", chkDate.isSelected());
-			model.setOptions(options);
+			model.getparams().put("useDate", chkDate.isSelected());
+		//	model.setparams(params);
 		});
 		chkTime.selectedProperty().addListener((x, y, z) -> {
-			options.put("useTime", chkTime.isSelected());
-			model.setOptions(options);
+			model.getparams().put("useTime", chkTime.isSelected());
+		//	model.setparams(params);
 		});
 		tgroup.selectedToggleProperty().addListener((x, y, z) -> {
-			options.put("dateConstraint", tgroup.getSelectedToggle().getUserData());
-			model.setOptions(options);
+			model.getparams().put("dateConstraint", tgroup.getSelectedToggle().getUserData());
+			//model.setparams(params);
 		});
 
 	}
@@ -94,22 +95,21 @@ public class QuestionDateTime extends QuestionView {
 		} catch (IOException e) {
 		}
 		rdioAny.setToggleGroup(tgroup);
-		rdioAny.setUserData(0);
+		rdioAny.setUserData(new Long(0));
 		rdioFuture.setToggleGroup(tgroup);
-		rdioFuture.setUserData(1);
+		rdioFuture.setUserData(new Long(1));
 		rdioPast.setToggleGroup(tgroup);
-		rdioPast.setUserData(2);
-		options = new HashMap<String, Object>();
+		rdioPast.setUserData(new Long(2));
 	}
 
 	@Override
 	public void showEditOpts(Map<String, Object> opts) {
-		if (opts.containsKey("useDate"))
-			chkDate.setSelected((boolean) opts.get("useDate"));
-		if (opts.containsKey("useTime"))
-			chkDate.setSelected((boolean) opts.get("useTime"));
-		if (opts.containsKey("dateConstraint"))
-			switch ((int) opts.get("dateConstraint")) {
+		if (model.getparams().containsKey("useDate"))
+			chkDate.setSelected((boolean) model.getparams().get("useDate"));
+		if (model.getparams().containsKey("useTime"))
+			chkTime.setSelected((boolean) model.getparams().get("useTime"));
+		if (model.getparams().containsKey("dateConstraint"))
+			switch (((Long)model.getparams().get("dateConstraint")).intValue()) {
 			case 0:
 				tgroup.selectToggle(rdioAny);
 				break;

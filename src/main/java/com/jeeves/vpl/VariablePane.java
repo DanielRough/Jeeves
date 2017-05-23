@@ -10,9 +10,11 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import com.jeeves.vpl.firebase.FirebaseVariable;
@@ -92,6 +94,16 @@ public class VariablePane extends Pane { // NO_UCD (use default)
 		if (cboVarType.getValue() == null) {
 			lblError.setText("Please give a type to this variable");
 			return false;
+		}
+		for(int i = 0; i < gui.getVariables().size(); i++){
+			if(gui.getVariables().get(i).getname().equals(name)){
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("Duplicate variable name");
+				alert.setHeaderText(null);
+				alert.setContentText("A variable with this name already exists");
+				alert.showAndWait();
+				return false;
+			}
 		}
 
 		variable.setVartype(cboVarType.getValue());

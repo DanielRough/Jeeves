@@ -11,6 +11,7 @@ import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.actions.Action;
 import com.jeeves.vpl.canvas.receivers.ActionReceiver;
 import com.jeeves.vpl.firebase.FirebaseAction;
+import com.jeeves.vpl.firebase.FirebaseExpression;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
 
 import javafx.collections.FXCollections;
@@ -21,6 +22,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
+
+import static com.jeeves.vpl.Constants.*;
 
 @SuppressWarnings("rawtypes")
 
@@ -35,18 +38,7 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 		}
 		return null;
 	}
-	protected static String getSaltString() {
-		String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-		StringBuilder salt = new StringBuilder();
-		Random rnd = new Random();
-		while (salt.length() < 18) {
-			int index = (int) (rnd.nextFloat() * SALTCHARS.length());
-			salt.append(SALTCHARS.charAt(index));
-		}
-		String saltStr = salt.toString();
-		return saltStr;
 
-	}
 
 	private ArrayList<Action> actions;
 	private ActionReceiver childReceiver;
@@ -105,6 +97,8 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 			ArrayList<Action> newActions = new ArrayList<Action>();
 			if (model.getactions() == null)
 				model.setactions(new ArrayList<FirebaseAction>());
+			if(model.gettimes() == null)
+				model.settimes(new ArrayList<FirebaseExpression>());
 			model.getactions().clear();
 			childReceiver.getChildElements().forEach(element -> {
 				newActions.add((Action) element);

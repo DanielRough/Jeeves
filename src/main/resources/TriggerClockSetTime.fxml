@@ -12,7 +12,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<Pane fx:id="pane" minHeight="84.0" prefHeight="114.0" prefWidth="166.0" styleClass="trigger" stylesheets="@Styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<Pane fx:id="pane" minHeight="84.0" prefWidth="166.0" styleClass="trigger" stylesheets="@Styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <VBox layoutX="6.0" layoutY="56.0" prefWidth="147.0" stylesheets="@Styles.css">
          <children>

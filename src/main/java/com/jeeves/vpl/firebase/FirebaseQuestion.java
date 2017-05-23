@@ -17,7 +17,7 @@ public class FirebaseQuestion extends FirebaseElement implements Serializable {
 	private String conditionConstraints;
 	private FirebaseQuestion conditionQuestion;
 	private String image;
-	private long questionId;
+	private String questionId;
 	private String questionText;
 	private long questionType;
 
@@ -39,19 +39,19 @@ public class FirebaseQuestion extends FirebaseElement implements Serializable {
 	public String getimage() {
 		return image;
 	}
-
-	public Map<String, Object> getOptions() {
-		if (params.containsKey("options"))
-			return (Map<String, Object>) params.get("options");
-		return new HashMap<String, Object>();
-	}
+//
+//	public Map<String, Object> getOptions() {
+//		if (params.containsKey("options"))
+//			return (Map<String, Object>) params.get("options");
+//		return new HashMap<String, Object>();
+//	}
 
 	@Override
 	public Map<String, Object> getparams() {
 		return params;
 	}
 
-	public long getquestionId() {
+	public String getquestionId() {
 		return questionId;
 	}
 
@@ -82,12 +82,12 @@ public class FirebaseQuestion extends FirebaseElement implements Serializable {
 	public void setconditionQuestion(FirebaseQuestion q) {
 		this.conditionQuestion = q;
 	}
+//
+//	public void setOptions(Map<String, Object> options) {
+//		params.put("options", options);
+//	}
 
-	public void setOptions(Map<String, Object> options) {
-		params.put("options", options);
-	}
-
-	public void setquestionId(long id) {
+	public void setquestionId(String id) {
 		this.questionId = id;
 	}
 

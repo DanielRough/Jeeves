@@ -131,6 +131,9 @@ public class QuestionEditor extends Pane {
 		populateVarBox();
 
 		Map<String, Object> opts = entry.getQuestionOptions();
+		if(opts != null)
+			selectedQuestion.showEditOpts(opts);
+
 		if (entry.getAssignedVar() != null && !entry.getAssignedVar().equals("")) {
 			chkAssignToVar.setSelected(true);
 			cboVars.getItems().forEach(variable -> {
@@ -148,7 +151,6 @@ public class QuestionEditor extends Pane {
 
 		if (selectedQuestion == null)
 			return;
-		selectedQuestion.showEditOpts(opts);
 		vboxOpts.getChildren().remove(2, vboxOpts.getChildren().size());
 		if (listener != null)
 			txtQText.textProperty().removeListener(listener);
@@ -231,7 +233,9 @@ public class QuestionEditor extends Pane {
 						super.updateItem(item, empty);
 						if (!empty) {
 							setText(item.getName());
+							getStyleClass().clear();
 							getStyleClass().add(item.getVarType());
+							System.out.println("Style class is " + getStyleClass().toString());
 							this.setBorder(null);
 							this.setAlignment(Pos.CENTER);
 							this.setFont(Font.font("Calibri", FontWeight.BOLD, 12.0));

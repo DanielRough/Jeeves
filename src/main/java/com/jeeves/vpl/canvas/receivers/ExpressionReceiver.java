@@ -12,6 +12,7 @@ import com.jeeves.vpl.TextUtils;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.expressions.Expression;
 import com.jeeves.vpl.canvas.expressions.Typed;
+import com.jeeves.vpl.canvas.expressions.UserVariable;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 
 import javafx.beans.value.ChangeListener;
@@ -39,6 +40,8 @@ public class ExpressionReceiver extends Receiver {
 	protected Expression containedExpression;
 	// in the receiver
 	protected double defaultOpacity;
+	TextField numericTextField;
+
 							protected String receiveType;
 	protected String value; // The value is for when we don't have an Expression
 
@@ -47,13 +50,21 @@ public class ExpressionReceiver extends Receiver {
 		captureRect.setWidth(20);
 		captureRect.setHeight(20);
 		defaultOpacity = 0.5;
+		numericTextField = new TextField();
 		setReceiveType(receiveType);
 		if (receiveType.equals(VAR_NUMERIC))
 			defaultOpacity = 0.0; // it's different for numbers
 	}
 
+	public TextField getTextField(){
+		return numericTextField;
+	}
 	@Override
 	public void addChild(ViewElement expression, double mouseX, double mouseY) {
+		if(((Expression)expression).getModel().getisValue()	){
+			numericTextField.setText(((Expression)expression).getModel().getvalue());
+			return;
+		}
 		getChildren().add(expression);
 		expression.setLayoutX(0);
 		expression.setLayoutY(0);
@@ -146,6 +157,7 @@ public class ExpressionReceiver extends Receiver {
 		case VAR_LOCATION:
 			captureRect.setArcWidth(20);
 			captureRect.setArcHeight(20);
+			captureRect.setFill(Color.RED);
 			break;
 		case VAR_NONE:
 			captureRect.setFill(Color.BLACK);
@@ -157,7 +169,6 @@ public class ExpressionReceiver extends Receiver {
 			break;
 		case VAR_NUMERIC:
 			captureRect.setOpacity(0);
-			TextField numericTextField = new TextField();
 			numericTextField.setPrefWidth(20);
 			numericTextField.setMinHeight(20);
 			numericTextField.setPrefHeight(20);
@@ -194,6 +205,11 @@ public class ExpressionReceiver extends Receiver {
 					captureRect.setWidth(numericTextField.getPrefWidth() + 6);
 					autosize();
 					value = numericTextField.getText();
+					FirebaseExpression model = new FirebaseExpression();
+					model.setIsValue(true);
+					model.setvalue(value);
+					UserVariable var = UserVariable.create(model);
+					addChild(var,0,0);
 				}
 
 			};

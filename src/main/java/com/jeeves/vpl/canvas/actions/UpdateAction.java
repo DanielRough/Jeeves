@@ -4,6 +4,7 @@ import static com.jeeves.vpl.Constants.VAR_ANY;
 import static com.jeeves.vpl.Constants.VAR_BOOLEAN;
 import static com.jeeves.vpl.Constants.VAR_NONE;
 
+import com.jeeves.vpl.ParentPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.expressions.Expression;
 import com.jeeves.vpl.canvas.expressions.UserVariable;
@@ -66,10 +67,11 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 				;
 				expr.setIndex(1);
 				expr.setVartype(VAR_BOOLEAN);
-				if (arg2.equals(trueButton)) {
-					expr.setValue("true");
+				
+				if (arg2 != null && arg2.equals(trueButton)) {
+					expr.setvalue("true");
 				} else
-					expr.setValue("false");
+					expr.setvalue("false");
 				model.getvars().add(1, expr);
 			}
 
@@ -127,6 +129,17 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 		return new Node[] { valuereceiver, variablereceiver };
 	}
 
+	
+	@Override
+	public void setParentPane(ParentPane parent) {
+		super.setParentPane(parent);
+		if(variablereceiver.getChildExpression() != null)
+		variablereceiver.getChildExpression().setParentPane(parent);
+		if(valuereceiver.getChildExpression() != null)
+		valuereceiver.getChildExpression().setParentPane(parent);
+
+	}
+	
 	@Override
 	public void setData(FirebaseAction model) {
 		super.setData(model);

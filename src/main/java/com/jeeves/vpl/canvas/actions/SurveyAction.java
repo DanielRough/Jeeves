@@ -31,8 +31,12 @@ public class SurveyAction extends Action { // NO_UCD (unused code)
 	@Override
 	public void addListeners() {
 		super.addListeners();
-		cboSurveyName.getItems().clear();
+		ObservableList<FirebaseSurvey> surveys = gui.getSurveys();
 
+		cboSurveyName.getItems().clear();
+		surveys.forEach(survey -> {
+			cboSurveyName.getItems().add(survey.gettitle());
+		});
 		gui.registerSurveyListener(new ListChangeListener<FirebaseSurvey>() {
 
 			@Override

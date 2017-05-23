@@ -57,7 +57,7 @@ public class FirebaseExpression extends FirebaseElement implements Serializable 
 		this.isValue = isValue;
 	}
 
-	public void setValue(String value) {
+	public void setvalue(String value) {
 		this.value = value;
 	}
 

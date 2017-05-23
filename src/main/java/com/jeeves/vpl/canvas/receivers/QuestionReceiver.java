@@ -3,10 +3,12 @@ package com.jeeves.vpl.canvas.receivers;
 import java.util.List;
 
 import javafx.collections.ListChangeListener;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
 import com.jeeves.vpl.Constants.ElementType;
@@ -53,7 +55,7 @@ public class QuestionReceiver extends ExternalReceiver implements ParentPane {
 		List<QuestionView> childQuestions = addedChild.getChildQuestions();
 		for (QuestionView parentchild : childQuestions) {
 			int childIndex = elements.getChildren().indexOf(parentchild);
-			if (childIndex < index) {
+			if (childIndex < index || index == -1) {
 				index = addedChild.oldIndex; // Can't have children coming
 												// before it!
 				Alert alert = new Alert(AlertType.INFORMATION);
@@ -69,7 +71,22 @@ public class QuestionReceiver extends ExternalReceiver implements ParentPane {
 		addedChild.setOldIndex(index);
 		((QuestionView) child).addButtons();
 	}
-
+//
+//	@Override
+//	public void defineHandlers() {
+//		super.defineHandlers();
+////
+////		EventHandler<MouseEvent> qreleasedHandler = event -> {
+////			event.consume();
+////			ViewElement question = (ViewElement)event.getSource();
+////			if(question.getWasDragged()){
+////				return;
+////			}
+////			System.out.println("NAY TWAS NOT DRAGGED");
+////			addChildAtIndex(question,question.oldIndex);
+////		};
+////		addEventFilter(MouseEvent.MOUSE_RELEASED,qreleasedHandler);
+//	}
 	@Override
 	public void addChildListeners() {
 		elements.getChildren().addListener(new ListChangeListener<Node>() {

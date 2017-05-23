@@ -130,7 +130,7 @@ public class TimeReceiver extends ExpressionReceiver {
 					captureRect.setWidth(text.getPrefWidth());
 				}
 			};
-			((ViewElement) event.getGestureSource()).addEventHandler(MouseEvent.MOUSE_PRESSED, removeEvent);
+			((ViewElement) event.getSource()).addEventHandler(MouseEvent.MOUSE_PRESSED, removeEvent);
 		};
 
 	}

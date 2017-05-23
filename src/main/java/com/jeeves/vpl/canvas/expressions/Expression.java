@@ -5,18 +5,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.jeeves.vpl.Constants.ElementType;
+import com.jeeves.vpl.ParentPane;
+import com.jeeves.vpl.ViewElement;
+import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
+import com.jeeves.vpl.firebase.FirebaseExpression;
+import com.jeeves.vpl.firebase.FirebaseVariable;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-
-import com.jeeves.vpl.Constants.ElementType;
-import com.jeeves.vpl.ParentPane;
-import com.jeeves.vpl.ViewElement;
-import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
-import com.jeeves.vpl.firebase.FirebaseExpression;
 
 /**
  * A class which represents an Expression. This has a type such as Boolean or
@@ -65,6 +68,15 @@ public abstract class Expression extends ViewElement<FirebaseExpression> impleme
 	public void addListeners() {
 		super.addListeners();
 		for (ExpressionReceiver receiver : receivers) {
+			receiver.getTextField().textProperty().addListener(new ChangeListener<String>(){
+				public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+					// TODO Auto-generated method stub
+					FirebaseVariable var = new FirebaseVariable();
+					var.setvalue(newValue);
+					var.setIsValue(true);
+					UserVariable variable = UserVariable.create(var);
+					addExprToReceiver(variable,receivers.indexOf(receiver));
+				}});			
 			receiver.getChildElements().addListener((ListChangeListener<ViewElement>) arg0 -> {
 				// ViewElement expr = receiver.getChildElements().get(0);
 				if (!receiver.getChildElements().isEmpty())
@@ -73,6 +85,7 @@ public abstract class Expression extends ViewElement<FirebaseExpression> impleme
 					removeExprFromReceiver(receivers.indexOf(receiver));
 				autosize();
 			});
+			
 		}
 	}
 
@@ -120,12 +133,13 @@ public abstract class Expression extends ViewElement<FirebaseExpression> impleme
 			int index = (int) (var.getindex());
 			if (index > 1)
 				continue; // Temporary fix hopefully
-			if (var.getisValue() == false) {
+			//if (var.getisValue() == false) {
 				Expression expr = Expression.create(var);
 				receivers.get(index).addChild(expr, 0, 0); // I cannot foresee
 															// this working tbh
 				expr.parentPane = this.parentPane;
-			}
+		//	}
+			
 
 		}
 
@@ -158,7 +172,7 @@ public abstract class Expression extends ViewElement<FirebaseExpression> impleme
 	private void addExprToReceiver(ViewElement childModel, int index) {
 		((FirebaseExpression) childModel.getModel()).setIndex(index); 
 		if (model.getvariables().size() > index)
-			model.getvariables().add(index, (FirebaseExpression) childModel.getModel());
+			model.getvariables().set(index, (FirebaseExpression) childModel.getModel());
 		else
 			model.getvariables().add((FirebaseExpression) childModel.getModel());
 	}

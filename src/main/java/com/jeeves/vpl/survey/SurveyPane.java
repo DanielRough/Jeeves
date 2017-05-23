@@ -1,10 +1,16 @@
 package com.jeeves.vpl.survey;
 
+import static com.jeeves.vpl.Constants.CONSTRAINT_NUMS;
+
 import java.net.URL;
+
 import com.jeeves.vpl.firebase.FirebaseSurvey;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,11 +25,19 @@ public class SurveyPane extends Pane {
 	@FXML
 	private Pane paneNoSurveys;
 
+	
 	@FXML
 	private TabPane paneSurveys;
 
-	// private ObservableList<FirebaseSurvey> currentsurveys;
+	
+	private ObservableList<FirebaseSurvey> currentsurveys;
 
+	public ObservableList<Tab> getSurveyTabs(){
+		return paneSurveys.getTabs();
+	}
+	public void registerSurveyListener(ListChangeListener<FirebaseSurvey> listener){
+		currentsurveys.addListener(listener);
+	}
 	public SurveyPane() {
 		// this.currentsurveys = currentsurveys;
 		FXMLLoader fxmlLoader = new FXMLLoader();
@@ -38,12 +52,14 @@ public class SurveyPane extends Pane {
 		}
 		// getStylesheets().add(ViewElement.class.getResource("Styles.css").toExternalForm());
 		// loadSurveys();
+		CONSTRAINT_NUMS.clear();
+
+		currentsurveys = FXCollections.observableArrayList();
 		addSurveyListeners();
 	}
 
 	public void addSurvey(Survey s) {
 		paneNoSurveys.setVisible(false);
-
 		Tab tab = new Tab();
 		s.setTab(tab);
 		tab.setContent(s);
@@ -71,25 +87,6 @@ public class SurveyPane extends Pane {
 
 	}
 
-	// private void loadSurveys(){
-	// paneSurveys.getTabs().clear();
-	// currentsurveys.forEach(survey->{
-	// Tab surveytab = new Tab(survey.gettitle());
-	// Survey surveyView = new Survey(survey);
-	// surveytab.setContent(surveyView);
-	// paneSurveys.getTabs().add(surveytab);
-	// surveyView.setTab(surveytab);
-	//
-	// });
-	// if(currentsurveys.size() > 0){
-	// paneSurveys.getSelectionModel().clearAndSelect(0); //select the first
-	// survey
-	// paneNoSurveys.setVisible(false);
-	// }
-	// else{
-	// paneNoSurveys.setVisible(true);
-	// }
-	// }
 
 	@FXML
 	public void handleNewSurveyClick(Event e) {
@@ -97,14 +94,9 @@ public class SurveyPane extends Pane {
 		Survey surveyview = new Survey(new FirebaseSurvey());
 		surveyview.setData(survey);
 		survey.settitle("New survey");
+		currentsurveys.add(survey);
+
 		addSurvey(surveyview);
-		// grpSurveyGroup.setVisible(true);
-		// currentsurveys.add(survey);
-		// surveyview.parentTab.textProperty().addListener(event->{ //WHen the
-		// survey's name gets changed we want to alert all triggers and
-		// expressions that use it
-		// currentsurveys.remove(survey);
-		// currentsurveys.add(survey);
-		// });
+
 	}
 }

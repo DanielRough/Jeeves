@@ -43,7 +43,7 @@ public class ElementReceiver extends ExternalReceiver implements ParentPane {
 		ChangeListener<Number> updateListener1 = new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-
+				
 				elements.setAlignment(Pos.TOP_CENTER);
 				Platform.runLater(new Runnable() {
 					@Override
@@ -58,7 +58,7 @@ public class ElementReceiver extends ExternalReceiver implements ParentPane {
 							}
 						}
 						if (newElement != null)
-							newElement.update(); // Ask to edit text if we
+							newElement.update(childList); // Ask to edit text if we
 													// haven't
 					}
 				});

@@ -163,7 +163,7 @@ public class ConditionEditor extends Pane {
 			break;
 		case DATETIME:
 			hboxDateOpts.setVisible(true);
-			Map<String, Object> myopts = conditionQuestion.getQuestionOptions();
+			Map<String, Object> myopts = conditionQuestion.getModel().getparams();
 			paneDateTimeReceiver.getChildren().clear();
 			boolean useDate = false, useTime = false;
 			if (myopts.containsKey("useDate"))
@@ -177,6 +177,14 @@ public class ConditionEditor extends Pane {
 
 			cboBeforeAfter.setVisible(true);
 			paneDateTimeReceiver.setVisible(true);
+			String[] dateconstraints = conditionConstraints.split(";");
+			if (dateconstraints.length > 1) {
+				if(dateconstraints[2].equals("time"))
+					timeReceiver.setText(dateconstraints[1]);
+				else
+					dateReceiver.setText(dateconstraints[1]);
+				cboBeforeAfter.setValue(dateconstraints[0]);
+			}
 			break;
 		case BOOLEAN:
 			rdioTrue.setVisible(true);
@@ -195,9 +203,12 @@ public class ConditionEditor extends Pane {
 			if (chkAskOnCondition.isSelected()) {
 				paneCondition.getChildren().forEach(child -> {
 					child.setDisable(false);
+					cboQuestionText.getSelectionModel().clearSelection();
 				});
 			} else {
 				disable();
+				cboQuestionText.getSelectionModel().clearSelection();
+
 			}
 		});
 
@@ -226,10 +237,10 @@ public class ConditionEditor extends Pane {
 			updateCondition(rdioTrue.isSelected() ? "true" : "false");
 		});
 		timeReceiver.getTextField().textProperty().addListener((ob, old, nval) -> {
-			updateCondition(cboBeforeAfter.getValue() + ";" + timeReceiver.getText());
+			updateCondition(cboBeforeAfter.getValue() + ";" + timeReceiver.getText() + ";time");
 		});
 		dateReceiver.getTextField().textProperty().addListener((ob, old, nval) -> {
-			updateCondition(cboBeforeAfter.getValue() + ";" + dateReceiver.getText());
+			updateCondition(cboBeforeAfter.getValue() + ";" + dateReceiver.getText() + ";date");
 		});
 
 		conditionPanes = new ArrayList<Node>();
