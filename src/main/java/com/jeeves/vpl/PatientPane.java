@@ -323,7 +323,7 @@ public class PatientPane extends Pane {
 
 				incompleteSurveys = selectedPatient.getincomplete();
 				completedSurveys = selectedPatient.getcomplete();
-				if (incompleteSurveys.isEmpty())
+				if (incompleteSurveys == null || incompleteSurveys.isEmpty())
 					lblMissed.setText("0");
 
 				else {
@@ -335,7 +335,7 @@ public class PatientPane extends Pane {
 					lblMissed.setText(Integer.toString(incomplete));
 				}
 
-				if (completedSurveys.isEmpty())
+				if (completedSurveys == null || completedSurveys.isEmpty())
 					lblCompleted.setText("0");
 				else
 					lblCompleted.setText(Integer.toString(completedSurveys.size()));

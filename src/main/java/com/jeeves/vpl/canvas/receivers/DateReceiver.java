@@ -2,10 +2,15 @@ package com.jeeves.vpl.canvas.receivers;
 
 import java.net.URL;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.TimeZone;
+
+import org.apache.commons.lang3.time.DateUtils;
+
 import com.jeeves.vpl.TextUtils;
 import com.jeeves.vpl.ViewElement;
 
@@ -98,7 +103,16 @@ public class DateReceiver extends ExpressionReceiver {
 	}
 
 	public String getText() {
-		return text.getText();
+			try {
+				long epochMillis = DateUtils.parseDate(text.getText(), "dd/MM/yy").getTime();
+				long epochDays = epochMillis/(1000*3600*24);
+				return Long.toString(epochDays);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				return "0";
+			}
+	
+//		return text.getText();
 	}
 
 	public TextField getTextField() {
@@ -159,6 +173,39 @@ public class DateReceiver extends ExpressionReceiver {
 	}
 
 	public void setText(String newtext) {
-		text.setText(newtext);
+			long epochMillis = Long.parseLong(newtext) * 3600 * 24 * 1000;
+			final Date date = new Date(epochMillis + (3600 * 24 * 1000)); //I have no idea why it takes a day off things :S
+			final String ISO_FORMAT = "dd/MM/yy";
+			final SimpleDateFormat sdf = new SimpleDateFormat(ISO_FORMAT);
+		//	final TimeZone utc = TimeZone.getTimeZone("UTC");
+		//	sdf.setTimeZone(utc);
+			text.setText(sdf.format(date));
+		
 	}
+//	public void setText(String newtext) {
+//		try {
+//			int totalmins = Integer.parseInt(newtext);
+//			int hours = totalmins / 60;
+//			int mins = totalmins % 60;
+//			text.setText(padWithZeroes(hours) + ":" + padWithZeroes(mins));
+//		} catch (NumberFormatException e) {
+//			text.setText(newtext);
+//		}
+//	}
+//
+//	public void setTextFromActual(String day, String month, String year) {
+////		text.setText(year);
+////		int hrs, mns;
+////		try {
+////			hrs = Integer.parseInt(hours);
+////		} catch (NumberFormatException e) {
+////			hrs = 0;
+////		}
+////		try {
+////			mns = Integer.parseInt(mins);
+////		} catch (NumberFormatException e) {
+////			mns = 0;
+////		}
+//	//	text.setText(padWithZeroes(hrs) + ":" + padWithZeroes(mns));
+//	}
 }

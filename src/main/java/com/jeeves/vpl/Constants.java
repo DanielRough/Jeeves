@@ -109,7 +109,7 @@ public class Constants {
 	public static final String INTERVAL_TRIGGER_TIME = "intervalTriggerTime";
 	public static final String LIMIT_AFTER_HOUR = "limitAfterHour";
 	public static final String LIMIT_BEFORE_HOUR = "limitBeforeHour";
-	public static final String NOTIFICATION_MIN_INTERVAL = "notificationMinInterval";
+	public static final String INTERVAL_WINDOW = "intervalWindowLength";
 
 	// A static event handler for ensuring we don't enter non-numeric characters
 	// into a numeric text box

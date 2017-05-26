@@ -5,16 +5,13 @@ import static com.jeeves.vpl.Constants.DATE_TO;
 import static com.jeeves.vpl.Constants.DURATIONS;
 import static com.jeeves.vpl.Constants.LIMIT_AFTER_HOUR;
 import static com.jeeves.vpl.Constants.LIMIT_BEFORE_HOUR;
-import static com.jeeves.vpl.Constants.NOTIFICATION_MIN_INTERVAL;
+import static com.jeeves.vpl.Constants.INTERVAL_WINDOW;
 import static com.jeeves.vpl.Constants.styleTextCombo;
 
-import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.expressions.UserVariable;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
-import com.jeeves.vpl.firebase.FirebaseVariable;
 
 import javafx.beans.value.ChangeListener;
-import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
@@ -91,7 +88,7 @@ public class ClockTriggerRandom extends ClockTrigger { // NO_UCD (use default)
 																					// 1000;
 				if (duration.equals("hours"))
 					intervalTriggerTime *= 60;
-				params.put(NOTIFICATION_MIN_INTERVAL, intervalTriggerTime);
+				params.put(INTERVAL_WINDOW, intervalTriggerTime);
 				params.put("frequency", txtFieldRandom.getText());
 			}
 		});

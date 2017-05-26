@@ -20,7 +20,7 @@ import com.jeeves.vpl.firebase.FirebaseUI;
  */
 public class ButtonTrigger extends Trigger { // NO_UCD (unused code)
 	public static final String DESC = "Schedule actions to take place when patient presses an app button";
-	public static final String NAME = "On app button pressed";
+	public static final String NAME = "Button Trigger";
 	@FXML
 	private ComboBox<String> cboButton;
 	final ToggleGroup group = new ToggleGroup();
@@ -49,6 +49,8 @@ public class ButtonTrigger extends Trigger { // NO_UCD (unused code)
 		uielements.forEach(survey -> {
 			cboButton.getItems().add(survey.gettext());
 			cboButton.getSelectionModel().selectFirst();
+			params.put("selectedButton", cboButton.getSelectionModel().getSelectedItem());
+
 		});
 		gui.registerElementListener(new ListChangeListener<FirebaseUI>() {
 

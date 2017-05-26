@@ -68,10 +68,10 @@ public abstract class ClockTrigger extends Trigger { // NO_UCD (use default)
 		timeReceiverTo.getChildElements().addListener(
 				(ListChangeListener<ViewElement>) listener -> model.settimeTo(timeReceiverTo.getChildModel()));
 		timeReceiverFrom.getTextField().textProperty().addListener(listen -> {
-			params.put(LIMIT_BEFORE_HOUR, timeReceiverFrom.getText());
+			params.put(LIMIT_BEFORE_HOUR, Long.parseLong(timeReceiverFrom.getText()));
 		});
 		timeReceiverTo.getTextField().textProperty().addListener(listen -> {
-			params.put(LIMIT_AFTER_HOUR, timeReceiverTo.getText());
+			params.put(LIMIT_AFTER_HOUR, Long.parseLong(timeReceiverTo.getText()));
 		});
 		dateReceiverFrom.getChildElements().addListener((ListChangeListener<ViewElement>) listener -> {
 			model.setdateFrom(dateReceiverFrom.getChildModel());
@@ -79,10 +79,10 @@ public abstract class ClockTrigger extends Trigger { // NO_UCD (use default)
 		dateReceiverTo.getChildElements().addListener(
 				(ListChangeListener<ViewElement>) listener -> model.setdateTo(dateReceiverTo.getChildModel()));
 		dateReceiverFrom.getTextField().textProperty().addListener(listen -> {
-			params.put(DATE_FROM, dateReceiverFrom.getText());
+			params.put(DATE_FROM, Long.parseLong(dateReceiverFrom.getText()));
 		});
 		dateReceiverTo.getTextField().textProperty().addListener(listen -> {
-			params.put(DATE_TO, dateReceiverTo.getText());
+			params.put(DATE_TO, Long.parseLong(dateReceiverTo.getText()));
 		});
 
 

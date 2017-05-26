@@ -102,7 +102,7 @@ public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 				if (duration.equals("hours"))
 					intervalTriggerTime *= 60;
 				params.put(INTERVAL_TRIGGER_TIME, intervalTriggerTime);
-				params.put("intervalTime", txtFieldInterval.getText());
+			//	params.put("intervalTime", txtFieldInterval.getText());
 			}
 		});
 

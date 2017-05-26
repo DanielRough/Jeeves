@@ -28,7 +28,7 @@ import javafx.scene.layout.VBox;
  */
 public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 	public static final String DESC = "Schedule actions to take place at specific times";
-	public static final String NAME = "Specific Times";
+	public static final String NAME = "Set Times Trigger";
 	@FXML
 	private Pane pane;
 	@FXML
