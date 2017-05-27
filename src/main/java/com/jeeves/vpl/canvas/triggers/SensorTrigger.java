@@ -28,7 +28,7 @@ import javafx.stage.Popup;
 
 public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 	public static final String DESC = "Schedule actions to take place when a phone sensor returns a particular result";
-	public static final String NAME = "On sensor result";
+	public static final String NAME = "Sensor Trigger";
 	private ExpressionReceiver locReceiver;
 	@FXML
 	protected Button btnLeft;

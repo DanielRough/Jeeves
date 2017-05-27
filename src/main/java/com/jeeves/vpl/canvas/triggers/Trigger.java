@@ -97,8 +97,6 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 			ArrayList<Action> newActions = new ArrayList<Action>();
 			if (model.getactions() == null)
 				model.setactions(new ArrayList<FirebaseAction>());
-			if(model.gettimes() == null)
-				model.settimes(new ArrayList<FirebaseExpression>());
 			model.getactions().clear();
 			childReceiver.getChildElements().forEach(element -> {
 				newActions.add((Action) element);

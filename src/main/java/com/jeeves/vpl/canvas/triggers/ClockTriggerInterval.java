@@ -147,8 +147,8 @@ public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 				duration = params.get("granularity").toString();
 			else
 				duration = "minutes";
-			if (params.containsKey("intervalTime"))
-				intervalTime = params.get("intervalTime").toString();
+			if (params.containsKey(INTERVAL_TRIGGER_TIME))
+				intervalTime = params.get(INTERVAL_TRIGGER_TIME).toString();
 			// paneDate.getChildren().add(new CalendarEveryday());
 
 			if (params.containsKey(DATE_FROM)) {

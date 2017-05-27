@@ -30,12 +30,6 @@
                   <Insets left="2.0" right="2.0" />
                </padding>
             </Label>
-            <ComboBox fx:id="cboRecipient" prefHeight="15.0" stylesheets="@Styles.css">
-               <styleClass>
-                  <String fx:value="styled-select" />
-                  <String fx:value="shadowy" />
-               </styleClass>
-            </ComboBox>
          </children>
       </HBox>
       <TextArea fx:id="smsText" layoutX="125.0" layoutY="3.0" prefHeight="163.0" prefWidth="200.0" stylesheets="@Styles.css" visible="false" />
