@@ -22,7 +22,7 @@ public class QuestionNumber extends QuestionView {
 
 	@Override
 	public String getLabel() {
-		return "Enter a numeric value into a text box";
+		return "Enter a number";
 	}
 
 	@Override

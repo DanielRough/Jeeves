@@ -30,7 +30,7 @@ class UIPopupPane extends Pane {
 
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setController(this);
-		URL location = this.getClass().getResource("/UIPopup.fxml");
+		URL location = this.getClass().getResource("/uiPopup.fxml");
 		fxmlLoader.setLocation(location);
 
 		//Hacky stuff to ensure we don't duplicate any names

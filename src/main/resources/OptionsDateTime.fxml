@@ -5,19 +5,11 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
 <Pane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox fx:id="hboxOptions" layoutX="7.0" layoutY="6.0" spacing="20.0">
          <children>
-            <VBox spacing="5.0">
-               <children>
-                  <Label text="Ask for..." />
-                  <CheckBox fx:id="chkDate" mnemonicParsing="false" text="Date" />
-                  <CheckBox fx:id="chkTime" mnemonicParsing="false" text="Time" />
-               </children>
-            </VBox>
-            <VBox fx:id="vboxDateOpts" spacing="5.0" visible="false">
+            <VBox fx:id="vboxDateOpts" spacing="5.0">
                <children>
                   <Label text="Date must be..." />
                   <RadioButton fx:id="rdioAny" mnemonicParsing="false" text="Any date" />

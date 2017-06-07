@@ -94,9 +94,9 @@ public class QuestionReceiver extends ExternalReceiver implements ParentPane {
 			public void onChanged(javafx.collections.ListChangeListener.Change<? extends Node> arg0) {
 				arg0.next();
 				if (arg0.wasAdded())
-					captureRect.setHeight(captureRect.getHeight() + 66);
+					captureRect.setHeight(captureRect.getHeight() + 55);
 				else
-					captureRect.setHeight(captureRect.getHeight() - 66);
+					captureRect.setHeight(captureRect.getHeight() - 55);
 
 			}
 
@@ -105,7 +105,7 @@ public class QuestionReceiver extends ExternalReceiver implements ParentPane {
 
 	public void addDummyView(Pane dummyView, int index) {
 		container.getChildren().add(dummyView);
-		captureRect.setHeight(captureRect.getHeight() + 66);
+		captureRect.setHeight(captureRect.getHeight() + 55);
 		dummyView.setMouseTransparent(true);
 	}
 

@@ -58,15 +58,18 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 		super(data, FirebaseTrigger.class);
 		this.model = data;
 		int actionNumber = 0;
-		if (model.gettriggerId() == null)
+		if (model.gettriggerId() == null){
+			System.out.println("NEEENAAWWWWNEEEEENAAAAAW");
+			if(SHOULD_UPDATE_TRIGGERS)
 			model.settriggerId(getSaltString());
-		if (actions != null)
+		}
+			if (actions != null)
 			for(Action a : actions){
 				System.out.println("Adding an action to " + childReceiver);
 				childReceiver.addChildAtIndex(a, actionNumber++);
 			}
 		loading = false; // To check whether we change the salt string on the
-							// first action initiation
+		// first action initiation
 
 	}
 
@@ -79,8 +82,10 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 			@Override
 			public void onChanged(
 					javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
-				model.settriggerId(getSaltString()); // Again, update, must
-														// reset
+				System.out.println("5" + getInstance().toString());
+				if(SHOULD_UPDATE_TRIGGERS)
+					model.settriggerId(getSaltString()); // Again, update, must
+				// reset
 				if (change.wasAdded()) {
 					model.getparams().put(change.getKey(), change.getValueAdded());
 				} else {
@@ -89,33 +94,76 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 			}
 
 		});
-
+		//If any new action is added
 		childReceiver.getChildElements().addListener((ListChangeListener<ViewElement>) arg0 -> {
-			if (loading == false)
-				model.settriggerId(getSaltString()); // Need to update ID if
-														// actions change
+			if (loading == false){
+				if(SHOULD_UPDATE_TRIGGERS)
+					model.settriggerId(getSaltString()); // Need to update ID if
+				System.out.println("6" + getInstance().toString());
+		//		System.out.println("1" + getInstance().toString());
+
+			}
+				// actions change
 			ArrayList<Action> newActions = new ArrayList<Action>();
 			if (model.getactions() == null)
 				model.setactions(new ArrayList<FirebaseAction>());
 			model.getactions().clear();
 			childReceiver.getChildElements().forEach(element -> {
-				newActions.add((Action) element);
+				Action myaction = (Action)element;
+				newActions.add(myaction);
 				model.getactions().add((FirebaseAction) element.getModel());
-			});
-
-			this.actions = newActions;
-			actions.forEach(myaction -> {
 				myaction.getparams().addListener(new MapChangeListener<String, Object>() {
 					@Override
 					public void onChanged(
 							javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
-						model.settriggerId(getSaltString()); // Again, update,
-																// must reset
+						System.out.println("1" + getInstance().toString());
+						if(SHOULD_UPDATE_TRIGGERS)
+							model.settriggerId(getSaltString()); // Again, update,
+						// must reset
+					}
+
+				});
+				//Also listen on this action's expressions changing (if it has any)
+				myaction.getVars().addListener(new ListChangeListener<FirebaseExpression>(){
+
+					@Override
+					public void onChanged(
+							javafx.collections.ListChangeListener.Change<? extends FirebaseExpression> c) {
+						System.out.println("2" + getInstance().toString());
+						if(SHOULD_UPDATE_TRIGGERS)
+							model.settriggerId(getSaltString()); // Again, update,
 					}
 
 				});
 			});
 		});
+		//IF any old action is changed
+		actions.forEach(myaction -> {
+			myaction.getparams().addListener(new MapChangeListener<String, Object>() {
+				@Override
+				public void onChanged(
+						javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
+					System.out.println("3" + getInstance().toString());
+					if(SHOULD_UPDATE_TRIGGERS)
+						model.settriggerId(getSaltString()); // Again, update,
+					// must reset
+				}
+
+			});
+			//Also listen on this action's expressions changing (if it has any)
+			myaction.getVars().addListener(new ListChangeListener<FirebaseExpression>(){
+
+				@Override
+				public void onChanged(
+						javafx.collections.ListChangeListener.Change<? extends FirebaseExpression> c) {
+					System.out.println("4" + getInstance().toString());
+					if(SHOULD_UPDATE_TRIGGERS)
+						model.settriggerId(getSaltString()); // Again, update,
+				}
+
+			});
+		});
+
 
 	}
 

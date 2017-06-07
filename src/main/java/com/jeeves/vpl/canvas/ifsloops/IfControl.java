@@ -16,7 +16,7 @@ import static com.jeeves.vpl.Constants.*;
  */
 public class IfControl extends Control {
 	public static final String DESC = "This will execute its contained actions if the contained expression is true";
-	public static final String NAME = "if this is true do that";
+	public static final String NAME = "If Condition";
 
 	public IfControl() {
 		this(new FirebaseAction());
@@ -37,7 +37,7 @@ public class IfControl extends Control {
 
 	@Override
 	public String getViewPath() {
-		return String.format("/ControlIf.fxml", this.getClass().getSimpleName());
+		return String.format("/controlIf.fxml", this.getClass().getSimpleName());
 	}
 
 	@Override

@@ -18,6 +18,22 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TimeZone;
 
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+
+import com.jeeves.vpl.firebase.FirebaseDB;
+import com.jeeves.vpl.firebase.FirebasePatient;
+import com.jeeves.vpl.firebase.FirebaseProject;
+import com.jeeves.vpl.firebase.FirebaseQuestion;
+import com.jeeves.vpl.firebase.FirebaseSurvey;
+
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
@@ -40,19 +56,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
-
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-
-import com.jeeves.vpl.firebase.FirebaseDB;
-import com.jeeves.vpl.firebase.FirebasePatient;
-import com.jeeves.vpl.firebase.FirebaseProject;
-import com.jeeves.vpl.firebase.FirebaseSurvey;
 
 public class PatientPane extends Pane {
 
@@ -150,6 +153,8 @@ public class PatientPane extends Pane {
 
 	@FXML
 	public void downloadResults(Event e) {
+		int answerlength = 0;
+		boolean newsheet = false;
 		Date date = new Date();
 		try {
 			FileChooser fileChooser = new FileChooser();
@@ -174,6 +179,8 @@ public class PatientPane extends Pane {
 					}
 					FileOutputStream fileOut = new FileOutputStream(file);
 					HashMap<String, Sheet> sheets = new HashMap<String, Sheet>();
+			//		HashMap<String, String> surveyids = new HashMap<String,String>();
+					String lastSurveyId = "";
 					// Is this horrendously convoluted? Perhaps. Hopefully it
 					// won't slow things down
 					Collection<FirebaseSurvey> surveys = completedSurveys.values();
@@ -187,38 +194,90 @@ public class PatientPane extends Pane {
 					});
 
 					Sheet s = null;
+					
 					CreationHelper createHelper = wb.getCreationHelper();
 					CellStyle cellStyle = wb.createCellStyle();
+					CellStyle style = wb.createCellStyle();
+					Font font = wb.createFont();
+					font.setFontName(HSSFFont.FONT_ARIAL);
+					font.setFontHeightInPoints((short)10);
+					font.setBold(true);
+					style.setFont(font);
 					cellStyle.setDataFormat(createHelper.createDataFormat().getFormat("m/d/yy h:mm"));
+					cellStyle.setFont(font);
 					for (FirebaseSurvey nextsurvey : surveylist) {
 						date.setTime(nextsurvey.gettimeFinished());
-						String surveyname = nextsurvey.getname();
+						String surveyname = nextsurvey.gettitle();
 						// Do we have a sheet for this particular survey?
 						s = sheets.get(surveyname);
 						if (s == null) {
+							newsheet = true;
 							s = wb.createSheet();
 							sheets.put(surveyname, s);
+							lastSurveyId =  nextsurvey.getsurveyId();
 							wb.setSheetName(wb.getSheetIndex(s), surveyname);
-						}
-
-						r = s.createRow(s.getLastRowNum() + 1);
-						c = r.createCell(0);
-
-						c.setCellValue(date);
-						c.setCellStyle(cellStyle);
-						List<Map<String, String>> answers = nextsurvey.getanswers();
-						int answercounter = 1;
-						for (Map<String, String> answer : answers) {
-							if (answer != null) { // Really weird how some of
-													// the answer lists go
-													// 0,1,2,3,5. No 4? Find
-													// this out
-								c = r.createCell(answercounter);
-								answercounter++;
-								c.setCellValue(answer.get("answer"));
+							r = s.createRow(0);
+							int count = 1;
+							c = r.createCell(0);
+							c.setCellStyle(style);
+							c.setCellValue("Completed");
+							for(FirebaseQuestion q : nextsurvey.getquestions()){
+								answerlength++;
+								c = r.createCell(count);
+								count++;
+								c.setCellValue(q.getquestionText());
+								c.setCellStyle(style);
 							}
 						}
+						//The Survey ID has changed, that means our questions have changed!
+						//Need to make a new line detailing the questions
+						int newlength = 0;
+						if(!nextsurvey.getsurveyId().equals(lastSurveyId)){
+							lastSurveyId = nextsurvey.getsurveyId();
+							r = s.createRow(s.getLastRowNum() + 1);
+							int count =1;
+							c = r.createCell(0);
+							c.setCellStyle(style);
+
+							c.setCellValue("Completed");
+							for(FirebaseQuestion q : nextsurvey.getquestions()){
+								newlength++;
+								c = r.createCell(count);
+								count++;
+								c.setCellValue(q.getquestionText());
+								c.setCellStyle(style);
+
+							}
+							if(newlength > answerlength)
+								answerlength = newlength;
+						}
+						
+						r = s.createRow(s.getLastRowNum() + 1);
+						c = r.createCell(0);
+						c.setCellStyle(cellStyle);
+						
+						c.setCellValue(date);
+					//	s.autoSizeColumn(0);
+
+						List<String> answers = nextsurvey.getanswers();
+						int answercounter = 1;
+						for (String answer : answers) {
+
+								c = r.createCell(answercounter);
+								answercounter++;
+								
+								c.setCellValue(answer);
+							}
+						if(newsheet){
+							s.setColumnWidth(0, 20*256);
+							for (int i = 1; i < answerlength; i++){
+								s.autoSizeColumn(i);
+							}
+							newsheet = false;
+						}
 					}
+				//	s.autoSizeColumn(0);
+					
 					wb.write(fileOut);
 					fileOut.close();
 					Desktop.getDesktop().open(file);
@@ -253,35 +312,35 @@ public class PatientPane extends Pane {
 		firebase.getpatients().addListener(new ListChangeListener<FirebasePatient>() {
 			@Override
 			public void onChanged(javafx.collections.ListChangeListener.Change<? extends FirebasePatient> c) {
-				Platform.runLater(new Runnable() {
-					@Override
-					public void run() {
-						loadPatientTable();
-						allowedPatients.clear();
-						firebase.getpatients().forEach(patient -> {
-							if (patient.getCurrentStudy() != null && patient.getCurrentStudy().equals(name))
-								allowedPatients.add(patient);
-
-						});
-						update();
-
-					}
-				});
+				loadPatientTable(name);
 
 			}
 		});
-		loadPatientTable();
-		firebase.getpatients().forEach(patient -> {
-			if (patient.getCurrentStudy() != null && patient.getCurrentStudy().equals(name))
-				allowedPatients.add(patient);
-		});
-
-		tblPatients.setItems(allowedPatients); // This is hacky but I'll get
-												// back to it k?
+		loadPatientTable(name);
+								// back to it k?
 		update();
 	}
 
-	private void loadPatientTable() {
+	private void loadPatientTable(String name) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				//loadPatientTable();
+				allowedPatients.clear();
+				firebase.getpatients().forEach(patient -> {
+					if (patient.getCurrentStudy() != null && patient.getCurrentStudy().equals(name))
+						allowedPatients.add(patient);
+
+				});
+				System.out.println("DOES THIS EVEN FUCKING HAPPEN FUCK FUCK FUCK");
+				System.out.println("We have " + allowedPatients.size() + " allowed patientes");
+			//	tblPatients.getItems().clear();
+				tblPatients.setItems(allowedPatients); // This is hacky but I'll get
+
+				update();
+
+			}
+		});
 		tblPatients.getSelectionModel().selectedItemProperty().addListener(listener);
 	}
 
@@ -290,6 +349,7 @@ public class PatientPane extends Pane {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
+
 				TableViewSelectionModel<FirebasePatient> selectionModel = tblPatients.getSelectionModel();
 				if (selectionModel.getSelectedItem() != null) {
 					selectedPatient = selectionModel.getSelectedItem();
@@ -331,6 +391,7 @@ public class PatientPane extends Pane {
 					Iterator<FirebaseSurvey> incompleteIter = incompleteSurveys.values().iterator();
 					while (incompleteIter.hasNext()) {
 						incomplete++;
+						incompleteIter.next(); //You bloody idiot
 					}
 					lblMissed.setText(Integer.toString(incomplete));
 				}

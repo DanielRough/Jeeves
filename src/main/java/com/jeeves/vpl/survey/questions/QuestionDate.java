@@ -1,16 +1,14 @@
 package com.jeeves.vpl.survey.questions;
 
-import static com.jeeves.vpl.Constants.DATETIME;
+import static com.jeeves.vpl.Constants.DATE;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import com.jeeves.vpl.firebase.FirebaseQuestion;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
@@ -18,12 +16,14 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 
-public class QuestionDateTime extends QuestionView {
+public class QuestionDate extends QuestionView {
 
-	@FXML
-	private CheckBox chkDate;
-	@FXML
-	private CheckBox chkTime;
+//	@FXML
+//	private RadioButton rdioDate;
+//	@FXML
+//	private RadioButton rdioTime;
+//
+//	private ToggleGroup askForGroup;
 	@FXML
 	private HBox hboxOptions;
 	@FXML
@@ -36,29 +36,20 @@ public class QuestionDateTime extends QuestionView {
 	@FXML
 	private VBox vboxDateOpts;
 
-	public QuestionDateTime() {
+	public QuestionDate() {
 		super();
 	}
 
-	public QuestionDateTime(FirebaseQuestion data) {
+	public QuestionDate(FirebaseQuestion data) {
 		super(data);
 	}
 
 	@Override
 	public void addEventHandlers() {
 
-		chkDate.selectedProperty().addListener((x, y, z) -> {
-			if (chkDate.isSelected())
-				vboxDateOpts.setVisible(true);
-			else
-				vboxDateOpts.setVisible(false);
-			model.getparams().put("useDate", chkDate.isSelected());
-		//	model.setparams(params);
-		});
-		chkTime.selectedProperty().addListener((x, y, z) -> {
-			model.getparams().put("useTime", chkTime.isSelected());
-		//	model.setparams(params);
-		});
+//		askForGroup.selectedToggleProperty().addListener((x,y,z)->{
+//			model.getparams().put("askFor", z.getUserData());
+//		});
 		tgroup.selectedToggleProperty().addListener((x, y, z) -> {
 			model.getparams().put("dateConstraint", tgroup.getSelectedToggle().getUserData());
 			//model.setparams(params);
@@ -73,27 +64,34 @@ public class QuestionDateTime extends QuestionView {
 
 	@Override
 	public String getLabel() {
-		return "Select a Date/Time";
+		return "Select a Date";
 	}
 
 	@Override
 	public int getQuestionType() {
 		// TODO Auto-generated method stub
-		return DATETIME;
+		return DATE;
 	}
 
 	@Override
 	public void loadOptions() {
 		tgroup = new ToggleGroup();
-
+	//	askForGroup = new ToggleGroup();
 		FXMLLoader surveyLoader = new FXMLLoader();
 		surveyLoader.setController(this);
 		surveyLoader.setLocation(getClass().getResource("/OptionsDateTime.fxml"));
 		try {
 			optionsPane = (Pane) surveyLoader.load();
+
 			addEventHandlers();
 		} catch (IOException e) {
 		}
+//		rdioDate.setToggleGroup(askForGroup);
+//		rdioDate.setUserData("date");
+//		rdioTime.setToggleGroup(askForGroup);
+//		rdioTime.setUserData("time");
+
+		
 		rdioAny.setToggleGroup(tgroup);
 		rdioAny.setUserData(new Long(0));
 		rdioFuture.setToggleGroup(tgroup);
@@ -104,10 +102,16 @@ public class QuestionDateTime extends QuestionView {
 
 	@Override
 	public void showEditOpts(Map<String, Object> opts) {
-		if (model.getparams().containsKey("useDate"))
-			chkDate.setSelected((boolean) model.getparams().get("useDate"));
-		if (model.getparams().containsKey("useTime"))
-			chkTime.setSelected((boolean) model.getparams().get("useTime"));
+
+//		if(model.getparams().containsKey("askFor")){
+//			String askFor = model.getparams().get("askFor").toString();
+//			if(askFor.equals("date"))
+//				rdioDate.setSelected(true);
+//			else if (askFor.equals("time"))
+//				rdioTime.setSelected(true);
+//
+//		}
+		
 		if (model.getparams().containsKey("dateConstraint"))
 			switch (((Long)model.getparams().get("dateConstraint")).intValue()) {
 			case 0:

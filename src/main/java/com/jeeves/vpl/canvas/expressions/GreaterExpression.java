@@ -7,7 +7,7 @@ import static com.jeeves.vpl.Constants.*;
 
 public class GreaterExpression extends Expression { // NO_UCD (unused code)
 	public static final String DESC = "returns true if the left number is more than the right number";
-	public static final String NAME = "greater than";
+	public static final String NAME = "Greater Than";
 
 	public GreaterExpression() {
 		this(new FirebaseExpression());

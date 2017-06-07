@@ -50,6 +50,7 @@ public class WaitingAction extends Action { // NO_UCD (unused code)
 
 			@Override
 			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
+
 				txtWaitTime.setPrefWidth(
 						TextUtils.computeTextWidth(txtWaitTime.getFont(), txtWaitTime.getText(), 0.0D) + 10);
 				autosize();
@@ -57,19 +58,8 @@ public class WaitingAction extends Action { // NO_UCD (unused code)
 			}
 
 		};
-		txtWaitTime.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
+		txtWaitTime.addEventFilter(KeyEvent.KEY_TYPED, numberHandler);
 
-			@Override
-			public void handle(KeyEvent arg0) {
-				try {
-					Long.parseLong(arg0.getCharacter());
-				} catch (NumberFormatException e) {
-					arg0.consume();
-					return;
-				}
-
-			}
-		});
 		txtWaitTime.textProperty().addListener(textChanged);
 		selectionListener = new ChangeListener<String>() {
 
@@ -89,11 +79,15 @@ public class WaitingAction extends Action { // NO_UCD (unused code)
 		super.fxmlInit();
 		name = NAME;
 		description = DESC;
+		txtWaitTime.setPrefWidth(20);
+		txtWaitTime.setMinHeight(20);
+		txtWaitTime.setPrefHeight(20);
+		txtWaitTime.getStyleClass().add("textfield");
 	}
 
 	@Override
 	public String getViewPath() {
-		return String.format("/ActionWaiting.fxml", this.getClass().getSimpleName());
+		return String.format("/actionWaiting.fxml", this.getClass().getSimpleName());
 	}
 
 	@Override

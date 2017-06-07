@@ -5,9 +5,12 @@ import java.io.IOException;
 import com.jeeves.vpl.Constants.ElementType;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.firebase.FirebaseAction;
+import com.jeeves.vpl.firebase.FirebaseExpression;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.MapChangeListener;
+import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -30,7 +33,7 @@ public abstract class Action extends ViewElement<FirebaseAction> {
 	}
 
 	protected ObservableMap<String, Object> params;
-
+	protected ObservableList<FirebaseExpression> vars;
 	public Action() {
 		super(FirebaseAction.class);
 	}
@@ -38,9 +41,16 @@ public abstract class Action extends ViewElement<FirebaseAction> {
 	public Action(FirebaseAction data) {
 		super(data, FirebaseAction.class);
 		this.model = data;
+		vars = FXCollections.observableArrayList(model.getvars());
+		vars.addListener(new ListChangeListener<FirebaseExpression>(){
+			@Override
+			public void onChanged(javafx.collections.ListChangeListener.Change<? extends FirebaseExpression> c) {
+				model.setvars(vars);//Will this work? Somehow I highly doubt it, circular logic and that
+			}
+		});
 
 	}
-
+	ListChangeListener<FirebaseExpression> varListener;
 	@Override
 	public void addListeners() {
 		super.addListeners();
@@ -61,6 +71,32 @@ public abstract class Action extends ViewElement<FirebaseAction> {
 
 			});
 		}
+//		if (vars != null) {
+//			System.out.println("WHEW");
+//			if(varListener != null)vars.removeListener(varListener);
+//			 varListener = new ListChangeListener<FirebaseExpression>(){
+//
+//				@Override
+//				public void onChanged(Change<? extends FirebaseExpression> change) {
+//					change.next();
+//					if (change.wasAdded()) {
+//						System.out.println("ADDING");
+//						model.getvars().addAll(change.getAddedSubList());
+//					} else if (change.wasRemoved()){
+//						System.out.println("REMOVING");
+//						model.getvars().removeAll(change.getRemoved());
+//					}					
+//					else{
+//						System.out.println("we had a different kind of change!?");
+//					}
+//				}
+//				
+//			};
+//			vars.addListener(varListener);
+//		}
+//		else{
+//			System.out.println("OH NO");
+//		}
 	}
 
 	@Override
@@ -75,6 +111,7 @@ public abstract class Action extends ViewElement<FirebaseAction> {
 		} catch (IOException exception) {
 			throw new RuntimeException(exception);
 		}
+
 	}
 
 	@Override
@@ -85,7 +122,9 @@ public abstract class Action extends ViewElement<FirebaseAction> {
 	public ObservableMap<String, Object> getparams() {
 		return params;
 	}
-
+	public ObservableList<FirebaseExpression> getVars(){
+		return vars;
+	}
 	public abstract String getViewPath();
 
 	@Override

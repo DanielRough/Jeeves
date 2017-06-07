@@ -12,11 +12,11 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<Pane fx:id="pane" minHeight="84.0" prefWidth="166.0" styleClass="trigger" stylesheets="@Styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<Pane fx:id="pane" minHeight="84.0" prefHeight="118.0" prefWidth="166.0" styleClass="trigger" stylesheets="@Styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <VBox layoutX="6.0" layoutY="56.0" prefWidth="147.0" stylesheets="@Styles.css">
          <children>
-      <VBox fx:id="paneTimes" fillWidth="false" prefHeight="-1.0" />
+      <VBox fx:id="paneTimes" fillWidth="false" prefHeight="-1.0" spacing="5.0" />
             <HBox alignment="CENTER" spacing="10.0">
                <children>
                   <Button fx:id="btnAddTime" alignment="CENTER" contentDisplay="CENTER" layoutX="66.0" layoutY="13.0" mnemonicParsing="false" onAction="#handleAddTime" prefHeight="22.0" prefWidth="65.0" text="add time" textAlignment="CENTER" wrapText="true">

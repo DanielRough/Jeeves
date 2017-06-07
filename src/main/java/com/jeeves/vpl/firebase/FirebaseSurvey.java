@@ -22,7 +22,7 @@ public class FirebaseSurvey extends FirebaseElement implements Serializable {
 	// public StringProperty gettitleproperty() {
 	// return title;
 	// }
-	private List<Map<String, String>> answers;
+	private List<String> answers;
 	private boolean begun; // Has the user begun completing the survey?
 	private long expiryTime;
 	private String key;
@@ -31,12 +31,19 @@ public class FirebaseSurvey extends FirebaseElement implements Serializable {
 	private long timeAlive;
 	private long timeFinished;
 	private long timeSent;
-
+	private String surveyId;
+	
+	public void setsurveyId(String id){
+		this.surveyId = id;
+	}
+	public String getsurveyId(){
+		return surveyId;
+	}
 	public FirebaseSurvey() {
 
 	}
 
-	public List<Map<String, String>> getanswers() {
+	public List<String> getanswers() {
 		return answers;
 	}
 
@@ -76,7 +83,7 @@ public class FirebaseSurvey extends FirebaseElement implements Serializable {
 		return title.get();
 	}
 
-	public void setanswers(List<Map<String, String>> answers) {
+	public void setanswers(List<String> answers) {
 		this.answers = answers;
 	}
 

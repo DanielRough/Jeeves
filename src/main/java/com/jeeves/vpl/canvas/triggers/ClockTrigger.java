@@ -8,13 +8,17 @@ import static com.jeeves.vpl.Constants.VAR_CLOCK;
 import static com.jeeves.vpl.Constants.VAR_DATE;
 
 import java.net.URL;
+import java.util.ArrayList;
 
 import com.jeeves.vpl.ParentPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.expressions.UserVariable;
 import com.jeeves.vpl.canvas.receivers.DateReceiver;
 import com.jeeves.vpl.canvas.receivers.TimeReceiver;
+import com.jeeves.vpl.firebase.FirebaseExpression;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
+import com.jeeves.vpl.firebase.FirebaseVariable;
+
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -63,24 +67,83 @@ public abstract class ClockTrigger extends Trigger { // NO_UCD (use default)
 	@Override
 	public void addListeners() {
 		super.addListeners();
+		if(model.getvariables() == null)
+			model.setvariables(new ArrayList<String>());
+		
 		timeReceiverFrom.getChildElements().addListener(
-				(ListChangeListener<ViewElement>) listener -> model.settimeFrom(timeReceiverFrom.getChildModel()));// timeReceiverFrom.getChildElements().get(0).getModel())));
+				(ListChangeListener<ViewElement>) listener ->{
+					listener.next();
+					if(listener.wasAdded()){
+						model.getvariables().add(timeReceiverFrom.getChildModel().getname());
+					}
+					else{
+						ViewElement removed = listener.getRemoved().get(0);
+						FirebaseExpression removedModel = (FirebaseExpression)removed.getModel();
+						model.getvariables().remove(removedModel.getname());
+					}
+					model.settimeFrom(timeReceiverFrom.getChildModel());
+					params.put(LIMIT_BEFORE_HOUR,0); //Just so things get updated
+					
+				});
+
 		timeReceiverTo.getChildElements().addListener(
-				(ListChangeListener<ViewElement>) listener -> model.settimeTo(timeReceiverTo.getChildModel()));
+				(ListChangeListener<ViewElement>) listener -> {
+					listener.next();
+					if(listener.wasAdded()){
+						model.getvariables().add(timeReceiverTo.getChildModel().getname());
+					}
+					else{
+						ViewElement removed = listener.getRemoved().get(0);
+						FirebaseExpression removedModel = (FirebaseExpression)removed.getModel();
+						model.getvariables().remove(removedModel.getname());
+					}
+					model.settimeTo(timeReceiverTo.getChildModel());
+					params.put(LIMIT_AFTER_HOUR,0);
+				});
+		
 		timeReceiverFrom.getTextField().textProperty().addListener(listen -> {
 			params.put(LIMIT_BEFORE_HOUR, Long.parseLong(timeReceiverFrom.getText()));
 		});
+		
 		timeReceiverTo.getTextField().textProperty().addListener(listen -> {
 			params.put(LIMIT_AFTER_HOUR, Long.parseLong(timeReceiverTo.getText()));
 		});
+		
 		dateReceiverFrom.getChildElements().addListener((ListChangeListener<ViewElement>) listener -> {
+			listener.next();
+			if(listener.wasAdded()){
+				model.getvariables().add(dateReceiverFrom.getChildModel().getname());
+			}
+			else{
+				ViewElement removed = listener.getRemoved().get(0);
+				FirebaseExpression removedModel = (FirebaseExpression)removed.getModel();
+				model.getvariables().remove(removedModel.getname());
+			}
 			model.setdateFrom(dateReceiverFrom.getChildModel());
+			params.put(DATE_FROM, System.currentTimeMillis()); //just so it gets updated
 		});
+		
 		dateReceiverTo.getChildElements().addListener(
-				(ListChangeListener<ViewElement>) listener -> model.setdateTo(dateReceiverTo.getChildModel()));
+				
+				(ListChangeListener<ViewElement>) listener -> {
+					listener.next();
+					if(listener.wasAdded()){
+						model.getvariables().add(dateReceiverTo.getChildModel().getname());
+					}
+					else{
+						ViewElement removed = listener.getRemoved().get(0);
+						FirebaseExpression removedModel = (FirebaseExpression)removed.getModel();
+						if(model.getvariables() == null)System.out.println("OOOH NOOOO");
+						model.getvariables().remove(removedModel.getname());
+					}
+					model.setdateTo(dateReceiverTo.getChildModel());
+					params.put(DATE_TO, System.currentTimeMillis());
+				});
+		
 		dateReceiverFrom.getTextField().textProperty().addListener(listen -> {
 			params.put(DATE_FROM, Long.parseLong(dateReceiverFrom.getText()));
 		});
+		
 		dateReceiverTo.getTextField().textProperty().addListener(listen -> {
 			params.put(DATE_TO, Long.parseLong(dateReceiverTo.getText()));
 		});
@@ -100,6 +163,7 @@ public abstract class ClockTrigger extends Trigger { // NO_UCD (use default)
 	@Override
 	public void setData(FirebaseTrigger data) {
 		super.setData(data);
+
 		if (model.gettimeFrom() != null) {
 			timeReceiverFrom.addChild(UserVariable.create(model.gettimeFrom()), 0, 0);
 		} else if (params.containsKey(LIMIT_BEFORE_HOUR)) {

@@ -33,6 +33,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class DateReceiver extends ExpressionReceiver {
+	//private long epochMillis;
 
 	public class NewSingleDatePane extends Pane {
 		@FXML
@@ -105,8 +106,7 @@ public class DateReceiver extends ExpressionReceiver {
 	public String getText() {
 			try {
 				long epochMillis = DateUtils.parseDate(text.getText(), "dd/MM/yy").getTime();
-				long epochDays = epochMillis/(1000*3600*24);
-				return Long.toString(epochDays);
+				return Long.toString(epochMillis);
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				return "0";
@@ -173,8 +173,8 @@ public class DateReceiver extends ExpressionReceiver {
 	}
 
 	public void setText(String newtext) {
-			long epochMillis = Long.parseLong(newtext) * 3600 * 24 * 1000;
-			final Date date = new Date(epochMillis + (3600 * 24 * 1000)); //I have no idea why it takes a day off things :S
+			long epochMillis = Long.parseLong(newtext);
+			final Date date = new Date(epochMillis); //I have no idea why it takes a day off things :S
 			final String ISO_FORMAT = "dd/MM/yy";
 			final SimpleDateFormat sdf = new SimpleDateFormat(ISO_FORMAT);
 		//	final TimeZone utc = TimeZone.getTimeZone("UTC");

@@ -13,20 +13,19 @@ import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.firebase.FirebaseQuestion;
 
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -66,6 +65,7 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 	protected Pane optionsPane;
 	private String questionId;
 	protected QuestionView parentQuestion;
+	public StringProperty questionTextProperty;
 
 	HBox buttonBox;
 
@@ -161,6 +161,8 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 			model.setquestionId(getSaltString());
 
 			setImage(getImagePath());
+			questionTextProperty = new SimpleStringProperty();
+
 			setQuestionText(getLabel());
 			// addListeners();
 			buttonBox = new HBox();

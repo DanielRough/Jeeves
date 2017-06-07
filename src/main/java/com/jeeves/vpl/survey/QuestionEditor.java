@@ -1,7 +1,25 @@
 package com.jeeves.vpl.survey;
 
+import static com.jeeves.vpl.Constants.BOOLEAN;
+import static com.jeeves.vpl.Constants.DATE;
+import static com.jeeves.vpl.Constants.TIME;
+import static com.jeeves.vpl.Constants.GEO;
+import static com.jeeves.vpl.Constants.NUMERIC;
+import static com.jeeves.vpl.Constants.SCALE;
+import static com.jeeves.vpl.Constants.VAR_BOOLEAN;
+import static com.jeeves.vpl.Constants.VAR_CLOCK;
+import static com.jeeves.vpl.Constants.VAR_DATE;
+import static com.jeeves.vpl.Constants.VAR_LOCATION;
+import static com.jeeves.vpl.Constants.VAR_NUMERIC;
+
 import java.io.IOException;
 import java.util.Map;
+
+import com.jeeves.vpl.Main;
+import com.jeeves.vpl.canvas.expressions.UserVariable;
+import com.jeeves.vpl.firebase.FirebaseQuestion;
+import com.jeeves.vpl.firebase.FirebaseVariable;
+import com.jeeves.vpl.survey.questions.QuestionView;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -25,13 +43,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
-
-import com.jeeves.vpl.Main;
-import com.jeeves.vpl.canvas.expressions.UserVariable;
-import com.jeeves.vpl.firebase.FirebaseVariable;
-import com.jeeves.vpl.survey.questions.QuestionView;
-
-import static com.jeeves.vpl.Constants.*;
 
 public class QuestionEditor extends Pane {
 
@@ -128,10 +139,13 @@ public class QuestionEditor extends Pane {
 		if (entry.equals(selectedQuestion))
 			return; // Forget it, we've already selected this quesiton
 		selectedQuestion = entry;
+		
+//		entry.
 		populateVarBox();
 
+		
 		Map<String, Object> opts = entry.getQuestionOptions();
-		if(opts != null)
+	//	if(opts != null)
 			selectedQuestion.showEditOpts(opts);
 
 		if (entry.getAssignedVar() != null && !entry.getAssignedVar().equals("")) {
@@ -158,8 +172,12 @@ public class QuestionEditor extends Pane {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				entry.setQuestionText(newValue);
+
 			}
 		};
+		txtQText.setOnKeyReleased(handler->{
+			entry.questionTextProperty.setValue(txtQText.getText()); //This might work?
+		});
 		txtQText.textProperty().addListener(listener);
 		txtQText.setText(selectedQuestion.getText());
 		if (entry.getOptionsPane() != null)
@@ -213,8 +231,13 @@ public class QuestionEditor extends Pane {
 						cboVars.getItems().add(uservar);
 					}
 					break;
-				case DATETIME:
-					if (uservar.getVarType().equals(VAR_DATE) || uservar.getVarType().equals(VAR_CLOCK)) {
+				case DATE:
+					if (uservar.getVarType().equals(VAR_DATE)) {
+						cboVars.getItems().add(uservar);
+					}
+					break;
+				case TIME:
+					if (uservar.getVarType().equals(VAR_CLOCK)) {
 						cboVars.getItems().add(uservar);
 					}
 					break;

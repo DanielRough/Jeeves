@@ -4,18 +4,22 @@ import java.util.Map;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 
+import com.jeeves.vpl.ParentPane;
+import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.receivers.DateReceiver;
 import com.jeeves.vpl.firebase.FirebaseExpression;
+import com.jeeves.vpl.firebase.FirebaseVariable;
 
 import static com.jeeves.vpl.Constants.*;
 
 public class TimeExpression extends Expression { // NO_UCD (unused code)
 	public static final String DESC = "Returns true if the current time is within the specified bounds of the expression time";
-	public static final String NAME = "is it this time";
+	public static final String NAME = "Time Result";
 	private ComboBox<String> cboBeforeAfter;
 	private ComboBox<String> cboTimeDiff;
 	private DateReceiver exprTimeVar;
@@ -29,7 +33,12 @@ public class TimeExpression extends Expression { // NO_UCD (unused code)
 		addListeners();
 
 	}
-
+	@Override
+	public void setParentPane(ParentPane parent) {
+		super.setParentPane(parent);
+			if (exprTimeVar.getChildExpression() != null)
+				exprTimeVar.getChildExpression().setParentPane(parent);
+	}
 	@Override
 	public void addListeners() {
 		super.addListeners();
@@ -40,7 +49,7 @@ public class TimeExpression extends Expression { // NO_UCD (unused code)
 
 			@Override
 			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
-				model.getparams().put("timeDiff", arg2);
+				params.put("timeDiff", arg2);
 			}
 		});
 		// (value->model.getparams().put("timeDiff", value));
@@ -48,8 +57,14 @@ public class TimeExpression extends Expression { // NO_UCD (unused code)
 
 			@Override
 			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
-				model.getparams().put("beforeAfter", arg2);
+				params.put("beforeAfter", arg2);
 			}
+		});
+		exprTimeVar.getChildElements().addListener((ListChangeListener<ViewElement>) listener -> {
+			params.put("timeVar",exprTimeVar.getChildModel());
+		});
+		exprTimeVar.getTextField().textProperty().addListener(listen -> {
+			params.put("timeVar", exprTimeVar.getText());
 		});
 
 	}
@@ -86,10 +101,29 @@ public class TimeExpression extends Expression { // NO_UCD (unused code)
 			cboTimeDiff.setValue(params.get("timeDiff").toString());
 		if (params.containsKey("beforeAfter"))
 			cboBeforeAfter.setValue(params.get("beforeAfter").toString());
-		if (params.containsKey("timevar") == false)
-			return;
-		exprTimeVar.setText(params.get("timevar").toString());
+		if (params.containsKey("timeVar")){
+			if (params.get("timeVar") instanceof String) {
+				exprTimeVar.setText(params.get("timeVar").toString()); //For plain dates, no variables
+			}//Otherwise at some point we dragged a date variable into here
+			else{ 
+				String name = ((Map<String,Object>)params.get("timeVar")).get("name").toString();
+				//Wee snippet of code that we use elsewhere, I haven't got time to fuck about
+				gui.registerVarListener(listener->{
+					listener.next();
+					if(listener.wasAdded()){
+						for(FirebaseVariable var : listener.getAddedSubList()){
+							if(var.getname().equals(name)){
+								exprTimeVar.addChild(UserVariable.create(var), 0,0);
+								setParentPane(getInstance().parentPane);
+							}
+						}
+					}
+				});
+			}
+			//	exprTimeVar.addChild(UserVariable.create(model.getdateFrom()), 0, 0);
+		} 
 	}
+
 
 	@Override
 	public void setup() {

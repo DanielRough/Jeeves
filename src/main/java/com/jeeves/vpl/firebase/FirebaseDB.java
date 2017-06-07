@@ -40,6 +40,24 @@ public class FirebaseDB {
 	public void addListeners() {
 		firebaseRef = FirebaseDatabase.getInstance().getReference();
 		dbRef = firebaseRef.child(DBNAME);
+		
+		DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+		connectedRef.addValueEventListener(new ValueEventListener() {
+		  @Override
+		  public void onDataChange(DataSnapshot snapshot) {
+		    boolean connected = snapshot.getValue(Boolean.class);
+		    if (connected) {
+		      gui.updateConnecetedStatus(true);
+		    } else {
+		      gui.updateConnecetedStatus(false);
+		    }
+		  }
+
+		  @Override
+		  public void onCancelled(DatabaseError error) {
+		    System.err.println("Listener was cancelled");
+		  }
+		});
 		dbRef.addValueEventListener(new ValueEventListener() {
 			@Override
 			public void onCancelled(DatabaseError arg0) {

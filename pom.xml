@@ -43,7 +43,7 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>com.jeeves.vpl.MainController</mainClass>
+							<mainClass>com.jeeves.vpl.Main</mainClass>
 						</manifest>
 					</archive>
 

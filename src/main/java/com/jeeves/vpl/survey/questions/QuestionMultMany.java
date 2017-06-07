@@ -83,13 +83,20 @@ public class QuestionMultMany extends QuestionView {
 		remove.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				
-				//DON'T LET IT DO ANYTHING
+				if(choices.getChildren().size() == 1){ //THIS IS OUR LAST OPTION DON'T REMOVE IT
+					e.consume();
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setTitle("Options required");
+					alert.setHeaderText(null);
+					alert.setContentText("Multi-choice questions must have at least one option!");
+					alert.showAndWait();
+					return;
+				}
 				if(!getInstance().getChildQuestions().isEmpty()){
 					Alert alert = new Alert(AlertType.INFORMATION);
-					alert.setTitle("Duplicate survey names");
+					alert.setTitle("Dependent child question");
 					alert.setHeaderText(null);
-					alert.setContentText("All surveys must have unique names");
+					alert.setContentText("Child questions may depend on these answers");
 					alert.showAndWait();
 					return;
 				}
@@ -107,16 +114,16 @@ public class QuestionMultMany extends QuestionView {
 
 		optionBox.getChildren().addAll(choice, remove);
 		choices.getChildren().add(optionBox);
-		choice.setOnKeyPressed(handler->{
-			if(!getInstance().getChildQuestions().isEmpty()){
-				handler.consume();
-				Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setTitle("Duplicate survey names");
-				alert.setHeaderText(null);
-				alert.setContentText("All surveys must have unique names");
-				alert.showAndWait();
-				return;
-			}
+		choice.textProperty().addListener(handler->{
+//			if(!getInstance().getChildQuestions().isEmpty()){
+//			//	handler.consume();
+//				Alert alert = new Alert(AlertType.INFORMATION);
+//				alert.setTitle("Duplicate survey names");
+//				alert.setHeaderText(null);
+//				alert.setContentText("All surveys must have unique names");
+//				alert.showAndWait();
+//				return;
+//			}
 			Map<String, Object> qOptions = new HashMap<String, Object>();
 			int optcount = 1;
 			for (Node opt : choices.getChildren()) {
@@ -126,7 +133,15 @@ public class QuestionMultMany extends QuestionView {
 				model.getparams().put("options",qOptions);
 			}
 		});
+		Map<String, Object> qOptions = new HashMap<String, Object>();
+		int optcount = 1;
 
+		for (Node opt : choices.getChildren()) {
+			HBox optbox = (HBox) opt;
+			TextField opttext = (TextField) optbox.getChildren().get(0);
+			qOptions.put("option" + Integer.toString(optcount++), opttext.getText());
+			model.getparams().put("options",qOptions);
+		}
 	}
 
 
@@ -138,6 +153,8 @@ public class QuestionMultMany extends QuestionView {
 		try {
 			optionsPane = (Pane) surveyLoader.load();
 			addEventHandlers();
+//			handleAddOpt(paneChoiceOptsM,"A");
+//			handleAddOpt(paneChoiceOptsM,"B");
 		} catch (IOException e) {
 		}
 	}
@@ -145,8 +162,14 @@ public class QuestionMultMany extends QuestionView {
 	@Override
 	public void showEditOpts(Map<String, Object> opts) {
 		paneChoiceOptsM.getChildren().clear();
-		if (opts == null)
+		if (opts.isEmpty()){
+			System.out.println("correct null");
+
+			handleAddOpt(paneChoiceOptsM,"A");
+			handleAddOpt(paneChoiceOptsM,"B");
+
 			return;
+		}
 		for (Object opt : opts.values()) {
 			handleAddOpt(paneChoiceOptsM, opt.toString());
 		}

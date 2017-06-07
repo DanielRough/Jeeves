@@ -1,7 +1,8 @@
 package com.jeeves.vpl.survey;
 
 import static com.jeeves.vpl.Constants.BOOLEAN;
-import static com.jeeves.vpl.Constants.DATETIME;
+import static com.jeeves.vpl.Constants.DATE;
+import static com.jeeves.vpl.Constants.TIME;
 import static com.jeeves.vpl.Constants.GEO;
 import static com.jeeves.vpl.Constants.MULT_MANY;
 import static com.jeeves.vpl.Constants.MULT_SINGLE;
@@ -67,7 +68,7 @@ public class ConditionEditor extends Pane {
 	@FXML
 	private Pane paneCondition;
 	@FXML
-	private Pane paneDateTimeReceiver;
+	private HBox paneDateTimeReceiver;
 	private ToggleGroup tgroup;
 	private TimeReceiver timeReceiver;
 
@@ -145,6 +146,8 @@ public class ConditionEditor extends Pane {
 			txtNumAnswer.setVisible(true);
 			cboLessMore.setVisible(true);
 			String[] constraints = conditionConstraints.split(";");
+			cboLessMore.getSelectionModel().clearAndSelect(0); //Default
+			txtNumAnswer.setText("5"); //Defaut
 			if (constraints.length > 1) {
 				cboLessMore.setValue(constraints[0]);
 				txtNumAnswer.setText(constraints[1]);
@@ -159,36 +162,64 @@ public class ConditionEditor extends Pane {
 				String option = opt.toString();
 				cboMultiChoice.getItems().add(option);
 			}
-			cboMultiChoice.getSelectionModel().select(conditionConstraints);
-			break;
-		case DATETIME:
-			hboxDateOpts.setVisible(true);
-			Map<String, Object> myopts = conditionQuestion.getModel().getparams();
-			paneDateTimeReceiver.getChildren().clear();
-			boolean useDate = false, useTime = false;
-			if (myopts.containsKey("useDate"))
-				useDate = (boolean) myopts.get("useDate");
-			if (myopts.containsKey("useTime"))
-				useTime = (boolean) myopts.get("useTime");
-			if (useDate == false && useTime == true)
-				paneDateTimeReceiver.getChildren().add(timeReceiver);
+			if (conditionConstraints.length() > 0)
+				cboMultiChoice.getSelectionModel().select(conditionConstraints);
 			else
+				cboMultiChoice.getSelectionModel().clearAndSelect(0); //default
+			break;
+		case DATE:
+			hboxDateOpts.setVisible(true);
+	//		Map<String, Object> myopts = conditionQuestion.getModel().getparams();
+			paneDateTimeReceiver.getChildren().clear();
+			String askFor = "";
+//			if (myopts.containsKey("askFor"))
+//				askFor = myopts.get("askFor").toString();
+//			if(askFor.equals("date"))
 				paneDateTimeReceiver.getChildren().add(dateReceiver);
-
+//			else if(askFor.equals("time"))
+//				paneDateTimeReceiver.getChildren().add(timeReceiver);
+//			else
+//				paneDateTimeReceiver.getChildren().addAll(dateReceiver,timeReceiver);
 			cboBeforeAfter.setVisible(true);
 			paneDateTimeReceiver.setVisible(true);
 			String[] dateconstraints = conditionConstraints.split(";");
 			if (dateconstraints.length > 1) {
-				if(dateconstraints[2].equals("time"))
-					timeReceiver.setText(dateconstraints[1]);
-				else
+		//			timeReceiver.setText(dateconstraints[2]);
 					dateReceiver.setText(dateconstraints[1]);
 				cboBeforeAfter.setValue(dateconstraints[0]);
 			}
+			else
+				cboBeforeAfter.getSelectionModel().clearAndSelect(0); //give it a default hopefully?
+			break;
+		case TIME:
+			hboxDateOpts.setVisible(true);
+	//		Map<String, Object> myopts = conditionQuestion.getModel().getparams();
+			paneDateTimeReceiver.getChildren().clear();
+//			String askFor = "";
+//			if (myopts.containsKey("askFor"))
+//				askFor = myopts.get("askFor").toString();
+//			if(askFor.equals("date"))
+		//		paneDateTimeReceiver.getChildren().add(dateReceiver);
+//			else if(askFor.equals("time"))
+				paneDateTimeReceiver.getChildren().add(timeReceiver);
+//			else
+//				paneDateTimeReceiver.getChildren().addAll(dateReceiver,timeReceiver);
+			cboBeforeAfter.setVisible(true);
+			paneDateTimeReceiver.setVisible(true);
+			String[] timeconstraints = conditionConstraints.split(";");
+			if (timeconstraints.length > 1) {
+					timeReceiver.setText(timeconstraints[1]);
+		//			dateReceiver.setText(dateconstraints[1]);
+				cboBeforeAfter.setValue(timeconstraints[0]);
+			}
+			else
+				cboBeforeAfter.getSelectionModel().clearAndSelect(0); //give it a default hopefully?
 			break;
 		case BOOLEAN:
 			rdioTrue.setVisible(true);
 			rdioFalse.setVisible(true);
+			if(tgroup.getSelectedToggle()!=null)
+			tgroup.getSelectedToggle().setSelected(false);
 			rdioTrue.setSelected(true);
 			if (conditionConstraints.length() > 0)
 				tgroup.selectToggle(Boolean.parseBoolean(conditionConstraints) ? rdioTrue : rdioFalse);
@@ -233,14 +264,22 @@ public class ConditionEditor extends Pane {
 		cboLessMore.getSelectionModel().selectedItemProperty().addListener((ob, old, nval) -> {
 			updateCondition(cboLessMore.getValue() + ";" + txtNumAnswer.getText());
 		});
+		cboBeforeAfter.getSelectionModel().selectedItemProperty().addListener((ob, old, nval) -> {
+			if(paneDateTimeReceiver.getChildren().contains(dateReceiver)){
+				updateCondition(cboBeforeAfter.getValue() + ";" + dateReceiver.getText());
+			}
+			else{
+				updateCondition(cboBeforeAfter.getValue() + ";" + timeReceiver.getText());
+			}
+		});
 		tgroup.selectedToggleProperty().addListener((ob, old, nval) -> {
 			updateCondition(rdioTrue.isSelected() ? "true" : "false");
 		});
 		timeReceiver.getTextField().textProperty().addListener((ob, old, nval) -> {
-			updateCondition(cboBeforeAfter.getValue() + ";" + timeReceiver.getText() + ";time");
+			updateCondition(cboBeforeAfter.getValue() + ";" + timeReceiver.getText());
 		});
 		dateReceiver.getTextField().textProperty().addListener((ob, old, nval) -> {
-			updateCondition(cboBeforeAfter.getValue() + ";" + dateReceiver.getText() + ";date");
+			updateCondition(cboBeforeAfter.getValue() + ";" + dateReceiver.getText());
 		});
 
 		conditionPanes = new ArrayList<Node>();

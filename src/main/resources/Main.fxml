@@ -31,7 +31,7 @@
           </Menu>
         </menus>
       </MenuBar>
-		<SplitPane fx:id="splitPane" dividerPositions="0.21671195652173914, 0.7126358695652174" focusTraversable="true" layoutX="-3.0" layoutY="29.0" prefHeight="667.0" prefWidth="1476.0" AnchorPane.bottomAnchor="-3.0" AnchorPane.leftAnchor="-3.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="29.0">
+		<SplitPane fx:id="splitPane" dividerPositions="0.23369565217391305, 0.7112771739130435" focusTraversable="true" layoutX="-3.0" layoutY="29.0" prefHeight="667.0" prefWidth="1476.0" AnchorPane.bottomAnchor="-3.0" AnchorPane.leftAnchor="-3.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="29.0">
 			<items>
 				<TabPane fx:id="tabPane" prefHeight="691.0">
 					<stylesheets>
@@ -108,20 +108,6 @@
                                                 <Insets left="20.0" />
                                              </padding>
                                           </VBox>
-                                          <VBox fx:id="paneVariables" alignment="TOP_CENTER" fillWidth="false" layoutX="189.0" layoutY="20.0" prefHeight="196.0" prefWidth="184.0" spacing="5.0" stylesheets="@Styles.css" visible="false">
-                                             <children>
-                                                <ScrollPane hbarPolicy="NEVER" prefHeight="165.0" prefViewportWidth="99.0" prefWidth="198.0">
-                                                   <content>
-                                                      <VBox fx:id="vboxSurveyVars" alignment="TOP_CENTER" fillWidth="false" spacing="10.0">
-                                                         <padding>
-                                                            <Insets bottom="5.0" left="20.0" right="20.0" top="5.0" />
-                                                         </padding>
-                                                      </VBox>
-                                                   </content>
-                                                </ScrollPane>
-                                                <Button fx:id="btnAddVar" mnemonicParsing="false" onAction="#addVariable" text="New Attribute" />
-                                             </children>
-                                          </VBox>
                                        </children>
                                     </Pane>
                                  </content>
@@ -155,64 +141,127 @@
 			
 					</tabs>
 				</TabPane>
-            <TitledPane collapsible="false" prefHeight="718.0" text="Application Logic">
+            <TitledPane fx:id="paneLogic" collapsible="false" minWidth="0.0" prefHeight="718.0" text="Application Logic">
                <content>
-								<Pane fx:id="paneIntervention" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="685.0" prefWidth="720.0">
-									<stylesheets>
-										<URL value="@Styles.css" />
-									</stylesheets>
-								</Pane>
+            								<Pane fx:id="paneIntervention" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="0.0" prefHeight="686.0" prefWidth="695.0">
+            									<stylesheets>
+            										<URL value="@Styles.css" />
+            									</stylesheets>
+            								</Pane>
                </content>
             </TitledPane>
-            <TitledPane animated="false" collapsible="false" prefHeight="712.0" text="User Interface Design">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="632.0">
+            <SplitPane dividerPositions="0.598314606741573" minWidth="0.0" orientation="VERTICAL">
+              <items>
+                  <Pane>
                      <children>
-                        <ImageView fx:id="imgPhone" fitHeight="482.0" fitWidth="261.0" layoutX="142.0" layoutY="75.0" mouseTransparent="true" pickOnBounds="true">
-                           <image>
-                              <Image url="@img/icons/phone.png" />
-                           </image>
-                        </ImageView>
-                        <ScrollPane hbarPolicy="NEVER" layoutX="165.0" layoutY="187.0" prefHeight="310.0" prefViewportHeight="310.0" prefViewportWidth="215.0" prefWidth="215.0">
-                           <content>
-                              <Pane fx:id="paneAndroid" layoutX="165.0" layoutY="187.0" style="-fx-background-color: white;" stylesheets="@Styles.css" />
-                           </content>
-                        </ScrollPane>
-                        <Rectangle arcHeight="5.0" fill="#2914c6" height="21.0" layoutX="165.0" layoutY="134.0" mouseTransparent="true" stroke="#4c32f2" strokeType="OUTSIDE" width="213.0" />
-                        <Rectangle arcHeight="5.0" fill="#4c32f2" height="39.0" layoutX="165.0" layoutY="147.0" mouseTransparent="true" stroke="#4c32f2" strokeType="OUTSIDE" width="214.0" />
-                        <Label layoutX="200.0" layoutY="154.0" text="Jeeves" textFill="WHITE">
+                      <AnchorPane layoutX="-2.0" prefHeight="434.0" prefWidth="388.0">
+                           <children>
+                              <ImageView fx:id="imgPhone" fitHeight="414.0" fitWidth="261.0" layoutX="147.0" mouseTransparent="true" pickOnBounds="true">
+                                 <image>
+                                    <Image url="@img/icons/phone.png" />
+                                 </image>
+                              </ImageView>
+                              <ScrollPane hbarPolicy="NEVER" layoutX="170.0" layoutY="101.0" prefHeight="258.0" prefViewportHeight="310.0" prefViewportWidth="215.0" prefWidth="215.0">
+                                 <content>
+                                    <Pane fx:id="paneAndroid" layoutX="165.0" layoutY="187.0" style="-fx-background-color: white;" stylesheets="@Styles.css" />
+                                 </content>
+                              </ScrollPane>
+                              <Rectangle arcHeight="5.0" fill="#2914c6" height="21.0" layoutX="170.0" layoutY="48.0" mouseTransparent="true" stroke="#4c32f2" strokeType="OUTSIDE" width="213.0" />
+                              <Rectangle arcHeight="5.0" fill="#4c32f2" height="39.0" layoutX="170.0" layoutY="61.0" mouseTransparent="true" stroke="#4c32f2" strokeType="OUTSIDE" width="214.0" />
+                              <Label layoutX="205.0" layoutY="68.0" text="Jeeves" textFill="WHITE">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                              <ImageView fitHeight="18.0" fitWidth="17.0" layoutX="180.0" layoutY="70.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@img/icons/back.png" />
+                                 </image>
+                              </ImageView>
+                              <TitledPane animated="false" layoutX="19.0" layoutY="46.0" prefHeight="198.0" prefWidth="130.0" text="components">
+                                <content>
+                                    <Pane prefHeight="341.0" prefWidth="126.0">
+                                       <children>
+                                          <VBox fx:id="vboxUIElements" alignment="TOP_CENTER" centerShape="false" fillWidth="false" prefHeight="344.0" prefWidth="130.0" scaleShape="false">
+                                             <padding>
+                                                <Insets top="10.0" />
+                                             </padding>
+                                          </VBox>
+                                       </children>
+                                    </Pane>
+                                </content>
+                              </TitledPane>
+                              <Label layoutX="17.0" layoutY="14.0" text="Interface Design" underline="true">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </Pane>
+                  <Pane prefHeight="379.0" prefWidth="420.0">
+                     <children>
+                        <Label layoutX="17.0" layoutY="14.0" text="Patient Attributes" underline="true">
                            <font>
-                              <Font size="16.0" />
+                              <Font size="14.0" />
                            </font>
                         </Label>
-                        <ImageView fitHeight="18.0" fitWidth="17.0" layoutX="175.0" layoutY="156.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@img/icons/back.png" />
-                           </image>
-                        </ImageView>
-                        <TitledPane animated="false" layoutX="14.0" layoutY="132.0" prefHeight="368.0" prefWidth="130.0" text="components">
-                          <content>
-                              <Pane prefHeight="341.0" prefWidth="126.0">
-                                 <children>
-                                    <VBox fx:id="vboxUIElements" alignment="TOP_CENTER" centerShape="false" fillWidth="false" prefHeight="344.0" prefWidth="130.0" scaleShape="false">
+                        <HBox alignment="CENTER_LEFT" layoutX="17.0" layoutY="34.0" prefHeight="240.0" prefWidth="382.0" spacing="5.0">
+                           <children>
+                              <ScrollPane hbarPolicy="NEVER" prefHeight="240.0" prefWidth="168.0">
+                                <content>
+                                    <VBox fx:id="vboxSurveyVars" alignment="CENTER" fillWidth="false" spacing="10.0">
                                        <padding>
-                                          <Insets top="10.0" />
+                                          <Insets left="5.0" right="5.0" top="5.0" />
                                        </padding>
                                     </VBox>
+                                </content>
+                              </ScrollPane>
+                              <VBox alignment="TOP_CENTER" prefHeight="247.0" prefWidth="154.0" spacing="5.0">
+                                 <children>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <Label text="Name: " />
+                                          <TextField fx:id="txtAttrName" prefHeight="25.0" prefWidth="93.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <Label text="  Type: " />
+                                          <ChoiceBox fx:id="cboAttrType" prefHeight="25.0" prefWidth="92.0" />
+                                       </children>
+                                    </HBox>
+                                    <Button fx:id="btnAddVar" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#addAttribute" prefHeight="25.0" prefWidth="135.0" text="Add New Attribute" textAlignment="CENTER">
+                                       <HBox.margin>
+                                          <Insets left="5.0" />
+                                       </HBox.margin>
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin>
+                                    </Button>
+                                    <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="154.0" text="Sort Attributes By..." textAlignment="CENTER">
+                                       <VBox.margin>
+                                          <Insets top="20.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <Button fx:id="btnSortName" mnemonicParsing="false" onAction="#sortByName" prefHeight="25.0" prefWidth="83.0" text="Name" />
+                                    <Button fx:id="btnSortTIme" mnemonicParsing="false" onAction="#sortByTime" text="Time Added" />
+                                    <Button fx:id="btnType" mnemonicParsing="false" onAction="#sortByType" prefHeight="25.0" prefWidth="84.0" text="Type" />
                                  </children>
-                              </Pane>
-                          </content>
-                        </TitledPane>
+                              </VBox>
+                           </children>
+                        </HBox>
                      </children>
-                  </AnchorPane>
-              </content>
-            </TitledPane>
+                  </Pane>
+              </items>
+            </SplitPane>
 			</items>
 			<stylesheets>
 				<URL value="@Styles.css" />
 			</stylesheets>
 		</SplitPane>
-      <ImageView fx:id="imgTrash" fitHeight="99.0" fitWidth="65.0" layoutX="1010.0" layoutY="650.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="imgTrash" fitHeight="99.0" fitWidth="65.0" layoutX="925.0" layoutY="660.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@img/icons/recycle.png" />
          </image>

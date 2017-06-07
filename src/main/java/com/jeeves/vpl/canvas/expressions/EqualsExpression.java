@@ -8,7 +8,7 @@ import com.jeeves.vpl.firebase.FirebaseExpression;
 
 public class EqualsExpression extends Expression { // NO_UCD (unused code)
 	public static final String DESC = "evaluates to true if the two contained expressions/attributes are equal";
-	public static final String NAME = "equality";
+	public static final String NAME = "Equality";
 
 	public EqualsExpression() {
 		this(new FirebaseExpression());

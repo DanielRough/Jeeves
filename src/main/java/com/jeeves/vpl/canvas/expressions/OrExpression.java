@@ -7,7 +7,7 @@ import static com.jeeves.vpl.Constants.*;
 
 public class OrExpression extends Expression { // NO_UCD (unused code)
 	public static final String DESC = "returns true if either contained expression/attribute is true";
-	public static final String NAME = "is this OR that true";
+	public static final String NAME = "Either True";
 
 	public OrExpression() {
 		this(new FirebaseExpression());

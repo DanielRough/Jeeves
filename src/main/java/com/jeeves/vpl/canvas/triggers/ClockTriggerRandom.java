@@ -12,6 +12,7 @@ import com.jeeves.vpl.canvas.expressions.UserVariable;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
 
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
@@ -78,22 +79,25 @@ public class ClockTriggerRandom extends ClockTrigger { // NO_UCD (use default)
 				}
 			}
 		});
-		txtFieldRandom.addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
+		txtFieldRandom.textProperty().addListener(new ChangeListener<String>(){
 
 			@Override
-			public void handle(KeyEvent arg0) {
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				if (txtFieldRandom.getText().equals(""))
 					return;
-				long intervalTriggerTime = Long.parseLong(txtFieldRandom.getText());// *
+		//		long intervalTriggerTime = Long.parseLong(txtFieldRandom.getText());// *
 																					// 1000;
-				if (duration.equals("hours"))
-					intervalTriggerTime *= 60;
-				params.put(INTERVAL_WINDOW, intervalTriggerTime);
-				params.put("frequency", txtFieldRandom.getText());
+//				if (duration.equals("hours"))
+//					intervalTriggerTime *= 60;
+			//	params.put(INTERVAL_WINDOW, intervalTriggerTime);
+				params.put(INTERVAL_WINDOW, txtFieldRandom.getText());
 			}
 		});
 		cboRandom.valueProperty()
 				.addListener((ChangeListener<String>) (arg0, arg1, arg2) -> params.put("granularity", arg2));
+		
+		if(!model.getparams().containsKey("frequency"))
+			txtFieldRandom.setText("60");
 	}
 
 	@Override
@@ -131,8 +135,8 @@ public class ClockTriggerRandom extends ClockTrigger { // NO_UCD (use default)
 			duration = "minutes";
 		cboRandom.setValue(duration);
 
-		if (params.containsKey("frequency")) {
-			frequencyR = params.get("frequency").toString();
+		if (params.containsKey(INTERVAL_WINDOW)) {
+			frequencyR = params.get(INTERVAL_WINDOW).toString();
 			txtFieldRandom.setText(frequencyR);
 		}
 		if (model.gettimeFrom() != null) {
@@ -151,9 +155,12 @@ public class ClockTriggerRandom extends ClockTrigger { // NO_UCD (use default)
 		// paneDate.getChildren().add(new CalendarEveryday());
 		if (params.containsKey(DATE_FROM)) {
 			dateFrom = ((Long) params.get(DATE_FROM)).intValue();
+
+		}
+		if (params.containsKey(DATE_TO)) {
 			dateTo = ((Long) params.get(DATE_TO)).intValue();
 		}
-		addListeners();
+				addListeners();
 	}
 
 	@Override

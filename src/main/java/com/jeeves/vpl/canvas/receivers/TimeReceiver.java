@@ -1,22 +1,36 @@
 package com.jeeves.vpl.canvas.receivers;
 
 import java.net.URL;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Point2D;
-import javafx.scene.Node;
-import javafx.scene.control.TextField;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.stage.Popup;
+import java.util.Calendar;
+import java.util.Date;
 
 import com.jeeves.vpl.TextUtils;
 import com.jeeves.vpl.ViewElement;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBoxBuilder;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Popup;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class TimeReceiver extends ExpressionReceiver {
 	public class NewTimePane extends Pane {
@@ -26,8 +40,22 @@ public class TimeReceiver extends ExpressionReceiver {
 		private TextField txtHours;
 		@FXML
 		private TextField txtMins;
-
-		public NewTimePane() {
+		@FXML
+		private Button btnOK;
+		private EventHandler<MouseEvent> closeHandler;
+		private Stage stage;
+		private TextField texty;
+		
+		private String padWithZeroes(int number) {
+			if (number > 9)
+				return Integer.toString(number);
+			else
+				return "0" + Integer.toString(number);
+		}
+		
+		public NewTimePane(Stage stage, TextField texty) {
+			this.stage = stage;
+			this.texty =  texty;
 			FXMLLoader fxmlLoader = new FXMLLoader();
 			fxmlLoader.setController(this);
 			URL location = this.getClass().getResource("/PopupNewTime.fxml");
@@ -38,12 +66,28 @@ public class TimeReceiver extends ExpressionReceiver {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
+			btnOK.setOnAction(handler->{
+				try{
+				int hours = Integer.parseInt(txtHours.getText());
+				int mins = Integer.parseInt(txtMins.getText());
+				texty.setText(padWithZeroes(hours) + ":" + padWithZeroes(mins));
+				}
+				catch(NumberFormatException e){
+					//do nothing
+				}
+				stage.close();
+			});
+			txtHours.addEventHandler(KeyEvent.KEY_PRESSED, handler->{
+				if(handler.getCode() == KeyCode.ENTER)
+					closeHandler.handle(null);
+			});
 			txtHours.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
 
 				@Override
 				public void handle(KeyEvent arg0) {
+					
 					String ch = arg0.getCharacter();
+					
 					int x = 0;
 					try {
 						x = Integer.parseInt(ch);
@@ -65,10 +109,16 @@ public class TimeReceiver extends ExpressionReceiver {
 				if (hours > 2)
 					txtMins.requestFocus();
 			});
+			txtMins.addEventHandler(KeyEvent.KEY_PRESSED, handler->{
+				if(handler.getCode() == KeyCode.ENTER)
+					closeHandler.handle(null);
+			});
 			txtMins.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
 
 				@Override
 				public void handle(KeyEvent arg0) {
+					if(arg0.getCode().equals(KeyCode.ENTER))
+						closeHandler.handle(null);
 					if (txtMins.getText().length() == 2) {
 						arg0.consume();
 						return;
@@ -130,7 +180,7 @@ public class TimeReceiver extends ExpressionReceiver {
 					captureRect.setWidth(text.getPrefWidth());
 				}
 			};
-			((ViewElement) event.getSource()).addEventHandler(MouseEvent.MOUSE_PRESSED, removeEvent);
+			((ViewElement) event.getGestureSource()).addEventHandler(MouseEvent.MOUSE_PRESSED, removeEvent);
 		};
 
 	}
@@ -138,7 +188,8 @@ public class TimeReceiver extends ExpressionReceiver {
 	public String getText() {
 		String clockText = text.getText();
 		String[] hoursmins = clockText.split(":");
-		String value = Integer.toString(Integer.parseInt(hoursmins[0]) * 60 + Integer.parseInt(hoursmins[1]));
+		//return milliseconds since midnight
+		String value = Integer.toString((Integer.parseInt(hoursmins[0]) * 60 + Integer.parseInt(hoursmins[1]))*60000);
 		return value;
 	}
 
@@ -147,7 +198,7 @@ public class TimeReceiver extends ExpressionReceiver {
 		return text;
 	}
 
-	public String padWithZeroes(int number) {
+	private String padWithZeroes(int number) {
 		if (number > 9)
 			return Integer.toString(number);
 		else
@@ -185,33 +236,20 @@ public class TimeReceiver extends ExpressionReceiver {
 				if (arg2 == false) {
 					captureRect.toFront();
 				} else {
-					Popup pop = new Popup();
-					NewTimePane pane = new NewTimePane();
-					pop.getContent().add(pane);
-					Point2D screenpoint = text.localToScreen(new Point2D(text.getLayoutX(), text.getLayoutY()));
-					pop.setX(screenpoint.getX());
-					pop.setY(screenpoint.getY());
-					pop.setAutoHide(true);
-					pop.setHideOnEscape(true);
-					pane.addEventHandler(MouseEvent.ANY, new EventHandler<MouseEvent>() {
+					captureRect.requestFocus();
+					 final Stage myDialog = new Stage();
 
-						@Override
-						public void handle(MouseEvent arg0) {
-							if (arg0.getEventType().equals(MouseEvent.MOUSE_EXITED))
-								pop.hide();
-						}
+					NewTimePane pane = new NewTimePane(myDialog,text);
+				        myDialog.initModality(Modality.APPLICATION_MODAL);
+				        Scene myDialogScene = new Scene(pane);
+				        myDialog.setScene(myDialogScene);
+						Point2D screenpoint = text.localToScreen(new Point2D(text.getLayoutX(), text.getLayoutY()));
+				        myDialog.setX(screenpoint.getX()+50);
+				        myDialog.setY(screenpoint.getY());
+				        myDialog.initStyle(StageStyle.TRANSPARENT);
+				        myDialog.setIconified(false);
 
-					});
-					TextField hours = pane.getTxtHours();
-					TextField mins = pane.getTxtMins();
-					hours.textProperty().addListener(listener -> {
-						setTextFromActual(hours.getText(), mins.getText());
-					});
-					mins.textProperty().addListener(listener -> {
-						setTextFromActual(hours.getText(), mins.getText());
-					});
-					pop.show(text, screenpoint.getX(), screenpoint.getY());
-
+				        myDialog.show();
 				}
 			}
 
@@ -231,27 +269,12 @@ public class TimeReceiver extends ExpressionReceiver {
 
 	public void setText(String newtext) {
 		try {
-			int totalmins = Integer.parseInt(newtext);
-			int hours = totalmins / 60;
-			int mins = totalmins % 60;
-			text.setText(padWithZeroes(hours) + ":" + padWithZeroes(mins));
+			long midnightMillis = Long.parseLong(newtext);
+			int midnightMinutes = (int)midnightMillis/60000;
+			text.setText(padWithZeroes(midnightMinutes/60) + ":" + padWithZeroes(midnightMinutes%60));
 		} catch (NumberFormatException e) {
 			text.setText(newtext);
 		}
 	}
 
-	public void setTextFromActual(String hours, String mins) {
-		int hrs, mns;
-		try {
-			hrs = Integer.parseInt(hours);
-		} catch (NumberFormatException e) {
-			hrs = 0;
-		}
-		try {
-			mns = Integer.parseInt(mins);
-		} catch (NumberFormatException e) {
-			mns = 0;
-		}
-		text.setText(padWithZeroes(hrs) + ":" + padWithZeroes(mns));
-	}
 }

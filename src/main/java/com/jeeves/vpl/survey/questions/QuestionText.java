@@ -55,7 +55,7 @@ public class QuestionText extends QuestionView {
 	// }
 	@Override
 	public String getLabel() {
-		return "Enter free text into a text box";
+		return "Enter free text";
 	}
 
 	@Override

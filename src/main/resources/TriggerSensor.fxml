@@ -16,7 +16,7 @@
     <ImageView fx:id="imgSensorImage" fitHeight="43.0" fitWidth="40.0" layoutX="15.0" layoutY="7.0" pickOnBounds="true" preserveRatio="false" />
       <Pane layoutX="14.0" layoutY="57.0" prefHeight="30.0" styleClass="trigger">
          <children>
-            <HBox fx:id="hboxBox" spacing="5.0">
+            <HBox fx:id="hboxBox" alignment="CENTER" fillHeight="false" spacing="5.0">
                <children>
                 <Label alignment="CENTER" contentDisplay="CENTER" layoutY="3.0" prefHeight="26.0" prefWidth="40.0" text="When" textAlignment="RIGHT" textFill="WHITE">
                   <font>
@@ -32,19 +32,16 @@
                         <Insets top="4.0" />
                      </HBox.margin>
                   </ComboBox>
-                <Label alignment="CENTER" contentDisplay="CENTER" layoutX="90.0" prefHeight="26.0" prefWidth="55.0" text="returns" textAlignment="RIGHT" textFill="WHITE">
+                <Label alignment="CENTER" contentDisplay="CENTER" layoutX="90.0" prefHeight="26.0" prefWidth="76.0" text="changes to" textAlignment="RIGHT" textFill="WHITE">
                      <font>
                         <Font size="13.0" />
                      </font>
                   </Label>
-                  <ComboBox fx:id="cboClassifications" layoutX="145.0" layoutY="6.0">
+                  <ComboBox fx:id="cboClassifications">
                      <styleClass>
                         <String fx:value="styled-select" />
                         <String fx:value="shadowy" />
                      </styleClass>
-                     <HBox.margin>
-                        <Insets top="4.0" />
-                     </HBox.margin>
                   </ComboBox>
                </children>
                <padding>

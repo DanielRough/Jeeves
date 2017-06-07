@@ -16,11 +16,18 @@ public class FirebaseTrigger extends FirebaseElement implements Serializable {
 	private FirebaseExpression dateFrom;
 	private FirebaseExpression dateTo;
 	private List<FirebaseExpression> times;
+	private List<String> variables;
 	private FirebaseExpression timeFrom;
 	private FirebaseExpression timeTo;
 	private String triggerId;
 
 
+	public List<String> getvariables(){
+		return variables;
+	}
+	public void setvariables(List<String> variables){
+		this.variables = variables;
+	}
 	public List<FirebaseAction> getactions() {
 		return actions;
 	}

@@ -7,7 +7,7 @@ import static com.jeeves.vpl.Constants.*;
 
 public class LessExpression extends Expression { // NO_UCD (unused code)
 	public static final String DESC = "returns true if the left number is less than the right number";
-	public static final String NAME = "less than";
+	public static final String NAME = "Less Than";
 
 	public LessExpression() {
 		this(new FirebaseExpression());

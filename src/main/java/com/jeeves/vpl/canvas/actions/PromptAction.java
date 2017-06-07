@@ -87,7 +87,7 @@ public class PromptAction extends Action { // NO_UCD (unused code)
 
 	@Override
 	public String getViewPath() {
-		return String.format("/ActionSendPrompt.fxml", this.getClass().getSimpleName());
+		return String.format("/actionSendPrompt.fxml", this.getClass().getSimpleName());
 	}
 
 	@Override

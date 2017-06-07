@@ -7,7 +7,9 @@ import static com.jeeves.vpl.Constants.styleTextCombo;
 
 import com.jeeves.vpl.ParentPane;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
+
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -91,24 +93,25 @@ public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 				}
 			}
 		});
-		txtFieldInterval.addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
+		txtFieldInterval.textProperty().addListener(new ChangeListener<String>(){
 
 			@Override
-			public void handle(KeyEvent arg0) {
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				if (txtFieldInterval.getText().equals(""))
 					return;
 				long intervalTriggerTime = Long.parseLong(txtFieldInterval.getText());// *
 																						// 1000;
-				if (duration.equals("hours"))
-					intervalTriggerTime *= 60;
+//				if (duration.equals("hours"))
+//					intervalTriggerTime *= 60;
 				params.put(INTERVAL_TRIGGER_TIME, intervalTriggerTime);
-			//	params.put("intervalTime", txtFieldInterval.getText());
+			//	params.put("intervalTime", txtFieldInterval.getText());				
 			}
 		});
 
 		cboInterval.valueProperty()
 				.addListener((ChangeListener<String>) (arg0, arg1, arg2) -> params.put("granularity", arg2));
-
+		if(!model.getparams().containsKey(INTERVAL_TRIGGER_TIME))
+			txtFieldInterval.setText("60");
 	}
 
 	@Override

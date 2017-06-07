@@ -91,6 +91,9 @@ public class SendTextAction extends Action { // NO_UCD (unused code)
 			params.put("recipient", "");
 		}
 	});
+    numberReceiver.getTextField().textProperty().addListener(listener->{
+    	params.put("recipient", numberReceiver.getTextField().getText());
+    });
 	}
 
 	@Override
@@ -107,7 +110,7 @@ public class SendTextAction extends Action { // NO_UCD (unused code)
 
 	@Override
 	public String getViewPath() {
-		return String.format("/ActionSendText.fxml", this.getClass().getSimpleName());
+		return String.format("/actionSendText.fxml", this.getClass().getSimpleName());
 	}
 
 	@Override
@@ -132,8 +135,10 @@ public class SendTextAction extends Action { // NO_UCD (unused code)
 			smsText.setText(messagetext);
 		}
 		if (params.containsKey("recipient"))
-			setRecipient((Map<String,Object>)params.get("recipient"));
-
+			if(params.get("recipient") instanceof Map)
+				setRecipient((Map<String,Object>)params.get("recipient"));
+			else
+				numberReceiver.getTextField().setText(params.get("recipient").toString());
 	}
 
 	public void setRecipient(Map<String,Object> rec) {

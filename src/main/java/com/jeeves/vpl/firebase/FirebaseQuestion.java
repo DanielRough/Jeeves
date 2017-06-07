@@ -39,12 +39,7 @@ public class FirebaseQuestion extends FirebaseElement implements Serializable {
 	public String getimage() {
 		return image;
 	}
-//
-//	public Map<String, Object> getOptions() {
-//		if (params.containsKey("options"))
-//			return (Map<String, Object>) params.get("options");
-//		return new HashMap<String, Object>();
-//	}
+
 
 	@Override
 	public Map<String, Object> getparams() {

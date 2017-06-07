@@ -54,7 +54,7 @@ public class UIButton extends UIElement { // NO_UCD (unused code)
 
 	@Override
 	public String getViewPath() {
-		return String.format("/UIButton.fxml", this.getClass().getSimpleName());
+		return String.format("/uiButton.fxml", this.getClass().getSimpleName());
 	}
 
 	@Override

@@ -7,7 +7,7 @@ import static com.jeeves.vpl.Constants.*;
 
 public class NotExpression extends Expression { // NO_UCD (unused code)
 	public static final String DESC = "returns true if the contained expression/attribute is false";
-	public static final String NAME = "is this false";
+	public static final String NAME = "Not True";
 
 	public NotExpression() {
 		this(new FirebaseExpression());

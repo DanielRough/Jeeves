@@ -47,9 +47,9 @@
          <content>
             <Pane fx:id="paneReceiver" layoutX="18.0" layoutY="77.0" prefWidth="292.0">
                <children>
-                  <Pane fx:id="paneDropRect" prefHeight="66.0" prefWidth="292.0" styleClass="addQuestionPane" stylesheets="@Styles.css">
+                  <Pane fx:id="paneDropRect" prefHeight="55.0" prefWidth="292.0" styleClass="addQuestionPane" stylesheets="@Styles.css">
                      <children>
-                        <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="28.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="28.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@img/icons/downarrow.png" />
                            </image>

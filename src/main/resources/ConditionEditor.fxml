@@ -39,7 +39,7 @@
             <HBox fx:id="hboxDateOpts" alignment="CENTER_LEFT" layoutX="6.0" layoutY="25.0" spacing="5.0" visible="false">
                <children>
                   <ComboBox fx:id="cboBeforeAfter" layoutX="6.0" layoutY="25.0" prefHeight="26.0" prefWidth="124.0" visible="false" />
-                  <Pane fx:id="paneDateTimeReceiver" prefWidth="135.0" visible="false" />
+                  <HBox fx:id="paneDateTimeReceiver" />
                </children>
             </HBox>
          </children>

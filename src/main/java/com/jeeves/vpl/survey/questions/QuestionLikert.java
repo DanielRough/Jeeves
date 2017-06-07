@@ -93,13 +93,12 @@ public class QuestionLikert extends QuestionView {
 		});
 
 		fields = new TextField[] { txtLikert1, txtLikert2, txtLikert3, txtLikert4, txtLikert5, txtLikert6, txtLikert7 };
-		for (TextField field : fields) {
-			field.setText("");
-		}
+
 
 		for (TextField field : fields) {
 			field.textProperty().addListener(change -> handleUpdateScale());
 		}
+
 	}
 
 	@Override
@@ -137,6 +136,14 @@ public class QuestionLikert extends QuestionView {
 		}
 	}
 
+	@Override
+	public void fxmlInit(){
+		super.fxmlInit();
+		int count = 1;
+		for (TextField field : fields) {
+			field.setText(""+count++); //add default values in so that we have at least SOME sort of parameters
+		}
+	}
 	@Override
 	public void showEditOpts(Map<String, Object> opts) {
 		if (opts == null) {

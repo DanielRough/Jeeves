@@ -1,5 +1,10 @@
 package com.jeeves.vpl;
 
+import static com.jeeves.vpl.Constants.SHOULD_UPDATE_TRIGGERS;
+import static com.jeeves.vpl.Constants.VAR_BOOLEAN;
+import static com.jeeves.vpl.Constants.VAR_CLOCK;
+import static com.jeeves.vpl.Constants.VAR_DATE;
+import static com.jeeves.vpl.Constants.VAR_LOCATION;
 import static com.jeeves.vpl.Constants.VAR_NUMERIC;
 import static com.jeeves.vpl.Constants.actionNames;
 import static com.jeeves.vpl.Constants.exprNames;
@@ -9,6 +14,7 @@ import static com.jeeves.vpl.Constants.uiElementNames;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +39,8 @@ import com.jeeves.vpl.survey.questions.QuestionView;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -49,6 +57,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
@@ -60,6 +69,8 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.SplitPane.Divider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
@@ -148,8 +159,8 @@ public class Main extends Application {
 	private VBox paneQuestions;
 	@FXML
 	private VBox paneTriggers;
-	@FXML
-	private VBox paneVariables;
+//	@FXML
+//	private VBox paneVariables;
 	private PatientPane patientController;
 
 	private Stage primaryStage;
@@ -178,6 +189,22 @@ public class Main extends Application {
 	@FXML
 	private VBox vboxUIElements;
 
+	@FXML
+	private TitledPane paneLogic;
+	
+	@FXML 
+	private TextField txtAttrName;
+	@FXML
+	private ChoiceBox<String> cboAttrType;
+	
+	private StringProperty connectedStatus;
+	
+	public void updateConnecetedStatus(boolean connected){
+		if(connected)
+			connectedStatus.set("Online - ready to make app changes!");
+		else
+			connectedStatus.set("Offline - changes will be made on reconnection");
+	}
 	private EventHandler<MouseEvent> viewElementHandler;
 
 	ArrayList<ViewElement> elements;
@@ -189,6 +216,7 @@ public class Main extends Application {
 		currentGUI = this;
 		this.primaryStage = primaryStage;
 		primaryStage.setResizable(false);
+		connectedStatus = new SimpleStringProperty();
 		firebase = new FirebaseDB(this);
 		firebase.addListeners();
 		firebase.getprojects().addListener(new ListChangeListener<FirebaseProject>() {
@@ -219,8 +247,21 @@ public class Main extends Application {
 		patientController = new PatientPane(this, firebase);
 		tabUsers.setContent(patientController);
 		currentproject = new FirebaseProject();
+		
+		paneLogic.setText(connectedStatus.get());
+		connectedStatus.addListener(new ChangeListener<String>(){
 
-		// isNewProject = true;
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+				paneLogic.setText(newValue);
+					}
+				});
+			}
+			
+		});
 
 		Platform.runLater(new Runnable() {
 			@Override
@@ -305,6 +346,8 @@ public class Main extends Application {
 														// again or they get
 														// duplicated every time
 		}
+		cboAttrType.getItems().clear();
+		cboAttrType.getItems().addAll("True/False","Date","Time","Location","Number");
 	}
 
 	@FXML
@@ -466,10 +509,11 @@ public class Main extends Application {
 				if (arg2.doubleValue() < 0.7)
 					d1.setPosition(0.7);
 				else
-					imgTrash.setLayoutX(arg2.doubleValue() * myPane.getWidth() - 37);
+					imgTrash.setLayoutX(arg2.doubleValue() * myPane.getWidth() - 50);
 			}
 
 		});
+		d1.setPosition(0.7);
 		viewElementHandler = new EventHandler<MouseEvent>() {
 
 			@Override
@@ -577,6 +621,8 @@ public class Main extends Application {
 	}
 
 	public void setCurrentProject(FirebaseProject project){
+		SHOULD_UPDATE_TRIGGERS = false;
+
 		currentproject = project;
 		primaryStage.setTitle("Jeeves - " + project.getname());
 		patientController.loadPatients(); // Reset so we have the
@@ -592,6 +638,8 @@ public class Main extends Application {
 			element.setHandler(viewElementHandler);
 		}
 		loadVariables();
+		SHOULD_UPDATE_TRIGGERS = true;
+
 	}
 	private void loadProjectsIntoMenu() {
 		mnuStudies.getItems().clear();
@@ -640,6 +688,7 @@ public class Main extends Application {
 		if (surveyBox.getChildren().size() > 1)
 			surveyBox.getChildren().remove(1);
 		surveyController = new SurveyPane();
+		
 		surveyBox.getChildren().add(surveyController); // reset dat shit
 		surveyController.registerSurveyListener(new ListChangeListener<FirebaseSurvey>(){
 
@@ -745,15 +794,15 @@ public class Main extends Application {
 		Divider divider = splitPane.getDividers().get(0);
 		double fractionwidth = paneFrame.getWidth() / splitPane.getWidth();
 		divider.setPosition(fractionwidth);
-
-		if (pane.equals(paneConditions)) {
-			paneVariables.setVisible(true);
-			paneVariables.toFront();
-			divider.setPosition((30 + paneVariables.getBoundsInParent().getMaxX()) / splitPane.getWidth());
-		} else {
-			paneVariables.setVisible(false);
-			paneVariables.toBack();
-		}
+//
+//		if (pane.equals(paneConditions)) {
+//			paneVariables.setVisible(true);
+//			paneVariables.toFront();
+//			divider.setPosition((30 + paneVariables.getBoundsInParent().getMaxX()) / splitPane.getWidth());
+//		} else {
+//			paneVariables.setVisible(false);
+//			paneVariables.toBack();
+//		}
 	}
 
 	boolean isOverTrash(double mouseX, double mouseY) {
@@ -762,7 +811,6 @@ public class Main extends Application {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	void setProject() {
-
 		ArrayList<ViewElement> views = new ArrayList<ViewElement>();
 		for (FirebaseTrigger trig : currentproject.gettriggers()) {
 			Trigger triggerview = Trigger.create(trig);
@@ -806,5 +854,87 @@ public class Main extends Application {
 			view.addEventHandler(MouseEvent.ANY, view.mainHandler);
 		});
 
+	}
+	
+	//Attributes stuff
+	
+	@FXML
+	public void addAttribute(Event e){
+		FirebaseVariable var = new FirebaseVariable();
+		String attrName = txtAttrName.getText();
+		if(attrName.isEmpty()){
+			return;
+		}
+		var.setname(attrName);
+		String attrType = cboAttrType.getValue();
+		if(attrType == null || attrType.isEmpty()){
+			return;
+		}
+		switch(attrType){
+		case "True/False":var.setVartype(VAR_BOOLEAN);break;
+		case "Number":var.setVartype(VAR_NUMERIC);break;
+		case "Date":var.setVartype(VAR_DATE); break;
+		case "Time":var.setVartype(VAR_CLOCK);break;
+		case "Location":var.setVartype(VAR_LOCATION);break;
+		}
+		System.out.println("VAR TYPE IS " + var.gettype());
+		var.setisCustom(true);
+		var.settimeCreated(System.currentTimeMillis());
+		addVariable(var);
+		loadVariables();
+	//	UserVariable newvar = UserVariable.create(var);
+		
+	}
+	class NameComparator implements Comparator<FirebaseVariable> {
+	    @Override
+	    public int compare(FirebaseVariable a, FirebaseVariable b) {
+	    	return a.getname().compareToIgnoreCase(b.getname());
+//	        return a.name.compareToIgnoreCase(b.name);
+	    }
+	}
+	class TypeComparator implements Comparator<FirebaseVariable> {
+	    @Override
+	    public int compare(FirebaseVariable a, FirebaseVariable b) {
+	        return a.getvartype().compareToIgnoreCase(b.getvartype());
+	    }
+	}
+	class AgeComparator implements Comparator<FirebaseVariable> {
+	    @Override
+	    public int compare(FirebaseVariable a, FirebaseVariable b) {
+	        return a.gettimeCreated() >= b.gettimeCreated() ? 1 : -1;
+	    }
+	}
+	
+	public void reAddVariables(){
+		vboxSurveyVars.getChildren().clear();
+		currentvariables.forEach(variable->{
+			UserVariable global = new UserVariable(variable);
+
+		ViewElement<FirebaseExpression> draggable = new UserVariable(variable);
+		global.setDraggable(draggable); // DJRNEW
+		global.setReadOnly();
+		setElementParent(draggable);
+		global.setHandler(viewElementHandler);
+		vboxSurveyVars.getChildren().add(global);
+		});
+	}
+	@FXML
+	public void sortByName(Event e){
+		currentvariables.sort(new NameComparator());
+		reAddVariables();
+	//	currentvariables.add(variable);
+	
+	}
+	
+	@FXML
+	public void sortByTime(Event e){
+		currentvariables.sort(new AgeComparator());
+		reAddVariables();
+	}
+	
+	@FXML
+	public void sortByType(Event e){
+		currentvariables.sort(new TypeComparator());
+		reAddVariables();
 	}
 }

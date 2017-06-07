@@ -21,6 +21,16 @@ public class FirebaseExpression extends FirebaseElement implements Serializable 
 	private List<FirebaseExpression> variables = new ArrayList<FirebaseExpression>();
 	private String vartype;
 
+	private long timeCreated;
+	
+	public void settimeCreated(long time){
+		this.timeCreated = time;
+		
+	}
+	
+	public long gettimeCreated(){
+		return timeCreated;
+	}
 	public long getindex() {
 		return index;
 	}

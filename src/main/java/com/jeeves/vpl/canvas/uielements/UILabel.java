@@ -53,7 +53,7 @@ public class UILabel extends UIElement { // NO_UCD (unused code)
 
 	@Override
 	public String getViewPath() {
-		return String.format("/UILabel.fxml", this.getClass().getSimpleName());
+		return String.format("/uiLabel.fxml", this.getClass().getSimpleName());
 	}
 
 	@Override

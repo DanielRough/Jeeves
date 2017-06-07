@@ -27,6 +27,8 @@
 	-fx-background-color: linear-gradient(#660198, #4B0082);
 	-fx-border-radius: 0 15 15 0;
 	-fx-background-radius: 0 15 15 0;
+	-fx-background: #4B0082;
+	-fx-fill:  #4B0082;
 }
 
 .action_join {

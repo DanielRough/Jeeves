@@ -1,6 +1,6 @@
 package com.jeeves.vpl.survey;
 
-import static com.jeeves.vpl.Constants.CONSTRAINT_NUMS;
+import static com.jeeves.vpl.Constants.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -102,7 +102,8 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 		receiver.getChildElements().addListener(new ListChangeListener<Node>() {
 			@Override
 			public void onChanged(javafx.collections.ListChangeListener.Change<? extends Node> arg0) {
-
+				//new question, better update the survey ID!
+				getModel().setsurveyId(getSaltString());
 				arg0.next();
 				if (arg0.wasAdded()) {
 					ViewElement added = (ViewElement) arg0.getAddedSubList().get(0);
@@ -134,11 +135,21 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 
 	public void addQuestion(int index, QuestionView view) {
 		surveyQuestions.add(index, view);
+
 		view.setReadOnly(false);
 		view.addButtons();
 		view.getEditButton().setOnAction(event -> {
 			editor.populateQuestion(view);
 			paneEditor.setDisable(false);
+		});
+		view.questionTextProperty.addListener(new ChangeListener<String>(){
+
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				if(!newValue.isEmpty())
+				getModel().setsurveyId(getSaltString()); //question text changed, again survey ID needs to be updated
+			}
+			
 		});
 		view.getDeleteButton().setOnAction(event -> {
 			Stage stage = new Stage(StageStyle.UNDECORATED);
@@ -154,7 +165,7 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 	public void fxmlInit() {
 		FXMLLoader surveyLoader = new FXMLLoader();
 		surveyLoader.setController(this);
-		surveyLoader.setLocation(getClass().getResource("/Survey.fxml"));
+		surveyLoader.setLocation(getClass().getResource("/survey.fxml"));
 		Pane surveynode;
 
 		surveyQuestions = FXCollections.observableArrayList();
@@ -204,6 +215,7 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 	}
 
 	public void removeQuestion(QuestionView question) {
+
 		if (model.getquestions().contains(question.getModel())) {
 			model.getquestions().remove(question.getModel());
 			receiver.removeChild(question);

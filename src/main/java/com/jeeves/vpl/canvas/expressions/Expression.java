@@ -14,7 +14,10 @@ import com.jeeves.vpl.firebase.FirebaseVariable;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.MapChangeListener;
+import javafx.collections.ObservableMap;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -30,6 +33,7 @@ import javafx.scene.layout.HBox;
  */
 
 public abstract class Expression extends ViewElement<FirebaseExpression> implements Typed {
+	protected ObservableMap<String, Object> params;
 
 	public static Expression create(FirebaseExpression exprmodel) {
 		String classname = exprmodel.gettype();
@@ -45,7 +49,7 @@ public abstract class Expression extends ViewElement<FirebaseExpression> impleme
 	private Label rbracket;
 	protected HBox box;
 	protected Label operand; 
-	protected Map<String, Object> params = new HashMap<String, Object>();
+//	protected Map<String, Object> params = new HashMap<String, Object>();
 														
 	protected ArrayList<ExpressionReceiver> receivers; 
 	protected String varType;
@@ -67,6 +71,23 @@ public abstract class Expression extends ViewElement<FirebaseExpression> impleme
 	@Override
 	public void addListeners() {
 		super.addListeners();
+		params = FXCollections.observableHashMap();
+		if (params != null) {
+			params.addListener(new MapChangeListener<String, Object>() {
+
+				@Override
+				public void onChanged(
+						javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
+
+					if (change.wasAdded()) {
+						model.getparams().put(change.getKey(), change.getValueAdded());
+					} else {
+						model.getparams().remove(change.getKey());
+					}
+				}
+
+			});
+		}
 		for (ExpressionReceiver receiver : receivers) {
 			receiver.getTextField().textProperty().addListener(new ChangeListener<String>(){
 				public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -76,6 +97,8 @@ public abstract class Expression extends ViewElement<FirebaseExpression> impleme
 					var.setIsValue(true);
 					UserVariable variable = UserVariable.create(var);
 					addExprToReceiver(variable,receivers.indexOf(receiver));
+					params.put("update","updated");
+					params.remove("update");	
 				}});			
 			receiver.getChildElements().addListener((ListChangeListener<ViewElement>) arg0 -> {
 				// ViewElement expr = receiver.getChildElements().get(0);
@@ -83,6 +106,8 @@ public abstract class Expression extends ViewElement<FirebaseExpression> impleme
 					addExprToReceiver(receiver.getChildElements().get(0), receivers.indexOf(receiver));
 				else
 					removeExprFromReceiver(receivers.indexOf(receiver));
+				params.put("update","updated");
+				params.remove("update");	
 				autosize();
 			});
 			
@@ -112,7 +137,9 @@ public abstract class Expression extends ViewElement<FirebaseExpression> impleme
 	public String getVarType() {
 		return varType;
 	}
-
+	public ObservableMap<String, Object> getparams() {
+		return params;
+	}
 	@Override
 	public Node[] getWidgets() {
 		Node[] nodes = new Node[receivers.size()];
