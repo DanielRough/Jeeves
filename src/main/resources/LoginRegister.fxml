@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="blueprint" stylesheets="@Styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label layoutX="127.0" layoutY="27.0" text="Jeeves - Experience Sampling at your service!">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <VBox layoutX="14.0" layoutY="76.0" prefHeight="310.0" prefWidth="262.0" spacing="5.0">
+         <children>
+            <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="262.0" spacing="10.0">
+               <children>
+                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/icons/id-card.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="27.0" prefWidth="243.0" text="Log In">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <Label text="Enter your username and password to log in" />
+            <TextField fx:id="txtUsername" prefHeight="35.0" promptText="Username" />
+            <PasswordField fx:id="txtPassword" prefHeight="35.0" promptText="Password" />
+            <Button fx:id="btnLogin" mnemonicParsing="false" onAction="#login" prefHeight="35.0" prefWidth="272.0" text="Log In" />
+            <CheckBox mnemonicParsing="false" text="Remember me on this machine" />
+            <Label fx:id="lblError" alignment="CENTER" prefHeight="81.0" prefWidth="254.0" textAlignment="CENTER" textFill="#c93a3a" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+         </children>
+      </VBox>
+      <VBox layoutX="324.0" layoutY="76.0" prefHeight="310.0" prefWidth="262.0" spacing="5.0">
+         <children>
+            <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="262.0" spacing="10.0">
+               <children>
+                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/icons/edit.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="27.0" prefWidth="251.0" text="Register">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <Label text="Fill in this form to get access to Jeeves" />
+            <TextField fx:id="txtFirstName" prefHeight="35.0" promptText="First name" />
+            <TextField fx:id="txtLastName" prefHeight="35.0" promptText="Last name" />
+            <TextField fx:id="txtEmail" prefHeight="35.0" promptText="Email address" />
+            <PasswordField fx:id="txtRegPassword" prefHeight="35.0" promptText="Password" />
+            <PasswordField fx:id="txtRegPasswordConfirm" prefHeight="35.0" promptText="Confirm Password" />
+            <Button fx:id="txtRegister" mnemonicParsing="false" onAction="#validate" prefHeight="35.0" prefWidth="279.0" text="Register" />
+         </children>
+      </VBox>
+      <Separator layoutX="300.0" layoutY="67.0" orientation="VERTICAL" prefHeight="310.0" prefWidth="1.0" styleClass="shadowy" />
+      <Separator layoutX="17.0" layoutY="62.0" prefHeight="8.0" prefWidth="564.0" />
+      <ImageView fx:id="btnClose" fitHeight="27.0" fitWidth="40.0" layoutX="554.0" layoutY="14.0" onMouseEntered="#showGlow" onMouseExited="#hideGlow" onMousePressed="#close" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@img/icons/error.png" />
+         </image>
+      </ImageView>
+   </children>
+</Pane>

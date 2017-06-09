@@ -30,7 +30,30 @@ public class FirebaseProject implements Serializable {
 	private String type;
 	private List<FirebaseUI> uidesign = new ArrayList<>();
 	private List<FirebaseVariable> variables = new ArrayList<>();
-
+	private String id;
+	private boolean active;
+	private long lastUpdated;
+	
+	public void setid(String id){
+		this.id = id;
+	}
+	public String getid(){
+		return id;
+	}
+	public void setactive(boolean active){
+		this.active = active;
+	}
+	public boolean getactive(){
+		return active;
+	}
+	public void setlastUpdated(long lastUpdated){
+		this.lastUpdated = lastUpdated;
+	}
+	public long getlastUpdated(){
+		return lastUpdated;
+	}
+	
+	
 	public FirebaseProject() {
 		// empty default constructor, necessary for Firebase to be able to
 		// deserialize blog posts

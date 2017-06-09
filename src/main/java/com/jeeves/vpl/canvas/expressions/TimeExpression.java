@@ -84,7 +84,7 @@ public class TimeExpression extends Expression { // NO_UCD (unused code)
 
 		box.getChildren().clear();
 		box.getChildren().addAll(cboTimeDiff, cboBeforeAfter, exprTimeVar);
-		box.setSpacing(20);
+		box.setSpacing(10);
 		box.setPadding(new Insets(0, 14, 0, 14));
 	}
 

@@ -6,10 +6,9 @@
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 
-
 <StackPane fx:id="panePane" stylesheets="@Styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Button fx:id="btnButton" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" mouseTransparent="true" text="new button" textAlignment="CENTER" wrapText="true">
+      <Button fx:id="btnButton" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" mouseTransparent="true" text="button" textAlignment="CENTER" wrapText="true">
          <padding>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </padding>

@@ -1,7 +1,10 @@
 .text-area .scroll-bar:vertical {
 	-fx-opacity: 0;
 }
-
+.shadowpane{
+-fx-background-color: black;
+-fx-opacity: 0.7;	
+}
 .blueprint {
 	-fx-background-image: url("paper.jpg");
 	-fx-background-repeat: repeat;

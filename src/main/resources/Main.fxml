@@ -16,29 +16,14 @@
 
 <AnchorPane id="AnchorPane" fx:id="myPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="740.0" prefWidth="1474.0" stylesheets="@Styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
-      <MenuBar fx:id="mnuBar" layoutX="-3.0" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="1476.0">
-        <menus>
-          <Menu fx:id="mnuFile" mnemonicParsing="false" text="File">
-            <items>
-                  <MenuItem mnemonicParsing="false" onAction="#newStudy" text="New Study" />
-                  <Menu fx:id="mnuStudies" mnemonicParsing="false" text="Open" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" onAction="#saveStudyMenu" text="Save" />
-                  <MenuItem mnemonicParsing="false" onAction="#saveAsStudyMenu" text="Save As..." />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-              <MenuItem mnemonicParsing="false" onAction="#quitStudyMenu" text="Quit" />
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
-		<SplitPane fx:id="splitPane" dividerPositions="0.23369565217391305, 0.7112771739130435" focusTraversable="true" layoutX="-3.0" layoutY="29.0" prefHeight="667.0" prefWidth="1476.0" AnchorPane.bottomAnchor="-3.0" AnchorPane.leftAnchor="-3.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="29.0">
+		<SplitPane fx:id="splitPane" dividerPositions="0.25, 0.7635869565217391" focusTraversable="true" layoutX="-3.0" layoutY="64.0" prefHeight="679.0" prefWidth="1474.0" AnchorPane.bottomAnchor="-3.0" AnchorPane.leftAnchor="-3.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="64.0">
 			<items>
 				<TabPane fx:id="tabPane" prefHeight="691.0">
 					<stylesheets>
 						<URL value="@Styles.css" />
 					</stylesheets>
 					<tabs>
-						<Tab fx:id="tabFramework" closable="false" text="Framework">
+						<Tab fx:id="tabFramework" closable="false" style="-fx-font-size: 14px;" text="Blocks">
 							<content>
                         <VBox fx:id="vboxFrame">
                            <children>
@@ -116,7 +101,7 @@
                         </VBox>
 							</content>
 						</Tab>
-                  <Tab fx:id="tabSurvey" closable="false" text="Surveys">
+                  <Tab fx:id="tabSurvey" closable="false" style="-fx-font-size: 14px;" text="Survey Design">
                      <content>
                         <HBox fx:id="surveyBox" fillHeight="false">
                            <children>
@@ -137,61 +122,60 @@
                            </children>
                         </HBox>
                      </content></Tab>
-                  <Tab fx:id="tabUsers" closable="false" text="Patients" />
+                  <Tab fx:id="tabUsers" closable="false" style="-fx-font-size: 14px;" text="Patient Data" />
 			
 					</tabs>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
 				</TabPane>
-            <TitledPane fx:id="paneLogic" collapsible="false" minWidth="0.0" prefHeight="718.0" text="Application Logic">
-               <content>
+            <VBox>
+               <children>
             								<Pane fx:id="paneIntervention" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="0.0" prefHeight="686.0" prefWidth="695.0">
             									<stylesheets>
             										<URL value="@Styles.css" />
             									</stylesheets>
             								</Pane>
-               </content>
-            </TitledPane>
-            <SplitPane dividerPositions="0.598314606741573" minWidth="0.0" orientation="VERTICAL">
+               </children>
+            </VBox>
+            <SplitPane fx:id="paneSplit" dividerPositions="0.5893371757925072" minWidth="0.0" orientation="VERTICAL" style="-fx-border-color: transparent;">
               <items>
-                  <Pane>
+                  <Pane prefHeight="344.0">
                      <children>
-                      <AnchorPane layoutX="-2.0" prefHeight="434.0" prefWidth="388.0">
+                      <AnchorPane layoutX="-1.0" prefHeight="434.0" style="-fx-border-color: transparent;">
                            <children>
-                              <ImageView fx:id="imgPhone" fitHeight="414.0" fitWidth="261.0" layoutX="147.0" mouseTransparent="true" pickOnBounds="true">
+                              <ImageView fx:id="imgPhone" fitHeight="414.0" fitWidth="261.0" layoutX="92.0" layoutY="-1.0" mouseTransparent="true" pickOnBounds="true">
                                  <image>
                                     <Image url="@img/icons/phone.png" />
                                  </image>
                               </ImageView>
-                              <ScrollPane hbarPolicy="NEVER" layoutX="170.0" layoutY="101.0" prefHeight="258.0" prefViewportHeight="310.0" prefViewportWidth="215.0" prefWidth="215.0">
+                              <ScrollPane hbarPolicy="NEVER" layoutX="115.0" layoutY="100.0" prefHeight="258.0" prefViewportHeight="310.0" prefViewportWidth="215.0" prefWidth="215.0">
                                  <content>
                                     <Pane fx:id="paneAndroid" layoutX="165.0" layoutY="187.0" style="-fx-background-color: white;" stylesheets="@Styles.css" />
                                  </content>
                               </ScrollPane>
-                              <Rectangle arcHeight="5.0" fill="#2914c6" height="21.0" layoutX="170.0" layoutY="48.0" mouseTransparent="true" stroke="#4c32f2" strokeType="OUTSIDE" width="213.0" />
-                              <Rectangle arcHeight="5.0" fill="#4c32f2" height="39.0" layoutX="170.0" layoutY="61.0" mouseTransparent="true" stroke="#4c32f2" strokeType="OUTSIDE" width="214.0" />
-                              <Label layoutX="205.0" layoutY="68.0" text="Jeeves" textFill="WHITE">
+                              <Rectangle arcHeight="5.0" fill="#2914c6" height="21.0" layoutX="115.0" layoutY="47.0" mouseTransparent="true" stroke="#4c32f2" strokeType="OUTSIDE" width="213.0" />
+                              <Rectangle arcHeight="5.0" fill="#4c32f2" height="39.0" layoutX="115.0" layoutY="60.0" mouseTransparent="true" stroke="#4c32f2" strokeType="OUTSIDE" width="214.0" />
+                              <Label layoutX="150.0" layoutY="67.0" text="Jeeves" textFill="WHITE">
                                  <font>
                                     <Font size="16.0" />
                                  </font>
                               </Label>
-                              <ImageView fitHeight="18.0" fitWidth="17.0" layoutX="180.0" layoutY="70.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="18.0" fitWidth="17.0" layoutX="125.0" layoutY="69.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@img/icons/back.png" />
                                  </image>
                               </ImageView>
-                              <TitledPane animated="false" layoutX="19.0" layoutY="46.0" prefHeight="198.0" prefWidth="130.0" text="components">
-                                <content>
-                                    <Pane prefHeight="341.0" prefWidth="126.0">
-                                       <children>
-                                          <VBox fx:id="vboxUIElements" alignment="TOP_CENTER" centerShape="false" fillWidth="false" prefHeight="344.0" prefWidth="130.0" scaleShape="false">
-                                             <padding>
-                                                <Insets top="10.0" />
-                                             </padding>
-                                          </VBox>
-                                       </children>
-                                    </Pane>
-                                </content>
-                              </TitledPane>
-                              <Label layoutX="17.0" layoutY="14.0" text="Interface Design" underline="true">
+                              <Pane layoutX="14.0" layoutY="34.0" prefHeight="172.0" prefWidth="78.0">
+                                 <children>
+                                    <VBox fx:id="vboxUIElements" alignment="TOP_CENTER" centerShape="false" fillWidth="false" prefHeight="344.0" prefWidth="100.0" scaleShape="false">
+                                       <padding>
+                                          <Insets top="10.0" />
+                                       </padding>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Label layoutY="4.0" text="Log Design">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -202,12 +186,12 @@
                   </Pane>
                   <Pane prefHeight="379.0" prefWidth="420.0">
                      <children>
-                        <Label layoutX="17.0" layoutY="14.0" text="Patient Attributes" underline="true">
+                        <Label layoutY="4.0" text="Patient Attributes">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <HBox alignment="CENTER_LEFT" layoutX="17.0" layoutY="34.0" prefHeight="240.0" prefWidth="382.0" spacing="5.0">
+                        <HBox alignment="CENTER_LEFT" layoutX="14.0" layoutY="34.0" prefHeight="240.0" prefWidth="320.0" spacing="5.0">
                            <children>
                               <ScrollPane hbarPolicy="NEVER" prefHeight="240.0" prefWidth="168.0">
                                 <content>
@@ -266,5 +250,88 @@
             <Image url="@img/icons/recycle.png" />
          </image>
       </ImageView>
+      <HBox fx:id="hboxIcons" prefHeight="64.0" prefWidth="1474.0" spacing="15.0" style="-fx-border-color: transparent;">
+         <children>
+            <VBox alignment="TOP_CENTER">
+               <children>
+                  <ImageView fitHeight="40.0" fitWidth="55.0" onMouseClicked="#newStudy" onMouseEntered="#addGlow" onMouseExited="#removeGlow" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/icons/new.png" />
+                     </image>
+                  </ImageView>
+                  <Label text="New" visible="false" />
+               </children>
+            </VBox>
+            <Separator orientation="VERTICAL" prefHeight="30.0" />
+            <VBox alignment="TOP_CENTER">
+               <children>
+                  <ImageView fitHeight="40.0" fitWidth="55.0" onMouseClicked="#openStudy" onMouseEntered="#addGlow" onMouseExited="#removeGlow" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/icons/open.png" />
+                     </image>
+                  </ImageView>
+                  <Label text="Open" visible="false" />
+               </children>
+            </VBox>
+            <Separator orientation="VERTICAL" prefHeight="30.0" />
+            <VBox alignment="TOP_CENTER">
+               <children>
+                  <ImageView fitHeight="40.0" fitWidth="55.0" onMouseClicked="#saveStudy" onMouseEntered="#addGlow" onMouseExited="#removeGlow" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/icons/save.png" />
+                     </image>
+                  </ImageView>
+                  <Label text="Save" visible="false" />
+               </children>
+            </VBox>
+            <Separator orientation="VERTICAL" prefHeight="30.0" />
+            <VBox alignment="TOP_CENTER">
+               <children>
+                  <ImageView fitHeight="40.0" fitWidth="55.0" onMouseClicked="#openSettings" onMouseEntered="#addGlow" onMouseExited="#removeGlow" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/icons/settings.png" />
+                     </image>
+                  </ImageView>
+                  <Label text="Settings" visible="false" />
+               </children>
+            </VBox>
+            <Separator orientation="VERTICAL" prefHeight="30.0" />
+            <VBox alignment="TOP_CENTER">
+               <children>
+                  <ImageView fitHeight="40.0" fitWidth="55.0" onMouseClicked="#exit" onMouseEntered="#addGlow" onMouseExited="#removeGlow" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/icons/exit.png" />
+                     </image>
+                  </ImageView>
+                  <Label text="Quit" visible="false" />
+               </children>
+            </VBox>
+            <Separator orientation="VERTICAL" prefHeight="30.0" />
+            <Label fx:id="lblWelcome">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <ImageView fitHeight="40.0" fitWidth="55.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@img/icons/publish.png" />
+               </image>
+               <HBox.margin>
+                  <Insets left="50.0" />
+               </HBox.margin>
+            </ImageView>
+            <Label prefHeight="41.0" prefWidth="126.0" text="Make study available to patients" wrapText="true">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <HBox.margin>
+                  <Insets left="-20.0" />
+               </HBox.margin>
+            </Label>
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="15.0" top="5.0" />
+         </padding>
+      </HBox>
 	</children>
 </AnchorPane>

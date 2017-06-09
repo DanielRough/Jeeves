@@ -186,7 +186,7 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 				} else if (event.getEventType().equals(MouseEvent.MOUSE_ENTERED)) {
 					setCursor(Cursor.HAND);
 					getStyleClass().add("drop_shadow");
-					gui.hideMenu();
+		//			gui.hideMenu();
 				} else if (event.getEventType().equals(MouseEvent.MOUSE_EXITED)) {
 					getStyleClass().remove("drop_shadow");
 				} else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
@@ -236,7 +236,7 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 					event.consume();
 				} else if (event.getEventType().equals(MouseEvent.MOUSE_ENTERED)) {
 					setCursor(Cursor.HAND);
-					gui.hideMenu();
+			//		gui.hideMenu();
 				}
 			}
 		};
