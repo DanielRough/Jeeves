@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="styled-select" stylesheets="@Styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox prefWidth="262.0" spacing="5.0" styleClass="blueprint">
+         <children>
+            <HBox alignment="CENTER_LEFT" prefWidth="262.0" spacing="10.0">
+               <children>
+                  <ImageView fitHeight="50.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/icons/settings.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="27.0" prefWidth="243.0" text="Settings">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" onMouseClicked="#close" onMouseEntered="#showGlow" onMouseExited="#hideGlow" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/icons/error.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
+            <VBox fx:id="vboxPublished" spacing="8.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <Label text="Your unique study ID is:" />
+                        <Label fx:id="lblStudyId">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <Label prefHeight="70.0" prefWidth="242.0" text="Patients use this ID in the JeevesAndroid app to assign themselves to your study. If you wish to change this ID, enter a new value and press 'Update ID' below" textAlignment="CENTER" wrapText="true" />
+                  <HBox prefHeight="25.0" prefWidth="242.0" spacing="10.0">
+                     <children>
+                        <TextField fx:id="txtStudyId" promptText="New Study ID" />
+                        <Button fx:id="btnStudyId" mnemonicParsing="false" onAction="#updateStudyId" text="Update ID" />
+                     </children>
+                  </HBox>
+                  <Separator prefWidth="200.0" />
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <Label text="Study status:" />
+                        <Label fx:id="lblStudyStatus">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <Label fx:id="lblStatusDesc" prefHeight="68.0" prefWidth="242.0" text="Your study currently requires patients to have your study ID. To make your study freely available to anyone, click 'Go Public' below!" textAlignment="CENTER" wrapText="true" />
+                  <Button fx:id="btnPublic" mnemonicParsing="false" onAction="#goPublic" prefHeight="38.0" prefWidth="242.0" text="Go Public">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Button>
+                  <Separator prefWidth="200.0" />
+                  <Label prefHeight="65.0" prefWidth="242.0" text="If you need to end your study now, hit the 'End Study' button below. This will stop data collection from all assigned patients." textAlignment="CENTER" wrapText="true" />
+                  <Button fx:id="btnEndStudy" alignment="CENTER" mnemonicParsing="false" onAction="#endStudy" prefHeight="28.0" prefWidth="242.0" text="End Study" textAlignment="CENTER">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Button>
+               </children>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </VBox>
+      <VBox fx:id="vboxUnpublished" layoutY="55.0" mouseTransparent="true" prefHeight="255.0" prefWidth="262.0" visible="false">
+         <children>
+            <Label alignment="CENTER" prefHeight="255.0" prefWidth="274.0" text="Your study is not currently published! To adjust publishing settings, make sure your study is published first by clicking 'Publish' in the toolbar" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets left="10.0" right="10.0" />
+               </VBox.margin>
+            </Label>
+         </children>
+      </VBox>
+   </children>
+</Pane>

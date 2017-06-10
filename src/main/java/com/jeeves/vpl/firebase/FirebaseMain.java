@@ -6,32 +6,21 @@ import java.util.Map;
 @SuppressWarnings("serial")
 public class FirebaseMain implements Serializable {
 
-	private Map<String, FirebasePatient> patients;
-	private Map<String, FirebaseProject> projects;
-	private Map<String, FirebaseVariable> systemvars;
-
-	public Map<String, FirebasePatient> getpatients() {
-		return patients;
+	private Map<String, FirebasePrivate> privateData;
+	private Map<String, FirebasePublic> publicData;
+	
+	public void setprivateData(Map<String,FirebasePrivate> privateData){
+		this.privateData = privateData;
 	}
-
-	public Map<String, FirebaseProject> getprojects() {
-		return projects;
+	public void setpublicData(Map<String,FirebasePublic> publicData){
+		this.publicData = publicData;
 	}
-
-	public Map<String, FirebaseVariable> getsystemvars() {
-		return systemvars;
+	
+	public Map<String,FirebasePrivate> getprivateData(){
+		return privateData;
 	}
-
-	public void setPatients(Map<String, FirebasePatient> patients) {
-		this.patients = patients;
+	public Map<String,FirebasePublic> getpublicData(){
+		return publicData;
 	}
-
-	public void setProjects(Map<String, FirebaseProject> projects) {
-		this.projects = projects;
-	}
-
-	public void setSystemvars(Map<String, FirebaseVariable> systemvars) {
-		this.systemvars = systemvars;
-	}
-
 }
+//	private Map<String, FirebaseVariable> systemvars;

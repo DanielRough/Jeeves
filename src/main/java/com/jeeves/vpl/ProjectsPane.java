@@ -128,11 +128,11 @@ public class ProjectsPane extends Pane {
 	            	lblStatus.setText("Status: Unpublished");
 	            	lblStatus.setStyle("-fx-text-fill: red");
 	            }
-	            firebase.getpatients().forEach(patient->{
-	            	String study = patient.getCurrentStudy();
-	            	if(study.equals(project.getid()))
-	            		patientCount++;
-	            });
+//	            firebase.getpatients().forEach(patient->{
+//	            	String study = patient.getCurrentStudy();
+//	            	if(study.equals(project.getid()))
+//	            		patientCount++;
+//	            });
 	            lblPatients.setText("Patients: " + patientCount);
 
 	            }

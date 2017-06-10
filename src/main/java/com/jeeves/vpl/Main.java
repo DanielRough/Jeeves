@@ -13,12 +13,28 @@ import static com.jeeves.vpl.Constants.triggerNames;
 import static com.jeeves.vpl.Constants.uiElementNames;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.prefs.Preferences;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
+import org.apache.commons.codec.binary.Base64;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.controlsfx.control.NotificationPane;
@@ -57,11 +73,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -622,8 +638,18 @@ public class Main extends Application {
 
 	}
 
+	public Cipher cipher;
 	public void setCurrentProject(FirebaseProject project){
 		SHOULD_UPDATE_TRIGGERS = false;
+		try {
+			this.cipher = Cipher.getInstance("RSA");
+		} catch (NoSuchAlgorithmException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (NoSuchPaddingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		currentproject = project;
 		primaryStage.setTitle("Jeeves");
@@ -641,7 +667,59 @@ public class Main extends Application {
 		}
 		loadVariables();
 		SHOULD_UPDATE_TRIGGERS = true;
+		//Let's test shit out
+		String pubKeyStr = currentproject.getpubKey();
+		Preferences keyPrefs = Preferences.userRoot().node("key");
+		String privKeyStr = keyPrefs.get("privateKey", "");
+		
+		try {
+			PublicKey pubkey = getPublic(pubKeyStr);
+			PrivateKey privkey = getPrivate(privKeyStr);
 
+			String msg = "Cryptography is fun!";
+			String encrypted_msg = encryptText(msg, privkey);
+			String decrypted_msg = decryptText(encrypted_msg, pubkey);
+			System.out.println("Original Message: " + msg +
+				"\nEncrypted Message: " + encrypted_msg
+				+ "\nDecrypted Message: " + decrypted_msg);
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+
+	// https://docs.oracle.com/javase/8/docs/api/java/security/spec/PKCS8EncodedKeySpec.html
+	public PrivateKey getPrivate(String keystr) throws Exception {
+		byte[] keyBytes = Base64.decodeBase64(keystr);
+		PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
+		KeyFactory kf = KeyFactory.getInstance("RSA");
+		return kf.generatePrivate(spec);
+	}
+
+	// https://docs.oracle.com/javase/8/docs/api/java/security/spec/X509EncodedKeySpec.html
+	public PublicKey getPublic(String keystr) throws Exception {
+		byte[] keyBytes = Base64.decodeBase64(keystr);
+		System.out.println("bytes are " + new String(keyBytes));
+		X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
+		KeyFactory kf = KeyFactory.getInstance("RSA");
+		return kf.generatePublic(spec);
+	}
+	public String encryptText(String msg, PrivateKey key)
+			throws NoSuchAlgorithmException, NoSuchPaddingException,
+			UnsupportedEncodingException, IllegalBlockSizeException,
+			BadPaddingException, InvalidKeyException {
+		this.cipher.init(Cipher.ENCRYPT_MODE, key);
+		return Base64.encodeBase64String(cipher.doFinal(msg.getBytes("UTF-8")));
+	}
+
+	public String decryptText(String msg, PublicKey key)
+			throws InvalidKeyException, UnsupportedEncodingException,
+			IllegalBlockSizeException, BadPaddingException {
+		this.cipher.init(Cipher.DECRYPT_MODE, key);
+		return new String(cipher.doFinal(Base64.decodeBase64(msg)), "UTF-8");
 	}
 //	private void loadProjectsIntoMenu() {
 //		mnuStudies.getItems().clear();
@@ -724,7 +802,7 @@ public class Main extends Application {
 					saveAsStudyMenu(e);
 					return;
 				} else {
-					firebase.addProject("", this.currentproject);
+					firebase.saveProject("", this.currentproject);
 		
 					System.out.println("OUGHTA BE SHOWING");
 					//notificationPane
@@ -735,7 +813,37 @@ public class Main extends Application {
 	
 	@FXML
 	public void openSettings(Event e){
-		
+		Stage stage = new Stage(StageStyle.UNDECORATED);
+		SettingsPane root = new SettingsPane(this,firebase,stage);
+		stage.setScene(new Scene(root));
+		stage.setTitle("Settings");
+		stage.initModality(Modality.APPLICATION_MODAL);
+		stage.initOwner(splitPane.getScene().getWindow());
+		stage.showAndWait();
+	}
+	
+	@FXML
+	public void publish(Event e){
+		if(currentproject.getactive()){
+			 Alert info = new Alert(AlertType.INFORMATION);
+			    info.setTitle("Already published");
+			    info.setHeaderText(null);
+			    info.setContentText("Your study is already published!");
+			    info.showAndWait();
+		}
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle("Confirm Publish");
+		alert.setHeaderText("Publish study " + currentproject.getname() + "?");
+		alert.setContentText("This will allow other researchers to view the study spec, and allow you to assign patients to the study");
+		Optional<ButtonType> result = alert.showAndWait();
+		if (result.get() == ButtonType.OK){
+		    firebase.publishStudy(currentproject);
+		    Alert info = new Alert(AlertType.INFORMATION);
+		    info.setTitle("Study published");
+		    info.setHeaderText("Successfully published");
+		    info.setContentText("Your study is now published! Configuration settings, including the study ID that you distribute to patients, are available in the Settings menu");
+		    info.showAndWait();
+		} 
 	}
 	
 	@FXML

@@ -32,8 +32,22 @@ public class FirebaseProject implements Serializable {
 	private List<FirebaseVariable> variables = new ArrayList<>();
 	private String id;
 	private boolean active;
+	private boolean isPublic;
 	private long lastUpdated;
+	private String pubKey;
 	
+	public void setpubKey(String pubKey){
+		this.pubKey = pubKey;
+	}
+	public String getpubKey(){
+		return pubKey;
+	}
+	public void setisPublic(boolean isPublic){
+		this.isPublic = isPublic;
+	}
+	public boolean getisPublic(){
+		return isPublic;
+	}
 	public void setid(String id){
 		this.id = id;
 	}

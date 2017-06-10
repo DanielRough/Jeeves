@@ -73,7 +73,7 @@ public class SaveAsPane extends Pane { // NO_UCD (use default)
 			Optional<ButtonType> result = alert.showAndWait();
 			if (result.get() == ButtonType.OK){
 				project.setname(newname);
-				firebase.addProject(oldname, project);
+				firebase.saveProject(oldname, project);
 				currentGUI.setNewProject(false);
 				stage.close();
 			} else {
@@ -83,7 +83,7 @@ public class SaveAsPane extends Pane { // NO_UCD (use default)
 		}
 		else{
 			project.setname(newname);
-			firebase.addProject(oldname, project);
+			firebase.saveProject(oldname, project);
 			currentGUI.setNewProject(false);
 			stage.close();
 		}

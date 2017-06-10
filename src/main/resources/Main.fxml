@@ -287,6 +287,20 @@
             <Separator orientation="VERTICAL" prefHeight="30.0" />
             <VBox alignment="TOP_CENTER">
                <children>
+                  <ImageView fitHeight="40.0" fitWidth="55.0" onMouseClicked="#publish" onMouseEntered="#addGlow" onMouseExited="#removeGlow" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/icons/publish.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </ImageView>
+                  <Label text="Publish" visible="false" />
+               </children>
+            </VBox>
+            <Separator orientation="VERTICAL" prefHeight="30.0" />
+            <VBox alignment="TOP_CENTER">
+               <children>
                   <ImageView fitHeight="40.0" fitWidth="55.0" onMouseClicked="#openSettings" onMouseEntered="#addGlow" onMouseExited="#removeGlow" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@img/icons/settings.png" />
@@ -311,22 +325,6 @@
                <font>
                   <Font size="18.0" />
                </font>
-            </Label>
-            <ImageView fitHeight="40.0" fitWidth="55.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@img/icons/publish.png" />
-               </image>
-               <HBox.margin>
-                  <Insets left="50.0" />
-               </HBox.margin>
-            </ImageView>
-            <Label prefHeight="41.0" prefWidth="126.0" text="Make study available to patients" wrapText="true">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <HBox.margin>
-                  <Insets left="-20.0" />
-               </HBox.margin>
             </Label>
          </children>
          <padding>
