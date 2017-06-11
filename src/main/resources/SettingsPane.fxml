@@ -53,7 +53,7 @@
                   <Separator prefWidth="200.0" />
                   <HBox alignment="CENTER_LEFT" spacing="10.0">
                      <children>
-                        <Label text="Study status:" />
+                        <Label prefHeight="17.0" prefWidth="76.0" text="Study status:" />
                         <Label fx:id="lblStudyStatus">
                            <font>
                               <Font name="System Bold" size="14.0" />

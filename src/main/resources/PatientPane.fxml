@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.text.*?>
@@ -8,16 +9,16 @@
 
 <Pane maxWidth="-Infinity" minWidth="-Infinity" prefHeight="682.0" prefWidth="914.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="415.0" layoutY="21.0" text="Patients" textAlignment="CENTER">
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="414.0" layoutY="20.0" text="Patient Stats" textAlignment="CENTER">
          <font>
             <Font size="24.0" fx:id="x22" />
          </font>
       </Label>
-      <StackPane layoutX="34.0" layoutY="63.0" prefHeight="212.0" prefWidth="845.0">
+      <StackPane layoutX="34.0" layoutY="37.0" prefHeight="224.0" prefWidth="283.0">
          <children>
-            <ScrollPane>
+            <ScrollPane hbarPolicy="NEVER" prefHeight="227.0" prefWidth="251.0" vbarPolicy="ALWAYS">
                <content>
-                  <TableView fx:id="tblPatients" editable="true" layoutX="15.0" layoutY="56.0" prefHeight="211.0" prefWidth="830.0">
+                  <TableView fx:id="tblPatients" editable="true" layoutX="15.0" layoutY="56.0" prefHeight="225.0" prefWidth="268.0">
                      <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                      </columnResizePolicy>
@@ -26,75 +27,236 @@
             </ScrollPane>
          </children>
       </StackPane>
-      <Group fx:id="grpInfo" disable="true">
+      <AnchorPane layoutX="321.0" layoutY="70.0" prefHeight="120.0" prefWidth="273.0">
          <children>
-            <AnchorPane layoutX="34.0" layoutY="289.0" prefHeight="302.0" prefWidth="273.0">
-               <children>
-                  <Label alignment="CENTER_RIGHT" layoutX="1.0" layoutY="222.0" prefHeight="22.0" prefWidth="79.0" text="Phone no:" textAlignment="RIGHT" wrapText="true">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <TextField fx:id="txtFname" editable="false" layoutX="87.0" prefHeight="28.0" prefWidth="150.0" />
-                  <Label alignment="CENTER_RIGHT" layoutX="1.0" layoutY="3.0" prefHeight="22.0" prefWidth="79.0" text="Name:" textAlignment="RIGHT" wrapText="true">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <Label alignment="CENTER_RIGHT" layoutX="1.0" layoutY="71.0" prefHeight="22.0" prefWidth="79.0" text="Address:" textAlignment="RIGHT" wrapText="true">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <Label alignment="CENTER_RIGHT" layoutX="1.0" layoutY="255.0" prefHeight="22.0" prefWidth="79.0" text="Email:" textAlignment="RIGHT" wrapText="true">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <TextField fx:id="txtEmail" editable="false" layoutX="87.0" layoutY="252.0" prefHeight="28.0" prefWidth="150.0" />
-                  <TextField fx:id="txtPhone" editable="false" layoutX="87.0" layoutY="219.0" prefHeight="28.0" prefWidth="150.0" />
-                  <TextField fx:id="txtAddress1" editable="false" layoutX="87.0" layoutY="68.0" prefHeight="28.0" prefWidth="150.0" />
-                  <TextField fx:id="txtAddress2" editable="false" layoutX="87.0" layoutY="102.0" prefHeight="28.0" prefWidth="150.0" />
-                  <TextField fx:id="txtAddress3" editable="false" layoutX="87.0" layoutY="136.0" prefHeight="28.0" prefWidth="150.0" />
-                  <TextField fx:id="txtAddress4" editable="false" layoutX="87.0" layoutY="170.0" prefHeight="28.0" prefWidth="150.0" />
-               </children>
-            </AnchorPane>
+            <Label alignment="CENTER_RIGHT" layoutX="1.0" layoutY="39.0" prefHeight="22.0" prefWidth="79.0" text="Phone no:" textAlignment="RIGHT" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txtName" editable="false" layoutX="87.0" prefHeight="28.0" prefWidth="150.0" />
+            <Label alignment="CENTER_RIGHT" layoutX="1.0" layoutY="3.0" prefHeight="22.0" prefWidth="79.0" text="Name:" textAlignment="RIGHT" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <Label alignment="CENTER_RIGHT" layoutX="1.0" layoutY="72.0" prefHeight="22.0" prefWidth="79.0" text="Email:" textAlignment="RIGHT" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txtEmail" editable="false" layoutX="87.0" layoutY="69.0" prefHeight="28.0" prefWidth="150.0" />
+            <TextField fx:id="txtPhone" editable="false" layoutX="87.0" layoutY="36.0" prefHeight="28.0" prefWidth="150.0" />
+            <Label fx:id="lblPatientMissed" layoutX="164.0" layoutY="129.0" prefHeight="29.0" textFill="#a6392e">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="lblPatientCompleted" layoutX="164.0" layoutY="100.0" prefHeight="29.0" textFill="#2fa845">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label alignment="CENTER_RIGHT" layoutX="3.0" layoutY="133.0" prefHeight="20.0" prefWidth="156.0" text="Missed Surveys:" textAlignment="RIGHT">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <Label alignment="CENTER_RIGHT" layoutX="6.0" layoutY="104.0" prefHeight="20.0" prefWidth="158.0" text="Completed Surveys: " textAlignment="RIGHT">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
          </children>
-      </Group>
-      <TitledPane animated="false" collapsible="false" layoutX="283.0" layoutY="289.0" prefHeight="335.0" prefWidth="597.0" text="Survey stats">
-         <content>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+      </AnchorPane>
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="415.0" layoutY="285.0" text="Survey Stats" textAlignment="CENTER">
+         <font>
+            <Font size="24.0" fx:id="x221" />
+         </font>
+      </Label>
+      <Button fx:id="btnDownloadPatient" layoutX="400.0" layoutY="228.0" mnemonicParsing="false" onAction="#downloadPatient" prefHeight="29.0" prefWidth="158.0" text="Download Patient Results" />
+      <Label layoutX="609.0" layoutY="63.0" prefHeight="20.0" prefWidth="78.0" text="Feedback">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
+      <ListView fx:id="lstMessages" layoutX="607.0" layoutY="84.0" prefHeight="134.0" prefWidth="283.0" />
+      <AnchorPane layoutX="31.0" layoutY="320.0" prefHeight="309.0" prefWidth="852.0">
+         <children>
+            <VBox layoutX="254.0" layoutY="10.0" prefHeight="290.0" prefWidth="273.0" spacing="5.0">
                <children>
-                  <Label alignment="CENTER_RIGHT" layoutX="17.0" layoutY="14.0" prefHeight="20.0" prefWidth="158.0" text="Completed Surveys: " textAlignment="RIGHT">
+                  <HBox>
+                     <children>
+                        <Label alignment="CENTER_RIGHT" prefWidth="120.0" text="Total surveys sent:" textAlignment="RIGHT">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblSent">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox>
+                     <children>
+                        <Label alignment="CENTER_RIGHT" prefWidth="120.0" text="Completed:" textAlignment="RIGHT">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblComplete">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox>
+                     <children>
+                        <Label alignment="CENTER_RIGHT" prefWidth="120.0" text="Missed:" textAlignment="RIGHT">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblMissed">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox>
+                     <children>
+                        <Label alignment="CENTER_RIGHT" prefWidth="120.0" text="Avg compliance:" textAlignment="RIGHT">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblCompliance">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <Label alignment="CENTER_RIGHT" prefWidth="120.0" text="Survey triggers" textAlignment="RIGHT">
                      <font>
-                        <Font size="16.0" />
+                        <Font name="System Bold" size="14.0" />
                      </font>
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
                   </Label>
-                  <Label alignment="CENTER_RIGHT" layoutX="14.0" layoutY="43.0" prefHeight="20.0" prefWidth="156.0" text="Missed Surveys:" textAlignment="RIGHT">
+                  <HBox>
+                     <children>
+                        <Label alignment="CENTER_RIGHT" prefWidth="120.0" text="Time:" textAlignment="RIGHT">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblTimeTriggers">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox>
+                     <children>
+                        <Label alignment="CENTER_RIGHT" prefWidth="120.0" text="Sensor value:" textAlignment="RIGHT">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblSensorTriggers">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox>
+                     <children>
+                        <Label alignment="CENTER_RIGHT" prefWidth="120.0" text="Button press:" textAlignment="RIGHT">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblButtonTriggers">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <Label alignment="CENTER_RIGHT" prefWidth="120.0" text="Promptness" textAlignment="RIGHT">
                      <font>
-                        <Font size="16.0" />
+                        <Font name="System Bold" size="14.0" />
                      </font>
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
                   </Label>
-                  <Label fx:id="lblCompleted" layoutX="175.0" layoutY="10.0" prefHeight="29.0" textFill="#2fa845">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="lblMissed" layoutX="175.0" layoutY="39.0" prefHeight="29.0" textFill="#a6392e">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                  </Label>
-                  <Button fx:id="btnDownload" layoutX="14.0" layoutY="82.0" mnemonicParsing="false" onAction="#downloadResults" text="Download All Results" />
-                  <Label layoutX="17.0" layoutY="134.0" prefHeight="20.0" prefWidth="78.0" text="Feedback">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                  </Label>
-                  <ListView fx:id="lstMessages" layoutX="17.0" layoutY="154.0" prefHeight="145.0" prefWidth="555.0" />
+                  <HBox>
+                     <children>
+                        <Label alignment="CENTER_RIGHT" prefWidth="120.0" text="Initiation time:" textAlignment="RIGHT">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblInitTime">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox>
+                     <children>
+                        <Label alignment="CENTER_RIGHT" prefWidth="120.0" text="Completion time:" textAlignment="RIGHT">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblCompletionTime">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
                </children>
-            </AnchorPane>
-         </content>
-      </TitledPane>
+            </VBox>
+            <ListView fx:id="lstSurveys" layoutX="21.0" layoutY="21.0" prefHeight="274.0" prefWidth="217.0" />
+            <Label layoutX="78.0" text="Show data for...">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="544.0" layoutY="16.0" text="Download">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <VBox layoutX="544.0" layoutY="41.0" prefHeight="85.0" prefWidth="273.0" spacing="5.0">
+               <children>
+                  <RadioButton fx:id="rdioCsv" mnemonicParsing="false" text="Comma-Separated Values (.csv)">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </RadioButton>
+                  <RadioButton fx:id="rdioExcel" mnemonicParsing="false" text="Excel Spreadsheet (.xlsx)">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </RadioButton>
+                  <Button fx:id="btnDownloadSurvey" mnemonicParsing="false" onAction="#downloadSurvey" prefHeight="29.0" prefWidth="150.0" text="Download Survey Results" />
+               </children>
+            </VBox>
+         </children>
+      </AnchorPane>
+      <Separator layoutX="14.0" layoutY="273.0" prefHeight="3.0" prefWidth="891.0" />
    </children>
 </Pane>

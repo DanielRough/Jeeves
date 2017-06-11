@@ -638,23 +638,15 @@ public class Main extends Application {
 
 	}
 
-	public Cipher cipher;
 	public void setCurrentProject(FirebaseProject project){
 		SHOULD_UPDATE_TRIGGERS = false;
-		try {
-			this.cipher = Cipher.getInstance("RSA");
-		} catch (NoSuchAlgorithmException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (NoSuchPaddingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		
 
 		currentproject = project;
 		primaryStage.setTitle("Jeeves");
 		patientController.loadPatients(); // Reset so we have the
 											// patients for THIS project
+		patientController.loadSurveys();
 		resetPanes();
 		isNewProject = false;
 		for (ViewElement element : elements) {
@@ -666,61 +658,41 @@ public class Main extends Application {
 			element.setHandler(viewElementHandler);
 		}
 		loadVariables();
-		SHOULD_UPDATE_TRIGGERS = true;
-		//Let's test shit out
-		String pubKeyStr = currentproject.getpubKey();
-		Preferences keyPrefs = Preferences.userRoot().node("key");
-		String privKeyStr = keyPrefs.get("privateKey", "");
-		
-		try {
-			PublicKey pubkey = getPublic(pubKeyStr);
-			PrivateKey privkey = getPrivate(privKeyStr);
-
-			String msg = "Cryptography is fun!";
-			String encrypted_msg = encryptText(msg, privkey);
-			String decrypted_msg = decryptText(encrypted_msg, pubkey);
-			System.out.println("Original Message: " + msg +
-				"\nEncrypted Message: " + encrypted_msg
-				+ "\nDecrypted Message: " + decrypted_msg);
-
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		SHOULD_UPDATE_TRIGGERS = true;
+//		//Let's test shit out
+//		String pubKeyStr = currentproject.getpubKey();
+//		Preferences keyPrefs = Preferences.userRoot().node("key");
+//		String privKeyStr = keyPrefs.get("privateKey", "");
+//		
+//		try {
+//			PublicKey pubkey = getPublic(pubKeyStr);
+//			PrivateKey privkey = getPrivate(privKeyStr);
+//
+//			String msg = "Cryptography is fun!";
+//			String encrypted_msg = encryptText(msg, privkey);
+//			String decrypted_msg = decryptText(encrypted_msg, pubkey);
+//			System.out.println("Original Message: " + msg +
+//				"\nEncrypted Message: " + encrypted_msg
+//				+ "\nDecrypted Message: " + decrypted_msg);
+//
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 	}
 	
 
-	// https://docs.oracle.com/javase/8/docs/api/java/security/spec/PKCS8EncodedKeySpec.html
-	public PrivateKey getPrivate(String keystr) throws Exception {
-		byte[] keyBytes = Base64.decodeBase64(keystr);
-		PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
-		KeyFactory kf = KeyFactory.getInstance("RSA");
-		return kf.generatePrivate(spec);
-	}
+//	// https://docs.oracle.com/javase/8/docs/api/java/security/spec/PKCS8EncodedKeySpec.html
+//	public PrivateKey getPrivate(String keystr) throws Exception {
+//		byte[] keyBytes = Base64.decodeBase64(keystr);
+//		PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
+//		KeyFactory kf = KeyFactory.getInstance("RSA");
+//		return kf.generatePrivate(spec);
+//	}
 
 	// https://docs.oracle.com/javase/8/docs/api/java/security/spec/X509EncodedKeySpec.html
-	public PublicKey getPublic(String keystr) throws Exception {
-		byte[] keyBytes = Base64.decodeBase64(keystr);
-		System.out.println("bytes are " + new String(keyBytes));
-		X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
-		KeyFactory kf = KeyFactory.getInstance("RSA");
-		return kf.generatePublic(spec);
-	}
-	public String encryptText(String msg, PrivateKey key)
-			throws NoSuchAlgorithmException, NoSuchPaddingException,
-			UnsupportedEncodingException, IllegalBlockSizeException,
-			BadPaddingException, InvalidKeyException {
-		this.cipher.init(Cipher.ENCRYPT_MODE, key);
-		return Base64.encodeBase64String(cipher.doFinal(msg.getBytes("UTF-8")));
-	}
 
-	public String decryptText(String msg, PublicKey key)
-			throws InvalidKeyException, UnsupportedEncodingException,
-			IllegalBlockSizeException, BadPaddingException {
-		this.cipher.init(Cipher.DECRYPT_MODE, key);
-		return new String(cipher.doFinal(Base64.decodeBase64(msg)), "UTF-8");
-	}
 //	private void loadProjectsIntoMenu() {
 //		mnuStudies.getItems().clear();
 //		firebase.getprojects().forEach(project -> {
@@ -830,6 +802,7 @@ public class Main extends Application {
 			    info.setHeaderText(null);
 			    info.setContentText("Your study is already published!");
 			    info.showAndWait();
+			    return;
 		}
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Confirm Publish");

@@ -182,6 +182,7 @@ public class FirebaseDB {
 				FirebasePrivate appdata = arg0.getValue(FirebasePrivate.class);
 				newprojects.clear();
 				newpatients.clear();
+				System.out.println("Ooooh we changed ehre!");
 				if (appdata != null) {
 					Map<String, FirebaseProject> projects = appdata.getprojects();
 					Map<String, FirebasePatient> patients = appdata.getpatients();
@@ -258,17 +259,17 @@ public class FirebaseDB {
 		DatabaseReference globalRef = null;
 		DatabaseReference publicRef = null;
 		//just reloading something we've already made. Need to update it in the public bit too (if it's currently active)
-		if (oldname == null || oldname.equals("")){
+		if (oldname == null/* || oldname.equals("")*/){
 			try {
 				kpg = KeyPairGenerator.getInstance("RSA");
 				kpg.initialize(1024);
 		        kp = kpg.genKeyPair();
 		        publicKey = kp.getPublic();
-		       
-		        object.setpubKey(Base64.encodeBase64String(publicKey.getEncoded()));
+		 
 		        privateKey = kp.getPrivate();
 		        Preferences prefs = Preferences.userRoot().node("key");
-		        
+		        object.setpubKey(Base64.encodeBase64String(publicKey.getEncoded()));
+
 		        prefs.put("privateKey",Base64.encodeBase64String(privateKey.getEncoded()));
 		      //  System.out.println("private key is " + new String(privateKey.getEncoded()));
 			} catch (NoSuchAlgorithmException e) {

@@ -11,6 +11,7 @@ import com.google.firebase.database.IgnoreExtraProperties;
 @IgnoreExtraProperties
 public class FirebasePatient implements Serializable {
 
+	private String userinfo;
 	private String address;
 	private Map<String, FirebaseSurvey> complete;
 	private String currentStudy;
@@ -20,11 +21,19 @@ public class FirebasePatient implements Serializable {
 	private String name;
 	private String phoneNo;
 	private String uid;
-
+	private String date;
+	
 	public String getAddress() {
 		return address;
 	}
 
+	
+	public void setuserinfo(String userinfo){
+		this.userinfo = userinfo;
+	}
+	public String getuserinfo(){
+		return userinfo;
+	}
 	public Map<String, FirebaseSurvey> getcomplete() {
 		return complete;
 	}
@@ -33,6 +42,12 @@ public class FirebasePatient implements Serializable {
 		return currentStudy;
 	}
 
+	public String getDate(){
+		return date;
+	}
+	public void setDate(String date){
+		this.date = date;
+	}
 	public String getEmail() {
 		return email;
 	}
