@@ -51,14 +51,11 @@ public abstract class Control extends Action implements ActionHolder {
 	@Override
 	public void addListeners() {
 		super.addListeners();
-		System.out.println("First this");
 		childReceiver.getChildElements().addListener((ListChangeListener<ViewElement>) arg0 -> {
-			System.out.println("thiiiiiis?");
 			ArrayList<Action> newActions = new ArrayList<Action>();
 			if (model.getactions() == null)
 				model.setactions(new ArrayList<FirebaseAction>());
 			model.getactions().clear();
-			System.out.println("MYACTIONPARAMSCHANGED");
 			params.put("update","updated");
 			params.remove("update");
 			childReceiver.getChildElements().forEach(element -> {
@@ -70,7 +67,6 @@ public abstract class Control extends Action implements ActionHolder {
 					public void onChanged(
 							javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
 						//Merciless hack to update parent receiver
-						System.out.println("PARAMS CHANGED");
 						params.put("update","updated");
 						params.remove("update");
 					}
@@ -83,7 +79,6 @@ public abstract class Control extends Action implements ActionHolder {
 					public void onChanged(
 							javafx.collections.ListChangeListener.Change<? extends FirebaseExpression> c) {
 						//Merciless hack to update parent receiver
-						System.out.println("VARS CHANGED");
 						params.put("update","updated");
 						params.remove("update");
 					}
@@ -97,12 +92,10 @@ public abstract class Control extends Action implements ActionHolder {
 //			});
 		});
 		actions.forEach(myaction -> {
-			System.out.println("EY HO LETS GO");
 			myaction.getparams().addListener(new MapChangeListener<String, Object>() {
 				@Override
 				public void onChanged(
 						javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
-					System.out.println("MYACTIONPARAMSCHANGED");
 					params.put("update","updated");
 					params.remove("update");						// must reset
 				}
@@ -114,7 +107,6 @@ public abstract class Control extends Action implements ActionHolder {
 				@Override
 				public void onChanged(
 						javafx.collections.ListChangeListener.Change<? extends FirebaseExpression> c) {
-					System.out.println("MYVARSPARAMSCHANGED");
 
 					params.put("update","updated");
 					params.remove("update");					}
@@ -135,7 +127,6 @@ public abstract class Control extends Action implements ActionHolder {
 					public void onChanged(
 							javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
 						vars.clear();
-						System.out.println("CHANGED MY EXPRESSION");
 						vars.add(0,variable.getModel());
 						params.put("update","updated");
 						params.remove("update");	
@@ -164,7 +155,6 @@ public abstract class Control extends Action implements ActionHolder {
 			public void onChanged(
 					javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
 				vars.clear();
-				System.out.println("CHANGED MY EXPRESSION");
 				vars.add(0,variable.getModel());
 				params.put("update","updated");
 				params.remove("update");	
@@ -203,14 +193,12 @@ public abstract class Control extends Action implements ActionHolder {
 	@Override
 	public void setData(FirebaseAction model) {
 		super.setData(model);
-		System.out.println("presumabyl now this");
 		actions = new ArrayList<Action>();
 		if (model.getactions() != null) {
 			List<FirebaseAction> onReceive = new ArrayList<FirebaseAction>(model.getactions()); 
 			for (FirebaseAction action : onReceive) {
 				Action myaction = Action.create(action);
 				actions.add(myaction);
-				System.out.println("now?");
 
 				childReceiver.addChild(myaction, 0, 0);
 			}

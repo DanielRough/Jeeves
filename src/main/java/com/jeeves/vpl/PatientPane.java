@@ -58,7 +58,9 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
@@ -74,7 +76,6 @@ public class PatientPane extends Pane {
 
 	private ObservableList<FirebasePatient> allowedPatients = FXCollections.observableArrayList();
 	private Map<String, FirebaseSurvey> completedSurveys;
-	private FirebaseDB firebase;
 
 	private Main gui;
 	private Map<String, FirebaseSurvey> incompleteSurveys;
@@ -86,11 +87,11 @@ public class PatientPane extends Pane {
 	@FXML private TextField txtName;
 	@FXML private TextField txtPhone;
 	private ChangeListener<FirebasePatient> patientListener;
-	private ChangeListener<FirebaseSurvey> surveyListener;
+	private ChangeListener<String> surveyListener;
 	private int selectedIndex = 0;
 	private FirebasePatient selectedPatient;
 
-	@FXML private ListView<String> lstSurveys;
+	@FXML private ListView<FirebaseSurvey> lstSurveys;
 	@FXML private Label lblSent;
 	@FXML private Label lblComplete;
 	@FXML private Label lblMissed;
@@ -104,7 +105,8 @@ public class PatientPane extends Pane {
 	@FXML private RadioButton rdioCsv;
 	@FXML private RadioButton rdioExcel;
 	
-
+	@FXML private Button btnAllSurveys;
+	
 	private PrivateKey privateKey;
 
 	public PrivateKey getPrivate(String keystr) throws Exception {
@@ -120,11 +122,11 @@ public class PatientPane extends Pane {
 			throws InvalidKeyException, UnsupportedEncodingException,
 			IllegalBlockSizeException, BadPaddingException {
 		this.cipher.init(Cipher.DECRYPT_MODE, key);
+		System.out.println("Message weas " + msg);
 		return new String(cipher.doFinal(Base64.decodeBase64(msg)), "UTF-8");
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public PatientPane(Main gui, FirebaseDB firebase) {
-		this.firebase = firebase;
+	public PatientPane(Main gui) {
 		this.gui = gui;
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setController(this);
@@ -132,14 +134,14 @@ public class PatientPane extends Pane {
 			@Override
 			public void changed(ObservableValue<? extends FirebasePatient> observable, FirebasePatient oldValue,
 					FirebasePatient newValue) {
-				update();
+				updatePatient();
 			}
 		};
-		surveyListener = new ChangeListener<FirebaseSurvey>() {
+		surveyListener = new ChangeListener<String>() {
 			@Override
-			public void changed(ObservableValue<? extends FirebaseSurvey> observable, FirebaseSurvey oldValue,
-					FirebaseSurvey newValue) {
-				update();
+			public void changed(ObservableValue<? extends String> observable, String oldValue,
+					String newValue) {
+				updateSurvey(newValue);
 			}
 		};
 		try {
@@ -231,15 +233,8 @@ public class PatientPane extends Pane {
 					style.setFont(font);
 					cellStyle.setDataFormat(createHelper.createDataFormat().getFormat("m/d/yy h:mm"));
 					cellStyle.setFont(font);
-					Preferences prefs = Preferences.userRoot().node("key");
-					String privateKeyStr = prefs.get("privateKey", "");
-					PrivateKey privateKey = getPrivate(privateKeyStr);
-					System.out.println("privkeystr is " + privateKeyStr);
 					for (FirebaseSurvey nextsurvey : surveylist) {
-						System.out.println("our encoded answers are...");
-						System.out.println(nextsurvey.getencodedAnswers());
-						System.out.println("decrypted answers are...");
-						System.out.println(decryptText(nextsurvey.getencodedAnswers(), privateKey));
+
 						date.setTime(nextsurvey.gettimeFinished());
 						String surveyname = nextsurvey.gettitle();
 						// Do we have a sheet for this particular survey?
@@ -293,7 +288,10 @@ public class PatientPane extends Pane {
 						c.setCellValue(date);
 						//	s.autoSizeColumn(0);
 
-						List<String> answers = nextsurvey.getanswers();
+						String encodedanswers = nextsurvey.getencodedAnswers();
+						String decoded = decryptText(encodedanswers, privateKey);
+						String[] answers = decoded.split(";");
+//						List<String> answers = nextsurvey.getanswers();
 						int answercounter = 1;
 						for (String answer : answers) {
 
@@ -328,38 +326,49 @@ public class PatientPane extends Pane {
 	}
 	
 	public void loadSurveys(){
-//		FirebaseProject proj = gui.getCurrentProject();
-//		if (proj == null)
-//			return;
-//		String name = proj.getname();
+		Callback<ListView<FirebaseSurvey>, ListCell<FirebaseSurvey>> cellFactory = new Callback<ListView<FirebaseSurvey>, ListCell<FirebaseSurvey>>() {
+			@Override
+			public ListCell<FirebaseSurvey> call(ListView<FirebaseSurvey> param) {
+
+				return new ListCell<FirebaseSurvey>() {
+					@Override
+					public void updateItem(FirebaseSurvey item, boolean empty) {
+						super.updateItem(item, empty);
+						if (!empty) {
+							setText(item.gettitle());
+							setGraphic(null);
+						}
+					}
+				};
+			}
+		};
+		lstSurveys.setCellFactory(cellFactory);
+		//Load the initial values...
+		gui.getSurveys().forEach(survey->{
+			survey.title.addListener(listener->{lstSurveys.getItems().remove(survey);lstSurveys.getItems().add(survey);});
+			lstSurveys.getItems().add(survey);
+			
+		});
+		//...then listen for more!
 		gui.registerSurveyListener(new ListChangeListener<FirebaseSurvey>(){
 
 			@Override
 			public void onChanged(javafx.collections.ListChangeListener.Change<? extends FirebaseSurvey> c) {
-				c.next();
-				if(c.wasAdded()){
-					FirebaseSurvey added = c.getAddedSubList().get(0);
-					lstSurveys.getItems().add(added.gettitle());
-				//	addToTable(added);
-				}
-				else{
-					FirebaseSurvey removed = c.getRemoved().get(0);
-					lstSurveys.getItems().remove(removed.gettitle());
-				//	removeFromTable(removed);
-				}				
+				lstSurveys.getItems().clear();
+				
+				gui.getSurveys().forEach(survey->lstSurveys.getItems().add(survey));
+//				lstSurveys.getItems().addAll(gui.getSurveys());
 			}
 			
 		});
 	}
 	public void loadPatients() {
-		FirebaseProject proj = gui.getCurrentProject();
+		FirebaseProject proj = FirebaseDB.getOpenProject();
 		if (proj == null)
 			return;
-		String name = proj.getname();
-		firebase.getpatients().addListener(new ListChangeListener<FirebasePatient>() {
+		FirebaseDB.getInstance().getpatients().addListener(new ListChangeListener<FirebasePatient>() {
 			@Override
 			public void onChanged(javafx.collections.ListChangeListener.Change<? extends FirebasePatient> c) {
-				System.out.println("AGAIN!?!?");
 				c.next();
 				if(c.wasAdded()){
 					FirebasePatient added = c.getAddedSubList().get(0);
@@ -369,30 +378,52 @@ public class PatientPane extends Pane {
 					FirebasePatient removed = c.getRemoved().get(0);
 					removeFromTable(removed);
 				}
-				loadPatientTable(name);
+		//		loadPatientTable(FirebaseDB.getOpenProject().getname());
 
 			}
 		});
-		loadPatientTable(name);
+		loadPatientTable(FirebaseDB.getOpenProject().getname());
 		// back to it k?
-		update();
+		updatePatient();
 	}
 
+	private void updateSurvey(String newvalue){
+		
+	}
+	
+	/**
+	 * Decrypts a patient's personal info and adds it to the table
+	 * @param patient
+	 */
 	private void addToTable(FirebasePatient patient){
+		Preferences prefs = Preferences.userRoot().node("key");
+		String privateKeyStr = prefs.get("privateKey" + FirebaseDB.getOpenProject().getname(), "");
+		FirebaseProject proj = FirebaseDB.getOpenProject();
+		if (proj == null)
+			return;
+		String name = proj.getname();
 		String personalInfo = "";
+		if(patient.getCurrentStudy().equals(name))
 		try {
+			privateKey = getPrivate(privateKeyStr);
+
 			personalInfo = decryptText(patient.getuserinfo(),privateKey);
-		} catch (InvalidKeyException | UnsupportedEncodingException | IllegalBlockSizeException
-				| BadPaddingException e) {
+			decryptInfo(patient,personalInfo);
+			tblPatients.getItems().add(patient);
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		decryptInfo(patient,personalInfo);
-		tblPatients.getItems().add(patient);
+
 	}
+	/**
+	 * If a patient is uncoupled from the study, this method removes them
+	 * @param patient
+	 */
 	private void removeFromTable(FirebasePatient patient){
 		tblPatients.getItems().remove(patient);
 	}
+	
 	
 	private void decryptInfo(FirebasePatient patient, String personalInfo){
 		String[] infoBits = personalInfo.split(";");
@@ -403,50 +434,41 @@ public class PatientPane extends Pane {
 		patient.setEmail(email);
 		patient.setPhoneNo(phone);
 	}
+
 	private void loadPatientTable(String name) {
 		Preferences prefs = Preferences.userRoot().node("key");
-		String privateKeyStr = prefs.get("privateKey", "");
-		try {
-			privateKey = getPrivate(privateKeyStr);
-			System.out.println("privkey is " + privateKey);
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		System.out.println("HOW MAY TIMES");
+		String privateKeyStr = prefs.get("privateKey" + FirebaseDB.getOpenProject().getname(), "");
+
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				//loadPatientTable();
 				allowedPatients.clear();
-				firebase.getpatients().forEach(patient -> {
+				FirebaseDB.getInstance().getpatients().forEach(patient -> {
+					System.out.println("THERE ARE CURRENTLY " + FirebaseDB.getInstance().getpatients().size() + " Patients");
 					if (patient.getCurrentStudy() != null && patient.getCurrentStudy().equals(name))
-						allowedPatients.add(patient);
-					System.out.println("Patient's encrypted info is " + patient.getuserinfo());
 					try {
-				//		System.out.println("And their decrypted info is " + 
-					//String oldinfo = new String(patient.getuserinfo());
+						allowedPatients.add(patient);
+						privateKey = getPrivate(privateKeyStr);
+						System.out.println("NAME IS " + name);
 						String personalInfo = decryptText(patient.getuserinfo(),privateKey);
 						decryptInfo(patient,personalInfo);
-					} catch (InvalidKeyException | UnsupportedEncodingException | IllegalBlockSizeException
-							| BadPaddingException e) {
-						// TODO Auto-generated catch block
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}); 
 
-				System.out.println("We have " + allowedPatients.size() + " allowed patientes");
-				//	tblPatients.getItems().clear();
 				tblPatients.setItems(allowedPatients); // This is hacky but I'll get
-
-				update();
-
+				updatePatient();
 			}
 		});
 		tblPatients.getSelectionModel().selectedItemProperty().addListener(patientListener);
 	}
 
-	private void update() {
+	/**
+	 * This method gets the selected patient in the patient table, and udpates the rest of the GUI with this
+	 * patient's information, including decrypted personal information, study compliance, and feedback
+	 */
+	private void updatePatient() {
 
 		Platform.runLater(new Runnable() {
 			@Override
@@ -510,5 +532,9 @@ public class PatientPane extends Pane {
 		});
 	}
 
+	@FXML
+	public void showAllSurveys(Event e){
+		
+	}
 
 }

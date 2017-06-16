@@ -145,14 +145,13 @@ public class SendTextAction extends Action { // NO_UCD (unused code)
 		if(rec.isEmpty())
 			return;
 		String name = rec.get("name").toString();
-		System.out.println("HERE WE ARE VARS LENGTH IS  " + gui.getVariables().size());
 		gui.registerVarListener(listener->{
 			listener.next();
 			if(listener.wasAdded()){
 				for(FirebaseVariable var : listener.getAddedSubList()){
 					if(var.getname().equals(name)){
 						numberReceiver.addChild(UserVariable.create(var), 0,0);
-						setParentPane(getInstance().parentPane);
+						setParentPane(parentPane);
 					}
 					}
 			}

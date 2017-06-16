@@ -71,32 +71,6 @@ public abstract class Action extends ViewElement<FirebaseAction> {
 
 			});
 		}
-//		if (vars != null) {
-//			System.out.println("WHEW");
-//			if(varListener != null)vars.removeListener(varListener);
-//			 varListener = new ListChangeListener<FirebaseExpression>(){
-//
-//				@Override
-//				public void onChanged(Change<? extends FirebaseExpression> change) {
-//					change.next();
-//					if (change.wasAdded()) {
-//						System.out.println("ADDING");
-//						model.getvars().addAll(change.getAddedSubList());
-//					} else if (change.wasRemoved()){
-//						System.out.println("REMOVING");
-//						model.getvars().removeAll(change.getRemoved());
-//					}					
-//					else{
-//						System.out.println("we had a different kind of change!?");
-//					}
-//				}
-//				
-//			};
-//			vars.addListener(varListener);
-//		}
-//		else{
-//			System.out.println("OH NO");
-//		}
 	}
 
 	@Override

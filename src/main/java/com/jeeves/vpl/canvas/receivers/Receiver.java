@@ -65,7 +65,6 @@ public abstract class Receiver extends Pane {
 			elements.getChildren().add(child);
 			childList.add(child);
 		}
-		System.out.println("Added an element at index " + index);
 		// child.parentPane = this;
 		child.setManaged(true); // So it sits in the appropriate place
 		child.setMouseTransparent(false);
@@ -81,7 +80,7 @@ public abstract class Receiver extends Pane {
 				// child.removeEventHandler(MouseEvent.MOUSE_PRESSED, this);
 				child.setOnMouseReleased(handler -> {
 					if (child.getWasRemoved() == false && (child.getType() == ElementType.QUESTION || child.getType() == ElementType.UIELEMENT))
-						addChildAtIndex(child, child.oldIndex);
+						addChildAtIndex(child, child.getOldIndex());
 				}); // Hopefully readds it automatically if it gets dragged out
 					// and released?
 

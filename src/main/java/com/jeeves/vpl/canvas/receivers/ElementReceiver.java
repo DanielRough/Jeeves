@@ -66,6 +66,7 @@ public class ElementReceiver extends ExternalReceiver implements ParentPane {
 			}
 		};
 		elements.heightProperty().addListener(updateListener1);
+		
 	}
 
 	@Override

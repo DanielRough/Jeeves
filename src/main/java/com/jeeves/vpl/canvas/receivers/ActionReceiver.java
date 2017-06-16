@@ -198,7 +198,6 @@ public class ActionReceiver extends Receiver {
 //		for (int yPoint = 1; yPoint < 16; yPoint += 2)
 //			bottombracket.set(yPoint, bottombracket.get(yPoint) + heightChange);
 		redrawLine();
-		System.out.println("Height change to " + getInstance() + " was " + heightChange);
 
 		if (parentReceiver != null) {
 			parentReceiver.heightChanged(heightChange);
@@ -206,7 +205,6 @@ public class ActionReceiver extends Receiver {
 		heightProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-				System.out.println("How manhy times is this called? On " + getInstance());
 				if (parentReceiver == null)
 					return;
 				Platform.runLater(new Runnable() {

@@ -54,7 +54,7 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 				String value = cboSurvey.getValue();
 				cboSurvey.getItems().clear();
 				surveys.forEach(survey -> {
-					if (getInstance().isReadOnly)
+					if (isReadOnly)
 						return;
 					cboSurvey.getItems().add(survey.gettitle());
 					if (survey.gettitle().equals(value))
@@ -70,7 +70,8 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 							});
 
 							if (index >= 0)
-								cboSurvey.setValue(surveys.get(index).gettitle());
+								cboSurvey.getSelectionModel().clearAndSelect(index);
+								//	cboSurvey.setValue(surveys.get(index).gettitle());
 
 						}
 
@@ -97,7 +98,6 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				System.out.println("WHY YOU NO CHANGE");
 				params.put("result", cboCompMissed.getValue());
 				
 			}

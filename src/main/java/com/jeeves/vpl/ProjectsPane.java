@@ -11,6 +11,7 @@ import org.controlsfx.control.NotificationPane;
 import com.jeeves.vpl.firebase.FirebaseDB;
 import com.jeeves.vpl.firebase.FirebaseProject;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -34,7 +35,6 @@ public class ProjectsPane extends Pane {
 	@FXML private ListView<FirebaseProject> lstProjects;
 	
 	private FirebaseProject selectedProject;
-	private FirebaseDB firebase;
 	private Main gui;
 	private ObservableList<FirebaseProject> projects;
 	private Stage stage;
@@ -49,11 +49,10 @@ public class ProjectsPane extends Pane {
 		gui.setCurrentProject(selectedProject);
 		stage.close();
 	}
-	public ProjectsPane(Main gui, FirebaseDB firebase, Stage stage) {
-		this.firebase = firebase;
+	public ProjectsPane(Main gui,Stage stage) {
 		this.gui = gui;
 		this.stage = stage;
-		this.projects = firebase.getprojects();
+		this.projects = FirebaseDB.getInstance().getprojects();
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setController(this);
 
@@ -65,7 +64,24 @@ public class ProjectsPane extends Pane {
 			getChildren().add(root);
 			lstProjects.setItems(projects);
 			lstProjects.setCellFactory(projectsView -> new ProjectCell());
-			lstProjects.setPlaceholder(new Label("No projects currently available"));
+		
+			//Wait for 5 seconds before declaring that, yes, no projects are gonna come
+			new Thread(() -> {
+		        try {
+		            Thread.sleep(5000);
+		            if(projects.size() == 0)
+		            	Platform.runLater(new Runnable(){
+		    				public void run(){
+		    					lstProjects.setPlaceholder(new Label("No projects currently available."));
+		    				}
+		    			});		        }
+		        catch (Exception e){
+		            System.err.println(e);
+		        }
+		    }).start();
+			
+			lstProjects.setPlaceholder(new Label("Loading projects..."));
+			
 			
 			lstProjects.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<FirebaseProject>(){
 
@@ -115,7 +131,7 @@ public class ProjectsPane extends Pane {
 	            }
 
 	            lblProjectName.setText(project.getname());
-	            DateFormat formatter = new SimpleDateFormat("dd/MM/yy");
+	            DateFormat formatter = new SimpleDateFormat("dd/MM/yy HH:mm");
 	            Date date = new Date();
 	            date.setTime(project.getlastUpdated());
 	            String dateStr = formatter.format(date);
@@ -128,13 +144,14 @@ public class ProjectsPane extends Pane {
 	            	lblStatus.setText("Status: Unpublished");
 	            	lblStatus.setStyle("-fx-text-fill: red");
 	            }
-//	            firebase.getpatients().forEach(patient->{
-//	            	String study = patient.getCurrentStudy();
-//	            	if(study.equals(project.getid()))
-//	            		patientCount++;
-//	            });
+	            FirebaseDB.getInstance().getpatients().forEach(patient->{
+	            	String study = patient.getCurrentStudy();
+	            	
+	            	if(study != null && study.equals(project.getname()))
+	            		patientCount++;
+	            });
 	            lblPatients.setText("Patients: " + patientCount);
-
+	            patientCount = 0;
 	            }
 
 	            setText(null);

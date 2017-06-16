@@ -31,16 +31,16 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 		}
 		return null;
 	}
-	public boolean isReadOnly = false;
-	public double mouseX;
-	public double mouseY;
-	public ParentPane parentPane;
-	public double x;
-	public double y;
+	protected boolean isReadOnly = false;
+	protected double mouseX;
+	protected double mouseY;
+	protected ParentPane parentPane;
+	protected double x;
+	protected double y;
 	private ViewElement draggable; // Self-referencing class, hm...
 	private boolean wasRemoved = false;
 	private boolean wasDragged = false;
-	public int oldIndex;
+	protected int oldIndex;
 	protected String description;
 	protected EventHandler<MouseEvent> draggedHandler;
 	protected Main gui;
@@ -294,6 +294,9 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 
 	public void setOldIndex(int index) {
 		this.oldIndex = index;
+	}
+	public int getOldIndex(){
+		return oldIndex;
 	}
 	protected void addListeners() {
 		layoutXProperty().addListener(listener -> model.setxPos((long) getLayoutX()));

@@ -1,11 +1,12 @@
 package com.jeeves.vpl;
-
+import static com.jeeves.vpl.Constants.*;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
+import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
@@ -24,8 +25,6 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -57,20 +56,42 @@ public class LoginRegisterPane extends Pane{
 			getChildren().add(root);
 
 			//default values for now
-			txtUsername.setText("dman@dan.com");
-			txtPassword.setText("password");
+			txtUsername.setText("djr531@st-andrews.ac.uk");
+			txtPassword.setText("22grand92");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	@FXML 
-	public void validate(Event e){
+	private void validate(Event e){
 		String email = txtEmail.getText();
 		String password = txtRegPassword.getText();
+		String passwordconfirm = txtRegPasswordConfirm.getText();
 		String firstName = txtFirstName.getText();
 		String lastName = txtLastName.getText();
 		CreateRequest request = null;
+		if(firstName == null || firstName.isEmpty()){
+			makeInfoAlert("Jeeves","Registration error","Please enter your first name");
+			return;
+		}
+		if(lastName == null || lastName.isEmpty()){
+			makeInfoAlert("Jeeves","Registration error","Please enter your last name");
+			return;
+		}
+		if(email == null || email.isEmpty() ||  !EmailValidator.getInstance().isValid(email)){
+			makeInfoAlert("Jeeves","Registration error","Please enter a valid email address");
+			return;
+		}
+		if(password == null || password.isEmpty()){
+			makeInfoAlert("Jeeves","Registration error","Please enter a password");
+			return;
+		}
+		if(passwordconfirm == null || passwordconfirm.isEmpty() || !password.equals(passwordconfirm)){
+			makeInfoAlert("Jeeves","Registration error","Make sure your passwords match!");
+			return;
+		}
+		//This should all be fine with validation above, but it's in a try-catch just in case...
 		try{
 			request = new CreateRequest()
 					.setEmail(email)
@@ -80,45 +101,34 @@ public class LoginRegisterPane extends Pane{
 					.setDisabled(false);
 		}
 		catch(Exception err){
-			Alert alert = new Alert(AlertType.INFORMATION);
-			alert.setTitle("Registration failed");
-			alert.setHeaderText(null);
-			alert.setContentText("Sorry, that didn't work. " + err.getMessage());
-			alert.showAndWait();
+			makeInfoAlert("Jeeves","Registration failed", "Sorry, that didn't work. " + err.getMessage());
+			err.printStackTrace();
 			return;
 		}
+		
 		FirebaseAuth.getInstance().createUser(request)
 		.addOnSuccessListener(userRecord -> {
 			Platform.runLater(new Runnable(){
 				public void run(){
-					Alert alert = new Alert(AlertType.INFORMATION);
-					alert.setTitle("Registration successful");
-					alert.setHeaderText(null);
-					alert.setContentText("Successfully registered new user. You can now log in to Jeeves!");
-					alert.showAndWait();
+					makeInfoAlert("Jeeves","Registration successful","Successfully registered " + email + ". You can now log in to Jeeves!");
 				}
 			});
 
 			addUserToConfig(email,password,userRecord.getUid());
 		})
+		//It's not always that the user already exists, but...almost always.
 		.addOnFailureListener(err -> {
 			Platform.runLater(new Runnable(){
 				public void run(){
-					Alert alert = new Alert(AlertType.INFORMATION);
-					alert.setTitle("Registration failed");
-					alert.setHeaderText(null);
-					alert.setContentText("Sorry, that didn't work. " + err.getMessage());
-					alert.showAndWait();
+					makeInfoAlert("Jeeves","Registration failed", "Sorry, that didn't work. A user with this email address already exists!");
 				}
 			});
-
-			System.err.println("Error creating new user: " + err.getMessage());
 		});
 
 	}
 
 
-	public void addUserToConfig(String email, String password,String uid){
+	private void addUserToConfig(String email, String password,String uid){
 		Sha256Hash sha256Hash = new Sha256Hash(password);
 		try {
 
@@ -131,7 +141,7 @@ public class LoginRegisterPane extends Pane{
 
 	}
 	@FXML
-	public void login(Event e){
+	private void login(Event e){
 		Factory<org.apache.shiro.mgt.SecurityManager> factory = new IniSecurityManagerFactory("shiro.ini");
 		org.apache.shiro.mgt.SecurityManager securityManager = factory.getInstance();
 
@@ -159,19 +169,19 @@ public class LoginRegisterPane extends Pane{
 	}
 
 	@FXML
-	public void close(Event e){
+	private void close(Event e){
 		stage.close();
 		System.exit(0);
 	}
 
 	@FXML
-	public void showGlow(Event e){
+	private void showGlow(Event e){
 		Node image = (Node)e.getSource();
 		image.getStyleClass().add("drop_shadow");
 	}
 
 	@FXML
-	public void hideGlow(Event e){
+	private void hideGlow(Event e){
 		Node image = (Node)e.getSource();
 		image.getStyleClass().remove("drop_shadow");
 	}

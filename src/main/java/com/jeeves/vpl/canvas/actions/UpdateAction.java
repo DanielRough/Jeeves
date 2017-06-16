@@ -71,10 +71,8 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 				
 				if (arg2 != null && arg2.equals(trueButton)) {
 					expr.setvalue("true");
-					System.out.println("YAY");
 				} else{
 					expr.setvalue("false");
-					System.out.println("BOO");
 				}
 					if(vars.size()<2)
 					vars.add(null);

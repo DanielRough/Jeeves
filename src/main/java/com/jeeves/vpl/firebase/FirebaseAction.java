@@ -10,9 +10,6 @@ import com.google.firebase.database.IgnoreExtraProperties;
  * Created by Daniel on 26/05/15.
  */
 @SuppressWarnings("serial")
-// @JsonTypeInfo(use=JsonTypeInfo.Id.MINIMAL_CLASS, include=
-// JsonTypeInfo.As.PROPERTY, property="@class")
-@IgnoreExtraProperties
 
 public class FirebaseAction extends FirebaseElement implements Serializable {
 

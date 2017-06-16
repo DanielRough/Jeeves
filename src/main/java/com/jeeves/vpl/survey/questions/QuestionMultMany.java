@@ -163,8 +163,6 @@ public class QuestionMultMany extends QuestionView {
 	public void showEditOpts(Map<String, Object> opts) {
 		paneChoiceOptsM.getChildren().clear();
 		if (opts.isEmpty()){
-			System.out.println("correct null");
-
 			handleAddOpt(paneChoiceOptsM,"A");
 			handleAddOpt(paneChoiceOptsM,"B");
 

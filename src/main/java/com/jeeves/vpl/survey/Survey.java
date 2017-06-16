@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.receivers.QuestionReceiver;
+import com.jeeves.vpl.firebase.FirebaseDB;
 import com.jeeves.vpl.firebase.FirebaseQuestion;
 import com.jeeves.vpl.firebase.FirebaseSurvey;
 import com.jeeves.vpl.survey.questions.QuestionView;
@@ -42,7 +43,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class Survey extends ViewElement<FirebaseSurvey> {
-	private static int lastQuestionId = 0;
 	@FXML
 	private Button btnAddChoiceOpt;
 	@FXML
@@ -73,7 +73,6 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 	// private EventHandler<MouseEvent> qTypeHandler;
 	private Tab parentTab;
 	private QuestionReceiver receiver;
-	private DropShadow shadow = new DropShadow();
 
 	private ObservableList<QuestionView> surveyQuestions;
 	private StringProperty title;
@@ -223,8 +222,7 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 				question.getParentQuestion().removeChildQuestion(question);
 
 		}
-		else
-			System.out.println("Actually no we don't have this one");
+
 		// Time to referesh
 		editor.refresh();
 	}
@@ -293,6 +291,9 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 			}
 		});
 
+		//THIS IS TO STOP THEM RENAMING SURVEYS ONCE THE THING IS PUBLISHED
+		if(FirebaseDB.getOpenProject().getactive())
+			txtSurveyName.setDisable(true);
 		txtSurveyName.setOnKeyReleased(new EventHandler<KeyEvent>() {
 
 			@Override

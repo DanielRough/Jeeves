@@ -23,4 +23,3 @@ public class FirebaseMain implements Serializable {
 		return publicData;
 	}
 }
-//	private Map<String, FirebaseVariable> systemvars;

@@ -42,7 +42,7 @@ public class QuestionReceiver extends ExternalReceiver implements ParentPane {
 		if (parentQuestion != null) {
 			int parentIndex = elements.getChildren().indexOf(parentQuestion);
 			if (index <= parentIndex) {
-				index = addedChild.oldIndex; // Reset it to add it back to its
+				index = addedChild.getOldIndex(); // Reset it to add it back to its
 												// old place
 				Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setTitle("Parent/Child Question Conflict");
@@ -56,7 +56,7 @@ public class QuestionReceiver extends ExternalReceiver implements ParentPane {
 		for (QuestionView parentchild : childQuestions) {
 			int childIndex = elements.getChildren().indexOf(parentchild);
 			if (childIndex < index || index == -1) {
-				index = addedChild.oldIndex; // Can't have children coming
+				index = addedChild.getOldIndex(); // Can't have children coming
 												// before it!
 				Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setTitle("Parent/Child Question Conflict");
@@ -71,22 +71,7 @@ public class QuestionReceiver extends ExternalReceiver implements ParentPane {
 		addedChild.setOldIndex(index);
 		((QuestionView) child).addButtons();
 	}
-//
-//	@Override
-//	public void defineHandlers() {
-//		super.defineHandlers();
-////
-////		EventHandler<MouseEvent> qreleasedHandler = event -> {
-////			event.consume();
-////			ViewElement question = (ViewElement)event.getSource();
-////			if(question.getWasDragged()){
-////				return;
-////			}
-////			System.out.println("NAY TWAS NOT DRAGGED");
-////			addChildAtIndex(question,question.oldIndex);
-////		};
-////		addEventFilter(MouseEvent.MOUSE_RELEASED,qreleasedHandler);
-//	}
+
 	@Override
 	public void addChildListeners() {
 		elements.getChildren().addListener(new ListChangeListener<Node>() {

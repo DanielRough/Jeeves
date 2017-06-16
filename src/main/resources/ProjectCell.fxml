@@ -6,20 +6,26 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<HBox fx:id="hbox" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="57.0" prefWidth="333.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<HBox fx:id="hbox" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="333.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Label fx:id="lblProjectName" prefHeight="43.0" prefWidth="102.0" text="Project Name" wrapText="true">
+      <Label fx:id="lblProjectName" prefHeight="43.0" prefWidth="129.0" text="Project Name" wrapText="true">
          <font>
-            <Font name="System Bold" size="14.0" />
+            <Font name="System Bold" size="13.0" />
          </font></Label>
       <Label fx:id="lblLastUpdated" contentDisplay="CENTER" prefHeight="40.0" prefWidth="81.0" text="Last Updated" wrapText="true">
          <font>
-            <Font size="14.0" />
+            <Font size="13.0" />
          </font></Label>
-      <VBox alignment="CENTER_RIGHT" prefHeight="77.0" prefWidth="160.0" spacing="10.0">
+      <VBox alignment="CENTER_RIGHT" prefHeight="77.0" prefWidth="160.0">
          <children>
-            <Label fx:id="lblStatus" text="Status" wrapText="true" />
-            <Label fx:id="lblPatients" text="Patients" wrapText="true" />
+            <Label fx:id="lblStatus" text="Status" wrapText="true">
+               <font>
+                  <Font size="13.0" />
+               </font></Label>
+            <Label fx:id="lblPatients" text="Patients" wrapText="true">
+               <font>
+                  <Font size="13.0" />
+               </font></Label>
          </children>
       </VBox>
    </children>

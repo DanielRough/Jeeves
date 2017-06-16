@@ -3,7 +3,11 @@ package com.jeeves.vpl;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.jeeves.vpl.firebase.FirebaseProject;
+
 import javafx.event.EventHandler;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -12,6 +16,11 @@ import javafx.util.Callback;
 
 public class Constants {
 	
+	public static FirebaseProject openProject;
+	
+	public static void setOpenProject(FirebaseProject proj){
+		openProject = proj;
+	}
 	//When we first load up the triggers from file, we don't want to update the trigger IDs
 	public static boolean SHOULD_UPDATE_TRIGGERS = false;
 	public static enum ElementType {
@@ -114,13 +123,23 @@ public class Constants {
 	public static final String PATIENTS_COLL = "patients";
 	public static final String PROJECTS_COLL = "projects";
 	
-	// Clock trigger constants
+	// Clock trigger / time expression constants
+	public static final String[] DURATIONS_SHORT = {"minutes","hours"};
 	public static final String[] DURATIONS = { "minutes", "hours", "days", "weeks" };
 	public static final String INTERVAL_TRIGGER_TIME = "intervalTriggerTime";
 	public static final String LIMIT_AFTER_HOUR = "limitAfterHour";
 	public static final String LIMIT_BEFORE_HOUR = "limitBeforeHour";
 	public static final String INTERVAL_WINDOW = "intervalWindowLength";
 
+	
+	//A static method to make Info alerts
+	public static void makeInfoAlert(String titleText, String headerText, String infoText){
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle(titleText);
+		alert.setHeaderText(headerText);
+		alert.setContentText(infoText);
+		alert.showAndWait();
+	}
 	// A static event handler for ensuring we don't enter non-numeric characters
 	// into a numeric text box
 	public static EventHandler<KeyEvent> numberHandler = new EventHandler<KeyEvent>() {
@@ -173,6 +192,7 @@ public class Constants {
 
 	}
 	
+	//Generate a smaller project ID (easier to remember)
 	public static String generateProjectID() {
 		String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 		StringBuilder salt = new StringBuilder();

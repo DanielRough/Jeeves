@@ -5,6 +5,9 @@
 -fx-background-color: black;
 -fx-opacity: 0.7;	
 }
+.popup-shadow {
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
 .blueprint {
 	-fx-background-image: url("paper.jpg");
 	-fx-background-repeat: repeat;

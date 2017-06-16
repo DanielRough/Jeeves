@@ -52,27 +52,55 @@ public class FirebaseDB {
 	private DatabaseReference dbRef;// = myFirebaseRef.child(DBNAME);
 	private DatabaseReference privateRef;
 	private DatabaseReference publicRef;
-
+	DatabaseReference connectedRef;
 	private ObservableList<FirebasePatient> newpatients = FXCollections.observableArrayList();
 	private ObservableList<FirebaseProject> newprojects = FXCollections.observableArrayList();
 	private ObservableList<FirebaseProject> publicprojects = FXCollections.observableArrayList();
 	private Main gui;
 	private Session currentsesh;
-
+	private static FirebaseDB instance;
+	private static FirebaseProject openProject;
+	private String uid;
+	private boolean loaded = false;
+	public static FirebaseDB getInstance(){
+		return instance;
+	}
+	public static FirebaseProject getOpenProject(){
+		return openProject;
+	}
+	public static void setOpenProject(FirebaseProject project){
+		openProject = project;
+	}
 	public void getUserCredentials(String email){
 		Subject currentUser = SecurityUtils.getSubject();
 		Task<UserRecord> task = FirebaseAuth.getInstance().getUserByEmail(email)
 				.addOnSuccessListener(userRecord -> {
 					// See the UserRecord reference doc for the contents of userRecord.
-					System.out.println("Successfully fetched user data: " + userRecord.getEmail());
 					currentsesh = currentUser.getSession();
 					currentsesh.setAttribute( "uid", userRecord.getUid());
 					FirebaseApp.getInstance().delete();
-
+					loaded = true;
 					firebaseLogin();
 				})
 				.addOnFailureListener(e -> {
 					System.err.println("Error fetching user data: " + e.getMessage());
+					//HOPEFULLY this means that if we fail to load for a start, this'll reload things properly
+					connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+					connectedRef.addValueEventListener(new ValueEventListener() {
+						@Override
+						public void onDataChange(DataSnapshot snapshot) {
+							boolean connected = snapshot.getValue(Boolean.class);
+							if (connected) {
+								connectedRef.removeEventListener(this);
+								getUserCredentials(email);
+							}
+						}
+
+						@Override
+						public void onCancelled(DatabaseError error) {
+							System.err.println("Listener was cancelled");
+						}
+					});
 				});
 	}
 
@@ -85,6 +113,7 @@ public class FirebaseDB {
 		// Initialize the app with a custom auth variable, limiting the server's access
 		Map<String, Object> auth = new HashMap<String, Object>();
 		//	Session session = currentUser.getSession();
+		uid = currentsesh.getAttribute("uid").toString();
 		auth.put("uid", currentsesh.getAttribute("uid"));
 		try {
 			URL resource = FirebaseDB.class.getResource(SERVICE_JSON);
@@ -97,7 +126,6 @@ public class FirebaseDB {
 					.setDatabaseAuthVariableOverride(auth)
 					.build();
 			FirebaseApp.initializeApp(options);
-			System.out.println("Our User id is " + auth.get("uid"));
 			addListeners(); //listen on the database AS OUR CURRENT USER
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -111,6 +139,7 @@ public class FirebaseDB {
 	}
 	public FirebaseDB(Main gui) {
 		this.gui = gui;
+		instance = this;
 		try {
 			URL resource = FirebaseDB.class.getResource(SERVICE_JSON);
 			File file = new File(resource.toURI());
@@ -140,49 +169,14 @@ public class FirebaseDB {
 		privateRef =  dbRef.child(PRIVATE_COLL).child(currentsesh.getAttribute("uid").toString());
 		publicRef = dbRef.child(PUBLIC_COLL);
 
-		DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
-		connectedRef.addValueEventListener(new ValueEventListener() {
-			@Override
-			public void onDataChange(DataSnapshot snapshot) {
-				boolean connected = snapshot.getValue(Boolean.class);
-				if (connected) {
-					gui.updateConnecetedStatus(true);
-				} else {
-					gui.updateConnecetedStatus(false);
-				}
-			}
-
-			@Override
-			public void onCancelled(DatabaseError error) {
-				System.err.println("Listener was cancelled");
-			}
-		});
-		//		
-		//		dbRef.addValueEventListener(new ValueEventListener(){
-		//
-		//			@Override
-		//			public void onCancelled(DatabaseError arg0) {
-		//				System.out.println("ERROR ERROR " + arg0.getDetails());				
-		//			}
-		//
-		//			@Override
-		//			public void onDataChange(DataSnapshot arg0) {
-		//				FirebaseMain dbData = arg0.getValue(FirebaseMain.class);				
-		//			}
-		//			
-		//		});
-
 		privateRef.addValueEventListener(new ValueEventListener() {
 			@Override
-			public void onCancelled(DatabaseError arg0) {
-				System.out.println("ERROR ERROR " + arg0.getDetails());
-			}
+			public void onCancelled(DatabaseError arg0) {}
 			@Override
 			public void onDataChange(DataSnapshot arg0) {
 				FirebasePrivate appdata = arg0.getValue(FirebasePrivate.class);
 				newprojects.clear();
 				newpatients.clear();
-				System.out.println("Ooooh we changed ehre!");
 				if (appdata != null) {
 					Map<String, FirebaseProject> projects = appdata.getprojects();
 					Map<String, FirebasePatient> patients = appdata.getpatients();
@@ -197,7 +191,6 @@ public class FirebaseDB {
 		publicRef.addValueEventListener(new ValueEventListener() {
 			@Override
 			public void onCancelled(DatabaseError arg0) {
-				System.out.println("ERROR ERROR " + arg0.getDetails());
 			}
 
 			@Override
@@ -210,6 +203,24 @@ public class FirebaseDB {
 					//for (String key : publicprojs.keySet())
 					publicprojects.addAll(projects.values());
 				}
+			}
+		});
+		connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+		connectedRef.addValueEventListener(new ValueEventListener() {
+			@Override
+			public void onDataChange(DataSnapshot snapshot) {
+				boolean connected = snapshot.getValue(Boolean.class);
+
+				if (connected) {
+					Main.getContext().updateConnectedStatus(true);
+				} else {
+					Main.getContext().updateConnectedStatus(false);
+				}
+			}
+
+			@Override
+			public void onCancelled(DatabaseError error) {
+				System.err.println("Listener was cancelled");
 			}
 		});
 	}
@@ -228,6 +239,7 @@ public class FirebaseDB {
 			public void onDataChange(DataSnapshot dataSnapshot) {
 				@SuppressWarnings("unchecked")
 				FirebaseProject proj = dataSnapshot.getValue(FirebaseProject.class);
+				openProject = proj;
 				Platform.runLater(new Runnable(){
 					public void run(){
 						gui.setCurrentProject(proj);
@@ -256,8 +268,8 @@ public class FirebaseDB {
 
 		//Gonna try some basic encryption stuff
 		
-		DatabaseReference globalRef = null;
-		DatabaseReference publicRef = null;
+//		DatabaseReference globalRef = null;
+//		DatabaseReference publicRef = null;
 		//just reloading something we've already made. Need to update it in the public bit too (if it's currently active)
 		if (oldname == null/* || oldname.equals("")*/){
 			try {
@@ -270,30 +282,43 @@ public class FirebaseDB {
 		        Preferences prefs = Preferences.userRoot().node("key");
 		        object.setpubKey(Base64.encodeBase64String(publicKey.getEncoded()));
 
-		        prefs.put("privateKey",Base64.encodeBase64String(privateKey.getEncoded()));
-		      //  System.out.println("private key is " + new String(privateKey.getEncoded()));
+		        //SPECIFIC PRIVATE KEY TO THIS PROJECT YOU FUCKING IDIOT
+		        prefs.put("privateKey"+object.getname(),Base64.encodeBase64String(privateKey.getEncoded()));
+		        System.out.println("Just set the private key to " + prefs.get("privateKey"+object.getname(), ""));
+		        
 			} catch (NoSuchAlgorithmException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	        
-			publicRef = dbRef.child(PUBLIC_COLL).child(object.getname());
-			globalRef = privateRef.child(PROJECTS_COLL).child(object.getname());
+		//	publicRef = dbRef.child(PUBLIC_COLL).child(PROJECTS_COLL).child(object.getname());
+		//	globalRef = privateRef.child(PROJECTS_COLL).child(object.getname());
 			//This project needs an ID
 			String projid = generateProjectID();
 			object.setid(projid);
 			object.setresearcherno(currentsesh.getAttribute("uid").toString());
-			
-			if(object.getactive()){
-				publicRef.setValue(object);
-			}
+//			
+//			if(object.getactive()){
+//				publicRef.child(PROJECTS_COLL).child(object.getname()).setValue(object);
+//			}
 		}
 		else {
-			globalRef = privateRef.child(PROJECTS_COLL).child(oldname); // Update
-			globalRef.removeValue();
-			globalRef = privateRef.child(PROJECTS_COLL).child(object.getname());
+		//	publicRef = dbRef.child(PUBLIC_COLL).child(PROJECTS_COLL)child(oldname);
+		//	publicRef.child(PROJECTS_COLL).child(oldname).removeValue();
+	//		privateRef.child(PROJECTS_COLL).child(oldname).removeValue();
+			//			publicRef = dbRef.child(PUBLIC_COLL).child(object.getname());
+	//		globalRef = privateRef.child(PROJECTS_COLL).child(oldname); // Update
+//			globalRef.removeValue();
+//			publicRef.removeValue();
+//			globalRef = privateRef.child(PROJECTS_COLL).child(object.getname());
+//			publicRef = publicRef.child(PUBLIC_COLL).child(object.getname());
 		}
-		globalRef.setValue(object);
+		object.setlastUpdated(System.currentTimeMillis());
+		privateRef.child(PROJECTS_COLL).child(object.getname()).setValue(object);
+		
+	//	System.out.println("My uid is " + currentsesh.getAttribute("uid"));
+		if(object.getactive()){
+			publicRef.child(PROJECTS_COLL).child(object.getname()).setValue(object);		}
 		return true;
 	}
 

@@ -93,6 +93,7 @@ public abstract class ClockTrigger extends Trigger { // NO_UCD (use default)
 						model.getvariables().add(timeReceiverTo.getChildModel().getname());
 					}
 					else{
+						
 						ViewElement removed = listener.getRemoved().get(0);
 						FirebaseExpression removedModel = (FirebaseExpression)removed.getModel();
 						model.getvariables().remove(removedModel.getname());
@@ -133,7 +134,6 @@ public abstract class ClockTrigger extends Trigger { // NO_UCD (use default)
 					else{
 						ViewElement removed = listener.getRemoved().get(0);
 						FirebaseExpression removedModel = (FirebaseExpression)removed.getModel();
-						if(model.getvariables() == null)System.out.println("OOOH NOOOO");
 						model.getvariables().remove(removedModel.getname());
 					}
 					model.setdateTo(dateReceiverTo.getChildModel());

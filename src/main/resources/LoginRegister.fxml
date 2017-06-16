@@ -6,7 +6,6 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="blueprint" stylesheets="@Styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label layoutX="127.0" layoutY="27.0" text="Jeeves - Experience Sampling at your service!">
@@ -34,7 +33,6 @@
             <TextField fx:id="txtUsername" prefHeight="35.0" promptText="Username" />
             <PasswordField fx:id="txtPassword" prefHeight="35.0" promptText="Password" />
             <Button fx:id="btnLogin" mnemonicParsing="false" onAction="#login" prefHeight="35.0" prefWidth="272.0" text="Log In" />
-            <CheckBox mnemonicParsing="false" text="Remember me on this machine" />
             <Label fx:id="lblError" alignment="CENTER" prefHeight="81.0" prefWidth="254.0" textAlignment="CENTER" textFill="#c93a3a" wrapText="true">
                <font>
                   <Font name="System Bold" size="14.0" />

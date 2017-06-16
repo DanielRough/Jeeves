@@ -141,8 +141,9 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 			return;
 		TimeReceiver lastReceiver = (TimeReceiver) times.get(times.size() - 1);
 		paneTimes.getChildren().remove(lastReceiver);
-		model.gettimes().remove(model.gettimes().size()-1);//remove the last one
-		receivers.remove(model.gettimes().size()-1); //Ugh
+		int size = model.gettimes().size();
+		model.gettimes().remove(size-1);//remove the last one
+		receivers.remove(size-1); //Ugh
 		model.settriggerId(getSaltString()); // Again, update, must
 
 	}

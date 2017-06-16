@@ -114,7 +114,7 @@ public class TimeExpression extends Expression { // NO_UCD (unused code)
 						for(FirebaseVariable var : listener.getAddedSubList()){
 							if(var.getname().equals(name)){
 								exprTimeVar.addChild(UserVariable.create(var), 0,0);
-								setParentPane(getInstance().parentPane);
+								setParentPane(parentPane);
 							}
 						}
 					}

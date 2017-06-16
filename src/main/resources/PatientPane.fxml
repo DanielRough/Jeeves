@@ -16,15 +16,11 @@
       </Label>
       <StackPane layoutX="34.0" layoutY="37.0" prefHeight="224.0" prefWidth="283.0">
          <children>
-            <ScrollPane hbarPolicy="NEVER" prefHeight="227.0" prefWidth="251.0" vbarPolicy="ALWAYS">
-               <content>
-                  <TableView fx:id="tblPatients" editable="true" layoutX="15.0" layoutY="56.0" prefHeight="225.0" prefWidth="268.0">
-                     <columnResizePolicy>
-                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                     </columnResizePolicy>
-                  </TableView>
-               </content>
-            </ScrollPane>
+            <TableView fx:id="tblPatients" editable="true" layoutX="15.0" layoutY="56.0" prefHeight="225.0" prefWidth="268.0">
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
+            </TableView>
          </children>
       </StackPane>
       <AnchorPane layoutX="321.0" layoutY="70.0" prefHeight="120.0" prefWidth="273.0">
@@ -229,7 +225,7 @@
                   </HBox>
                </children>
             </VBox>
-            <ListView fx:id="lstSurveys" layoutX="21.0" layoutY="21.0" prefHeight="274.0" prefWidth="217.0" />
+            <ListView fx:id="lstSurveys" layoutX="21.0" layoutY="21.0" prefHeight="233.0" prefWidth="217.0" />
             <Label layoutX="78.0" text="Show data for...">
                <font>
                   <Font name="System Bold" size="14.0" />
@@ -255,6 +251,7 @@
                   <Button fx:id="btnDownloadSurvey" mnemonicParsing="false" onAction="#downloadSurvey" prefHeight="29.0" prefWidth="150.0" text="Download Survey Results" />
                </children>
             </VBox>
+            <Button fx:id="btnAllSurveys" layoutX="21.0" layoutY="266.0" mnemonicParsing="false" onAction="#showAllSurveys" prefHeight="29.0" prefWidth="217.0" text="All Surveys" />
          </children>
       </AnchorPane>
       <Separator layoutX="14.0" layoutY="273.0" prefHeight="3.0" prefWidth="891.0" />

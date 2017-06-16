@@ -2,7 +2,7 @@ package com.jeeves.vpl.canvas.triggers;
 
 import static com.jeeves.vpl.Constants.DATE_FROM;
 import static com.jeeves.vpl.Constants.DATE_TO;
-import static com.jeeves.vpl.Constants.DURATIONS;
+import static com.jeeves.vpl.Constants.DURATIONS_SHORT;
 import static com.jeeves.vpl.Constants.LIMIT_AFTER_HOUR;
 import static com.jeeves.vpl.Constants.LIMIT_BEFORE_HOUR;
 import static com.jeeves.vpl.Constants.INTERVAL_WINDOW;
@@ -96,7 +96,7 @@ public class ClockTriggerRandom extends ClockTrigger { // NO_UCD (use default)
 		cboRandom.valueProperty()
 				.addListener((ChangeListener<String>) (arg0, arg1, arg2) -> params.put("granularity", arg2));
 		
-		if(!model.getparams().containsKey("frequency"))
+		if(!model.getparams().containsKey(INTERVAL_WINDOW))
 			txtFieldRandom.setText("60");
 	}
 
@@ -111,9 +111,9 @@ public class ClockTriggerRandom extends ClockTrigger { // NO_UCD (use default)
 		paneRandomFrom.getChildren().add(timeReceiverFrom);
 		paneRandomTo.getChildren().add(timeReceiverTo);
 		styleTextCombo(cboRandom);
-		cboRandom.getItems().addAll(DURATIONS); // Add seconds, minutes, days,
+		cboRandom.getItems().addAll(DURATIONS_SHORT); // Add seconds, minutes, days,
 												// etc
-		cboRandom.setValue(DURATIONS[0]);
+		cboRandom.setValue(DURATIONS_SHORT[0]);
 	}
 
 	@Override
@@ -138,27 +138,6 @@ public class ClockTriggerRandom extends ClockTrigger { // NO_UCD (use default)
 		if (params.containsKey(INTERVAL_WINDOW)) {
 			frequencyR = params.get(INTERVAL_WINDOW).toString();
 			txtFieldRandom.setText(frequencyR);
-		}
-		if (model.gettimeFrom() != null) {
-			timeReceiverFrom.addChild(UserVariable.create(model.gettimeFrom()), 0, 0);
-		} else if (params.containsKey(LIMIT_BEFORE_HOUR)) {
-			String beforeTime = params.get(LIMIT_BEFORE_HOUR).toString();
-			timeReceiverFrom.setText(beforeTime);
-		}
-		if (model.gettimeTo() != null) {
-			timeReceiverTo.addChild(UserVariable.create(model.gettimeTo()), 0, 0);
-		} else if (params.containsKey(LIMIT_AFTER_HOUR)) {
-			String afterTime = params.get(LIMIT_AFTER_HOUR).toString();
-			timeReceiverTo.setText(afterTime);
-		}
-
-		// paneDate.getChildren().add(new CalendarEveryday());
-		if (params.containsKey(DATE_FROM)) {
-			dateFrom = ((Long) params.get(DATE_FROM)).intValue();
-
-		}
-		if (params.containsKey(DATE_TO)) {
-			dateTo = ((Long) params.get(DATE_TO)).intValue();
 		}
 				addListeners();
 	}

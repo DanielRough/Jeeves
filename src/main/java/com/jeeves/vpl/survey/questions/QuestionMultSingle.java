@@ -165,13 +165,10 @@ public class QuestionMultSingle extends QuestionView {
 		paneChoiceOptsS.getChildren().clear();
 
 		if (opts.isEmpty()){
-			System.out.println("correct null");
 			handleAddOpt(paneChoiceOptsS,"A");
 			handleAddOpt(paneChoiceOptsS,"B");
 			return;
 		}
-		else
-			System.out.println("Oh really? How strange!");
 
 		for (Object opt : opts.values()) {
 			handleAddOpt(paneChoiceOptsS, opt.toString());

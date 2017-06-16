@@ -70,8 +70,5 @@ public class FirebaseElement implements Serializable {
 		this.yPos = yPos;
 	}
 
-	// @Override
-	// public String toString(){
-	// return name.get();
-	// }
+
 }

@@ -56,19 +56,15 @@ public class ButtonTrigger extends Trigger { // NO_UCD (unused code)
 
 			@Override
 			public void onChanged(javafx.collections.ListChangeListener.Change<? extends FirebaseUI> c) {
-				System.out.println("YEAH THIS HAPPENED");
 				if (cboButton.getValue() != null)
 					value = cboButton.getValue();
-				System.out.println("CBO BUTOTN VALUE IS " + value);
 				cboButton.getItems().clear();
 				for (FirebaseUI button : uielements) {
-					System.out.println("Here's a button");
 					if (button.gettext() == null)
 						continue;
 					if(!button.getname().equals("button"))
 						continue;
 					cboButton.getItems().add(button.gettext());
-					System.out.println("Added " + button.gettext());
 					if (button.gettext().equals(value)) {
 						cboButton.setValue(value); // reset it if the original
 													// survey we had selected

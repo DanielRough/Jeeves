@@ -258,7 +258,6 @@ public class QuestionEditor extends Pane {
 							setText(item.getName());
 							getStyleClass().clear();
 							getStyleClass().add(item.getVarType());
-							System.out.println("Style class is " + getStyleClass().toString());
 							this.setBorder(null);
 							this.setAlignment(Pos.CENTER);
 							this.setFont(Font.font("Calibri", FontWeight.BOLD, 12.0));

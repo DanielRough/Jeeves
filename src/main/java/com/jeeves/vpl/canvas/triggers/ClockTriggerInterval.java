@@ -1,7 +1,6 @@
 package com.jeeves.vpl.canvas.triggers;
 
-import static com.jeeves.vpl.Constants.DATE_FROM;
-import static com.jeeves.vpl.Constants.DURATIONS;
+import static com.jeeves.vpl.Constants.DURATIONS_SHORT;
 import static com.jeeves.vpl.Constants.INTERVAL_TRIGGER_TIME;
 import static com.jeeves.vpl.Constants.styleTextCombo;
 
@@ -62,25 +61,7 @@ public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 	@SuppressWarnings("rawtypes")
 	public void addListeners() {
 		super.addListeners();
-		// paneDate.setOnMouseClicked(event->{
-		// newDatePane.setParams(dateStage, this, dateFrom, dateTo);
-		// Point2D point =
-		// getInstance().localToScreen(event.getX(),event.getY());
-		// Rectangle2D bounds = Screen.getPrimary().getBounds();
-		// double initX = point.getX();
-		// double initY = point.getY();
-		// if(point.getX() > (bounds.getWidth()-200)){
-		// initX = bounds.getWidth()-200;
-		// }
-		// if(point.getY() > (bounds.getHeight() - 300)){
-		// initY = bounds.getHeight() - 300;
-		// }
-		// dateStage.setX(initX);
-		// dateStage.setY(initY);
-		//
-		// dateStage.showAndWait();
-		//
-		// });
+
 		txtFieldInterval.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
 
 			@Override
@@ -100,11 +81,7 @@ public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 				if (txtFieldInterval.getText().equals(""))
 					return;
 				long intervalTriggerTime = Long.parseLong(txtFieldInterval.getText());// *
-																						// 1000;
-//				if (duration.equals("hours"))
-//					intervalTriggerTime *= 60;
 				params.put(INTERVAL_TRIGGER_TIME, intervalTriggerTime);
-			//	params.put("intervalTime", txtFieldInterval.getText());				
 			}
 		});
 
@@ -124,10 +101,9 @@ public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 		paneEndDate.getChildren().add(dateReceiverTo);
 		paneIntervalFrom.getChildren().add(timeReceiverFrom);
 		paneIntervalTo.getChildren().add(timeReceiverTo);
-		// super.datePane = paneDate;
 		styleTextCombo(cboInterval);
-		cboInterval.getItems().addAll(DURATIONS);
-		cboInterval.setValue(DURATIONS[0]);
+		cboInterval.getItems().addAll(DURATIONS_SHORT);
+		cboInterval.setValue(DURATIONS_SHORT[0]);
 	}
 
 	@Override
@@ -152,22 +128,10 @@ public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 				duration = "minutes";
 			if (params.containsKey(INTERVAL_TRIGGER_TIME))
 				intervalTime = params.get(INTERVAL_TRIGGER_TIME).toString();
-			// paneDate.getChildren().add(new CalendarEveryday());
 
-			if (params.containsKey(DATE_FROM)) {
-				// String dateFrom = ((String)params.get(DATE_FROM));String
-				// dateTo = ((String)params.get(DATE_TO));
-				// if(dateFrom != 0 && dateTo != 0){
-				// paneDate.getChildren().clear();
-				// CalendarFromTo calendarpane = new CalendarFromTo();
-				// paneDate.getChildren().add(calendarpane);
-				// calendarpane.setCalDates(LocalDate.ofEpochDay(dateFrom),LocalDate.ofEpochDay(dateTo));
-				// }
-			}
 			txtFieldInterval.setText(intervalTime);
 			cboInterval.setValue(duration);
 
-			// addListeners();
 		}
 
 	}

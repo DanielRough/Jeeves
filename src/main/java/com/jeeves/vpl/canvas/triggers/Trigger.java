@@ -59,13 +59,11 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 		this.model = data;
 		int actionNumber = 0;
 		if (model.gettriggerId() == null){
-			System.out.println("NEEENAAWWWWNEEEEENAAAAAW");
 			if(SHOULD_UPDATE_TRIGGERS)
 			model.settriggerId(getSaltString());
 		}
 			if (actions != null)
 			for(Action a : actions){
-				System.out.println("Adding an action to " + childReceiver);
 				childReceiver.addChildAtIndex(a, actionNumber++);
 			}
 		loading = false; // To check whether we change the salt string on the
@@ -82,7 +80,6 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 			@Override
 			public void onChanged(
 					javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
-				System.out.println("5" + getInstance().toString());
 				if(SHOULD_UPDATE_TRIGGERS)
 					model.settriggerId(getSaltString()); // Again, update, must
 				// reset
@@ -99,8 +96,6 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 			if (loading == false){
 				if(SHOULD_UPDATE_TRIGGERS)
 					model.settriggerId(getSaltString()); // Need to update ID if
-				System.out.println("6" + getInstance().toString());
-		//		System.out.println("1" + getInstance().toString());
 
 			}
 				// actions change
@@ -116,7 +111,6 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 					@Override
 					public void onChanged(
 							javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
-						System.out.println("1" + getInstance().toString());
 						if(SHOULD_UPDATE_TRIGGERS)
 							model.settriggerId(getSaltString()); // Again, update,
 						// must reset
@@ -129,7 +123,6 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 					@Override
 					public void onChanged(
 							javafx.collections.ListChangeListener.Change<? extends FirebaseExpression> c) {
-						System.out.println("2" + getInstance().toString());
 						if(SHOULD_UPDATE_TRIGGERS)
 							model.settriggerId(getSaltString()); // Again, update,
 					}
@@ -143,7 +136,6 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 				@Override
 				public void onChanged(
 						javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
-					System.out.println("3" + getInstance().toString());
 					if(SHOULD_UPDATE_TRIGGERS)
 						model.settriggerId(getSaltString()); // Again, update,
 					// must reset
@@ -156,7 +148,6 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 				@Override
 				public void onChanged(
 						javafx.collections.ListChangeListener.Change<? extends FirebaseExpression> c) {
-					System.out.println("4" + getInstance().toString());
 					if(SHOULD_UPDATE_TRIGGERS)
 						model.settriggerId(getSaltString()); // Again, update,
 				}
