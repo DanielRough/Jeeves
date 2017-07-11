@@ -61,6 +61,7 @@ public class DateReceiver extends ExpressionReceiver {
 		@FXML
 		public void closePane(Event e) {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
+			
 			if (pckPicker.getValue() != null) {
 				String formattedString = pckPicker.getValue().format(formatter);
 				texty.setText(formattedString);
@@ -177,8 +178,8 @@ public class DateReceiver extends ExpressionReceiver {
 			final Date date = new Date(epochMillis); //I have no idea why it takes a day off things :S
 			final String ISO_FORMAT = "dd/MM/yy";
 			final SimpleDateFormat sdf = new SimpleDateFormat(ISO_FORMAT);
-		//	final TimeZone utc = TimeZone.getTimeZone("UTC");
-		//	sdf.setTimeZone(utc);
+			final TimeZone utc = TimeZone.getTimeZone("Europe/London");
+			sdf.setTimeZone(utc);
 			text.setText(sdf.format(date));
 		
 	}

@@ -66,7 +66,7 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 	private String questionId;
 	protected QuestionView parentQuestion;
 	public StringProperty questionTextProperty;
-
+	private boolean isMandatory;
 	HBox buttonBox;
 
 	// protected String parentConstraints;
@@ -211,10 +211,12 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 		return model.getconditionConstraints();
 	}
 	
+	
 	public QuestionView getParentQuestion(){
 		return parentQuestion;
 	}
 
+	
 
 	public String getQuestionId(){
 		return this.questionId;
@@ -241,6 +243,13 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 		return new Node[] {};
 	}
 
+	public void setisMandatory(boolean mandatory){
+		model.setisMandatory(mandatory);
+	}
+	
+	public boolean isMandatory(){
+		return model.getisMandatory();
+	}
 	public void indent() {
 
 		Platform.runLater(new Runnable(){

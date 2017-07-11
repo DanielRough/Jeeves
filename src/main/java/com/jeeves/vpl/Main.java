@@ -1,13 +1,16 @@
 package com.jeeves.vpl;
 
-import static com.jeeves.vpl.Constants.*;
+import static com.jeeves.vpl.Constants.SHOULD_UPDATE_TRIGGERS;
+import static com.jeeves.vpl.Constants.VAR_BLUETOOTH;
 import static com.jeeves.vpl.Constants.VAR_BOOLEAN;
 import static com.jeeves.vpl.Constants.VAR_CLOCK;
 import static com.jeeves.vpl.Constants.VAR_DATE;
 import static com.jeeves.vpl.Constants.VAR_LOCATION;
 import static com.jeeves.vpl.Constants.VAR_NUMERIC;
+import static com.jeeves.vpl.Constants.VAR_WIFI;
 import static com.jeeves.vpl.Constants.actionNames;
 import static com.jeeves.vpl.Constants.exprNames;
+import static com.jeeves.vpl.Constants.makeInfoAlert;
 import static com.jeeves.vpl.Constants.questionNames;
 import static com.jeeves.vpl.Constants.triggerNames;
 import static com.jeeves.vpl.Constants.uiElementNames;
@@ -19,9 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
-import org.controlsfx.control.NotificationPane;
 
 import com.jeeves.vpl.Constants.ElementType;
 import com.jeeves.vpl.canvas.expressions.Expression;
@@ -43,13 +46,13 @@ import com.jeeves.vpl.survey.questions.QuestionView;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -64,15 +67,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.SplitPane.Divider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
-import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseDragEvent;
@@ -110,6 +110,7 @@ public class Main extends Application {
 			.observableList(new ArrayList<FirebaseVariable>());
 	private ObservableList<FirebaseUI> currentelements = FXCollections
 			.observableList(new ArrayList<FirebaseUI>());
+	private ObservableMap<String,Object> currentsurveydata = FXCollections.observableHashMap();
 	
 	private DragPane dragPane;
 	//private FirebaseDB firebase;
@@ -119,6 +120,10 @@ public class Main extends Application {
 	private SurveyPane surveyController;
 	private Stage primaryStage;
 	private ElementReceiver receiver; // Where UI elements go
+	
+	private NameComparator nameComparator;
+	private AgeComparator ageComparator;
+	private TypeComparator typeComparator;
 	@FXML private VBox vboxSurveyVars;
 
 	@FXML private Label lblActions;
@@ -192,7 +197,9 @@ public class Main extends Application {
 		lblOpenProject.setText("New project");
 		FirebaseDB.setOpenProject(openProject);
 		new FirebaseDB(this);
-
+		nameComparator = new NameComparator();
+		ageComparator = new AgeComparator();
+		typeComparator = new TypeComparator();
 		//currentproject = new FirebaseProject();
 
 		Platform.runLater(new Runnable() {
@@ -223,6 +230,10 @@ public class Main extends Application {
 		return currentelements;
 	}
 
+	public ObservableMap<String,Object> getSurveyEntries(){
+		return currentsurveydata;
+	}
+	
 	public ObservableList<FirebaseVariable> getVariables() {
 		return currentvariables;
 	}
@@ -343,6 +354,7 @@ public class Main extends Application {
 		currentsurveys.clear();
 		currentvariables.clear();
 		currentelements.clear();
+		currentsurveydata.clear();
 		
 		refreshCanvas();
 		refreshInterfaceDesigner();
@@ -355,6 +367,8 @@ public class Main extends Application {
 
 		currentelements.addAll(openProject.getuidesign());
 		currentsurveys.addAll(openProject.getsurveys());
+		if(openProject.getsurveydata() != null)
+		currentsurveydata.putAll(openProject.getsurveydata());
 		patientController.loadPatients(); // Reset so we have the			// patients for THIS project
 		patientController.loadSurveys();
 		tabPane.getSelectionModel().select(tabFramework);
@@ -474,8 +488,9 @@ public class Main extends Application {
 														// again or they get
 														// duplicated every time
 		}
+		//TODO: These should really be read from the Constants class
 		cboAttrType.getItems().clear();
-		cboAttrType.getItems().addAll("True/False","Date","Time","Location","Number");
+		cboAttrType.getItems().addAll("True/False","Date","Time","Location","WiFi","Bluetooth","Number");
 	}
 
 
@@ -490,6 +505,10 @@ public class Main extends Application {
 
 	public void registerVarListener(ListChangeListener<FirebaseVariable> listener) {
 		currentvariables.addListener(listener);
+	}
+	
+	public void registerSurveyDataListener(MapChangeListener<String,Object> listener){
+		currentsurveydata.addListener(listener);
 	}
 
 	@FXML
@@ -652,7 +671,7 @@ public class Main extends Application {
 		FirebaseDB.setOpenProject(openProject);
 		primaryStage.setTitle("Jeeves");
 		resetPanes();
-
+		
 
 		for (ViewElement element : elements) {
 			ViewElement<FirebaseVariable> draggable = ViewElement.create(element.getClass().getName());
@@ -844,6 +863,9 @@ public class Main extends Application {
 		case "Date":var.setVartype(VAR_DATE); break;
 		case "Time":var.setVartype(VAR_CLOCK);break;
 		case "Location":var.setVartype(VAR_LOCATION);break;
+		case "WiFi":var.setVartype(VAR_WIFI);break;
+		case "Bluetooth":var.setVartype(VAR_BLUETOOTH);break;
+
 		}
 		var.setisCustom(true);
 		var.settimeCreated(System.currentTimeMillis());
@@ -852,21 +874,27 @@ public class Main extends Application {
 		
 	}
 	class NameComparator implements Comparator<FirebaseVariable> {
+		int reverse =1;
+		public void doReverse(){reverse = -reverse;}
 	    @Override
 	    public int compare(FirebaseVariable a, FirebaseVariable b) {
-	    	return a.getname().compareToIgnoreCase(b.getname());
+	    	return reverse * a.getname().compareToIgnoreCase(b.getname());
 	    }
 	}
 	class TypeComparator implements Comparator<FirebaseVariable> {
-	    @Override
+		int reverse =1;
+		public void doReverse(){reverse = -reverse;}
+		@Override
 	    public int compare(FirebaseVariable a, FirebaseVariable b) {
-	        return a.getvartype().compareToIgnoreCase(b.getvartype());
+	        return reverse * a.getvartype().compareToIgnoreCase(b.getvartype());
 	    }
 	}
 	class AgeComparator implements Comparator<FirebaseVariable> {
+	    int reverse =1;
+		public void doReverse(){reverse = -reverse;}
 	    @Override
 	    public int compare(FirebaseVariable a, FirebaseVariable b) {
-	        return a.gettimeCreated() >= b.gettimeCreated() ? 1 : -1;
+	        return a.gettimeCreated() >= b.gettimeCreated() ? reverse : -reverse;
 	    }
 	}
 	
@@ -883,22 +911,26 @@ public class Main extends Application {
 		vboxSurveyVars.getChildren().add(global);
 		});
 	}
+	
 	@FXML
 	public void sortByName(Event e){
-		currentvariables.sort(new NameComparator());
+		nameComparator.doReverse();
+		currentvariables.sort(nameComparator);
 		reAddVariables();
 	
 	}
 	
 	@FXML
 	public void sortByTime(Event e){
-		currentvariables.sort(new AgeComparator());
+		ageComparator.doReverse();
+		currentvariables.sort(ageComparator);
 		reAddVariables();
 	}
 	
 	@FXML
 	public void sortByType(Event e){
-		currentvariables.sort(new TypeComparator());
+		typeComparator.doReverse();
+		currentvariables.sort(typeComparator);
 		reAddVariables();
 	}
 }

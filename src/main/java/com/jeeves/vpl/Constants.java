@@ -43,6 +43,8 @@ public class Constants {
 	public static final String VAR_CLOCK = "Time";
 	public static final String VAR_DATE = "Date";
 	public static final String VAR_LOCATION = "Location";
+	public static final String VAR_WIFI = "WiFi";
+	public static final String VAR_BLUETOOTH = "Bluetooth";
 	public static final String VAR_NONE = "None";
 	public static final String VAR_NUMERIC = "Numeric";
 	public static class Sensor {
@@ -75,18 +77,21 @@ public class Constants {
 	// Sensor constants
 		private static Sensor accelSensor = new Sensor("Accelerometer", "/img/icons/accelerometer.png",
 				new String[] {"Moving", "Stationary"},true);
-		public static Sensor locSensor = new Sensor("Location", "/img/icons/location.jpg", new String[] {},true);
-
-		private static Sensor smsSensor = new Sensor("SMS", "/img/icons/sms.jpg",
+		public static Sensor locSensor = new Sensor(VAR_LOCATION, "/img/icons/location.png", new String[] {},true);
+		public static Sensor bluetoothSensor = new Sensor(VAR_BLUETOOTH, "/img/icons/bluetooth.png", new String[] {},true);
+		public static Sensor wifiSensor = new Sensor(VAR_WIFI, "/img/icons/wifi.png", new String[] {},true);
+		public static Sensor microphoneSensor = new Sensor("Microphone", "/img/icons/microphone.png", new String[] {"Noisy","Quiet"},true);
+		private static Sensor smsSensor = new Sensor("SMS", "/img/icons/sms.png",
 				new String[] { "Message Sent", "Message Received" },false);
 		
-		public static final Sensor[] sensors = { accelSensor, locSensor, smsSensor };
+		public static final Sensor[] sensors = { accelSensor, locSensor, smsSensor,wifiSensor,bluetoothSensor,microphoneSensor };
 
 	//Trigger, action, other such names for dynamic loading
 	public static String[] actionNames = { "com.jeeves.vpl.canvas.actions.PromptAction",
 			"com.jeeves.vpl.canvas.actions.SendTextAction", 
 			//"com.jeeves.vpl.canvas.actions.SpeakerAction",
 			"com.jeeves.vpl.canvas.actions.SurveyAction", "com.jeeves.vpl.canvas.actions.UpdateAction",
+			"com.jeeves.vpl.canvas.actions.AskForDataAction", "com.jeeves.vpl.canvas.actions.CaptureDataAction",
 			"com.jeeves.vpl.canvas.actions.WaitingAction", "com.jeeves.vpl.canvas.ifsloops.IfControl"};
 	public static String[] exprNames = { "com.jeeves.vpl.canvas.expressions.AndExpression",
 			"com.jeeves.vpl.canvas.expressions.OrExpression", "com.jeeves.vpl.canvas.expressions.NotExpression",

@@ -35,6 +35,7 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseCredentials;
 import com.google.firebase.auth.UserRecord;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -43,15 +44,17 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.tasks.Task;
 import com.jeeves.vpl.Main;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 
 public class FirebaseDB {
 
-	private DatabaseReference dbRef;// = myFirebaseRef.child(DBNAME);
-	private DatabaseReference privateRef;
-	private DatabaseReference publicRef;
+	private static DatabaseReference dbRef;// = myFirebaseRef.child(DBNAME);
+	private static DatabaseReference privateRef;
+	private static DatabaseReference patientsRef;
+	private static DatabaseReference surveyDataRef;
+	private static DatabaseReference publicRef;
 	DatabaseReference connectedRef;
 	private ObservableList<FirebasePatient> newpatients = FXCollections.observableArrayList();
 	private ObservableList<FirebaseProject> newprojects = FXCollections.observableArrayList();
@@ -70,6 +73,23 @@ public class FirebaseDB {
 	}
 	public static void setOpenProject(FirebaseProject project){
 		openProject = project;
+		//Not particularly nice that I have to put the reference for survey data in here
+		if(privateRef == null)return;
+		DatabaseReference globalRef = privateRef.child(PROJECTS_COLL).child(project.getname());
+		DatabaseReference surveyDataRef = globalRef.child("surveydata");
+		System.out.println("I did definitely make a reference right?");
+		surveyDataRef.addValueEventListener(new ValueEventListener(){
+			@Override
+			public void onCancelled(DatabaseError arg0) {
+				System.out.println("ERROR ERROR " + arg0.getDetails());
+			}
+			@Override
+			public void onDataChange(DataSnapshot arg0) {
+				Map<String,Object> surveymap = (Map<String,Object>)arg0.getValue();
+				openProject.setsurveydata(surveymap);
+			}
+		});
+	
 	}
 	public void getUserCredentials(String email){
 		Subject currentUser = SecurityUtils.getSubject();
@@ -167,24 +187,63 @@ public class FirebaseDB {
 	public void addListeners() {
 		dbRef = FirebaseDatabase.getInstance().getReference();
 		privateRef =  dbRef.child(PRIVATE_COLL).child(currentsesh.getAttribute("uid").toString());
+		patientsRef = privateRef.child("patients");
 		publicRef = dbRef.child(PUBLIC_COLL);
+		
+		//We now have listeners for individual patients rather than just clearing and adding them all every time an
+		//update happens. This should make the patients pane function more cleanly
+		patientsRef.addChildEventListener(new ChildEventListener() {
+		    @Override
+		    public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
+		        FirebasePatient newPost = dataSnapshot.getValue(FirebasePatient.class);
+		        System.out.println("WE ADDED A CHILD");
+		        newpatients.add(newPost);
+		    }
 
+		    @Override
+		    public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
+		    	System.out.println("WE CHANGED A CHILD");
+		    	FirebasePatient changedPatient = dataSnapshot.getValue(FirebasePatient.class);
+		    	System.out.println("name of patient is " + changedPatient.getName());
+		    	newpatients.remove(changedPatient);
+		    	newpatients.add(changedPatient);
+		    }
+
+		    @Override
+		    public void onChildRemoved(DataSnapshot dataSnapshot) {
+		        FirebasePatient newPost = dataSnapshot.getValue(FirebasePatient.class);
+		        System.out.println("WE REMOVED A CHILD");
+		    	System.out.println("name of patient is " + newPost.getName());
+
+		        System.out.println("removal result is " +newpatients.remove(newPost) );
+		        ;
+		    }
+		    @Override
+		    public void onChildMoved(DataSnapshot dataSnapshot, String prevChildKey) {}
+
+		    @Override
+		    public void onCancelled(DatabaseError databaseError) {}
+		});
 		privateRef.addValueEventListener(new ValueEventListener() {
 			@Override
-			public void onCancelled(DatabaseError arg0) {}
+			public void onCancelled(DatabaseError arg0) {
+				System.out.println("ERROR: " + arg0.getDetails());
+				
+			}
 			@Override
 			public void onDataChange(DataSnapshot arg0) {
+			//	System.out.println("WE CHANNNNNGEDs");
 				FirebasePrivate appdata = arg0.getValue(FirebasePrivate.class);
 				newprojects.clear();
-				newpatients.clear();
+			//	newpatients.clear();
 				if (appdata != null) {
 					Map<String, FirebaseProject> projects = appdata.getprojects();
-					Map<String, FirebasePatient> patients = appdata.getpatients();
+			//		Map<String, FirebasePatient> patients = appdata.getpatients();
 					if (projects != null)
 						for (String key : projects.keySet())
 							newprojects.add(projects.get(key));
-					if (patients != null)
-						newpatients.addAll(patients.values());
+//					if (patients != null)
+//						newpatients.addAll(patients.values());
 				}
 			}
 		});
@@ -231,31 +290,38 @@ public class FirebaseDB {
 		return true;
 	}
 
-	public void loadProject(String name){
-
-		DatabaseReference globalRef = privateRef.child(PROJECTS_COLL).child(name);
-		globalRef.addListenerForSingleValueEvent(new ValueEventListener() {
-			@Override
-			public void onDataChange(DataSnapshot dataSnapshot) {
-				@SuppressWarnings("unchecked")
-				FirebaseProject proj = dataSnapshot.getValue(FirebaseProject.class);
-				openProject = proj;
-				Platform.runLater(new Runnable(){
-					public void run(){
-						gui.setCurrentProject(proj);
-					}
-				});
-			}
-
-			@Override
-			public void onCancelled(DatabaseError arg0) {
-				// TODO Auto-generated method stub
-
-			}
-
-
-		});
+	public void sendPatientFeedback(FirebasePatient patient, String feedback){
+        final DatabaseReference firebaseFeedback =  privateRef.child(PATIENTS_COLL).child(patient.getName()).child("feedback").child(Long.toString(System.currentTimeMillis()));
+        firebaseFeedback.setValue("You: " + feedback);
 	}
+//	public void loadProject(String name){
+//
+//		DatabaseReference globalRef = privateRef.child(PROJECTS_COLL).child(name);
+//		globalRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//			@Override
+//			public void onDataChange(DataSnapshot dataSnapshot) {
+//				@SuppressWarnings("unchecked")
+//				FirebaseProject proj = dataSnapshot.getValue(FirebaseProject.class);
+//				openProject = proj;
+//				//It's a bit annoying, but this is the only bit of the project that gets updated from the Android side!
+//				
+//				Platform.runLater(new Runnable(){
+//					public void run(){
+//						gui.setCurrentProject(proj);
+//					}
+//				});
+//				
+//			}
+//
+//			@Override
+//			public void onCancelled(DatabaseError arg0) {
+//				// TODO Auto-generated method stub
+//
+//			}
+//
+//
+//		});
+//	}
 	KeyPairGenerator kpg;
     KeyPair kp;
     PublicKey publicKey;
@@ -333,6 +399,7 @@ public class FirebaseDB {
 	public ObservableList<FirebaseProject> getpublicprojects(){
 		return publicprojects;
 	}
+
 	/**
 	 * 'Publish' the study by putting it in the 'public' branch of the Firebase Database.
 	 * It first updates the 'active' field of the study to true. It then writes this study spec to both the private and public branches

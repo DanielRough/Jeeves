@@ -23,9 +23,14 @@
                   </Label>
                   <TextField fx:id="txtQText" prefWidth="258.0" promptText="How are you?">
                      <VBox.margin>
-                        <Insets bottom="20.0" />
+                        <Insets bottom="5.0" />
                      </VBox.margin>
                   </TextField>
+                  <CheckBox fx:id="chkMandatory" mnemonicParsing="false" text="Must be answered">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
                   <Pane fx:id="paneNoOpts" prefHeight="200.0" prefWidth="200.0">
                      <children>
                         <Label layoutX="70.0" layoutY="77.0" text="No additional options" textFill="#656161">

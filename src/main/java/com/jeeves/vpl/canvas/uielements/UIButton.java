@@ -2,10 +2,12 @@ package com.jeeves.vpl.canvas.uielements;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Control;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 
 import com.jeeves.vpl.ViewElement;
@@ -82,6 +84,7 @@ public class UIButton extends UIElement { // NO_UCD (unused code)
 
 			@Override
 			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
+
 				model.settext(arg2);
 			}
 

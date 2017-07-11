@@ -20,9 +20,19 @@ public class FirebaseQuestion extends FirebaseElement implements Serializable {
 	private String questionId;
 	private String questionText;
 	private long questionType;
+	private boolean isMandatory;
+	
 
 	// Maybe each FirebaseQuestion could have another reference to a
 	// FirebaseQuestion that acts as its condition question?
+
+	public boolean getisMandatory(){
+		return isMandatory;
+	}
+	
+	public void setisMandatory(boolean isMandatory){
+		this.isMandatory = isMandatory;
+	}
 
 	public String getassignedVar() {
 		return assignedVar;

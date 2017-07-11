@@ -2,6 +2,8 @@ package com.jeeves.vpl.canvas.triggers;
 
 import static com.jeeves.vpl.Constants.VAR_LOCATION;
 import static com.jeeves.vpl.Constants.locSensor;
+import static com.jeeves.vpl.Constants.bluetoothSensor;
+import static com.jeeves.vpl.Constants.wifiSensor;
 import static com.jeeves.vpl.Constants.sensors;
 
 import java.util.List;
@@ -29,7 +31,8 @@ import javafx.stage.Popup;
 public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 	public static final String DESC = "Schedule actions to take place when a phone sensor returns a particular result";
 	public static final String NAME = "Sensor Trigger";
-	private ExpressionReceiver locReceiver;
+	private ExpressionReceiver variableReceiver;
+	
 	@FXML
 	protected Button btnLeft;
 	@FXML
@@ -76,8 +79,8 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 			}
 		});
 
-		locReceiver.getChildElements().addListener(
-				(ListChangeListener<ViewElement>) listener -> {listener.next(); if(listener.wasRemoved())return; params.put("result", locReceiver.getChildModel().getname());});// timeReceiverFrom.getChildElements().get(0).getModel())));			
+		variableReceiver.getChildElements().addListener(
+				(ListChangeListener<ViewElement>) listener -> {listener.next(); if(listener.wasRemoved())return; params.put("result", variableReceiver.getChildModel().getname());});// timeReceiverFrom.getChildElements().get(0).getModel())));			
 
 		cboClassifications.valueProperty()
 				.addListener((ChangeListener<String>) (arg0, arg1, arg2) -> params.put("result", arg2));
@@ -91,7 +94,7 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 		for (Sensor s : sensors) {
 			cboSensor.getItems().add(s.getname());
 		}
-		locReceiver = new ExpressionReceiver(VAR_LOCATION);
+		variableReceiver = new ExpressionReceiver(VAR_LOCATION);
 
 	}
 
@@ -108,8 +111,9 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 	@Override
 	public void setParentPane(ParentPane parent) {
 		super.setParentPane(parent);
-		if(locReceiver.getChildExpression()!= null)
-			locReceiver.getChildExpression().setParentPane(parent);
+		System.out.println("THEN ME");
+		if(variableReceiver.getChildExpression()!= null)
+			variableReceiver.getChildExpression().setParentPane(parent);
 
 	}
 	@Override
@@ -125,8 +129,6 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 		for (Sensor s : sensors) {
 			if (s.getname().equals(sensorName)) {
 				setSelectedSensor(s);
-				// cboSensor.setValue(sensorName);
-				// imgSensorImage.setImage(new Image(s.getimage()));
 			}
 		}
 		if (params.containsKey("result"))
@@ -140,14 +142,16 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 		
 		if (result != null && !result.equals("")) {
 			// this.result = result;
-			if(selectedSensor == locSensor){
+			if(selectedSensor == locSensor || selectedSensor == bluetoothSensor || selectedSensor == wifiSensor){
 				gui.registerVarListener(listener->{
 					listener.next();
 					if(listener.wasAdded()){
 						List<FirebaseVariable> list = (List<FirebaseVariable>) listener.getAddedSubList();
-						if(list.get(0).getname().equals(result))
-							locReceiver.addChild(UserVariable.create(list.get(0)),0,0);
-					}
+						if(list.get(0).getname().equals(result)){
+							variableReceiver.addChild(UserVariable.create(list.get(0)),0,0);
+							System.out.println("FIRST ME");
+						}
+						}
 				});
 				
 			}
@@ -169,16 +173,27 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 			cboClassifications.setValue(model.getparams().get("result").toString());
 		else if (classifications.length > 0)
 			cboClassifications.setValue(classifications[0]);
-		if (locReceiver == null)
-			locReceiver = new ExpressionReceiver(VAR_LOCATION);
-
-		if (sensor.getname().equals("Location") && !hboxBox.getChildren().contains(locReceiver)) { 
+		if (variableReceiver == null)
+			variableReceiver = new ExpressionReceiver(VAR_LOCATION);
+		
+		//IF our sensor has no possible classification values then it's one we have to drag a variable into
+		//hboxBox.getChildren().remove(variableReceiver);
+		if(sensor.getvalues().length == 0){
 			hboxBox.getChildren().remove(cboClassifications);
-			hboxBox.getChildren().add(locReceiver);
-		} else if (!sensor.getname().equals("Location") && !hboxBox.getChildren().contains(cboClassifications)) {
-			hboxBox.getChildren().add(cboClassifications);
-			hboxBox.getChildren().remove(locReceiver);
+			variableReceiver.setReceiveType(sensor.getname());
+		//	variableReceiver = new ExpressionReceiver(sensor.getname());
+			hboxBox.getChildren().add(variableReceiver);
+			
 		}
+		else{
+			hboxBox.getChildren().add(cboClassifications);
+			hboxBox.getChildren().remove(variableReceiver);
+		}
+//		if (sensor.getname().equals("Location") && !hboxBox.getChildren().contains(variableReceiver)) { 
+//
+//		} else if (!sensor.getname().equals("Location") && !hboxBox.getChildren().contains(cboClassifications)) {
+//
+//		}
 	}
 
 }

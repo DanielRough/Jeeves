@@ -117,14 +117,16 @@
 }
 
 .Location {
-	-fx-background-color: radial-gradient(center 50% -40%, radius 200%, #e73827 45%, #f0796e 50%);
+	-fx-background-color: thistle;
 	-fx-border-radius: 20 20 20 20;
 	-fx-border-width: 0;
 	-fx-background-radius: 20 20 20 20;
 	  -fx-alignment: center;
 -fx-text-alignment: center;
 }
-
+.Location .img{
+    -fx-background-image: url("img/icons/location.png");
+}
 .Location .label {
 	-fx-text-fill: black;
 	-fx-font-family: 'Calibri';
@@ -135,6 +137,52 @@
 	-fx-text-alignment: center;
 }
 
+.WiFi {
+	-fx-background-color: thistle;
+	-fx-border-radius: 20 20 20 20;
+	-fx-border-width: 0;
+	-fx-background-radius: 20 20 20 20;
+	  -fx-alignment: center;
+-fx-text-alignment: center;
+}
+
+.WiFi .img{
+    -fx-background-image: url("img/icons/wifi.png");
+}
+
+.WiFi .label{
+	-fx-text-fill: black;
+	-fx-font-family: 'Calibri';
+	-fx-alignment: center;
+		-fx-font-weight: bold; 
+		-fx-padding: 0 15 0 15;
+	
+	-fx-text-alignment: center;
+}
+
+
+
+.Bluetooth{
+	-fx-background-color: thistle;
+	-fx-border-radius: 20 20 20 20;
+	-fx-border-width: 0;
+	-fx-background-radius: 20 20 20 20;
+	  -fx-alignment: center;
+-fx-text-alignment: center;
+}
+
+.Bluetooth .img{
+    -fx-background-image: url("img/icons/bluetooth.png");
+}
+.Bluetooth .label{
+	-fx-text-fill: black;
+	-fx-font-family: 'Calibri';
+	-fx-alignment: center;
+		-fx-font-weight: bold; 
+		-fx-padding: 0 15 0 15;
+	
+	-fx-text-alignment: center;
+}
 .Date {
 	-fx-border-radius: 20 20 20 20;
 	-fx-background-radius: 20 20 20 20;

@@ -1,5 +1,9 @@
 package com.jeeves.vpl.canvas.triggers;
 
+import com.jeeves.vpl.canvas.uielements.UIButton;
+import com.jeeves.vpl.firebase.FirebaseTrigger;
+import com.jeeves.vpl.firebase.FirebaseUI;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -8,9 +12,6 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ToggleGroup;
-
-import com.jeeves.vpl.firebase.FirebaseTrigger;
-import com.jeeves.vpl.firebase.FirebaseUI;
 
 /**
  * This class represents a clock trigger that can be dragged around on the
@@ -47,10 +48,11 @@ public class ButtonTrigger extends Trigger { // NO_UCD (unused code)
 																		// FIX
 																		// //myCanvas.getProject().getUIElements();
 		uielements.forEach(survey -> {
+			if(survey.getname().equals("button")){
 			cboButton.getItems().add(survey.gettext());
 			cboButton.getSelectionModel().selectFirst();
 			params.put("selectedButton", cboButton.getSelectionModel().getSelectedItem());
-
+			}
 		});
 		gui.registerElementListener(new ListChangeListener<FirebaseUI>() {
 

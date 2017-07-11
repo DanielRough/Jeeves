@@ -1,5 +1,9 @@
 package com.jeeves.vpl.canvas.expressions;
 
+import static com.jeeves.vpl.Constants.VAR_BLUETOOTH;
+import static com.jeeves.vpl.Constants.VAR_LOCATION;
+import static com.jeeves.vpl.Constants.VAR_WIFI;
+
 import com.jeeves.vpl.Constants.ElementType;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.firebase.FirebaseExpression;
@@ -8,6 +12,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 public class UserVariable extends Expression implements Typed {
 	public static UserVariable create(FirebaseExpression exprmodel) {
@@ -71,6 +77,18 @@ public class UserVariable extends Expression implements Typed {
 		varValue = model.getvalue();
 		getStyleClass().add(varType);
 		label.setText(model.getname());
+		ImageView testImg = new ImageView();
+		testImg.setFitHeight(15);
+		testImg.setFitWidth(15);
+		testImg.setY(2);
+		getChildren().add(testImg);
+		//TODO: Get this read in from the CSS file, or the Constants class, or SOMETHING because this is bloody awful
+		switch(varType){
+		case VAR_BLUETOOTH:testImg.setImage(new Image("img/icons/bluetooth.png"));break;
+		case VAR_LOCATION:testImg.setImage(new Image("img/icons/location.png"));break;
+		case VAR_WIFI:testImg.setImage(new Image("img/icons/wifi.png"));break;
+		}
+		//testImg.getStyleClass().add("img");
 		getChildren().add(label);
 		label.setAlignment(Pos.CENTER);
 		label.autosize();

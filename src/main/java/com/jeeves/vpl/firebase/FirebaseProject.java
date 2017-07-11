@@ -2,7 +2,12 @@ package com.jeeves.vpl.firebase;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.controlsfx.control.PropertySheet.Item;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.jeeves.vpl.ViewElement;
@@ -11,6 +16,10 @@ import com.jeeves.vpl.canvas.expressions.UserVariable;
 import com.jeeves.vpl.canvas.triggers.Trigger;
 import com.jeeves.vpl.canvas.uielements.UIElement;
 import com.jeeves.vpl.survey.Survey;
+
+import javafx.beans.Observable;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 
 /**
  * Created by Daniel on 28/04/2016.
@@ -27,6 +36,7 @@ public class FirebaseProject implements Serializable {
 	private String researcherno;
 	private List<FirebaseSurvey> surveys = new ArrayList<>();
 	private List<FirebaseTrigger> triggers = new ArrayList<>();
+	private Map<String,Object> surveydata = new HashMap<String,Object>();
 	private String type;
 	private List<FirebaseUI> uidesign = new ArrayList<>();
 	private List<FirebaseVariable> variables = new ArrayList<>();
@@ -36,6 +46,8 @@ public class FirebaseProject implements Serializable {
 	private long lastUpdated;
 	private String pubKey;
 	
+	private ObservableMap<String,Object> surveydataobservable = FXCollections.observableHashMap();
+
 	public void setpubKey(String pubKey){
 		this.pubKey = pubKey;
 	}
@@ -108,10 +120,24 @@ public class FirebaseProject implements Serializable {
 		return researcherno;
 	}
 
+	public Map<String,Object> getsurveydata(){
+		return surveydata;	
+	}
+	
+	public ObservableMap<String,Object> getObservableSurveyData(){
+		return surveydataobservable;
+	}
+	public void registerSurveyDataListener(){	}
+	public void setsurveydata(Map<String,Object> surveydata){
+		this.surveydata = surveydata;
+		surveydataobservable.putAll(surveydata);
+	}
+	
 	public List<FirebaseSurvey> getsurveys() {
 		return surveys;
 	}
 
+	
 	public List<FirebaseTrigger> gettriggers() {
 		return triggers;
 	}
@@ -149,4 +175,5 @@ public class FirebaseProject implements Serializable {
 	public void setresearcherno(String researcherno) {
 		this.researcherno = researcherno;
 	}
+	
 }

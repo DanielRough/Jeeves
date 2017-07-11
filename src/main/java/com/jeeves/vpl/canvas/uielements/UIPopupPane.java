@@ -25,13 +25,15 @@ class UIPopupPane extends Pane {
 	private UIElement element;
 	@FXML
 	private TextField txtText;
-
-	public UIPopupPane(Stage stage, List<ViewElement> currentChildren) {
+	private String currentname;
+	
+	public UIPopupPane(Stage stage, List<ViewElement> currentChildren, String currentname) {
 
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setController(this);
 		URL location = this.getClass().getResource("/uiPopup.fxml");
 		fxmlLoader.setLocation(location);
+		this.currentname = currentname;
 
 		//Hacky stuff to ensure we don't duplicate any names
 		ArrayList<String> currentnames = new ArrayList<String>();
@@ -53,7 +55,7 @@ class UIPopupPane extends Pane {
 			stage.hide();
 		});
 		btnOkay.setOnAction(click -> {
-			if(element instanceof UIButton && currentnames.contains(txtText.getText())){
+			if(element instanceof UIButton && !txtText.getText().equals(currentname) && currentnames.contains(txtText.getText())){
 				Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setTitle("Duplicate button names");
 				alert.setHeaderText(null);
@@ -66,7 +68,7 @@ class UIPopupPane extends Pane {
 		});
 		txtText.setOnKeyReleased(keyevent -> {
 			if (keyevent.getCode().toString().equals("ENTER")) {
-				if(element instanceof UIButton && currentnames.contains(txtText.getText())){
+				if(element instanceof UIButton && !txtText.getText().equals(currentname) && currentnames.contains(txtText.getText())){
 					Alert alert = new Alert(AlertType.INFORMATION);
 					alert.setTitle("Duplicate button names");
 					alert.setHeaderText(null);

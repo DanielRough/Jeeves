@@ -1,15 +1,17 @@
 package com.jeeves.vpl.canvas.uielements;
 
+import com.jeeves.vpl.ViewElement;
+import com.jeeves.vpl.firebase.FirebaseUI;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-
-import com.jeeves.vpl.ViewElement;
-import com.jeeves.vpl.firebase.FirebaseUI;
 
 public class UILabel extends UIElement { // NO_UCD (unused code)
 	public static final String DESC = "A label to provide textual information";
@@ -17,7 +19,7 @@ public class UILabel extends UIElement { // NO_UCD (unused code)
 	@FXML
 	private Label lblLabel;
 	@FXML
-	private StackPane panePane;
+	public StackPane panePane;
 
 	public UILabel() {
 		this(new FirebaseUI());
@@ -58,7 +60,7 @@ public class UILabel extends UIElement { // NO_UCD (unused code)
 
 	@Override
 	public Node[] getWidgets() {
-		return new Node[] {};
+		return new Node[] {lblLabel};
 	}
 
 	@Override
@@ -79,6 +81,7 @@ public class UILabel extends UIElement { // NO_UCD (unused code)
 	@Override
 	protected void addListeners() {
 		super.addListeners();
+
 		lblLabel.textProperty().addListener(new ChangeListener<String>() {
 
 			@Override

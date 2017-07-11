@@ -71,6 +71,7 @@ public class QuestionEditor extends Pane {
 	private TextField txtQText;
 	@FXML
 	private VBox vboxOpts;
+	@FXML private CheckBox chkMandatory;
 
 	ListChangeListener<QuestionView> childQListener;
 
@@ -108,6 +109,13 @@ public class QuestionEditor extends Pane {
 					selectedQuestion.setAssignedVar(newValue.getName());
 			}
 
+		});
+		
+		chkMandatory.selectedProperty().addListener(new ChangeListener<Boolean>(){
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				selectedQuestion.setisMandatory(newValue);
+			}
 		});
 
 		chkAssignToVar.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -148,6 +156,10 @@ public class QuestionEditor extends Pane {
 	//	if(opts != null)
 			selectedQuestion.showEditOpts(opts);
 
+		if (entry.isMandatory())
+			chkMandatory.setSelected(true);
+		else
+			chkMandatory.setSelected(false);
 		if (entry.getAssignedVar() != null && !entry.getAssignedVar().equals("")) {
 			chkAssignToVar.setSelected(true);
 			cboVars.getItems().forEach(variable -> {
@@ -165,7 +177,7 @@ public class QuestionEditor extends Pane {
 
 		if (selectedQuestion == null)
 			return;
-		vboxOpts.getChildren().remove(2, vboxOpts.getChildren().size());
+		vboxOpts.getChildren().remove(3, vboxOpts.getChildren().size());
 		if (listener != null)
 			txtQText.textProperty().removeListener(listener);
 		listener = new ChangeListener<String>() {

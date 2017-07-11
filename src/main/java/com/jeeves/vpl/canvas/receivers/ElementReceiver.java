@@ -1,15 +1,19 @@
 package com.jeeves.vpl.canvas.receivers;
 
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.layout.Pane;
 import com.jeeves.vpl.Constants.ElementType;
 import com.jeeves.vpl.ParentPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.uielements.UIElement;
+
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 
 @SuppressWarnings("rawtypes")
 public class ElementReceiver extends ExternalReceiver implements ParentPane {
@@ -32,9 +36,29 @@ public class ElementReceiver extends ExternalReceiver implements ParentPane {
 
 	}
 
+	boolean elementdragged = false;
+
 	@Override
 	public void addChildAtIndex(ViewElement child, int index) {
 		super.addChildAtIndex(child, index);
+		Button editButton = new Button();
+		editButton.setLayoutX(child.getBoundsInLocal().getMaxX()+10);
+		child.setOnMouseEntered(handler->{child.getStyleClass().add("drop_shadow");
+		});		
+		
+		child.setOnMouseExited(handler->{child.getStyleClass().remove("drop_shadow");
+		});
+		child.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>(){
+
+			@Override
+			public void handle(MouseEvent event) {
+				if(event.isSecondaryButtonDown()){
+					event.consume();
+					((UIElement)child).update(childList);
+				}
+			}
+			
+		});
 
 	}
 

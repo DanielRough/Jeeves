@@ -11,6 +11,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Control;
+import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -28,7 +29,8 @@ public abstract class UIElement extends ViewElement<FirebaseUI> {
 
 	// private ElementReceiver receiver;
 	public boolean previouslyAdded = false;
-
+	protected TextField editField;
+	
 	public UIElement() {
 		super(FirebaseUI.class);
 	}
@@ -42,6 +44,7 @@ public abstract class UIElement extends ViewElement<FirebaseUI> {
 	public void fxmlInit() {
 		this.type = ElementType.UIELEMENT;
 		FXMLLoader fxmlLoader = new FXMLLoader();
+		editField = new TextField();
 		fxmlLoader.setController(this);
 		fxmlLoader.setLocation(getClass().getResource(getViewPath()));
 		try {
@@ -68,13 +71,19 @@ public abstract class UIElement extends ViewElement<FirebaseUI> {
 
 	public abstract void setText(String text);
 
+	
+	/**
+	 * Method called when a new UI Element is added
+	 * @param childList
+	 */
 	public void update(List<ViewElement> childList) {
 		Stage stage = new Stage(StageStyle.UNDECORATED);
-		UIPopupPane root = new UIPopupPane(stage,childList);
+	//	setText("         "); //Get rid of its default name
+		String currentname = getText();
+		UIPopupPane root = new UIPopupPane(stage,childList,currentname);
 		root.init(this);
 		stage.setScene(new Scene(root));
 		stage.setTitle("Add property");
-
 		stage.initModality(Modality.APPLICATION_MODAL);
 		stage.initOwner(this.getScene().getWindow());
 		stage.showAndWait();
