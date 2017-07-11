@@ -74,7 +74,8 @@ public class FirebaseDB {
 	public static void setOpenProject(FirebaseProject project){
 		openProject = project;
 		//Not particularly nice that I have to put the reference for survey data in here
-		if(privateRef == null)return;
+		if(privateRef == null || project.getname() == null)return;
+		
 		DatabaseReference globalRef = privateRef.child(PROJECTS_COLL).child(project.getname());
 		DatabaseReference surveyDataRef = globalRef.child("surveydata");
 		System.out.println("I did definitely make a reference right?");
