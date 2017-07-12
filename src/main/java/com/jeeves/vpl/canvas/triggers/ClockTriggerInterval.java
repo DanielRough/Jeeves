@@ -25,9 +25,9 @@ import javafx.scene.layout.Pane;
  */
 public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 	public static final String DESC = "Schedule actions to take place at regular intervals";
-	public static final String NAME = "Interval Contingent";
+	public static final String NAME = "Repeated Time Trigger";
 	@FXML
-	private ComboBox<String> cboInterval;
+	//private ComboBox<String> cboInterval;
 	private long dateFrom;
 	private long dateTo;
 	private String duration = "seconds";
@@ -85,10 +85,10 @@ public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 			}
 		});
 
-		cboInterval.valueProperty()
-				.addListener((ChangeListener<String>) (arg0, arg1, arg2) -> params.put("granularity", arg2));
+//		cboInterval.valueProperty()
+//				.addListener((ChangeListener<String>) (arg0, arg1, arg2) -> params.put("granularity", arg2));
 		if(!model.getparams().containsKey(INTERVAL_TRIGGER_TIME))
-			txtFieldInterval.setText("60");
+			txtFieldInterval.setText("5");
 	}
 
 	@Override
@@ -101,9 +101,9 @@ public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 		paneEndDate.getChildren().add(dateReceiverTo);
 		paneIntervalFrom.getChildren().add(timeReceiverFrom);
 		paneIntervalTo.getChildren().add(timeReceiverTo);
-		styleTextCombo(cboInterval);
-		cboInterval.getItems().addAll(DURATIONS_SHORT);
-		cboInterval.setValue(DURATIONS_SHORT[0]);
+//		styleTextCombo(cboInterval);
+//		cboInterval.getItems().addAll(DURATIONS_SHORT);
+//		cboInterval.setValue(DURATIONS_SHORT[0]);
 	}
 
 	@Override
@@ -114,7 +114,8 @@ public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 	@Override
 	public Node[] getWidgets() {
 		return new Node[] { dateReceiverFrom, dateReceiverTo, paneIntervalFrom, paneIntervalTo, txtFieldInterval,
-				cboInterval };
+				//cboInterval 
+				};
 	}
 
 	@Override
@@ -130,7 +131,7 @@ public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 				intervalTime = params.get(INTERVAL_TRIGGER_TIME).toString();
 
 			txtFieldInterval.setText(intervalTime);
-			cboInterval.setValue(duration);
+			//cboInterval.setValue(duration);
 
 		}
 

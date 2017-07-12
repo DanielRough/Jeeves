@@ -13,24 +13,49 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<Pane fx:id="pane" minHeight="78.0" prefHeight="118.0" prefWidth="184.0" styleClass="trigger" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<Pane fx:id="pane" minHeight="78.0" prefHeight="96.0" styleClass="trigger" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <children>
-      <Pane layoutX="6.0" layoutY="59.0" prefHeight="26.0" styleClass="trigger">
+      <HBox layoutY="6.0" spacing="5.0" styleClass="trigger">
          <children>
-            <ComboBox fx:id="cboInterval" layoutX="122.0" layoutY="4.0">
-               <styleClass>
-                  <String fx:value="styled-select" />
-                  <String fx:value="shadowy" />
-               </styleClass></ComboBox>
-            <Label layoutY="3.0" prefHeight="19.0" text="do this every" textFill="WHITE">
+            <Label id="txtSensorName" contentDisplay="CENTER" layoutY="8.0" prefHeight="17.0" text="from" textFill="WHITE" visible="true">
+               <font>
+                  <Font size="13.0" />
+               </font>
+               <VBox.margin>
+                  <Insets left="5.0" />
+               </VBox.margin>
+            </Label>
+            <Pane fx:id="paneStartDate" layoutY="30.0" prefHeight="20.0" />
+            <Label id="txtSensorName" contentDisplay="CENTER" layoutX="88.0" layoutY="8.0" prefHeight="17.0" stylesheets="@Styles.css" text="to" textFill="WHITE" visible="true">
+               <font>
+                  <Font size="13.0" />
+               </font>
+               <VBox.margin>
+                  <Insets left="5.0" />
+               </VBox.margin>
+            </Label>
+            <Pane fx:id="paneEndDate" layoutX="88.0" layoutY="30.0" prefHeight="20.0" />
+         </children>
+         <padding>
+            <Insets left="5.0" right="5.0" top="10.0" />
+         </padding>
+      </HBox>
+      <Pane layoutX="3.0" layoutY="43.0" prefHeight="26.0" styleClass="trigger">
+         <children>
+            <Label layoutY="3.0" prefHeight="19.0" text="do this" textFill="WHITE">
                <font>
                   <Font size="13.0" />
                </font>
             </Label>
-            <TextField fx:id="txtFieldInterval" layoutX="80.0" layoutY="3.0" minHeight="20.0" prefHeight="20.0" prefWidth="35.0" promptText="60" />
+            <TextField fx:id="txtFieldInterval" layoutX="46.0" layoutY="3.0" minHeight="20.0" prefHeight="20.0" prefWidth="35.0" promptText="60" />
+            <Label layoutX="90.0" layoutY="3.0" prefHeight="19.0" text="times" textFill="WHITE">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
             <HBox layoutY="30.0">
                <children>
-                  <Label id="txtSensorName" contentDisplay="CENTER" layoutY="71.0" prefWidth="48.0" text="from:" textAlignment="CENTER" textFill="WHITE" visible="true">
+                  <Label id="txtSensorName" contentDisplay="CENTER" layoutY="71.0" prefHeight="16.0" prefWidth="54.0" text="between" textAlignment="CENTER" textFill="WHITE" visible="true">
                      <font>
                         <Font size="13.0" />
                      </font>
@@ -40,7 +65,7 @@
                         <URL value="@Styles.css" />
                      </stylesheets>
                   </Pane>
-                  <Label id="txtSensorName" alignment="CENTER" contentDisplay="CENTER" layoutX="101.0" layoutY="71.0" prefWidth="22.0" text="to:" textAlignment="CENTER" textFill="WHITE" visible="true">
+                  <Label id="txtSensorName" alignment="CENTER" contentDisplay="CENTER" layoutX="101.0" layoutY="71.0" prefHeight="16.0" prefWidth="27.0" text="and" textAlignment="CENTER" textFill="WHITE" visible="true">
                      <font>
                         <Font size="13.0" />
                      </font>
@@ -54,39 +79,6 @@
             </HBox>
          </children>
       </Pane>
-      <HBox styleClass="trigger">
-         <children>
-            <VBox layoutY="8.0" spacing="3.0">
-               <children>
-                  <Label id="txtSensorName" contentDisplay="CENTER" layoutY="8.0" prefHeight="17.0" prefWidth="76.0" text="start date" textFill="WHITE" visible="true">
-                     <font>
-                        <Font size="13.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets left="5.0" />
-                     </VBox.margin>
-                  </Label>
-                  <Pane fx:id="paneStartDate" layoutY="30.0" prefHeight="20.0" />
-               </children>
-            </VBox>
-            <VBox layoutX="88.0" layoutY="8.0" spacing="3.0">
-               <children>
-                  <Label id="txtSensorName" contentDisplay="CENTER" layoutX="88.0" layoutY="8.0" prefHeight="17.0" prefWidth="76.0" stylesheets="@Styles.css" text="end date" textFill="WHITE" visible="true">
-                     <font>
-                        <Font size="13.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets left="5.0" />
-                     </VBox.margin>
-                  </Label>
-                  <Pane fx:id="paneEndDate" layoutX="88.0" layoutY="30.0" prefHeight="20.0" />
-               </children>
-            </VBox>
-         </children>
-         <padding>
-            <Insets top="10.0" />
-         </padding>
-      </HBox>
   </children>
   <stylesheets>
     <URL value="@Styles.css" />

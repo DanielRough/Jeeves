@@ -456,13 +456,13 @@ public class Main extends Application {
 		String[] globalVarNames = new String[] { "Missed Surveys", "Completed Surveys", "Last Survey Score",
 				"Survey Score Difference" };
 		ArrayList<FirebaseVariable> globalVars = new ArrayList<FirebaseVariable>();
-		for (String name : globalVarNames) {
-			FirebaseVariable var = new FirebaseVariable();
-			var.setname(name);
-			var.setVartype(VAR_NUMERIC);
-			openProject.getvariables().add(var);
-			globalVars.add(var);
-		}
+//		for (String name : globalVarNames) {
+//			FirebaseVariable var = new FirebaseVariable();
+//			var.setname(name);
+//			var.setVartype(VAR_NUMERIC);
+//			openProject.getvariables().add(var);
+//			globalVars.add(var);
+//		}
 		openProject.getvariables().forEach(variable -> {
 			UserVariable global = new UserVariable(variable);
 			String varname = variable.getname();
@@ -532,10 +532,11 @@ public class Main extends Application {
 		VBox boxybox = new VBox();
 		newlable.prefWidthProperty().bind(elem.widthProperty());
 		box.setFillHeight(true);
+		box.getChildren().add(newlable);
 		boxybox.getChildren().addAll(box, elem);
 		boxybox.setFillWidth(true);
 		newlable.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
-
+		
 		return boxybox;
 	}
 

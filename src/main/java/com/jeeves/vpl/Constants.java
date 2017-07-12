@@ -91,7 +91,7 @@ public class Constants {
 			"com.jeeves.vpl.canvas.actions.SendTextAction", 
 			//"com.jeeves.vpl.canvas.actions.SpeakerAction",
 			"com.jeeves.vpl.canvas.actions.SurveyAction", "com.jeeves.vpl.canvas.actions.UpdateAction",
-			"com.jeeves.vpl.canvas.actions.AskForDataAction", "com.jeeves.vpl.canvas.actions.CaptureDataAction",
+			/*"com.jeeves.vpl.canvas.actions.AskForDataAction",*/ "com.jeeves.vpl.canvas.actions.CaptureDataAction",
 			"com.jeeves.vpl.canvas.actions.WaitingAction", "com.jeeves.vpl.canvas.ifsloops.IfControl"};
 	public static String[] exprNames = { "com.jeeves.vpl.canvas.expressions.AndExpression",
 			"com.jeeves.vpl.canvas.expressions.OrExpression", "com.jeeves.vpl.canvas.expressions.NotExpression",
@@ -106,7 +106,8 @@ public class Constants {
 	};
 	public static final String[] triggerNames = { "com.jeeves.vpl.canvas.triggers.BeginTrigger",
 			"com.jeeves.vpl.canvas.triggers.ButtonTrigger", "com.jeeves.vpl.canvas.triggers.ClockTriggerInterval",
-			"com.jeeves.vpl.canvas.triggers.ClockTriggerRandom", "com.jeeves.vpl.canvas.triggers.ClockTriggerSetTimes",
+			//"com.jeeves.vpl.canvas.triggers.ClockTriggerRandom", 
+			"com.jeeves.vpl.canvas.triggers.ClockTriggerSetTimes",
 			"com.jeeves.vpl.canvas.triggers.SensorTrigger", "com.jeeves.vpl.canvas.triggers.SurveyTrigger" };
 	public static final String[] uiElementNames = { "com.jeeves.vpl.canvas.uielements.UIButton",
 			"com.jeeves.vpl.canvas.uielements.UILabel" };
