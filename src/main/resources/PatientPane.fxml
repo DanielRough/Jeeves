@@ -65,7 +65,7 @@
             </Label>
          </children>
       </AnchorPane>
-      <Button fx:id="btnDownloadPatient" layoutX="400.0" layoutY="228.0" mnemonicParsing="false" onAction="#downloadPatient" prefHeight="29.0" prefWidth="158.0" text="Download Patient Results" />
+      <Button fx:id="btnDownloadPatient" layoutX="373.0" layoutY="228.0" mnemonicParsing="false" onAction="#downloadPatient" prefHeight="29.0" prefWidth="185.0" text="Download Patient Results" />
       <Label layoutX="609.0" layoutY="63.0" prefHeight="20.0" prefWidth="78.0" text="Feedback">
          <font>
             <Font name="System Bold" size="14.0" />
@@ -193,7 +193,7 @@
                         <Font size="14.0" />
                      </font>
                   </RadioButton>
-                  <Button fx:id="btnDownloadSurvey" mnemonicParsing="false" onAction="#downloadSurvey" prefHeight="29.0" prefWidth="150.0" text="Download Survey Results" />
+                  <Button fx:id="btnDownloadSurvey" mnemonicParsing="false" onAction="#downloadSurvey" prefHeight="29.0" prefWidth="193.0" text="Download Survey Results" />
                </children>
             </VBox>
             <Button fx:id="btnAllSurveys" layoutX="21.0" layoutY="266.0" mnemonicParsing="false" onAction="#showAllSurveys" prefHeight="29.0" prefWidth="217.0" text="All Surveys" />
@@ -206,7 +206,7 @@
       </AnchorPane>
       <Separator layoutX="12.0" layoutY="340.0" prefHeight="0.0" prefWidth="891.0" />
       <TextArea fx:id="txtPatientMessage" layoutX="609.0" layoutY="243.0" prefHeight="47.0" prefWidth="283.0" promptText="Enter message text here" />
-      <Button fx:id="btnSendMessage" layoutX="676.0" layoutY="295.0" mnemonicParsing="false" onAction="#sendMessage" text="Send Message To Patient" />
+      <Button fx:id="btnSendMessage" layoutX="664.0" layoutY="297.0" mnemonicParsing="false" onAction="#sendMessage" text="Send Message To Patient" />
       <Label layoutX="609.0" layoutY="218.0" prefHeight="20.0" prefWidth="202.0" text="Send message to patient">
          <font>
             <Font name="System Bold" size="14.0" />

@@ -42,13 +42,8 @@
       </HBox>
       <Pane layoutX="3.0" layoutY="43.0" prefHeight="26.0" styleClass="trigger">
          <children>
-            <Label layoutY="3.0" prefHeight="19.0" text="do this" textFill="WHITE">
-               <font>
-                  <Font size="13.0" />
-               </font>
-            </Label>
-            <TextField fx:id="txtFieldInterval" layoutX="46.0" layoutY="3.0" minHeight="20.0" prefHeight="20.0" prefWidth="35.0" promptText="60" />
-            <Label layoutX="90.0" layoutY="3.0" prefHeight="19.0" text="times" textFill="WHITE">
+            <TextField fx:id="txtFieldInterval" layoutX="6.0" layoutY="3.0" minHeight="20.0" prefHeight="20.0" prefWidth="35.0" promptText="60" />
+            <Label layoutX="48.0" layoutY="4.0" prefHeight="19.0" text="times" textFill="WHITE">
                <font>
                   <Font size="13.0" />
                </font>
@@ -77,6 +72,12 @@
                   </Pane>
                </children>
             </HBox>
+            <ComboBox fx:id="cboFixedRandom" layoutX="93.0" layoutY="1.0" prefHeight="26.0">
+               <styleClass>
+                  <String fx:value="shadowy" />
+                  <String fx:value="styled-select" />
+               </styleClass>
+            </ComboBox>
          </children>
       </Pane>
   </children>

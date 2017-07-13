@@ -27,6 +27,7 @@ public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 	public static final String DESC = "Schedule actions to take place at regular intervals";
 	public static final String NAME = "Repeated Time Trigger";
 	@FXML
+	private ComboBox<String> cboFixedRandom;
 	//private ComboBox<String> cboInterval;
 	private long dateFrom;
 	private long dateTo;
@@ -85,6 +86,8 @@ public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 			}
 		});
 
+		cboFixedRandom.valueProperty()
+		.addListener((ChangeListener<String>) (arg0, arg1, arg2) -> params.put("fixedRandom", arg2));
 //		cboInterval.valueProperty()
 //				.addListener((ChangeListener<String>) (arg0, arg1, arg2) -> params.put("granularity", arg2));
 		if(!model.getparams().containsKey(INTERVAL_TRIGGER_TIME))
@@ -104,6 +107,8 @@ public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 //		styleTextCombo(cboInterval);
 //		cboInterval.getItems().addAll(DURATIONS_SHORT);
 //		cboInterval.setValue(DURATIONS_SHORT[0]);
+		cboFixedRandom.getItems().addAll("fixed","random");
+		cboFixedRandom.setValue("fixed");
 	}
 
 	@Override
@@ -113,8 +118,7 @@ public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 
 	@Override
 	public Node[] getWidgets() {
-		return new Node[] { dateReceiverFrom, dateReceiverTo, paneIntervalFrom, paneIntervalTo, txtFieldInterval,
-				//cboInterval 
+		return new Node[] { dateReceiverFrom, dateReceiverTo, paneIntervalFrom, paneIntervalTo, txtFieldInterval,cboFixedRandom 
 				};
 	}
 
@@ -123,15 +127,15 @@ public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 		super.setData(model);
 		// Map<String,Object> params = model.getparams();
 		if (!params.isEmpty()) {
-			if (params.containsKey("granularity"))
-				duration = params.get("granularity").toString();
+			if (params.containsKey("fixedrandom"))
+				duration = params.get("fixedrandom").toString();
 			else
 				duration = "minutes";
 			if (params.containsKey(INTERVAL_TRIGGER_TIME))
 				intervalTime = params.get(INTERVAL_TRIGGER_TIME).toString();
 
 			txtFieldInterval.setText(intervalTime);
-			//cboInterval.setValue(duration);
+			cboFixedRandom.setValue(duration);
 
 		}
 
