@@ -127,10 +127,10 @@ public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 		super.setData(model);
 		// Map<String,Object> params = model.getparams();
 		if (!params.isEmpty()) {
-			if (params.containsKey("fixedrandom"))
-				duration = params.get("fixedrandom").toString();
+			if (params.containsKey("fixedRandom"))
+				duration = params.get("fixedRandom").toString();
 			else
-				duration = "minutes";
+				duration = "fixed";
 			if (params.containsKey(INTERVAL_TRIGGER_TIME))
 				intervalTime = params.get(INTERVAL_TRIGGER_TIME).toString();
 

@@ -37,6 +37,7 @@ public class ProjectsPane extends Pane {
 	private FirebaseProject selectedProject;
 	private Main gui;
 	private ObservableList<FirebaseProject> projects;
+	private ObservableList<FirebaseProject> publicprojects;
 	private Stage stage;
 	@FXML 
 	private void close(Event e){
@@ -53,6 +54,7 @@ public class ProjectsPane extends Pane {
 		this.gui = gui;
 		this.stage = stage;
 		this.projects = FirebaseDB.getInstance().getprojects();
+		//this.publicprojects = FirebaseDB.getInstance().getpublicprojects();
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setController(this);
 
@@ -62,6 +64,7 @@ public class ProjectsPane extends Pane {
 		try {
 			Node root = (Node) fxmlLoader.load();
 			getChildren().add(root);
+	//		projects.addAll(publicprojects);
 			lstProjects.setItems(projects);
 			lstProjects.setCellFactory(projectsView -> new ProjectCell());
 		

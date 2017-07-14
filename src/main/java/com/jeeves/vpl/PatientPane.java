@@ -504,7 +504,7 @@ public class PatientPane extends Pane {
 						tblPatients.getSelectionModel().select(selected);
 						updatePatient();
 				}
-				else{
+				else if (c.wasRemoved()){
 					System.out.println("removed length is " + c.getRemovedSize());
 					removeFromTable(c.getRemoved());
 					tblPatients.getSelectionModel().select(selected);
@@ -523,7 +523,7 @@ public class PatientPane extends Pane {
 	 */
 	private void addToTable(List<? extends FirebasePatient> list){
 		Preferences prefs = Preferences.userRoot().node("key");
-		String privateKeyStr = prefs.get("privateKey" + FirebaseDB.getOpenProject().getname(), "");
+		String privateKeyStr = prefs.get("privateKey" + FirebaseDB.getOpenProject().getname(), "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAJ1u6xx6NS0XV07/nWmpx+G45NzduB4Bc3AMbOTbgrOhsTM+3NwxZXiSDHiJgNOZF3gGP92Z1yp1wRbB+w75dwVeswdbaEkVwjn3AJPjo2VBzMz7dYHqFY+ZyvW0ML50jGBF8tEvewJg2QarAmNtP9bAWMhpl5Fv8i5AcRgqwvoZAgMBAAECgYBfzp+ADhMMZNb6OW7HXc5JXKbSjo+8mu9wce9W+ws4XB8la40m51y0GlVCiZN/sfvpTAxTxIp/yXd/bP9nJoO6KLx4YSYDeAnou6TEPnt5nNxcTcgxGJ3nUKLeI39PcjycyiWCrzx3c31YJJJbMbLwVKTRiQ5GUMc5Dghuv7nu8QJBANmDr1tyu+XK4CBmSLt98VdsI8HCamLJsPY44d67vTkztNGqTVaArhPuUid5mk7MZ1iIqcrVLU3o+QJ2UMhPzb0CQQC5SdvlMLwty1N1/ZLQfkm8UQ5R9z2mnRL0dXbKK4Kcju8T28aQ4ZZA7yzKEs26LrCd1Rl0L1C8LeyoLnh75V2NAkBtT09Fzr/8uFqwDZcJmj4559+EVRavtJpY8rcX/xMV9xUstMAO87YH0CG7MtJIPVLGXE+v3jfZSnYxNZJdSDWlAkEAtCjvqfLwFirsVP6hAR66PWQm42XeSSHTa2THgx45WlbUed+pO/hMq4ijaTxNUunRCzZIEKNtAfw5bvH4bqd/hQJAQVOoR0toId7iqCuxKl/MxtXuwrSrV5wZPsX0X2nlhuojG2B4He5PFtv+F3fLugFDeV8+DogqSXTqky0gTvKtXQ==");
 		FirebaseProject proj = FirebaseDB.getOpenProject();
 		if (proj == null)
 			return;
