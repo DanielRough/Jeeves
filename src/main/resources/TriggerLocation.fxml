@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<Pane fx:id="pane" minHeight="78.0" prefHeight="86.0" prefWidth="69.0" styleClass="trigger" stylesheets="@Styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+  <children>
+    <ImageView fx:id="imgSensorImage" fitHeight="43.0" fitWidth="40.0" layoutX="15.0" layoutY="7.0" pickOnBounds="true" preserveRatio="false">
+         <image>
+            <Image url="@img/icons/location.png" />
+         </image></ImageView>
+      <Pane layoutX="14.0" layoutY="57.0" prefHeight="30.0" styleClass="trigger" stylesheets="@Styles.css">
+         <children>
+            <HBox fx:id="hboxBox" alignment="CENTER" fillHeight="false" spacing="5.0">
+               <children>
+                <Label alignment="CENTER" contentDisplay="CENTER" layoutY="3.0" prefHeight="26.0" text="When patient" textAlignment="RIGHT" textFill="WHITE">
+                  <font>
+                    <Font size="13.0" fx:id="x2" />
+                  </font>
+                </Label>
+                  <ComboBox fx:id="cboClassifications" layoutX="40.0" layoutY="6.0">
+                     <styleClass>
+                        <String fx:value="shadowy" />
+                        <String fx:value="styled-select" />
+                     </styleClass>
+                     <HBox.margin>
+                        <Insets top="4.0" />
+                     </HBox.margin>
+                  </ComboBox>
+               </children>
+               <padding>
+                  <Insets right="5.0" />
+               </padding>
+            </HBox>
+         </children>
+      </Pane>
+  </children>
+</Pane>

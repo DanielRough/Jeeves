@@ -150,17 +150,17 @@ public class SensorExpression extends Expression { // NO_UCD (unused code)
 
 	protected void setResult(String result) {
 		if (result != null && !result.equals("")) {
-			if(selectedSensor == locSensor){
-				gui.registerVarListener(listener->{
-					listener.next();
-					if(listener.wasAdded()){
-						List<FirebaseVariable> list = (List<FirebaseVariable>) listener.getAddedSubList();
-						if(list.get(0).getname().equals(result))
-							locReceiver.addChild(UserVariable.create(list.get(0)),0,0);
-					}
-				});
-				
-			}
+//			if(selectedSensor == locSensor){
+//				gui.registerVarListener(listener->{
+//					listener.next();
+//					if(listener.wasAdded()){
+//						List<FirebaseVariable> list = (List<FirebaseVariable>) listener.getAddedSubList();
+//						if(list.get(0).getname().equals(result))
+//							locReceiver.addChild(UserVariable.create(list.get(0)),0,0);
+//					}
+//				});
+//				
+//			}
 			this.result = result;
 			cboClassifications.setValue(result);
 		}
