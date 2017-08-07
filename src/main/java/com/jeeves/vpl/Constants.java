@@ -77,14 +77,15 @@ public class Constants {
 	// Sensor constants
 		private static Sensor accelSensor = new Sensor("Accelerometer", "/img/icons/accelerometer.png",
 				new String[] {"Moving", "Stationary"},true);
-		public static Sensor locSensor = new Sensor(VAR_LOCATION, "/img/icons/location.png", new String[] {},true);
+		//LOCATIONS ARE TREATED IN A SEPARATE TRIGGER NOW
+		//public static Sensor locSensor = new Sensor(VAR_LOCATION, "/img/icons/location.png", new String[] {},true);
 		public static Sensor bluetoothSensor = new Sensor(VAR_BLUETOOTH, "/img/icons/bluetooth.png", new String[] {},true);
 		public static Sensor wifiSensor = new Sensor(VAR_WIFI, "/img/icons/wifi.png", new String[] {},true);
 		public static Sensor microphoneSensor = new Sensor("Microphone", "/img/icons/microphone.png", new String[] {"Noisy","Quiet"},true);
 		private static Sensor smsSensor = new Sensor("SMS", "/img/icons/sms.png",
 				new String[] { "Message Sent", "Message Received" },false);
 		
-		public static final Sensor[] sensors = { accelSensor, locSensor, smsSensor,wifiSensor,bluetoothSensor,microphoneSensor };
+		public static final Sensor[] sensors = { accelSensor, /*locSensor, */smsSensor,wifiSensor,bluetoothSensor,microphoneSensor };
 
 	//Trigger, action, other such names for dynamic loading
 	public static String[] actionNames = { "com.jeeves.vpl.canvas.actions.PromptAction",
@@ -96,7 +97,7 @@ public class Constants {
 	public static String[] exprNames = { "com.jeeves.vpl.canvas.expressions.AndExpression",
 			"com.jeeves.vpl.canvas.expressions.OrExpression", "com.jeeves.vpl.canvas.expressions.NotExpression",
 			"com.jeeves.vpl.canvas.expressions.EqualsExpression", "com.jeeves.vpl.canvas.expressions.GreaterExpression",
-			"com.jeeves.vpl.canvas.expressions.LessExpression", "com.jeeves.vpl.canvas.expressions.SensorExpression",
+			"com.jeeves.vpl.canvas.expressions.LessExpression", "com.jeeves.vpl.canvas.expressions.LocationExpression", "com.jeeves.vpl.canvas.expressions.SensorExpression",
 			"com.jeeves.vpl.canvas.expressions.TimeExpression" };
 	public static final String[] questionNames = { "com.jeeves.vpl.survey.questions.QuestionDate","com.jeeves.vpl.survey.questions.QuestionTime",
 			"com.jeeves.vpl.survey.questions.QuestionLikert", "com.jeeves.vpl.survey.questions.QuestionLocation",
@@ -107,7 +108,7 @@ public class Constants {
 	public static final String[] triggerNames = { "com.jeeves.vpl.canvas.triggers.BeginTrigger",
 			"com.jeeves.vpl.canvas.triggers.ButtonTrigger", "com.jeeves.vpl.canvas.triggers.ClockTriggerInterval",
 			//"com.jeeves.vpl.canvas.triggers.ClockTriggerRandom", 
-			"com.jeeves.vpl.canvas.triggers.ClockTriggerSetTimes",
+			"com.jeeves.vpl.canvas.triggers.ClockTriggerSetTimes","com.jeeves.vpl.canvas.triggers.LocationTrigger",
 			"com.jeeves.vpl.canvas.triggers.SensorTrigger", "com.jeeves.vpl.canvas.triggers.SurveyTrigger" };
 	public static final String[] uiElementNames = { "com.jeeves.vpl.canvas.uielements.UIButton",
 			"com.jeeves.vpl.canvas.uielements.UILabel" };
