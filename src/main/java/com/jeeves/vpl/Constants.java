@@ -37,6 +37,9 @@ public class Constants {
 	public static final int BOOLEAN = 7;
 	public static final int NUMERIC = 8;
 	public static final int TIME = 9; 
+	public static final int WIFI = 10;
+	public static final int BLUETOOTH = 11;
+	
 	//Variable types (these are Strings because they also refer to class names in Styles.css)
 	public static final String VAR_ANY = "Any";
 	public static final String VAR_BOOLEAN = "Boolean";
@@ -99,7 +102,8 @@ public class Constants {
 			"com.jeeves.vpl.canvas.expressions.LessExpression", "com.jeeves.vpl.canvas.expressions.SensorExpression",
 			"com.jeeves.vpl.canvas.expressions.TimeExpression" };
 	public static final String[] questionNames = { "com.jeeves.vpl.survey.questions.QuestionDate","com.jeeves.vpl.survey.questions.QuestionTime",
-			"com.jeeves.vpl.survey.questions.QuestionLikert", "com.jeeves.vpl.survey.questions.QuestionLocation",
+			"com.jeeves.vpl.survey.questions.QuestionLikert", "com.jeeves.vpl.survey.questions.QuestionLocation","com.jeeves.vpl.survey.questions.QuestionBluetooth",
+			"com.jeeves.vpl.survey.questions.QuestionWifi",
 			"com.jeeves.vpl.survey.questions.QuestionMultMany", "com.jeeves.vpl.survey.questions.QuestionMultSingle",
 			"com.jeeves.vpl.survey.questions.QuestionNumber", "com.jeeves.vpl.survey.questions.QuestionText",
 			"com.jeeves.vpl.survey.questions.QuestionTrueFalse"

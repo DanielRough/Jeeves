@@ -363,7 +363,7 @@ public class FirebaseDB {
 			//This project needs an ID
 			String projid = generateProjectID();
 			object.setid(projid);
-			object.setresearcherno(currentsesh.getAttribute("uid").toString());
+			object.setresearcherno(uid);
 //			
 //			if(object.getactive()){
 //				publicRef.child(PROJECTS_COLL).child(object.getname()).setValue(object);

@@ -6,11 +6,15 @@ import static com.jeeves.vpl.Constants.TIME;
 import static com.jeeves.vpl.Constants.GEO;
 import static com.jeeves.vpl.Constants.NUMERIC;
 import static com.jeeves.vpl.Constants.SCALE;
+import static com.jeeves.vpl.Constants.WIFI;
+import static com.jeeves.vpl.Constants.BLUETOOTH;
 import static com.jeeves.vpl.Constants.VAR_BOOLEAN;
 import static com.jeeves.vpl.Constants.VAR_CLOCK;
 import static com.jeeves.vpl.Constants.VAR_DATE;
 import static com.jeeves.vpl.Constants.VAR_LOCATION;
 import static com.jeeves.vpl.Constants.VAR_NUMERIC;
+import static com.jeeves.vpl.Constants.VAR_WIFI;
+import static com.jeeves.vpl.Constants.VAR_BLUETOOTH;
 
 import java.io.IOException;
 import java.util.Map;
@@ -253,7 +257,18 @@ public class QuestionEditor extends Pane {
 						cboVars.getItems().add(uservar);
 					}
 					break;
+				case WIFI:
+					if (uservar.getVarType().equals(VAR_WIFI)) {
+						cboVars.getItems().add(uservar);
+					}
+					break;
+				case BLUETOOTH:
+					if (uservar.getVarType().equals(VAR_BLUETOOTH)) {
+						cboVars.getItems().add(uservar);
+					}
+					break;
 				}
+				
 				uservar.removeHander();
 
 			}

@@ -233,6 +233,9 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 		this.model = model;
 		addProperties();
 		txtSurveyName.setText(model.gettitle());
+		//THIS IS TO STOP THEM RENAMING SURVEYS ONCE THE THING IS PUBLISHED
+				if(FirebaseDB.getOpenProject().getactive() && model.gettitle() != null)
+					txtSurveyName.setDisable(true);
 		if (model.getexpiryTime() > 0) {
 			chkExpiry.setSelected(true);
 			txtExpiry.setText(Long.toString(model.getexpiryTime()));
@@ -291,9 +294,7 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 			}
 		});
 
-		//THIS IS TO STOP THEM RENAMING SURVEYS ONCE THE THING IS PUBLISHED
-		if(FirebaseDB.getOpenProject().getactive())
-			txtSurveyName.setDisable(true);
+		
 		txtSurveyName.setOnKeyReleased(new EventHandler<KeyEvent>() {
 
 			@Override

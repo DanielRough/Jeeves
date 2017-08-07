@@ -186,6 +186,7 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 			
 		}
 		else{
+			hboxBox.getChildren().remove(cboClassifications);
 			hboxBox.getChildren().add(cboClassifications);
 			hboxBox.getChildren().remove(variableReceiver);
 		}
