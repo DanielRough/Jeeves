@@ -15,6 +15,7 @@ import javafx.stage.Popup;
 import com.jeeves.vpl.ParentPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
+import com.jeeves.vpl.firebase.FirebaseDB;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 import com.jeeves.vpl.firebase.FirebaseVariable;
 
@@ -55,7 +56,12 @@ public class SensorExpression extends Expression { // NO_UCD (unused code)
 						setSelectedSensor(s);
 				//	model.getparams().put("selectedSensor", arg2);
 					params.put("selectedSensor", arg2);
+					//Here we also want to change the necessary sensors of our project. There's no easy way to do this I don't think
+
 				}
+				if(arg1 != null)
+					FirebaseDB.getOpenProject().getsensors().remove(arg1);
+				FirebaseDB.getOpenProject().getsensors().add(arg2);
 			}
 		});
 		locReceiver.getChildElements().addListener(

@@ -40,6 +40,7 @@ public class FirebaseProject implements Serializable {
 	private String type;
 	private List<FirebaseUI> uidesign = new ArrayList<>();
 	private List<FirebaseVariable> variables = new ArrayList<>();
+	private List<String> sensors = new ArrayList<>();
 	private String id;
 	private boolean active;
 	private boolean isPublic;
@@ -48,6 +49,12 @@ public class FirebaseProject implements Serializable {
 	
 	private ObservableMap<String,Object> surveydataobservable = FXCollections.observableHashMap();
 
+	public void setsensors(List<String> sensors){
+		this.sensors = sensors;
+	}
+	public List<String> getsensors(){
+		return sensors;
+	}
 	public void setpubKey(String pubKey){
 		this.pubKey = pubKey;
 	}

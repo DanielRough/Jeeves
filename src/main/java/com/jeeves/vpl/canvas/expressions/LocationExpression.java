@@ -43,6 +43,7 @@ public class LocationExpression extends Expression { // NO_UCD (unused code)
 
 				});// timeReceiverFrom.getChildElements().get(0).getModel())));		
 
+		params.put("selectedSensor", "Location");
 
 	}
 

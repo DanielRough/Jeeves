@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.jeeves.vpl.Constants.Sensor;
 import com.jeeves.vpl.firebase.FirebaseAction;
+import com.jeeves.vpl.firebase.FirebaseDB;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -43,6 +44,9 @@ public class CaptureDataAction extends Action{
 						cboSensor.setValue(s.getname());
 					params.put("selectedSensor", arg2);
 				}
+				if(arg1 != null)
+					FirebaseDB.getOpenProject().getsensors().remove(arg1);
+				FirebaseDB.getOpenProject().getsensors().add(arg2);
 			}
 		});
 	}
