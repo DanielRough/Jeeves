@@ -79,6 +79,7 @@ public class PatientPane extends Pane {
 	private ObservableList<FirebasePatient> allowedPatients = FXCollections.observableArrayList();
 	private Map<String, FirebaseSurvey> completedSurveys;
 
+	private Map<String,Map<String,Object>> selectedSurveyData;
 	private Main gui;
 	private Map<String, FirebaseSurvey> incompleteSurveys;
 	@FXML private Label lblPatientCompleted;
@@ -103,11 +104,6 @@ public class PatientPane extends Pane {
 	@FXML private Label lblButtonTriggers;
 	@FXML private Label lblInitTime;
 	@FXML private Label lblCompletionTime;
-	
-	@FXML private RadioButton rdioCsv;
-	@FXML private RadioButton rdioExcel;
-	
-	@FXML private Button btnAllSurveys;
 	
 	@FXML private TextArea txtPatientMessage;
 	@FXML private Button btnSendMessage;
@@ -181,37 +177,51 @@ public class PatientPane extends Pane {
 
 	@FXML
 	public void downloadSurvey(Event e){
+		
+		boolean newsheet = false;
+		Date date = new Date();
 		FileChooser fileChooser = new FileChooser();
+		String surveyname = lstSurveys.getSelectionModel().getSelectedItem();
 		fileChooser.setInitialFileName(lstSurveys.getSelectionModel().getSelectedItem()+ ".xls");
 		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel spreadsheet(*.xls)", "*.xls"));
 
-		fileChooser.setTitle("Save Image");
+		fileChooser.setTitle("Save Survey Data");
 		Workbook wb = new HSSFWorkbook();
 		Row r = null;
 		Cell c = null;
-//
-//		File file = fileChooser.showSaveDialog(getScene().getWindow());
-//
-//		if (file != null) {
-//			if (!file.getName().contains(".")) {
-//				file = new File(file.getAbsolutePath() + ".xls");
-//			}
-//			try {
-//				if (completedSurveys == null || completedSurveys.isEmpty()) {
-//					wb.close();
-//					return;
-//				}
-//				FileOutputStream fileOut = new FileOutputStream(file);
-//				HashMap<String, Sheet> sheets = new HashMap<String, Sheet>();
-//				//		HashMap<String, String> surveyids = new HashMap<String,String>();
-//				String lastSurveyId = "";
-//				// Is this horrendously convoluted? Perhaps. Hopefully it
-//				// won't slow things down
+
+		File file = fileChooser.showSaveDialog(getScene().getWindow());
+
+		if (file != null) {
+			if (!file.getName().contains(".")) {
+				file = new File(file.getAbsolutePath() + ".xls");
+			}
+			try {
+				if (selectedSurveyData == null || selectedSurveyData.isEmpty()) {
+					wb.close();
+					return;
+				}
+				FileOutputStream fileOut = new FileOutputStream(file);
+				HashMap<String, Sheet> sheets = new HashMap<String, Sheet>();
+				//		HashMap<String, String> surveyids = new HashMap<String,String>();
+				String lastPatientId = "";
+				// Is this horrendously convoluted? Perhaps. Hopefully it
+				// won't slow things down
 //				String surveyname = lstSurveys.getSelectionModel().getSelectedItem();
-//				Map<String,Object> surveydata = gui.getSurveyEntries();
-//				Map<String,Map<String,Object>> data = (Map<String,Map<String,Object>>)surveydata.get(surveyname);
-//				Map<String,Object> completedsurveys = data.get("completed");
-//				List<Map<String,Object>> values = new ArrayList(completedsurveys.values());
+				Map<String,Object> surveydata = gui.getSurveyEntries();
+				Map<String,Map<String,Object>> data = (Map<String,Map<String,Object>>)surveydata.get(surveyname);
+				Map<String,Object> completedsurveys = data.get("completed");
+				List<Map<String,Object>> values = new ArrayList(completedsurveys.values());
+				Collection<FirebaseSurvey> surveys = completedSurveys.values();
+				ArrayList<FirebaseSurvey> surveylist = new ArrayList<FirebaseSurvey>(surveys);
+				surveylist.sort(new Comparator<FirebaseSurvey>() {
+
+					@Override
+					public int compare(FirebaseSurvey o1, FirebaseSurvey o2) {
+						return (int) (o1.gettimeFinished() - o2.gettimeFinished());
+					}
+				});
+
 //				
 ////				surveylist.sort(new Comparator<FirebaseSurvey>() {
 ////
@@ -221,19 +231,20 @@ public class PatientPane extends Pane {
 ////					}
 ////				});
 //
-//				Sheet s = null;
+				Sheet s = null;
 //
-//				CreationHelper createHelper = wb.getCreationHelper();
-//				CellStyle cellStyle = wb.createCellStyle();
-//				CellStyle style = wb.createCellStyle();
-//				Font font = wb.createFont();
-//				font.setFontName(HSSFFont.FONT_ARIAL);
-//				font.setFontHeightInPoints((short)10);
-//				font.setBold(true);
-//				style.setFont(font);
-//				cellStyle.setDataFormat(createHelper.createDataFormat().getFormat("m/d/yy h:mm"));
-//				cellStyle.setFont(font);
-//				for (Map<String,Object> nextsurvey : values) {
+				CreationHelper createHelper = wb.getCreationHelper();
+				CellStyle cellStyle = wb.createCellStyle();
+				CellStyle style = wb.createCellStyle();
+				Font font = wb.createFont();
+				font.setFontName(HSSFFont.FONT_ARIAL);
+				font.setFontHeightInPoints((short)10);
+				font.setBold(true);
+				style.setFont(font);
+				cellStyle.setDataFormat(createHelper.createDataFormat().getFormat("m/d/yy h:mm"));
+				cellStyle.setFont(font);
+			
+//				for (FirebaseSurvey nextsurvey : surveylist) {
 //
 //					date.setTime(nextsurvey.gettimeFinished());
 //					String surveyname = nextsurvey.gettitle();
@@ -319,9 +330,9 @@ public class PatientPane extends Pane {
 //			}
 //			wb.close();
 //		}
-//	} catch (Exception ex) {
-//		ex.printStackTrace();
-//	}
+	} catch (Exception ex) {
+		ex.printStackTrace();
+	}}
 
 	}
 	@FXML
@@ -334,7 +345,7 @@ public class PatientPane extends Pane {
 			fileChooser.setInitialFileName(selectedPatient.getName()+ ".xls");
 			fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel spreadsheet(*.xls)", "*.xls"));
 
-			fileChooser.setTitle("Save Image");
+			fileChooser.setTitle("Save Patient Data");
 			Workbook wb = new HSSFWorkbook();
 			Row r = null;
 			Cell c = null;
@@ -604,6 +615,7 @@ public class PatientPane extends Pane {
 		Map<String,Object> surveydata = FirebaseDB.getOpenProject().getObservableSurveyData();
 		//Oh dear
 		Map<String,Map<String,Object>> data = (Map<String,Map<String,Object>>)surveydata.get(surveyname);
+		this.selectedSurveyData = data;
 		if(data == null){
 			lblSent.setText("0");
 			lblComplete.setText("");
@@ -743,10 +755,7 @@ public class PatientPane extends Pane {
 		});
 	}
 
-	@FXML
-	public void showAllSurveys(Event e){
-		
-	}
+
 
 	@FXML
 	public void sendMessage(Event e){

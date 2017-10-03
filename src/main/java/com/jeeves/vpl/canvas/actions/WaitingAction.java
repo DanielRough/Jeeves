@@ -1,21 +1,22 @@
 package com.jeeves.vpl.canvas.actions;
 
-import java.util.Map;
+import static com.jeeves.vpl.Constants.numberHandler;
+import static com.jeeves.vpl.Constants.styleTextCombo;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.HBox;
+import java.util.Map;
 
 import com.jeeves.vpl.TextUtils;
 import com.jeeves.vpl.firebase.FirebaseAction;
 
-import static com.jeeves.vpl.Constants.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 
 /**
  * Action to remain in the execution of a trigger temporarily
@@ -25,7 +26,7 @@ import static com.jeeves.vpl.Constants.*;
  */
 public class WaitingAction extends Action { // NO_UCD (unused code)
 	public static final String DESC = "Add a delay between actions happening";
-	public static final String NAME = "Wait";
+	public static final String NAME = "Snooze";
 	@FXML
 	private ComboBox<String> cboWaitGranularity;
 	@FXML
@@ -83,8 +84,17 @@ public class WaitingAction extends Action { // NO_UCD (unused code)
 		txtWaitTime.setMinHeight(20);
 		txtWaitTime.setPrefHeight(20);
 		txtWaitTime.getStyleClass().add("textfield");
-	}
+		setMyTooltip("","");
 
+	}
+	public void setMyTooltip(String graphicURL, String text){
+		final Tooltip tooltip = new Tooltip();
+		tooltip.setText(
+		    "\nYour password must be\n" +
+		    "at least 8 characters in length\n"  
+		);
+		txtWaitTime.setTooltip(tooltip);
+	}
 	@Override
 	public String getViewPath() {
 		return String.format("/actionWaiting.fxml", this.getClass().getSimpleName());
@@ -107,7 +117,8 @@ public class WaitingAction extends Action { // NO_UCD (unused code)
 			cboWaitGranularity.setValue(params.get("granularity").toString());
 		if (params.containsKey("time"))
 			txtWaitTime.setText(params.get("time").toString());
-
 	}
+	
+
 
 }

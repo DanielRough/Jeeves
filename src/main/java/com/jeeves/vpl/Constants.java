@@ -22,7 +22,7 @@ public class Constants {
 		openProject = proj;
 	}
 	//When we first load up the triggers from file, we don't want to update the trigger IDs
-	public static boolean SHOULD_UPDATE_TRIGGERS = false;
+	public static boolean SHOULD_UPDATE_TRIGGERS = true;
 	public static enum ElementType {
 		ACTION, CTRL_ACTION, EXPRESSION, QUESTION, TRIGGER, UIELEMENT, VARIABLE;
 	}
@@ -78,8 +78,8 @@ public class Constants {
 		}
 	}
 	// Sensor constants
-		private static Sensor accelSensor = new Sensor("Accelerometer", "/img/icons/accelerometer.png",
-				new String[] {"Moving", "Stationary"},true);
+		private static Sensor accelSensor = new Sensor("Activity", "/img/icons/accelerometer.png",
+				new String[] {"Walking", "Running", "Still", "Driving"},true);
 		//LOCATIONS ARE TREATED IN A SEPARATE TRIGGER NOW
 		//public static Sensor locSensor = new Sensor(VAR_LOCATION, "/img/icons/location.png", new String[] {},true);
 		public static Sensor bluetoothSensor = new Sensor(VAR_BLUETOOTH, "/img/icons/bluetooth.png", new String[] {},true);
@@ -103,8 +103,9 @@ public class Constants {
 			"com.jeeves.vpl.canvas.expressions.LessExpression", "com.jeeves.vpl.canvas.expressions.LocationExpression", "com.jeeves.vpl.canvas.expressions.SensorExpression",
 			"com.jeeves.vpl.canvas.expressions.TimeExpression" };
 	public static final String[] questionNames = { "com.jeeves.vpl.survey.questions.QuestionDate","com.jeeves.vpl.survey.questions.QuestionTime",
-			"com.jeeves.vpl.survey.questions.QuestionLikert", "com.jeeves.vpl.survey.questions.QuestionLocation","com.jeeves.vpl.survey.questions.QuestionBluetooth",
-			"com.jeeves.vpl.survey.questions.QuestionWifi",
+			"com.jeeves.vpl.survey.questions.QuestionLikert", "com.jeeves.vpl.survey.questions.QuestionLocation",
+			//"com.jeeves.vpl.survey.questions.QuestionBluetooth",
+			//"com.jeeves.vpl.survey.questions.QuestionWifi",
 			"com.jeeves.vpl.survey.questions.QuestionMultMany", "com.jeeves.vpl.survey.questions.QuestionMultSingle",
 			"com.jeeves.vpl.survey.questions.QuestionNumber", "com.jeeves.vpl.survey.questions.QuestionText",
 			"com.jeeves.vpl.survey.questions.QuestionTrueFalse"

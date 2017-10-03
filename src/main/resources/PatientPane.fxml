@@ -168,6 +168,7 @@
                         </Label>
                      </children>
                   </HBox>
+                  <Button fx:id="btnDownloadSurvey" mnemonicParsing="false" onAction="#downloadSurvey" prefHeight="29.0" prefWidth="193.0" text="Download Survey Results" />
                </children>
             </VBox>
             <ListView fx:id="lstSurveys" layoutX="21.0" layoutY="21.0" prefHeight="233.0" prefWidth="217.0" />
@@ -176,27 +177,7 @@
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <Label layoutX="544.0" layoutY="51.0" text="Download">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Label>
-            <VBox layoutX="544.0" layoutY="80.0" prefHeight="85.0" prefWidth="273.0" spacing="5.0">
-               <children>
-                  <RadioButton fx:id="rdioCsv" mnemonicParsing="false" text="Comma-Separated Values (.csv)">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </RadioButton>
-                  <RadioButton fx:id="rdioExcel" mnemonicParsing="false" text="Excel Spreadsheet (.xlsx)">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </RadioButton>
-                  <Button fx:id="btnDownloadSurvey" mnemonicParsing="false" onAction="#downloadSurvey" prefHeight="29.0" prefWidth="193.0" text="Download Survey Results" />
-               </children>
-            </VBox>
-            <Button fx:id="btnAllSurveys" layoutX="21.0" layoutY="266.0" mnemonicParsing="false" onAction="#showAllSurveys" prefHeight="29.0" prefWidth="217.0" text="All Surveys" />
+            <VBox layoutX="544.0" layoutY="80.0" prefHeight="85.0" prefWidth="273.0" spacing="5.0" />
             <Label alignment="CENTER" contentDisplay="CENTER" layoutX="391.0" layoutY="14.0" text="Survey Stats" textAlignment="CENTER">
                <font>
                   <Font size="24.0" fx:id="x221" />
