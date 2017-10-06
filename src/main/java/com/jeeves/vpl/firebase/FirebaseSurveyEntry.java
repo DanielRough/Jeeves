@@ -1,6 +1,8 @@
 package com.jeeves.vpl.firebase;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
@@ -10,6 +12,7 @@ import com.google.firebase.database.IgnoreExtraProperties;
 @IgnoreExtraProperties
 public class FirebaseSurveyEntry extends FirebaseElement implements Serializable{
 
+	private List<FirebaseQuestion> questions = new ArrayList<FirebaseQuestion>();
 	private int complete;
 	private int initTime;
 	private String encodedAnswers;
@@ -36,7 +39,9 @@ public class FirebaseSurveyEntry extends FirebaseElement implements Serializable
 	public void setstatus(int status){
 		this.status = status;
 	}
-	
+	public List<FirebaseQuestion> getquestions() {
+		return questions;
+	}
 	public int gettriggerType(){
 		return triggerType;
 	}

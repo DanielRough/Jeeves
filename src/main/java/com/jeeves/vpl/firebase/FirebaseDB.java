@@ -86,7 +86,7 @@ public class FirebaseDB {
 			}
 			@Override
 			public void onDataChange(DataSnapshot arg0) {
-				Map<String,Object> surveymap = (Map<String,Object>)arg0.getValue();
+				Map<String,Map<String,FirebaseSurveyEntry>> surveymap = (Map<String,Map<String,FirebaseSurveyEntry>>)arg0.getValue();
 				openProject.setsurveydata(surveymap);
 			}
 		});

@@ -37,6 +37,7 @@ import com.jeeves.vpl.firebase.FirebaseExpression;
 import com.jeeves.vpl.firebase.FirebaseProject;
 import com.jeeves.vpl.firebase.FirebaseQuestion;
 import com.jeeves.vpl.firebase.FirebaseSurvey;
+import com.jeeves.vpl.firebase.FirebaseSurveyEntry;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
 import com.jeeves.vpl.firebase.FirebaseUI;
 import com.jeeves.vpl.firebase.FirebaseVariable;
@@ -110,7 +111,7 @@ public class Main extends Application {
 			.observableList(new ArrayList<FirebaseVariable>());
 	private ObservableList<FirebaseUI> currentelements = FXCollections
 			.observableList(new ArrayList<FirebaseUI>());
-	private ObservableMap<String,Object> currentsurveydata = FXCollections.observableHashMap();
+	private ObservableMap<String,Map<String,FirebaseSurveyEntry>> currentsurveydata = FXCollections.observableHashMap();
 	
 	private DragPane dragPane;
 	//private FirebaseDB firebase;
@@ -149,6 +150,7 @@ public class Main extends Application {
 	@FXML private SplitPane splitPane;
 	@FXML private HBox surveyBox;
 	@FXML private Tab tabFramework;
+	@FXML private Tab tabPatients;
 	@FXML private TabPane tabPane;
 	@FXML private Label lblWelcome;
 	@FXML private Label lblConnection;
@@ -230,7 +232,7 @@ public class Main extends Application {
 		return currentelements;
 	}
 
-	public ObservableMap<String,Object> getSurveyEntries(){
+	public ObservableMap<String,Map<String,FirebaseSurveyEntry>> getSurveyEntries(){
 		return currentsurveydata;
 	}
 	
@@ -635,6 +637,8 @@ public class Main extends Application {
 				Divider divider = splitPane.getDividers().get(0);
 				if (arg2 != null && arg2.equals(tabFramework))
 					divider.setPosition(0.25);
+				else if (arg2 != null && arg2.equals(tabPatients))
+					divider.setPosition(0.6);
 				else
 					divider.setPosition(0.75);
 			}

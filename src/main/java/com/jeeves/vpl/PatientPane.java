@@ -46,6 +46,7 @@ import com.jeeves.vpl.firebase.FirebasePatient;
 import com.jeeves.vpl.firebase.FirebaseProject;
 import com.jeeves.vpl.firebase.FirebaseQuestion;
 import com.jeeves.vpl.firebase.FirebaseSurvey;
+import com.jeeves.vpl.firebase.FirebaseSurveyEntry;
 
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -63,13 +64,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
@@ -79,13 +80,14 @@ public class PatientPane extends Pane {
 	private ObservableList<FirebasePatient> allowedPatients = FXCollections.observableArrayList();
 	private Map<String, FirebaseSurvey> completedSurveys;
 
-	private Map<String,Map<String,Object>> selectedSurveyData;
+	private Map<String,FirebaseSurveyEntry> selectedSurveyData;
 	private Main gui;
 	private Map<String, FirebaseSurvey> incompleteSurveys;
-	@FXML private Label lblPatientCompleted;
-	@FXML private Label lblPatientMissed;
+//	@FXML private Label lblPatientCompleted;
+//	@FXML private Label lblPatientMissed;
 	@FXML private ListView<String> lstMessages;
-	@FXML private TableView<FirebasePatient> tblPatients;
+	@FXML private ListView<FirebasePatient> lstPatients;
+//	@FXML private TableView<FirebasePatient> tblPatients;
 	@FXML private TextField txtEmail;
 	@FXML private TextField txtName;
 	@FXML private TextField txtPhone;
@@ -107,6 +109,13 @@ public class PatientPane extends Pane {
 	
 	@FXML private TextArea txtPatientMessage;
 	@FXML private Button btnSendMessage;
+	
+	@FXML private RadioButton rdioSelPatient;
+	@FXML private RadioButton rdioAllPatient;
+	private ToggleGroup patientGroup;
+	@FXML private RadioButton rdioSelSurvey;
+	@FXML private RadioButton rdioAllSurvey;
+	private ToggleGroup surveyGroup;
 	private PrivateKey privateKey;
 
 	public PrivateKey getPrivate(String keystr) throws Exception {
@@ -154,6 +163,7 @@ public class PatientPane extends Pane {
 			e1.printStackTrace();
 		}
 		URL location = this.getClass().getResource("/PatientPane.fxml");
+		
 		TableColumn nameCol = new TableColumn("Name");
 		nameCol.setCellValueFactory(
 				new Callback<CellDataFeatures<FirebasePatient, String>, ObservableValue<String>>() {
@@ -166,18 +176,45 @@ public class PatientPane extends Pane {
 		try {
 			Node root = (Node) fxmlLoader.load();
 			getChildren().add(root);
-			tblPatients.getColumns().clear();
-			tblPatients.getColumns().addAll(nameCol);
-			tblPatients.setPlaceholder(new Label("No patients currently assigned to this study"));
-
+			 lstPatients.setCellFactory(new Callback<ListView<FirebasePatient>, 
+			            ListCell<FirebasePatient>>() {
+			                @Override 
+			                public ListCell<FirebasePatient> call(ListView<FirebasePatient> list) {
+			                    return new ListCell<FirebasePatient>(){
+			                        @Override
+			                        public void updateItem(FirebasePatient item, boolean empty) {
+			                            super.updateItem(item, empty);
+			                            if(item != null)
+			                            setText(item.getScreenName());
+			                        }
+			                    };
+			                }
+			            }
+			        );
+		//	tblPatients.getColumns().clear();
+		//	tblPatients.getColumns().addAll(nameCol);
+		//	tblPatients.setPlaceholder(new Label("No patients currently assigned to this study"));
+			 surveyGroup = new ToggleGroup();
+			 patientGroup = new ToggleGroup();
+			 rdioSelSurvey.setToggleGroup(surveyGroup);
+			 rdioAllSurvey.setToggleGroup(surveyGroup);
+			 rdioSelPatient.setToggleGroup(patientGroup);
+			 rdioAllPatient.setToggleGroup(patientGroup);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	@FXML
+	public void downloadData(Event e){
+		if(rdioAllSurvey.isSelected() && rdioSelPatient.isSelected()){
+			this.downloadPatient(e);
+		}
+	}
+	@FXML
 	public void downloadSurvey(Event e){
-		
+		int answerlength = 0;
+
 		boolean newsheet = false;
 		Date date = new Date();
 		FileChooser fileChooser = new FileChooser();
@@ -208,17 +245,17 @@ public class PatientPane extends Pane {
 				// Is this horrendously convoluted? Perhaps. Hopefully it
 				// won't slow things down
 //				String surveyname = lstSurveys.getSelectionModel().getSelectedItem();
-				Map<String,Object> surveydata = gui.getSurveyEntries();
-				Map<String,Map<String,Object>> data = (Map<String,Map<String,Object>>)surveydata.get(surveyname);
-				Map<String,Object> completedsurveys = data.get("completed");
-				List<Map<String,Object>> values = new ArrayList(completedsurveys.values());
-				Collection<FirebaseSurvey> surveys = completedSurveys.values();
-				ArrayList<FirebaseSurvey> surveylist = new ArrayList<FirebaseSurvey>(surveys);
-				surveylist.sort(new Comparator<FirebaseSurvey>() {
+				Map<String,Map<String,FirebaseSurveyEntry>> surveydata = gui.getSurveyEntries();
+				Map<String,FirebaseSurveyEntry> data = (Map<String,FirebaseSurveyEntry>)surveydata.get(surveyname);
+			//	Map<String,Object> completedsurveys = data.get("completed");
+				List<FirebaseSurveyEntry> values = new ArrayList(data.values());
+				//Collection<FirebaseSurvey> surveys = completedSurveys.values();
+				ArrayList<FirebaseSurveyEntry> surveylist = new ArrayList<FirebaseSurveyEntry>(data.values());
+				surveylist.sort(new Comparator<FirebaseSurveyEntry>() {
 
 					@Override
-					public int compare(FirebaseSurvey o1, FirebaseSurvey o2) {
-						return (int) (o1.gettimeFinished() - o2.gettimeFinished());
+					public int compare(FirebaseSurveyEntry o1, FirebaseSurveyEntry o2) {
+						return (int) (o1.getcomplete() - o2.getcomplete());
 					}
 				});
 
@@ -244,31 +281,33 @@ public class PatientPane extends Pane {
 				cellStyle.setDataFormat(createHelper.createDataFormat().getFormat("m/d/yy h:mm"));
 				cellStyle.setFont(font);
 			
-//				for (FirebaseSurvey nextsurvey : surveylist) {
-//
-//					date.setTime(nextsurvey.gettimeFinished());
-//					String surveyname = nextsurvey.gettitle();
-//					// Do we have a sheet for this particular survey?
-//					s = sheets.get(surveyname);
-//					if (s == null) {
-//						newsheet = true;
-//						s = wb.createSheet();
-//						sheets.put(surveyname, s);
-//						lastSurveyId =  nextsurvey.getsurveyId();
-//						wb.setSheetName(wb.getSheetIndex(s), surveyname);
-//						r = s.createRow(0);
-//						int count = 1;
-//						c = r.createCell(0);
-//						c.setCellStyle(style);
-//						c.setCellValue("Completed");
-//						for(FirebaseQuestion q : nextsurvey.getquestions()){
-//							answerlength++;
-//							c = r.createCell(count);
-//							count++;
-//							c.setCellValue(q.getquestionText());
-//							c.setCellStyle(style);
-//						}
-//					}
+				for (FirebaseSurveyEntry nextsurvey : surveylist) {
+
+					date.setTime(nextsurvey.getcomplete());
+					String patientId = nextsurvey.getuid();
+					//					String surveyname = nextsurvey.gettitle();
+					// Do we have a sheet for this particular survey?
+					s = sheets.get(patientId);
+					if (s == null) {
+						newsheet = true;
+						s = wb.createSheet();
+						sheets.put(surveyname, s);
+						lastPatientId =  nextsurvey.getuid();
+						wb.setSheetName(wb.getSheetIndex(s), surveyname);
+						r = s.createRow(0);
+						int count = 1;
+						c = r.createCell(0);
+						c.setCellStyle(style);
+						c.setCellValue("Completed");
+						ObservableList<FirebaseSurvey> currentsurveys = gui.getSurveys();
+						for(FirebaseQuestion q : nextsurvey.getquestions()){
+							answerlength++;
+							c = r.createCell(count);
+							count++;
+							c.setCellValue(q.getquestionText());
+							c.setCellStyle(style);
+						}
+					}
 //					//The Survey ID has changed, that means our questions have changed!
 //					//Need to make a new line detailing the questions
 //					int newlength = 0;
@@ -292,49 +331,47 @@ public class PatientPane extends Pane {
 //							answerlength = newlength;
 //					}
 //
-//					r = s.createRow(s.getLastRowNum() + 1);
-//					c = r.createCell(0);
-//					c.setCellStyle(cellStyle);
-//
-//					c.setCellValue(date);
-//					//	s.autoSizeColumn(0);
-//
-//					String encodedanswers = nextsurvey.getencodedAnswers();
-//					String decoded = decryptText(encodedanswers, privateKey);
-//					String[] answers = decoded.split(";");
-////					List<String> answers = nextsurvey.getanswers();
-//					int answercounter = 1;
-//					for (String answer : answers) {
-//
-//						c = r.createCell(answercounter);
-//						answercounter++;
-//
-//						c.setCellValue(answer);
-//					}
-//					if(newsheet){
-//						s.setColumnWidth(0, 20*256);
-//						for (int i = 1; i < answerlength; i++){
-//							s.autoSizeColumn(i);
-//						}
-//						newsheet = false;
-//					}
-//				}
-//				//	s.autoSizeColumn(0);
-//
-//				wb.write(fileOut);
-//				fileOut.close();
-//				Desktop.getDesktop().open(file);
-//			} catch (IOException e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
-//			wb.close();
-//		}
-	} catch (Exception ex) {
-		ex.printStackTrace();
-	}}
+					r = s.createRow(s.getLastRowNum() + 1);
+					c = r.createCell(0);
+					c.setCellStyle(cellStyle);
 
-	}
+					c.setCellValue(date);
+					//	s.autoSizeColumn(0);
+
+					String encodedanswers = nextsurvey.getencodedAnswers();
+					String decoded = decryptText(encodedanswers, privateKey);
+					String[] answers = decoded.split(";");
+//					List<String> answers = nextsurvey.getanswers();
+					int answercounter = 1;
+					for (String answer : answers) {
+
+						c = r.createCell(answercounter);
+						answercounter++;
+
+						c.setCellValue(answer);
+					}
+					if(newsheet){
+						s.setColumnWidth(0, 20*256);
+						for (int i = 1; i < answerlength; i++){
+							s.autoSizeColumn(i);
+						}
+						newsheet = false;
+					}
+				}
+				//	s.autoSizeColumn(0);
+
+				wb.write(fileOut);
+				fileOut.close();
+				Desktop.getDesktop().open(file);
+				wb.close();
+
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+	} 
+
 	@FXML
 	public void downloadPatient(Event e) {
 		int answerlength = 0;
@@ -507,18 +544,18 @@ public class PatientPane extends Pane {
 			@Override
 			public void onChanged(javafx.collections.ListChangeListener.Change<? extends FirebasePatient> c) {
 				//Keep a reference to the patient we had selected
-				FirebasePatient selected = tblPatients.getSelectionModel().getSelectedItem();
+				FirebasePatient selected = lstPatients.getSelectionModel().getSelectedItem();
 				c.next();
 				if(c.wasAdded()){
 					System.out.println("added length is " + c.getAddedSize());
 						addToTable(c.getAddedSubList()); 
-						tblPatients.getSelectionModel().select(selected);
+						lstPatients.getSelectionModel().select(selected);
 						updatePatient();
 				}
 				else if (c.wasRemoved()){
 					System.out.println("removed length is " + c.getRemovedSize());
 					removeFromTable(c.getRemoved());
-					tblPatients.getSelectionModel().select(selected);
+					lstPatients.getSelectionModel().select(selected);
 					updatePatient();
 				}
 			}
@@ -548,7 +585,7 @@ public class PatientPane extends Pane {
 
 					String personalInfo = decryptText(patient.getuserinfo(),privateKey);
 					decryptInfo(patient,personalInfo);
-					tblPatients.getItems().add(patient);
+					lstPatients.getItems().add(patient);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -563,8 +600,10 @@ public class PatientPane extends Pane {
 	 * If a patient is uncoupled from the study, this method removes them
 	 * @param patient
 	 */
+
 	private void removeFromTable(List<? extends FirebasePatient> list){
-		tblPatients.getItems().removeAll(list);
+		lstPatients.getItems().removeAll(list);
+
 	}
 	
 	
@@ -603,65 +642,65 @@ public class PatientPane extends Pane {
 					}
 				}); 
 
-				tblPatients.setItems(allowedPatients); // This is hacky but I'll get
+				lstPatients.setItems(allowedPatients); // This is hacky but I'll get
 				updatePatient();
 			}
 		});
-		tblPatients.getSelectionModel().selectedItemProperty().addListener(patientListener);
+		lstPatients.getSelectionModel().selectedItemProperty().addListener(patientListener);
 	}
 
 	private void updateSurvey(){
-		String surveyname = lstSurveys.getSelectionModel().getSelectedItem();
-		Map<String,Object> surveydata = FirebaseDB.getOpenProject().getObservableSurveyData();
-		//Oh dear
-		Map<String,Map<String,Object>> data = (Map<String,Map<String,Object>>)surveydata.get(surveyname);
-		this.selectedSurveyData = data;
-		if(data == null){
-			lblSent.setText("0");
-			lblComplete.setText("");
-			lblMissed.setText("");
-			lblCompliance.setText("");
-			lblInitTime.setText("");
-			lblCompletionTime.setText("");
-			return;
-		}
-		Map<String,Object> completedMap = data.get("completed");
-		Map<String,Object> missedMap = data.get("missed");
-		if(completedMap == null)completedMap = new HashMap<String,Object>();
-		if(missedMap == null)missedMap = new HashMap<String,Object>();
-		
-		int sentsize = completedMap.size() + missedMap.size();
-		int completedsize = completedMap.size();
-		int missedsize = missedMap.size();
-		lblSent.setText(""+sentsize);
-		int initialised = 0; int avgInitTime = 0;
-		int avgCompleteTime = 0;
-		
-		Iterator iter = completedMap.values().iterator();
-		while(iter.hasNext()){
-			Map<String,Object> entrydata = (Map<String,Object>)iter.next();
-			avgCompleteTime += (long)entrydata.get("complete");
-			if(entrydata.containsKey("initTime") && (long)entrydata.get("initTime")>0){
-				avgInitTime += (long)entrydata.get("initTime");
-				initialised++;
-			}
-		}
-
-		lblComplete.setText(completedsize+"");
-		lblMissed.setText(missedsize+"");
-		lblCompliance.setText((100*completedsize/sentsize)+"%");
-		if((100*completedsize/sentsize) < 60)
-			lblCompliance.setStyle("-fx-text-fill:#a6392e");
-		else if((100*completedsize/sentsize) > 90)
-			lblCompliance.setStyle("-fx-text-fill:#2fa845");
-		if(initialised != 0)
-		lblInitTime.setText(avgInitTime/(1000*initialised)+" seconds");
-		else
-			lblInitTime.setText("N/A");
-		if(completedsize != 0)
-			lblCompletionTime.setText(avgCompleteTime/(1000*completedsize)+" seconds");
-		else
-			lblCompletionTime.setText("N/A");
+//		String surveyname = lstSurveys.getSelectionModel().getSelectedItem();
+//		Map<String,Map<String,FirebaseSurveyEntry>> surveydata = FirebaseDB.getOpenProject().getObservableSurveyData();
+//		//Oh dear
+//		Map<String,FirebaseSurveyEntry> data = (Map<String,FirebaseSurveyEntry>)surveydata.get(surveyname);
+//		this.selectedSurveyData = data;
+//		if(data == null){
+//			lblSent.setText("0");
+//			lblComplete.setText("");
+//			lblMissed.setText("");
+//			lblCompliance.setText("");
+//			lblInitTime.setText("");
+//			lblCompletionTime.setText("");
+//			return;
+//		}
+//		Map<String,Object> completedMap = data.get("completed");
+//		Map<String,Object> missedMap = data.get("missed");
+//		if(completedMap == null)completedMap = new HashMap<String,Object>();
+//		if(missedMap == null)missedMap = new HashMap<String,Object>();
+//		
+//		int sentsize = completedMap.size() + missedMap.size();
+//		int completedsize = completedMap.size();
+//		int missedsize = missedMap.size();
+//		lblSent.setText(""+sentsize);
+//		int initialised = 0; int avgInitTime = 0;
+//		int avgCompleteTime = 0;
+//		
+//		Iterator iter = completedMap.values().iterator();
+//		while(iter.hasNext()){
+//			Map<String,Object> entrydata = (Map<String,Object>)iter.next();
+//			avgCompleteTime += (long)entrydata.get("complete");
+//			if(entrydata.containsKey("initTime") && (long)entrydata.get("initTime")>0){
+//				avgInitTime += (long)entrydata.get("initTime");
+//				initialised++;
+//			}
+//		}
+//
+//		lblComplete.setText(completedsize+"");
+//		lblMissed.setText(missedsize+"");
+//		lblCompliance.setText((100*completedsize/sentsize)+"%");
+//		if((100*completedsize/sentsize) < 60)
+//			lblCompliance.setStyle("-fx-text-fill:#a6392e");
+//		else if((100*completedsize/sentsize) > 90)
+//			lblCompliance.setStyle("-fx-text-fill:#2fa845");
+//		if(initialised != 0)
+//		lblInitTime.setText(avgInitTime/(1000*initialised)+" seconds");
+//		else
+//			lblInitTime.setText("N/A");
+//		if(completedsize != 0)
+//			lblCompletionTime.setText(avgCompleteTime/(1000*completedsize)+" seconds");
+//		else
+//			lblCompletionTime.setText("N/A");
 	}
 	/**
 	 * This method gets the selected patient in the patient table, and udpates the rest of the GUI with this
@@ -673,15 +712,15 @@ public class PatientPane extends Pane {
 			@Override
 			public void run() {
 
-				TableViewSelectionModel<FirebasePatient> selectionModel = tblPatients.getSelectionModel();
+				MultipleSelectionModel<FirebasePatient> selectionModel = lstPatients.getSelectionModel();
 				if (selectionModel.getSelectedItem() != null) {
 					selectedPatient = selectionModel.getSelectedItem();
 					selectedIndex = selectionModel.getSelectedIndex();
 				} else {
-					tblPatients.getSelectionModel().selectedItemProperty().removeListener(patientListener);
-					tblPatients.getSelectionModel().clearAndSelect(selectedIndex);
+					lstPatients.getSelectionModel().selectedItemProperty().removeListener(patientListener);
+					lstPatients.getSelectionModel().clearAndSelect(selectedIndex);
 					selectedPatient = selectionModel.getSelectedItem();
-					tblPatients.getSelectionModel().selectedItemProperty().addListener(patientListener);
+					lstPatients.getSelectionModel().selectedItemProperty().addListener(patientListener);
 				}
 				lstMessages.getItems().clear();
 				if (selectedPatient == null)
@@ -731,7 +770,7 @@ public class PatientPane extends Pane {
 				incompleteSurveys = selectedPatient.getincomplete();
 				completedSurveys = selectedPatient.getcomplete();
 				if (incompleteSurveys == null || incompleteSurveys.isEmpty())
-					lblPatientMissed.setText("0");
+					lblMissed.setText("0");
 
 				else {
 					int incomplete = 0;
@@ -740,13 +779,13 @@ public class PatientPane extends Pane {
 						incomplete++;
 						incompleteIter.next(); //You bloody idiot
 					}
-					lblPatientMissed.setText(Integer.toString(incomplete));
+					lblMissed.setText(Integer.toString(incomplete));
 				}
 
 				if (completedSurveys == null || completedSurveys.isEmpty())
-					lblPatientCompleted.setText("0");
+					lblComplete.setText("0");
 				else
-					lblPatientCompleted.setText(Integer.toString(completedSurveys.size()));
+					lblComplete.setText(Integer.toString(completedSurveys.size()));
 
 				txtName.setText(selectedPatient.getScreenName());
 				txtEmail.setText(selectedPatient.getEmail());
@@ -760,7 +799,7 @@ public class PatientPane extends Pane {
 	@FXML
 	public void sendMessage(Event e){
 		String messageText = txtPatientMessage.getText();
-		FirebaseDB.getInstance().sendPatientFeedback(tblPatients.getSelectionModel().getSelectedItem(), messageText);
+		FirebaseDB.getInstance().sendPatientFeedback(lstPatients.getSelectionModel().getSelectedItem(), messageText);
 		txtPatientMessage.clear();
 	}
 }

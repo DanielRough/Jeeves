@@ -122,7 +122,7 @@
                            </children>
                         </HBox>
                      </content></Tab>
-                  <Tab fx:id="tabUsers" closable="false" style="-fx-font-size: 14px;" text="Patient Data">
+                  <Tab fx:id="tabPatients" closable="false" style="-fx-font-size: 14px;" text="Patient Data">
                      <content>
                         <Pane fx:id="panePatients" prefHeight="200.0" prefWidth="200.0" />
                      </content></Tab>

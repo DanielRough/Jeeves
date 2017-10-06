@@ -57,7 +57,7 @@ public class LocationTrigger extends Trigger { // NO_UCD (unused code)
 				(ListChangeListener<ViewElement>) listener -> {listener.next(); if(listener.wasRemoved())return; params.put("result", variableReceiver.getChildModel().getname());});// timeReceiverFrom.getChildElements().get(0).getModel())));			
 
 		cboClassifications.valueProperty()
-				.addListener((ChangeListener<String>) (arg0, arg1, arg2) -> params.put("result", arg2));
+				.addListener((ChangeListener<String>) (arg0, arg1, arg2) -> params.put("change", arg2));
 	}
 
 	@Override
@@ -117,7 +117,7 @@ public class LocationTrigger extends Trigger { // NO_UCD (unused code)
 				});
 
 		}
-		
+
 	}
 
 	protected void setSelectedSensor() {
@@ -126,8 +126,8 @@ public class LocationTrigger extends Trigger { // NO_UCD (unused code)
 		cboClassifications.getItems().clear();
 		cboClassifications.getItems().addAll("enters","leaves","stays in");
 
-		if (model.getparams().get("result") != null)
-			cboClassifications.setValue(model.getparams().get("result").toString());
+		if (model.getparams().get("changes") != null)
+			cboClassifications.setValue(model.getparams().get("changes").toString());
 		else 
 			cboClassifications.setValue("enters");
 		if (variableReceiver == null)

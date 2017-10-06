@@ -36,7 +36,7 @@ public class FirebaseProject implements Serializable {
 	private String researcherno;
 	private List<FirebaseSurvey> surveys = new ArrayList<>();
 	private List<FirebaseTrigger> triggers = new ArrayList<>();
-	private Map<String,Object> surveydata = new HashMap<String,Object>();
+	private Map<String,Map<String,FirebaseSurveyEntry>> surveydata = new HashMap<String,Map<String,FirebaseSurveyEntry>>();
 	private String type;
 	private List<FirebaseUI> uidesign = new ArrayList<>();
 	private List<FirebaseVariable> variables = new ArrayList<>();
@@ -47,7 +47,7 @@ public class FirebaseProject implements Serializable {
 	private long lastUpdated;
 	private String pubKey;
 	
-	private ObservableMap<String,Object> surveydataobservable = FXCollections.observableHashMap();
+	private ObservableMap<String,Map<String,FirebaseSurveyEntry>> surveydataobservable = FXCollections.observableHashMap();
 
 	public void setsensors(List<String> sensors){
 		this.sensors = sensors;
@@ -127,15 +127,15 @@ public class FirebaseProject implements Serializable {
 		return researcherno;
 	}
 
-	public Map<String,Object> getsurveydata(){
+	public Map<String,Map<String,FirebaseSurveyEntry>> getsurveydata(){
 		return surveydata;	
 	}
 	
-	public ObservableMap<String,Object> getObservableSurveyData(){
+	public ObservableMap<String,Map<String,FirebaseSurveyEntry>> getObservableSurveyData(){
 		return surveydataobservable;
 	}
 	public void registerSurveyDataListener(){	}
-	public void setsurveydata(Map<String,Object> surveydata){
+	public void setsurveydata(Map<String,Map<String,FirebaseSurveyEntry>> surveydata){
 		this.surveydata = surveydata;
 		surveydataobservable.putAll(surveydata);
 	}
