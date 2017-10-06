@@ -82,6 +82,8 @@ public class UserVariable extends Expression implements Typed {
 		testImg.setFitWidth(15);
 		testImg.setY(2);
 		getChildren().add(testImg);
+		
+		if(model.getisValue() == false){
 		//TODO: Get this read in from the CSS file, or the Constants class, or SOMETHING because this is bloody awful
 		switch(varType){
 		case VAR_BLUETOOTH:testImg.setImage(new Image("img/icons/bluetooth.png"));break;
@@ -91,7 +93,7 @@ public class UserVariable extends Expression implements Typed {
 		//testImg.getStyleClass().add("img");
 		getChildren().add(label);
 		label.setAlignment(Pos.CENTER);
-		label.autosize();
+		label.autosize();}
 	}
 
 	@Override

@@ -212,6 +212,7 @@ public class ExpressionReceiver extends Receiver {
 					FirebaseExpression model = new FirebaseExpression();
 					model.setIsValue(true);
 					model.setvalue(value);
+					model.setVartype("");
 					UserVariable var = UserVariable.create(model);
 					addChild(var,0,0);
 				}
