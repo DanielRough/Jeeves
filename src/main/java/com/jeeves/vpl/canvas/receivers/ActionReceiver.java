@@ -3,6 +3,7 @@ package com.jeeves.vpl.canvas.receivers;
 import java.util.Arrays;
 
 import com.jeeves.vpl.ActionHolder;
+import com.jeeves.vpl.Main;
 import com.jeeves.vpl.Constants.ElementType;
 import com.jeeves.vpl.ViewElement;
 
@@ -11,7 +12,9 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -105,7 +108,26 @@ public class ActionReceiver extends Receiver {
 	@Override
 	public void defineHandlers() {
 		super.defineHandlers();
+		
+		this.addEventHandler(MouseEvent.ANY, new EventHandler<MouseEvent>(){
 
+			@Override
+			public void handle(MouseEvent event) {
+				event.consume();
+				if(event.getEventType().equals(MouseEvent.MOUSE_PRESSED)){
+					captureRect.setFill(Color.CYAN);
+					Main.getContext().highlightMenu(ElementType.ACTION,true);
+
+				}
+				if(event.getEventType().equals(MouseEvent.MOUSE_RELEASED)){
+					captureRect.setFill(Color.DARKCYAN);
+					Main.getContext().highlightMenu(ElementType.ACTION,false);
+
+				}
+			}
+		
+			
+		});
 		mentered = event -> {
 			event.consume();
 			if (!isValidElement((ViewElement) event.getGestureSource()))

@@ -60,6 +60,10 @@
 .drop_shadow {
 	-fx-effect: dropshadow(three-pass-box, #29befe, 15, 0.8, 0, 0);
 }
+
+.light_drop_shadow {
+	-fx-effect: dropshadow(three-pass-box, #29befe, 10, 0.4, 0, 0);
+}
 .trigger {
 	-fx-background-color: #223768;
 	-fx-background: #223768;

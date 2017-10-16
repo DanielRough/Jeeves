@@ -649,6 +649,7 @@ public class Main extends Application {
 		labelPaneMap.put(lblConditions, paneConditions);
 		labelPaneMap.put(lblTriggers, paneTriggers);
 		lblTriggers.setUserData("selected");
+		activeMenu = lblTriggers;
 		DropShadow ds = new DropShadow(20, Color.AQUA);
 
 		imgTrash.addEventHandler(MouseDragEvent.ANY, new EventHandler<MouseDragEvent>() {
@@ -824,6 +825,48 @@ public class Main extends Application {
 		showMenu(label);
 	}
 
+	Label lastActiveMenu;
+	Label activeMenu;
+	public void highlightMenu(ElementType type,boolean shouldHighlight){
+		
+		if(shouldHighlight==false){
+			showMenu(lastActiveMenu);
+		}
+		else
+			lastActiveMenu = activeMenu;
+		
+		switch(type){
+		case ACTION:
+			if(shouldHighlight){
+			showMenu(lblActions);
+			paneActions.getChildren().forEach(action->action.getStyleClass().add("light_drop_shadow"));
+			}
+			else
+				paneActions.getChildren().forEach(action->action.getStyleClass().remove("light_drop_shadow"));
+
+			break;
+		case TRIGGER:
+			if(shouldHighlight){
+			showMenu(lblTriggers);
+			paneTriggers.getChildren().forEach(action->action.getStyleClass().add("drop_shadow"));
+			}
+			else
+				paneTriggers.getChildren().forEach(action->action.getStyleClass().remove("drop_shadow"));
+
+			break;
+		case EXPRESSION:
+			if(shouldHighlight){
+			showMenu(lblConditions);
+			paneConditions.getChildren().forEach(action->action.getStyleClass().add("drop_shadow"));
+			}
+			else
+				paneConditions.getChildren().forEach(action->action.getStyleClass().remove("drop_shadow"));
+
+			break;
+		default:
+			break;
+		}
+	}
 	private void showMenu(Label label) {
 		labelPaneMap.keySet().forEach(lbl -> {
 			lbl.setUserData("unselected");
@@ -840,6 +883,7 @@ public class Main extends Application {
 		if (!paneFrame.getChildren().contains(pane))
 			paneFrame.getChildren().add(pane);
 		pane.setVisible(true);
+		activeMenu = label;
 	}
 
 	boolean isOverTrash(double mouseX, double mouseY) {
