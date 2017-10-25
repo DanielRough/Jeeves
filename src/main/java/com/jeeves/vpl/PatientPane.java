@@ -61,6 +61,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -117,6 +118,10 @@ public class PatientPane extends Pane {
 	@FXML private RadioButton rdioAllSurvey;
 	private ToggleGroup surveyGroup;
 	private PrivateKey privateKey;
+	
+	@FXML private ChoiceBox<String> cboChartType;
+	@FXML private ChoiceBox<String> cboXAxis;
+	@FXML private ChoiceBox<String> cboYAxis;
 
 	public PrivateKey getPrivate(String keystr) throws Exception {
 		byte[] keyBytes = Base64.decodeBase64(keystr);
@@ -200,6 +205,8 @@ public class PatientPane extends Pane {
 			 rdioAllSurvey.setToggleGroup(surveyGroup);
 			 rdioSelPatient.setToggleGroup(patientGroup);
 			 rdioAllPatient.setToggleGroup(patientGroup);
+			 
+			 cboChartType.getItems().addAll("Line","Scatter","Bar","Pie");
 
 		} catch (Exception e) {
 			e.printStackTrace();
