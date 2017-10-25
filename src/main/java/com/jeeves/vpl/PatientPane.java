@@ -200,6 +200,7 @@ public class PatientPane extends Pane {
 			 rdioAllSurvey.setToggleGroup(surveyGroup);
 			 rdioSelPatient.setToggleGroup(patientGroup);
 			 rdioAllPatient.setToggleGroup(patientGroup);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -207,9 +208,12 @@ public class PatientPane extends Pane {
 
 	@FXML
 	public void downloadData(Event e){
-		if(rdioAllSurvey.isSelected() && rdioSelPatient.isSelected()){
+		if(rdioSelPatient.isSelected()){
 			this.downloadPatient(e);
 		}
+		else// if(rdioSelSurvey.isSelected()) {
+			this.downloadSurvey(e);
+		//}
 	}
 	@FXML
 	public void downloadSurvey(Event e){
@@ -218,7 +222,8 @@ public class PatientPane extends Pane {
 		boolean newsheet = false;
 		Date date = new Date();
 		FileChooser fileChooser = new FileChooser();
-		String surveyname = lstSurveys.getSelectionModel().getSelectedItem();
+		String surveyname = "";
+
 		fileChooser.setInitialFileName(lstSurveys.getSelectionModel().getSelectedItem()+ ".xls");
 		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel spreadsheet(*.xls)", "*.xls"));
 
@@ -234,23 +239,33 @@ public class PatientPane extends Pane {
 				file = new File(file.getAbsolutePath() + ".xls");
 			}
 			try {
-				if (selectedSurveyData == null || selectedSurveyData.isEmpty()) {
-					wb.close();
-					return;
-				}
+			
 				FileOutputStream fileOut = new FileOutputStream(file);
 				HashMap<String, Sheet> sheets = new HashMap<String, Sheet>();
-				//		HashMap<String, String> surveyids = new HashMap<String,String>();
-				String lastPatientId = "";
-				// Is this horrendously convoluted? Perhaps. Hopefully it
-				// won't slow things down
-//				String surveyname = lstSurveys.getSelectionModel().getSelectedItem();
 				Map<String,Map<String,FirebaseSurveyEntry>> surveydata = gui.getSurveyEntries();
-				Map<String,FirebaseSurveyEntry> data = (Map<String,FirebaseSurveyEntry>)surveydata.get(surveyname);
-			//	Map<String,Object> completedsurveys = data.get("completed");
-				List<FirebaseSurveyEntry> values = new ArrayList(data.values());
-				//Collection<FirebaseSurvey> surveys = completedSurveys.values();
-				ArrayList<FirebaseSurveyEntry> surveylist = new ArrayList<FirebaseSurveyEntry>(data.values());
+				ArrayList<String> allSurveyNames = new ArrayList<String>(surveydata.keySet());
+				ArrayList<FirebaseSurveyEntry> surveylist = new ArrayList<FirebaseSurveyEntry>();
+
+				if(rdioSelSurvey.isSelected())
+					surveyname = lstSurveys.getSelectionModel().getSelectedItem();
+				for(String name : allSurveyNames) {
+					//If we've selected a specific survey, only want the results for that one
+					if(!surveyname.equals("") && !surveyname.equals(name))continue;
+				Map<String,FirebaseSurveyEntry> data = (Map<String,FirebaseSurveyEntry>)surveydata.get(name);
+
+				if (data == null || data.isEmpty()) {
+					wb.close();
+					fileOut.close();
+
+					return;
+				}
+				Iterator<FirebaseSurveyEntry> iter = data.values().iterator();
+				while(iter.hasNext()) {
+					FirebaseSurveyEntry newentry = (FirebaseSurveyEntry)iter.next();
+					newentry.setname(name);
+					surveylist.add(newentry);
+				}
+				}
 				surveylist.sort(new Comparator<FirebaseSurveyEntry>() {
 
 					@Override
@@ -259,17 +274,7 @@ public class PatientPane extends Pane {
 					}
 				});
 
-//				
-////				surveylist.sort(new Comparator<FirebaseSurvey>() {
-////
-////					@Override
-////					public int compare(FirebaseSurvey o1, FirebaseSurvey o2) {
-////						return (int) (o1.gettimeFinished() - o2.gettimeFinished());
-////					}
-////				});
-//
 				Sheet s = null;
-//
 				CreationHelper createHelper = wb.getCreationHelper();
 				CellStyle cellStyle = wb.createCellStyle();
 				CellStyle style = wb.createCellStyle();
@@ -284,65 +289,34 @@ public class PatientPane extends Pane {
 				for (FirebaseSurveyEntry nextsurvey : surveylist) {
 
 					date.setTime(nextsurvey.getcomplete());
-					String patientId = nextsurvey.getuid();
-					//					String surveyname = nextsurvey.gettitle();
 					// Do we have a sheet for this particular survey?
-					s = sheets.get(patientId);
+					s = sheets.get(nextsurvey.getname());
 					if (s == null) {
 						newsheet = true;
 						s = wb.createSheet();
-						sheets.put(surveyname, s);
-						lastPatientId =  nextsurvey.getuid();
-						wb.setSheetName(wb.getSheetIndex(s), surveyname);
+						sheets.put(nextsurvey.getname(), s);
+						wb.setSheetName(wb.getSheetIndex(s), nextsurvey.getname());
 						r = s.createRow(0);
-						int count = 1;
 						c = r.createCell(0);
 						c.setCellStyle(style);
 						c.setCellValue("Completed");
-						ObservableList<FirebaseSurvey> currentsurveys = gui.getSurveys();
-						for(FirebaseQuestion q : nextsurvey.getquestions()){
-							answerlength++;
-							c = r.createCell(count);
-							count++;
-							c.setCellValue(q.getquestionText());
-							c.setCellStyle(style);
-						}
+						c = r.createCell(1);
+						c.setCellStyle(style);
+						c.setCellValue("Patient ID");
 					}
-//					//The Survey ID has changed, that means our questions have changed!
-//					//Need to make a new line detailing the questions
-//					int newlength = 0;
-//					if(!nextsurvey.getsurveyId().equals(lastSurveyId)){
-//						lastSurveyId = nextsurvey.getsurveyId();
-//						r = s.createRow(s.getLastRowNum() + 1);
-//						int count =1;
-//						c = r.createCell(0);
-//						c.setCellStyle(style);
-//
-//						c.setCellValue("Completed");
-//						for(FirebaseQuestion q : nextsurvey.getquestions()){
-//							newlength++;
-//							c = r.createCell(count);
-//							count++;
-//							c.setCellValue(q.getquestionText());
-//							c.setCellStyle(style);
-//
-//						}
-//						if(newlength > answerlength)
-//							answerlength = newlength;
-//					}
-//
 					r = s.createRow(s.getLastRowNum() + 1);
 					c = r.createCell(0);
 					c.setCellStyle(cellStyle);
 
 					c.setCellValue(date);
-					//	s.autoSizeColumn(0);
+					c = r.createCell(1);
+					c.setCellStyle(cellStyle);
+					c.setCellValue(nextsurvey.getuid());
 
 					String encodedanswers = nextsurvey.getencodedAnswers();
 					String decoded = decryptText(encodedanswers, privateKey);
 					String[] answers = decoded.split(";");
-//					List<String> answers = nextsurvey.getanswers();
-					int answercounter = 1;
+					int answercounter = 2;
 					for (String answer : answers) {
 
 						c = r.createCell(answercounter);
@@ -358,8 +332,6 @@ public class PatientPane extends Pane {
 						newsheet = false;
 					}
 				}
-				//	s.autoSizeColumn(0);
-
 				wb.write(fileOut);
 				fileOut.close();
 				Desktop.getDesktop().open(file);
@@ -430,7 +402,9 @@ public class PatientPane extends Pane {
 
 						date.setTime(nextsurvey.gettimeFinished());
 						String surveyname = nextsurvey.gettitle();
-						// Do we have a sheet for this particular survey?
+						if(rdioSelSurvey.isSelected() && !surveyname.equals(lstSurveys.getSelectionModel().getSelectedItem()))
+							continue; //Skip any surveys that don't have the correct name
+							// Do we have a sheet for this particular survey?
 						s = sheets.get(surveyname);
 						if (s == null) {
 							newsheet = true;
@@ -443,6 +417,7 @@ public class PatientPane extends Pane {
 							c = r.createCell(0);
 							c.setCellStyle(style);
 							c.setCellValue("Completed");
+
 							for(FirebaseQuestion q : nextsurvey.getquestions()){
 								answerlength++;
 								c = r.createCell(count);
@@ -454,31 +429,33 @@ public class PatientPane extends Pane {
 						//The Survey ID has changed, that means our questions have changed!
 						//Need to make a new line detailing the questions
 						int newlength = 0;
-						if(!nextsurvey.getsurveyId().equals(lastSurveyId)){
-							lastSurveyId = nextsurvey.getsurveyId();
-							r = s.createRow(s.getLastRowNum() + 1);
-							int count =1;
-							c = r.createCell(0);
-							c.setCellStyle(style);
-
-							c.setCellValue("Completed");
-							for(FirebaseQuestion q : nextsurvey.getquestions()){
-								newlength++;
-								c = r.createCell(count);
-								count++;
-								c.setCellValue(q.getquestionText());
-								c.setCellStyle(style);
-
-							}
-							if(newlength > answerlength)
-								answerlength = newlength;
-						}
+						
+//						if(!nextsurvey.getsurveyId().equals(lastSurveyId)){
+//							lastSurveyId = nextsurvey.getsurveyId();
+//							r = s.createRow(s.getLastRowNum() + 1);
+//							int count =1;
+//							c = r.createCell(0);
+//							c.setCellStyle(style);
+//
+//							c.setCellValue("Completed");
+//							for(FirebaseQuestion q : nextsurvey.getquestions()){
+//								newlength++;
+//								c = r.createCell(count);
+//								count++;
+//								c.setCellValue(q.getquestionText());
+//								c.setCellStyle(style);
+//
+//							}
+//							if(newlength > answerlength)
+//								answerlength = newlength;
+//						}
 
 						r = s.createRow(s.getLastRowNum() + 1);
 						c = r.createCell(0);
 						c.setCellStyle(cellStyle);
 
 						c.setCellValue(date);
+			
 						//	s.autoSizeColumn(0);
 
 						String encodedanswers = nextsurvey.getencodedAnswers();
@@ -535,6 +512,8 @@ public class PatientPane extends Pane {
 			}
 			
 		});
+		 lstSurveys.getSelectionModel().clearAndSelect(0);
+
 	}
 	public void loadPatients() {
 		FirebaseProject proj = FirebaseDB.getOpenProject();
@@ -561,6 +540,7 @@ public class PatientPane extends Pane {
 			}
 		});
 		loadPatientTable(FirebaseDB.getOpenProject().getname());
+		 lstPatients.getSelectionModel().clearAndSelect(0);
 		updatePatient();
 	}
 

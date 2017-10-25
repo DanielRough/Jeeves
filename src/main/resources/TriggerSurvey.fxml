@@ -46,8 +46,14 @@
                         <String fx:value="styled-select" />
                      </styleClass>
                   </ComboBox>
-                  <TextField fx:id="txtNumberOfTimes" layoutX="177.0" layoutY="25.0" prefHeight="18.0" prefWidth="32.0" />
-                  <Label layoutX="204.0" layoutY="26.0" prefHeight="16.0" prefWidth="37.0" text="times" textFill="WHITE" />
+                  <TextField fx:id="txtNumberOfTimes" layoutX="177.0" layoutY="25.0" minHeight="-Infinity" prefHeight="25.0" prefWidth="32.0">
+                     <font>
+                        <Font size="14.0" />
+                     </font></TextField>
+                  <Label layoutX="204.0" layoutY="26.0" prefHeight="16.0" prefWidth="37.0" text="times" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font></Label>
                </children>
             </HBox>
          </children>

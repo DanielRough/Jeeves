@@ -9,6 +9,7 @@ import static com.jeeves.vpl.Constants.VAR_NONE;
 import static com.jeeves.vpl.Constants.VAR_NUMERIC;
 import static com.jeeves.vpl.Constants.numberHandler;
 
+import com.jeeves.vpl.Main;
 import com.jeeves.vpl.Constants.ElementType;
 import com.jeeves.vpl.TextUtils;
 import com.jeeves.vpl.ViewElement;
@@ -93,7 +94,25 @@ public class ExpressionReceiver extends Receiver {
 	@Override
 	public void defineHandlers() {
 		super.defineHandlers();
+		this.addEventHandler(MouseEvent.ANY, new EventHandler<MouseEvent>(){
 
+			@Override
+			public void handle(MouseEvent event) {
+				event.consume();
+				if(event.getEventType().equals(MouseEvent.MOUSE_ENTERED)){
+					captureRect.setFill(Color.CYAN);
+					Main.getContext().highlightMenu(ElementType.EXPRESSION,true);
+
+				}
+				if(event.getEventType().equals(MouseEvent.MOUSE_EXITED)){
+					captureRect.setFill(Color.DARKCYAN);
+					Main.getContext().highlightMenu(ElementType.EXPRESSION,false);
+
+				}
+			}
+		
+			
+		});
 		mentered = event -> {
 			event.consume();
 			if (!isValidElement((ViewElement) event.getGestureSource()))

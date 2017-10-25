@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.jeeves.vpl.Constants.Sensor;
 import com.jeeves.vpl.ParentPane;
+import com.jeeves.vpl.ViewCanvas;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.expressions.UserVariable;
 import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
@@ -22,10 +23,15 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Popup;
+import javafx.util.Callback;
 
 public class LocationTrigger extends Trigger { // NO_UCD (unused code)
 	public static final String DESC = "Schedule actions to take place when a phone sensor returns a particular result";
@@ -51,7 +57,7 @@ public class LocationTrigger extends Trigger { // NO_UCD (unused code)
 	@Override
 	public void addListeners() {
 		super.addListeners();
-
+	
 
 		variableReceiver.getChildElements().addListener(
 				(ListChangeListener<ViewElement>) listener -> {listener.next(); if(listener.wasRemoved())return; params.put("result", variableReceiver.getChildModel().getname());});// timeReceiverFrom.getChildElements().get(0).getModel())));			

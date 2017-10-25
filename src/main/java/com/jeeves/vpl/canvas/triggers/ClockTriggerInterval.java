@@ -1,8 +1,6 @@
 package com.jeeves.vpl.canvas.triggers;
 
-import static com.jeeves.vpl.Constants.DURATIONS_SHORT;
 import static com.jeeves.vpl.Constants.INTERVAL_TRIGGER_TIME;
-import static com.jeeves.vpl.Constants.styleTextCombo;
 
 import com.jeeves.vpl.ParentPane;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
@@ -13,9 +11,14 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.util.Callback;
 
 /**
  * This class represents a clock trigger that can be dragged around on the
@@ -62,6 +65,30 @@ public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 	@SuppressWarnings("rawtypes")
 	public void addListeners() {
 		super.addListeners();
+		cboFixedRandom.setCellFactory(
+	            new Callback<ListView<String>, ListCell<String>>() {
+	                @Override public ListCell<String> call(ListView<String> param) {
+	                    final ListCell<String> cell = new ListCell<String>() {
+	                        {
+	                            super.setPrefWidth(100);
+	                        }    
+	                        @Override public void updateItem(String item, 
+	                            boolean empty) {
+	                                super.updateItem(item, empty);
+	                                if (item != null) {
+	                                    setText(item);    
+	                
+	                                        setTextFill(Color.RED);
+	                                        setFont(new Font("Calibri",18));
+	                                }
+	                                else {
+	                                    setText(null);
+	                                }
+	                            }
+	                };
+	                return cell;
+	            }
+	        });
 
 		txtFieldInterval.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
 

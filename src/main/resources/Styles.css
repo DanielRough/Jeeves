@@ -94,7 +94,8 @@
 .textfield {
 	-fx-border-color: green;
 	-fx-border-width: 1;
-	-fx-padding: -5 0 -5 0
+	-fx-padding: -5 0 -5 0;
+	-fx-font-size: 14px
 }
 .Boolean {
 	-fx-background-color: radial-gradient(center 50% -40%, radius 200%, #00FFFF 45%, #00BFFF 50%);
@@ -231,6 +232,7 @@
 	-fx-effect: innershadow(three-pass-box, rgba(0, 0, 0, 0.7), 6, 0.0, 0, 2);
 	-fx-text-fill: white;
 	-fx-font-weight: bold;
+	-fx-font-size: 14px
 }
 .datevar {
 	-fx-border-radius: 20 20 20 20;
@@ -239,6 +241,7 @@
 	-fx-effect: innershadow(three-pass-box, rgba(0, 0, 0, 0.7), 6, 0.0, 0, 2);
 	-fx-text-fill: white;
 	-fx-font-weight: bold;
+	-fx-font-size: 14px
 }
 /*For choice boxes */
 .styled-select {
@@ -261,7 +264,6 @@
 .styled-select select {
 	-fx-text-fill: white;
 	-fx-background-color: transparent;
-	-fx-font-size: 12px;
 }
 
 .styled-select .list-view {
@@ -269,7 +271,6 @@
 }
 
 .styled-select .list-cell {
-	-fx-font-size: 12px;
 	-fx-text-fill: white;
 	-fx-background-color: transparent;
 	-fx-padding: 1 5 2 5;

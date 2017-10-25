@@ -42,7 +42,10 @@
       </HBox>
       <Pane layoutX="3.0" layoutY="43.0" prefHeight="26.0" styleClass="trigger">
          <children>
-            <TextField fx:id="txtFieldInterval" layoutX="6.0" layoutY="3.0" minHeight="20.0" prefHeight="20.0" prefWidth="35.0" promptText="60" />
+            <TextField fx:id="txtFieldInterval" layoutX="6.0" layoutY="3.0" minHeight="20.0" prefHeight="20.0" prefWidth="35.0" promptText="60">
+               <font>
+                  <Font size="14.0" />
+               </font></TextField>
             <Label layoutX="48.0" layoutY="4.0" prefHeight="19.0" text="times" textFill="WHITE">
                <font>
                   <Font size="13.0" />

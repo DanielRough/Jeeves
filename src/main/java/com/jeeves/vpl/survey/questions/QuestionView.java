@@ -20,6 +20,7 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -84,7 +85,9 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 		if (surveynode.getChildren().contains(buttonBox))
 			return;
 		btnEdit = new Button("Edit");
-		btnDeleteQ = new Button("DELETE");
+		btnEdit.setStyle("-fx-font-size:14px");
+		btnDeleteQ = new Button("X");
+		btnDeleteQ.setStyle("-fx-font-size:14px; -fx-font-weight:bold");
 		btnEdit.setOnAction(action -> {
 		});
 		btnDeleteQ.setOnAction(action -> {
@@ -256,6 +259,7 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 			public void run(){
 				lblQuestion.setMaxWidth(parentQuestion.lblQuestion.getWidth() - 30);
 				setPrefWidth(parentQuestion.getWidth() - 30);
+				buttonBox.setPadding(new Insets(0,20,0,0));
 			}
 		});
 	}
@@ -263,6 +267,8 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 	public void unindent() {
 		lblQuestion.setMaxWidth(100);
 		setPrefWidth(originalWidth);
+		buttonBox.setPadding(new Insets(0,0,0,0));
+
 
 	}
 	public boolean isChild() {

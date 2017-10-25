@@ -35,7 +35,11 @@ public class ViewCanvas extends Group implements ParentPane {
 	private double translatedX = 0;
 
 	private double translatedY = 0;
-
+	public static double scaleFactor = 1.0;
+	
+	public static double getScale() {
+		return scaleFactor;
+	}
 	public ViewCanvas() {
 	}
 
@@ -109,6 +113,8 @@ public class ViewCanvas extends Group implements ParentPane {
 
 			setScaleX(getScaleX() * zoomFactor);
 			setScaleY(getScaleY() * zoomFactor);
+			scaleFactor = getScaleX();
+			System.out.println("scale is " + getScaleX());
 			setTranslateX(getTranslateX() + xr * dw / 2);
 			setTranslateY(getTranslateY() + yr * dh / 2);
 		};

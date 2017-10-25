@@ -46,7 +46,6 @@ import com.jeeves.vpl.Main;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
 
 public class FirebaseDB {
 
@@ -84,9 +83,22 @@ public class FirebaseDB {
 			public void onCancelled(DatabaseError arg0) {
 				System.out.println("ERROR ERROR " + arg0.getDetails());
 			}
+			Map<String,Map<String,FirebaseSurveyEntry>> surveymap = new HashMap<String,Map<String,FirebaseSurveyEntry>>();
+			Map<String,FirebaseSurveyEntry> entrymap = new HashMap<String,FirebaseSurveyEntry>();
+			//This is (hopefully) a horrendous way to actually get FirebaseSurveyEntry objects serialized properly
 			@Override
 			public void onDataChange(DataSnapshot arg0) {
-				Map<String,Map<String,FirebaseSurveyEntry>> surveymap = (Map<String,Map<String,FirebaseSurveyEntry>>)arg0.getValue();
+				for(DataSnapshot listofentries : arg0.getChildren()) {
+					entrymap = new HashMap<String,FirebaseSurveyEntry>();
+					String surveyname = listofentries.getKey();
+					for(DataSnapshot entry : listofentries.getChildren()) {
+						FirebaseSurveyEntry surveyentry = entry.getValue(FirebaseSurveyEntry.class);
+						entrymap.put(entry.getKey(), surveyentry);
+					}
+					surveymap.put(surveyname, entrymap);
+					
+				}
+			//	Map<String,Map<String,FirebaseSurveyEntry>> surveymap = (Map<String,Map<String,FirebaseSurveyEntry>>)arg0.getValue();
 				openProject.setsurveydata(surveymap);
 			}
 		});
@@ -188,6 +200,7 @@ public class FirebaseDB {
 	public void addListeners() {
 		dbRef = FirebaseDatabase.getInstance().getReference();
 		privateRef =  dbRef.child(PRIVATE_COLL).child(currentsesh.getAttribute("uid").toString());
+		System.out.println("Uid is " + currentsesh.getAttribute("uid"));
 		patientsRef = privateRef.child("patients");
 		publicRef = dbRef.child(PUBLIC_COLL);
 		
@@ -238,13 +251,19 @@ public class FirebaseDB {
 				newprojects.clear();
 			//	newpatients.clear();
 				if (appdata != null) {
+					System.out.println("App data was not null!");
 					Map<String, FirebaseProject> projects = appdata.getprojects();
 			//		Map<String, FirebasePatient> patients = appdata.getpatients();
 					if (projects != null)
-						for (String key : projects.keySet())
+						for (String key : projects.keySet()) {
 							newprojects.add(projects.get(key));
+							System.out.println("Yup added a project");
+						}
 //					if (patients != null)
 //						newpatients.addAll(patients.values());
+				}
+				else {
+					System.out.println("Oooh i'm afraid app data was null");
 				}
 			}
 		});

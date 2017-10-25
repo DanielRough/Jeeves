@@ -12,18 +12,21 @@ import com.google.firebase.database.IgnoreExtraProperties;
 @IgnoreExtraProperties
 public class FirebaseSurveyEntry extends FirebaseElement implements Serializable{
 
-	private List<FirebaseQuestion> questions = new ArrayList<FirebaseQuestion>();
-	private int complete;
+	//private List<FirebaseQuestion> questions = new ArrayList<FirebaseQuestion>();
+	private long complete;
 	private int initTime;
 	private String encodedAnswers;
 	private int status;
 	private int triggerType;
 	private String uid; 
 	
-	public int getcomplete(){
+	public FirebaseSurveyEntry() {
+	
+	}
+	public long getcomplete(){
 		return complete;
 	}
-	public void setcomplete(int complete){
+	public void setcomplete(long complete){
 		this.complete = complete;
 	}
 	public String getencodedAnswers(){
@@ -39,9 +42,9 @@ public class FirebaseSurveyEntry extends FirebaseElement implements Serializable
 	public void setstatus(int status){
 		this.status = status;
 	}
-	public List<FirebaseQuestion> getquestions() {
-		return questions;
-	}
+//	public List<FirebaseQuestion> getquestions() {
+//		return questions;
+//	}
 	public int gettriggerType(){
 		return triggerType;
 	}

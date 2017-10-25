@@ -39,13 +39,13 @@
             <TextField fx:id="txtPhone" editable="false" layoutX="87.0" layoutY="36.0" prefHeight="28.0" prefWidth="150.0" />
          </children>
       </AnchorPane>
-      <Label layoutX="40.0" layoutY="331.0" prefHeight="20.0" prefWidth="78.0" text="Feedback">
+      <Label layoutX="138.0" layoutY="325.0" prefHeight="20.0" prefWidth="78.0" text="Feedback">
          <font>
-            <Font name="System Bold" size="14.0" />
+            <Font size="18.0" />
          </font>
       </Label>
       <ListView fx:id="lstMessages" layoutX="38.0" layoutY="352.0" prefHeight="134.0" prefWidth="283.0" />
-      <VBox layoutX="512.0" layoutY="63.0" prefHeight="113.0" spacing="5.0">
+      <VBox layoutX="509.0" layoutY="23.0" prefHeight="113.0" spacing="5.0">
          <children>
             <HBox alignment="CENTER_LEFT" spacing="10.0">
                <children>
@@ -91,17 +91,17 @@
             </HBox>
          </children>
       </VBox>
-      <Label alignment="CENTER" layoutX="297.0" layoutY="33.0" text="Survey compliance" textAlignment="CENTER">
+      <Label alignment="CENTER" layoutX="351.0" layoutY="33.0" text="Survey" textAlignment="CENTER">
          <font>
             <Font size="18.0" />
          </font>
       </Label>
       <ListView fx:id="lstSurveys" layoutX="269.0" layoutY="62.0" prefHeight="224.0" prefWidth="217.0" />
-      <TextArea fx:id="txtPatientMessage" layoutX="40.0" layoutY="511.0" prefHeight="47.0" prefWidth="283.0" promptText="Enter message text here" />
-      <Button fx:id="btnSendMessage" layoutX="95.0" layoutY="565.0" mnemonicParsing="false" onAction="#sendMessage" text="Send Message To Patient" />
-      <Label layoutX="40.0" layoutY="486.0" prefHeight="20.0" prefWidth="202.0" text="Send message to patient">
+      <TextArea fx:id="txtPatientMessage" layoutX="38.0" layoutY="525.0" prefHeight="47.0" prefWidth="283.0" promptText="Enter message text here" />
+      <Button fx:id="btnSendMessage" layoutX="84.0" layoutY="577.0" mnemonicParsing="false" onAction="#sendMessage" text="Send Message To Patient" />
+      <Label layoutX="76.0" layoutY="498.0" prefHeight="20.0" prefWidth="202.0" text="Send message to patient">
          <font>
-            <Font name="System Bold" size="14.0" />
+            <Font size="18.0" />
          </font>
       </Label>
       <Button fx:id="btnDownload" layoutX="550.0" layoutY="239.0" mnemonicParsing="false" onAction="#downloadData" prefHeight="37.0" prefWidth="226.0" text="Download Results">
@@ -114,7 +114,7 @@
             <Font size="18.0" />
          </font>
       </Label>
-      <VBox layoutX="684.0" layoutY="63.0" prefHeight="89.0" spacing="5.0">
+      <VBox layoutX="668.0" layoutY="23.0" prefHeight="89.0" spacing="5.0">
          <children>
             <HBox alignment="CENTER_LEFT" spacing="10.0">
                <children>
@@ -169,7 +169,7 @@
             <Font size="18.0" />
          </font>
       </Label>
-      <LineChart layoutX="333.0" layoutY="315.0" prefHeight="343.0" prefWidth="481.0">
+      <LineChart layoutX="334.0" layoutY="311.0" prefHeight="317.0" prefWidth="481.0">
         <xAxis>
           <CategoryAxis side="BOTTOM" />
         </xAxis>
@@ -177,5 +177,15 @@
           <NumberAxis side="LEFT" />
         </yAxis>
       </LineChart>
+      <HBox alignment="CENTER" layoutX="328.0" layoutY="621.0" prefHeight="47.0" prefWidth="492.0" spacing="10.0">
+         <children>
+            <Label prefHeight="47.0" prefWidth="71.0" text="Chart type" textAlignment="CENTER" wrapText="true" />
+            <ChoiceBox fx:id="cboChartType" prefHeight="31.0" prefWidth="87.0" />
+            <Label text="X-Axis" />
+            <ChoiceBox fx:id="cboXAxis" prefHeight="31.0" prefWidth="100.0" />
+            <Label text="Y-Axis" />
+            <ChoiceBox fx:id="cboYAxis" prefHeight="31.0" prefWidth="99.0" />
+         </children>
+      </HBox>
    </children>
 </Pane>

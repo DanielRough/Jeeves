@@ -114,12 +114,12 @@ public class ActionReceiver extends Receiver {
 			@Override
 			public void handle(MouseEvent event) {
 				event.consume();
-				if(event.getEventType().equals(MouseEvent.MOUSE_PRESSED)){
+				if(event.getEventType().equals(MouseEvent.MOUSE_ENTERED)){
 					captureRect.setFill(Color.CYAN);
 					Main.getContext().highlightMenu(ElementType.ACTION,true);
 
 				}
-				if(event.getEventType().equals(MouseEvent.MOUSE_RELEASED)){
+				if(event.getEventType().equals(MouseEvent.MOUSE_EXITED)){
 					captureRect.setFill(Color.DARKCYAN);
 					Main.getContext().highlightMenu(ElementType.ACTION,false);
 
