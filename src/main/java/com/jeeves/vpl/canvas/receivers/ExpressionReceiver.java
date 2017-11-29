@@ -100,13 +100,13 @@ public class ExpressionReceiver extends Receiver {
 			public void handle(MouseEvent event) {
 				event.consume();
 				if(event.getEventType().equals(MouseEvent.MOUSE_ENTERED)){
-					captureRect.setFill(Color.CYAN);
-					Main.getContext().highlightMenu(ElementType.EXPRESSION,true);
+			//		captureRect.setFill(Color.CYAN);
+			//		Main.getContext().highlightMenu(ElementType.EXPRESSION,true);
 
 				}
 				if(event.getEventType().equals(MouseEvent.MOUSE_EXITED)){
-					captureRect.setFill(Color.DARKCYAN);
-					Main.getContext().highlightMenu(ElementType.EXPRESSION,false);
+			//		captureRect.setFill(Color.DARKCYAN);
+			//		Main.getContext().highlightMenu(ElementType.EXPRESSION,false);
 
 				}
 			}

@@ -8,10 +8,9 @@ import static com.jeeves.vpl.Constants.PUBLIC_COLL;
 import static com.jeeves.vpl.Constants.SERVICE_JSON;
 import static com.jeeves.vpl.Constants.generateProjectID;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.KeyPair;
@@ -140,7 +139,7 @@ public class FirebaseDB {
 	//Signs us into the database with restricted access based on the generated userid
 	public void firebaseLogin(){
 		Subject currentUser = SecurityUtils.getSubject();
-		FileInputStream serviceAccount;
+		InputStream serviceAccount;
 		//The role of our current user represents their unique ID. 
 		//This makes sense because then each role corresponds to certain read/write privileges in Firebase
 		// Initialize the app with a custom auth variable, limiting the server's access
@@ -149,12 +148,12 @@ public class FirebaseDB {
 		uid = currentsesh.getAttribute("uid").toString();
 		auth.put("uid", currentsesh.getAttribute("uid"));
 		try {
-			URL resource = FirebaseDB.class.getResource(SERVICE_JSON);
-			File file = new File(resource.toURI());
-			serviceAccount = new FileInputStream(file);
+			InputStream resource = FirebaseDB.class.getResourceAsStream(SERVICE_JSON);
+		//	File file = new File(resource.toURI());
+			//serviceAccount = new InputStream(resource);
 			//			serviceAccount = new FileInputStream(SERVICE_JSON);
 			FirebaseOptions options = new FirebaseOptions.Builder()
-					.setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
+					.setCredential(FirebaseCredentials.fromCertificate(resource))
 					.setDatabaseUrl(DB_URL)
 					.setDatabaseAuthVariableOverride(auth)
 					.build();
@@ -164,22 +163,20 @@ public class FirebaseDB {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
 
 	}
 	public FirebaseDB(Main gui) {
 		this.gui = gui;
 		instance = this;
 		try {
-			URL resource = FirebaseDB.class.getResource(SERVICE_JSON);
-			File file = new File(resource.toURI());
-			FileInputStream serviceAccount = new FileInputStream(file);
+		//	URL resource = FirebaseDB.class.getResource(SERVICE_JSON);
+			InputStream stream = FirebaseDB.class.getResourceAsStream(SERVICE_JSON);
+		//	File file = new File(resource.toURI());
+		//	FileInputStream serviceAccount = (FileInputStream) stream;
 			//			serviceAccount = new FileInputStream(SERVICE_JSON);
 			FirebaseOptions options = new FirebaseOptions.Builder()
-					.setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
+					.setCredential(FirebaseCredentials.fromCertificate(stream))
 					.setDatabaseUrl(DB_URL)
 					//  .setDatabaseAuthVariableOverride(auth)
 					.build();
@@ -188,10 +185,11 @@ public class FirebaseDB {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+//		catch (URISyntaxException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		//	getUserCredentials(email);
 
 	}

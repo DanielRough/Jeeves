@@ -32,6 +32,12 @@ public class LocationExpression extends Expression { // NO_UCD (unused code)
 		super.setParentPane(parent);
 			if (locReceiver.getChildExpression() != null)
 				locReceiver.getChildExpression().setParentPane(parent);
+			locReceiver.getChildElements().addListener(
+					(ListChangeListener<ViewElement>) listener -> {listener.next(); if(listener.wasRemoved())return; 
+					locReceiver.getChildExpression().setParentPane(parent);
+
+					});// timeReceiverFrom.getChildElements().get(0).getModel())));		
+
 	}
 	public LocationExpression(FirebaseExpression data) {
 		super(data);
@@ -100,6 +106,7 @@ public class LocationExpression extends Expression { // NO_UCD (unused code)
 						List<FirebaseVariable> list = (List<FirebaseVariable>) listener.getAddedSubList();
 						if(list.get(0).getname().equals(result))
 							locReceiver.addChild(UserVariable.create(list.get(0)),0,0);
+
 					}
 				});
 				

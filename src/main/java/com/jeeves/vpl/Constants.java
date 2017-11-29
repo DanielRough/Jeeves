@@ -5,6 +5,8 @@ import java.util.Random;
 
 import com.jeeves.vpl.firebase.FirebaseProject;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -47,6 +49,7 @@ public class Constants {
 	public static final String VAR_DATE = "Date";
 	public static final String VAR_LOCATION = "Location";
 	public static final String VAR_WIFI = "WiFi";
+	public static final String VAR_CATEGORY = "Category";
 	public static final String VAR_BLUETOOTH = "Bluetooth";
 	public static final String VAR_NONE = "None";
 	public static final String VAR_NUMERIC = "Numeric";
@@ -63,7 +66,9 @@ public class Constants {
 			this.values = values;
 			this.isPull = isPull;
 		}
+		
 
+		
 		public boolean isPull(){
 			return isPull;
 		}
@@ -89,6 +94,7 @@ public class Constants {
 				new String[] { "Message Sent", "Message Received" },false);
 		
 		public static final Sensor[] sensors = { accelSensor, /*locSensor, */smsSensor,wifiSensor,bluetoothSensor,microphoneSensor };
+		public static ObservableMap<String,String[]> categoryOpts = FXCollections.observableHashMap();
 
 	//Trigger, action, other such names for dynamic loading
 	public static String[] actionNames = { "com.jeeves.vpl.canvas.actions.PromptAction",
@@ -99,9 +105,8 @@ public class Constants {
 			"com.jeeves.vpl.canvas.actions.WaitingAction", "com.jeeves.vpl.canvas.ifsloops.IfControl"};
 	public static String[] exprNames = { "com.jeeves.vpl.canvas.expressions.AndExpression",
 			"com.jeeves.vpl.canvas.expressions.OrExpression", "com.jeeves.vpl.canvas.expressions.NotExpression",
-			"com.jeeves.vpl.canvas.expressions.EqualsExpression", "com.jeeves.vpl.canvas.expressions.GreaterExpression",
-			"com.jeeves.vpl.canvas.expressions.LessExpression", "com.jeeves.vpl.canvas.expressions.LocationExpression", "com.jeeves.vpl.canvas.expressions.SensorExpression",
-			"com.jeeves.vpl.canvas.expressions.TimeExpression" };
+			"com.jeeves.vpl.canvas.expressions.EqualsExpression", "com.jeeves.vpl.canvas.expressions.GreaterExpression","com.jeeves.vpl.canvas.expressions.LessExpression","com.jeeves.vpl.canvas.expressions.LocationExpression", "com.jeeves.vpl.canvas.expressions.SensorExpression",
+			"com.jeeves.vpl.canvas.expressions.TimeExpression","com.jeeves.vpl.canvas.expressions.CategoryExpression" };
 	public static final String[] questionNames = { "com.jeeves.vpl.survey.questions.QuestionDate","com.jeeves.vpl.survey.questions.QuestionTime",
 			"com.jeeves.vpl.survey.questions.QuestionLikert", "com.jeeves.vpl.survey.questions.QuestionLocation",
 			//"com.jeeves.vpl.survey.questions.QuestionBluetooth",

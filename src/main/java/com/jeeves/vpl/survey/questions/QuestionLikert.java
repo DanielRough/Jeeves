@@ -21,8 +21,8 @@ import static com.jeeves.vpl.Constants.*;
 
 public class QuestionLikert extends QuestionView {
 
-	@FXML
-	private CheckBox chkAssignScore;
+//	@FXML
+//	private CheckBox chkAssignScore;
 
 	private TextField[] fields;
 
@@ -33,23 +33,13 @@ public class QuestionLikert extends QuestionView {
 	// // this.description = "User answers by selecting from a scale";
 	// }
 	@FXML
-	private RadioButton rdioButton5;
+	private TextField txtNumOptions;
 	@FXML
-	private RadioButton rdioButton7;
+	private TextField txtBegin;
 	@FXML
-	private TextField txtLikert1;
+	private TextField txtMiddle;
 	@FXML
-	private TextField txtLikert2;
-	@FXML
-	private TextField txtLikert3;
-	@FXML
-	private TextField txtLikert4;
-	@FXML
-	private TextField txtLikert5;
-	@FXML
-	private TextField txtLikert6;
-	@FXML
-	private TextField txtLikert7;
+	private TextField txtEnd;
 	public QuestionLikert() {
 		super();
 	}
@@ -64,35 +54,35 @@ public class QuestionLikert extends QuestionView {
 	@Override
 	public void addEventHandlers() {
 		// TODO Auto-generated method stub
-		final ToggleGroup group = new ToggleGroup();
-		rdioButton5.setToggleGroup(group);
-		rdioButton7.setToggleGroup(group);
-		rdioButton7.selectedProperty().addListener(new ChangeListener<Boolean>() {
+		//final ToggleGroup group = new ToggleGroup();
+//		rdioButton5.setToggleGroup(group);
+//		rdioButton7.setToggleGroup(group);
+//		rdioButton7.selectedProperty().addListener(new ChangeListener<Boolean>() {
+//
+//			@Override
+//			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+//				if (newValue) {
+//					txtLikert6.setVisible(true);
+//					txtLikert7.setVisible(true);
+//					handleUpdateScale();
+//				}
+//			}
+//
+//		});
+//		rdioButton5.selectedProperty().addListener(new ChangeListener<Boolean>() {
+//
+//			@Override
+//			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+//				if (newValue) {
+//					txtLikert6.setVisible(false);
+//					txtLikert7.setVisible(false);
+//					handleUpdateScale();
+//				}
+//			}
+//
+//		});
 
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				if (newValue) {
-					txtLikert6.setVisible(true);
-					txtLikert7.setVisible(true);
-					handleUpdateScale();
-				}
-			}
-
-		});
-		rdioButton5.selectedProperty().addListener(new ChangeListener<Boolean>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				if (newValue) {
-					txtLikert6.setVisible(false);
-					txtLikert7.setVisible(false);
-					handleUpdateScale();
-				}
-			}
-
-		});
-
-		fields = new TextField[] { txtLikert1, txtLikert2, txtLikert3, txtLikert4, txtLikert5, txtLikert6, txtLikert7 };
+		fields = new TextField[] {txtBegin, txtMiddle, txtEnd };
 
 
 		for (TextField field : fields) {
@@ -118,7 +108,7 @@ public class QuestionLikert extends QuestionView {
 
 	@FXML
 	public void handleAssignScore(Event e) {
-		getModel().setAssign(chkAssignScore.isSelected()); // This is
+	//	getModel().setAssign(chkAssignScore.isSelected()); // This is
 		// getting
 		// silly
 	}
@@ -139,46 +129,48 @@ public class QuestionLikert extends QuestionView {
 	@Override
 	public void fxmlInit(){
 		super.fxmlInit();
-		int count = 1;
-		for (TextField field : fields) {
-			field.setText(""+count++); //add default values in so that we have at least SOME sort of parameters
-		}
+//		int count = 1;
+//		for (TextField field : fields) {
+//			field.setText(""+count++); //add default values in so that we have at least SOME sort of parameters
+//		}
 	}
 	@Override
 	public void showEditOpts(Map<String, Object> opts) {
 		if (opts == null) {
-			rdioButton5.setSelected(true);
+	//		rdioButton5.setSelected(true);
 			for (TextField field : fields) {
 				field.setText("");
 			}
 		} else {
 			if (opts.containsKey("number")) {
 				String number = opts.get("number").toString();
-				if (number.equals("5"))
-					rdioButton5.setSelected(true);
-				else if (number.equals("7"))
-					rdioButton7.setSelected(true);
+				txtNumOptions.setText(number);
+//				if (number.equals("5"))
+//					rdioButton5.setSelected(true);
+//				else if (number.equals("7"))
+//					rdioButton7.setSelected(true);
 			}
 			if (opts.containsKey("labels")) {
 				@SuppressWarnings("unchecked")
 				ArrayList<String> labels = (ArrayList<String>) opts.get("labels");
-				int count = 0;
-				for (String label : labels) {
-					fields[count].setText(label);
-					count++;
+				//int count = 0;
+				for (int count = 0; count < fields.length; count++) {
+					fields[count].setText(labels.get(count));
+					//count++;
 				}
 			}
 		}
-		boolean assigntoscore = getModel().getparams().get("assignToScore") == null ? false
-				: Boolean.parseBoolean(getModel().getparams().get("assignToScore").toString());
-		if (assigntoscore == true) {
-			chkAssignScore.setSelected(true);
-		} else
-			chkAssignScore.setSelected(false);
+//		boolean assigntoscore = getModel().getparams().get("assignToScore") == null ? false
+//				: Boolean.parseBoolean(getModel().getparams().get("assignToScore").toString());
+//		if (assigntoscore == true) {
+//			chkAssignScore.setSelected(true);
+//		} else
+//			chkAssignScore.setSelected(false);
 	}
 
 	private void handleUpdateScale() {
-		String number = rdioButton5.isSelected() ? "5" : "7";
+		//String number = rdioButton5.isSelected() ? "5" : "7";
+		String number = txtNumOptions.getText();
 		Map<String, Object> qScaleVals = new HashMap<String, Object>();
 		qScaleVals.put("number", number);
 		ArrayList<String> labels = new ArrayList<String>();

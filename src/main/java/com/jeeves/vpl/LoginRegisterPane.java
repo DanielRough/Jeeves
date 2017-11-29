@@ -1,6 +1,8 @@
 package com.jeeves.vpl;
-import static com.jeeves.vpl.Constants.*;
+import static com.jeeves.vpl.Constants.makeInfoAlert;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -12,6 +14,7 @@ import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.config.Ini;
 import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.apache.shiro.subject.Subject;
@@ -142,7 +145,10 @@ public class LoginRegisterPane extends Pane{
 	}
 	@FXML
 	private void login(Event e){
-		Factory<org.apache.shiro.mgt.SecurityManager> factory = new IniSecurityManagerFactory("shiro.ini");
+		InputStream shiroStream = getClass().getResourceAsStream("/shiro.ini");
+		Ini shiroIni = new Ini();
+		shiroIni.load(shiroStream);
+		Factory<org.apache.shiro.mgt.SecurityManager> factory = new IniSecurityManagerFactory(shiroIni);
 		org.apache.shiro.mgt.SecurityManager securityManager = factory.getInstance();
 
 		SecurityUtils.setSecurityManager(securityManager);

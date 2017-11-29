@@ -1,13 +1,13 @@
 package com.jeeves.vpl;
 
 import static com.jeeves.vpl.Constants.SHOULD_UPDATE_TRIGGERS;
-import static com.jeeves.vpl.Constants.VAR_BLUETOOTH;
 import static com.jeeves.vpl.Constants.VAR_BOOLEAN;
 import static com.jeeves.vpl.Constants.VAR_CLOCK;
 import static com.jeeves.vpl.Constants.VAR_DATE;
 import static com.jeeves.vpl.Constants.VAR_LOCATION;
 import static com.jeeves.vpl.Constants.VAR_NUMERIC;
 import static com.jeeves.vpl.Constants.VAR_WIFI;
+import static com.jeeves.vpl.Constants.VAR_CATEGORY;
 import static com.jeeves.vpl.Constants.actionNames;
 import static com.jeeves.vpl.Constants.exprNames;
 import static com.jeeves.vpl.Constants.makeInfoAlert;
@@ -492,7 +492,7 @@ public class Main extends Application {
 		}
 		//TODO: These should really be read from the Constants class
 		cboAttrType.getItems().clear();
-		cboAttrType.getItems().addAll("True/False","Date","Time","Location","WiFi","Bluetooth","Number");
+		cboAttrType.getItems().addAll("True/False","Number","Category","Date","Time","Location","WiFi");
 	}
 
 
@@ -909,11 +909,12 @@ public class Main extends Application {
 		switch(attrType){
 		case "True/False":var.setVartype(VAR_BOOLEAN);break;
 		case "Number":var.setVartype(VAR_NUMERIC);break;
+		case "Category":var.setVartype(VAR_CATEGORY);break;
 		case "Date":var.setVartype(VAR_DATE); break;
 		case "Time":var.setVartype(VAR_CLOCK);break;
 		case "Location":var.setVartype(VAR_LOCATION);break;
 		case "WiFi":var.setVartype(VAR_WIFI);break;
-		case "Bluetooth":var.setVartype(VAR_BLUETOOTH);break;
+//		case "Bluetooth":var.setVartype(VAR_BLUETOOTH);break;
 
 		}
 		var.setisCustom(true);

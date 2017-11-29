@@ -134,6 +134,7 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 
 	public void addQuestion(int index, QuestionView view) {
 		surveyQuestions.add(index, view);
+		editor.populateQuestion(view);
 
 		view.setReadOnly(false);
 		view.addButtons();

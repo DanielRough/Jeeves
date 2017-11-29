@@ -81,6 +81,8 @@ public class QuestionMultSingle extends QuestionView {
 		TextField choice = new TextField();
 		choice.setText(s);
 		Button remove = new Button();
+		String[] opts = new String[0];
+
 		remove.setText("X");
 		remove.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -110,6 +112,9 @@ public class QuestionMultSingle extends QuestionView {
 					TextField opttext = (TextField) optbox.getChildren().get(0);
 					qOptions.put("option" + Integer.toString(optcount++), opttext.getText());
 					model.getparams().put("options",qOptions);
+					categoryOpts.put(getAssignedVar(), qOptions.values().toArray(opts));
+
+					
 				}
 			}
 		});
@@ -134,7 +139,12 @@ public class QuestionMultSingle extends QuestionView {
 				qOptions.put("option" + Integer.toString(optcount++), opttext.getText());
 				model.getparams().put("options",qOptions);
 			}
+			System.out.println("In a slighlty different place I PUT " + getAssignedVar() + "," + qOptions.values().toString());
+
+			categoryOpts.put(getAssignedVar(), qOptions.values().toArray(opts));
+
 		});
+
 		Map<String, Object> qOptions = new HashMap<String, Object>();
 		int optcount = 1;
 
@@ -143,6 +153,9 @@ public class QuestionMultSingle extends QuestionView {
 			TextField opttext = (TextField) optbox.getChildren().get(0);
 			qOptions.put("option" + Integer.toString(optcount++), opttext.getText());
 			model.getparams().put("options",qOptions);
+			
+			//Here we update the global categories hashmap again
+			//categoryOpts.put(getAssignedVar(), qOptions.values().toArray(opts));
 		}
 	}
 

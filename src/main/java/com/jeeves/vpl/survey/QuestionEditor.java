@@ -7,14 +7,16 @@ import static com.jeeves.vpl.Constants.GEO;
 import static com.jeeves.vpl.Constants.NUMERIC;
 import static com.jeeves.vpl.Constants.SCALE;
 import static com.jeeves.vpl.Constants.WIFI;
-import static com.jeeves.vpl.Constants.BLUETOOTH;
+import static com.jeeves.vpl.Constants.MULT_SINGLE;
+import static com.jeeves.vpl.Constants.MULT_MANY;
+import static com.jeeves.vpl.Constants.categoryOpts;
 import static com.jeeves.vpl.Constants.VAR_BOOLEAN;
 import static com.jeeves.vpl.Constants.VAR_CLOCK;
 import static com.jeeves.vpl.Constants.VAR_DATE;
 import static com.jeeves.vpl.Constants.VAR_LOCATION;
 import static com.jeeves.vpl.Constants.VAR_NUMERIC;
 import static com.jeeves.vpl.Constants.VAR_WIFI;
-import static com.jeeves.vpl.Constants.VAR_BLUETOOTH;
+import static com.jeeves.vpl.Constants.VAR_CATEGORY;
 
 import java.io.IOException;
 import java.util.Map;
@@ -109,9 +111,22 @@ public class QuestionEditor extends Pane {
 			@Override
 			public void changed(ObservableValue<? extends UserVariable> observable, UserVariable oldValue,
 					UserVariable newValue) {
-				if (newValue != null)
+				if (newValue != null) {
 					selectedQuestion.setAssignedVar(newValue.getName());
-			}
+					//This is a bit nasty, but if the variable is of type 'category' then we need to update
+					//its possible values in the global  hashmap
+					String[] optsArray = new String[0];
+					try {
+					categoryOpts.put(newValue.getName(), selectedQuestion.getQuestionOptions().values().toArray(optsArray));
+					System.out.println("INTO CATEGORY OPTS I PUT " + newValue.getName() + "," + selectedQuestion.getQuestionOptions().values().toString());
+					}
+					catch(ArrayStoreException e) {
+						
+					}
+					if(oldValue != null)
+						categoryOpts.remove(oldValue.getName());
+				}
+				}
 
 		});
 		
@@ -156,9 +171,6 @@ public class QuestionEditor extends Pane {
 		populateVarBox();
 
 		
-		Map<String, Object> opts = entry.getQuestionOptions();
-	//	if(opts != null)
-			selectedQuestion.showEditOpts(opts);
 
 		if (entry.isMandatory())
 			chkMandatory.setSelected(true);
@@ -173,7 +185,20 @@ public class QuestionEditor extends Pane {
 			});
 		} else
 			chkAssignToVar.setSelected(false);
-
+		
+		
+		Map<String, Object> opts = entry.getQuestionOptions();
+	//	if(opts != null)
+			selectedQuestion.showEditOpts(opts);
+			String[] optsArray = new String[0];
+			System.out.println(entry.getQuestionOptions().values().toString());
+			try {
+			categoryOpts.put(entry.getAssignedVar(), entry.getQuestionOptions().values().toArray(optsArray));
+			}
+			catch(ArrayStoreException e) {
+				
+			}
+		
 		if (entry.getChildQuestions().isEmpty())
 			conditionEditor.setDisable(false);
 		else
@@ -262,8 +287,9 @@ public class QuestionEditor extends Pane {
 						cboVars.getItems().add(uservar);
 					}
 					break;
-				case BLUETOOTH:
-					if (uservar.getVarType().equals(VAR_BLUETOOTH)) {
+				case MULT_SINGLE:
+				case MULT_MANY:
+					if (uservar.getVarType().equals(VAR_CATEGORY)) {
 						cboVars.getItems().add(uservar);
 					}
 					break;
