@@ -11,15 +11,9 @@
 
 <Pane fx:id="pane" minHeight="30.0" prefHeight="30.0" styleClass="action" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <HBox layoutX="14.0" layoutY="2.0" spacing="5.0">
+      <HBox alignment="CENTER" layoutX="14.0" layoutY="2.0" spacing="5.0">
          <children>
-            <ComboBox fx:id="cboStartStop" layoutX="14.0" layoutY="2.0" stylesheets="@Styles.css">
-               <styleClass>
-                  <String fx:value="styled-select" />
-                  <String fx:value="shadowy" />
-               </styleClass>
-            </ComboBox>
-            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="67.0" layoutY="2.0" prefHeight="26.0" text="sensing" textAlignment="CENTER" textFill="BLACK" wrapText="true">
+            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="67.0" layoutY="2.0" prefHeight="26.0" text="sense" textAlignment="CENTER" textFill="BLACK" wrapText="true">
                <font>
                   <Font name="System Bold" size="13.0" fx:id="x1" />
                </font>
@@ -31,6 +25,13 @@
                <items>
                   <FXCollections fx:factory="observableArrayList" />
                </items>
+               <styleClass>
+                  <String fx:value="styled-select" />
+                  <String fx:value="shadowy" />
+               </styleClass>
+            </ComboBox>
+            <Label text="for" />
+            <ComboBox fx:id="cboTime">
                <styleClass>
                   <String fx:value="styled-select" />
                   <String fx:value="shadowy" />

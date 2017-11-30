@@ -21,7 +21,7 @@ public class CaptureDataAction extends Action{
 	@FXML
 	private ComboBox<String> cboSensor;
 	@FXML
-	private ComboBox<String> cboStartStop;
+	private ComboBox<String> cboTime;
 	public CaptureDataAction() {
 		this(new FirebaseAction());
 	}
@@ -39,7 +39,8 @@ public class CaptureDataAction extends Action{
 		}
 		//Need to add this manually as it doesn't come under the usual sensors
 		cboSensor.getItems().add("Location");
-		cboStartStop.getItems().addAll("start","stop");
+		//cboStartStop.getItems().addAll("start","stop");
+		cboTime.getItems().addAll("1 min","10 mins","1 hr","ever");
 		cboSensor.valueProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
@@ -53,12 +54,12 @@ public class CaptureDataAction extends Action{
 				FirebaseDB.getOpenProject().getsensors().add(arg2);
 			}
 		});
-		cboStartStop.valueProperty().addListener(new ChangeListener<String>() {
+		cboTime.valueProperty().addListener(new ChangeListener<String>() {
 			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
-				params.put("startstop", arg2);
+				params.put("time", arg2);
 			}
 		});
-		cboStartStop.setValue("start");
+		cboTime.setValue("10 mins");
 
 	}
 
@@ -90,8 +91,8 @@ public class CaptureDataAction extends Action{
 					cboSensor.setValue(sensorName);
 			//}
 		} 
-		if(model.getparams().containsKey("startstop")) {
-			cboStartStop.setValue((String)model.getparams().get("startstop"));
+		if(model.getparams().containsKey("time")) {
+			cboTime.setValue((String)model.getparams().get("time"));
 		}
 	}
 

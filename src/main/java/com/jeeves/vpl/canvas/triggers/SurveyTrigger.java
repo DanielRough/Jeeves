@@ -28,8 +28,8 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 	@FXML
 	private ComboBox<String> cboSurvey;
 	private ChangeListener<String> listener;
-	@FXML
-	private TextField txtNumberOfTimes;
+//	@FXML
+//	private TextField txtNumberOfTimes;
 
 	public SurveyTrigger() {
 		this(new FirebaseTrigger());
@@ -110,33 +110,33 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 		}
 		else
 			System.out.println("RESULT IS " + model.getparams().get("result"));
-		txtNumberOfTimes.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
-
-			@Override
-			public void handle(KeyEvent arg0) {
-				try {
-					Long.parseLong(arg0.getCharacter());
-				} catch (NumberFormatException e) {
-					arg0.consume();
-					return;
-				}
-			}
-		});
+//		txtNumberOfTimes.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
+//
+//			@Override
+//			public void handle(KeyEvent arg0) {
+//				try {
+//					Long.parseLong(arg0.getCharacter());
+//				} catch (NumberFormatException e) {
+//					arg0.consume();
+//					return;
+//				}
+//			}
+//		});
 		//txtNumberOfTimes.setText("1"); //default
 
-		txtNumberOfTimes.textProperty().addListener(new ChangeListener<String>(){
-
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				params.put("numTimes", txtNumberOfTimes.getText());
-				System.out.println("Result is " + txtNumberOfTimes.getText());
-
-			}
-			
-		});
+//		txtNumberOfTimes.textProperty().addListener(new ChangeListener<String>(){
+//
+//			@Override
+//			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+//				params.put("numTimes", txtNumberOfTimes.getText());
+//				System.out.println("Result is " + txtNumberOfTimes.getText());
+//
+//			}
+//			
+//		});
 		//Again, if we don't already have a number of times, give it a default
-		if(!model.getparams().containsKey("numTimes"))
-			txtNumberOfTimes.setText("1");
+//		if(!model.getparams().containsKey("numTimes"))
+//			txtNumberOfTimes.setText("1");
 //		txtNumberOfTimes.addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
 //
 //			@Override
@@ -163,7 +163,7 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 
 	@Override
 	public Node[] getWidgets() {
-		return new Node[] { cboSurvey, cboCompMissed, txtNumberOfTimes };
+		return new Node[] { cboSurvey, cboCompMissed};
 	}
 
 	@Override
@@ -180,7 +180,7 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 		String completed = params.containsKey("result") ? params.get("result").toString() : "missed";
 
 		cboCompMissed.setValue(completed);
-		txtNumberOfTimes.setText(params.containsKey("numTimes") ? params.get("numTimes").toString() : "");
+		//txtNumberOfTimes.setText(params.containsKey("numTimes") ? params.get("numTimes").toString() : "");
 
 	}
 }

@@ -98,8 +98,8 @@
       </Label>
       <ListView fx:id="lstSurveys" layoutX="269.0" layoutY="62.0" prefHeight="224.0" prefWidth="217.0" />
       <TextArea fx:id="txtPatientMessage" layoutX="38.0" layoutY="525.0" prefHeight="47.0" prefWidth="283.0" promptText="Enter message text here" />
-      <Button fx:id="btnSendMessage" layoutX="84.0" layoutY="577.0" mnemonicParsing="false" onAction="#sendMessage" text="Send Message To Patient" />
-      <Label layoutX="76.0" layoutY="498.0" prefHeight="20.0" text="Send message to patient">
+      <Button fx:id="btnSendMessage" layoutX="92.0" layoutY="577.0" mnemonicParsing="false" onAction="#sendMessage" text="Send Message To User" />
+      <Label layoutX="85.0" layoutY="495.0" prefHeight="20.0" text="Send message to user">
          <font>
             <Font size="18.0" />
          </font>

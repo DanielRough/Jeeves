@@ -12,7 +12,7 @@
          <children>
             <Label layoutX="80.0" text="Number of items">
                <font>
-                  <Font size="16.0" />
+                  <Font size="14.0" />
                </font>
             </Label>
             <TextField fx:id="txtNumOptions" prefHeight="31.0" prefWidth="47.0" />
@@ -24,17 +24,17 @@
                <children>
                   <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="Begin Label" textAlignment="RIGHT">
                      <font>
-                        <Font size="16.0" />
+                        <Font size="14.0" />
                      </font>
                   </Label>
                   <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="Middle Label" textAlignment="RIGHT">
                      <font>
-                        <Font size="16.0" />
+                        <Font size="14.0" />
                      </font>
                   </Label>
                   <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="End Label" textAlignment="RIGHT">
                      <font>
-                        <Font size="16.0" />
+                        <Font size="14.0" />
                      </font>
                   </Label>
                </children>
@@ -42,24 +42,27 @@
                   <Insets right="5.0" />
                </HBox.margin>
             </VBox>
-            <VBox prefHeight="100.0" prefWidth="98.0" spacing="5.0">
+            <VBox prefHeight="100.0" prefWidth="98.0" spacing="7.0">
                <children>
                   <TextField fx:id="txtBegin" maxHeight="-Infinity" minHeight="-Infinity" prefWidth="159.0" promptText="Begin Label">
                      <font>
-                        <Font size="14.0" />
+                        <Font size="12.0" />
                      </font>
                   </TextField>
                   <TextField fx:id="txtMiddle" minHeight="-Infinity" promptText="Middle Label">
                      <font>
-                        <Font size="14.0" />
+                        <Font size="12.0" />
                      </font>
                   </TextField>
                   <TextField fx:id="txtEnd" minHeight="-Infinity" promptText="End Label">
                      <font>
-                        <Font size="14.0" />
+                        <Font size="12.0" />
                      </font>
                   </TextField>
                </children>
+               <HBox.margin>
+                  <Insets top="5.0" />
+               </HBox.margin>
             </VBox>
          </children>
       </HBox>

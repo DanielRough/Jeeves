@@ -76,7 +76,7 @@ public class LocationExpression extends Expression { // NO_UCD (unused code)
 		name = NAME;
 		description = DESC;
 		this.varType = VAR_BOOLEAN;
-		operand.setText("patient is at");
+		operand.setText("user is at");
 		box.getStyleClass().add(this.varType);
 
 	}
