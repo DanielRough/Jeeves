@@ -1,13 +1,13 @@
 package com.jeeves.vpl.canvas.expressions;
 
 import static com.jeeves.vpl.Constants.VAR_BOOLEAN;
-import static com.jeeves.vpl.Constants.VAR_CLOCK;
+import static com.jeeves.vpl.Constants.VAR_DATE;
 
 import java.util.Map;
 
 import com.jeeves.vpl.ParentPane;
 import com.jeeves.vpl.ViewElement;
-import com.jeeves.vpl.canvas.receivers.TimeReceiver;
+import com.jeeves.vpl.canvas.receivers.DateReceiver;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 import com.jeeves.vpl.firebase.FirebaseVariable;
 
@@ -16,17 +16,17 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 
-public class TimeExpression extends Expression { // NO_UCD (unused code)
+public class DateExpression extends Expression { // NO_UCD (unused code)
 	public static final String DESC = "Returns true if the current date is within the specified bounds";
 	public static final String NAME = "Date Result";
-	private TimeReceiver exprDateFrom;
-	private TimeReceiver exprDateTo;
+	private DateReceiver exprDateFrom;
+	private DateReceiver exprDateTo;
 
-	public TimeExpression() {
+	public DateExpression() {
 		this(new FirebaseExpression());
 	}
 
-	public TimeExpression(FirebaseExpression data) {
+	public DateExpression(FirebaseExpression data) {
 		super(data);
 		addListeners();
 
@@ -65,8 +65,8 @@ public class TimeExpression extends Expression { // NO_UCD (unused code)
 	public void fxmlInit() {
 		super.fxmlInit();
 		
-		exprDateFrom = new TimeReceiver(VAR_CLOCK);
-		exprDateTo = new TimeReceiver(VAR_CLOCK);
+		exprDateFrom = new DateReceiver(VAR_DATE);
+		exprDateTo = new DateReceiver(VAR_DATE);
 
 
 		box.getChildren().clear();
