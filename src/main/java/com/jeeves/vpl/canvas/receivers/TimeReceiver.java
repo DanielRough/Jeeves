@@ -106,7 +106,7 @@ public class TimeReceiver extends ExpressionReceiver {
 			});
 			txtHours.textProperty().addListener(listen -> {
 				int hours = Integer.parseInt(txtHours.getText());
-				if (hours > 2)
+				if (hours > 2 || (txtHours.getText().length()==2))
 					txtMins.requestFocus();
 			});
 			txtMins.addEventHandler(KeyEvent.KEY_PRESSED, handler->{

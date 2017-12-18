@@ -109,7 +109,7 @@
             <Font size="18.0" />
          </font>
       </Button>
-      <Label alignment="CENTER" layoutX="122.0" layoutY="33.0" text="Patient" textAlignment="CENTER">
+      <Label alignment="CENTER" layoutX="122.0" layoutY="33.0" text="User" textAlignment="CENTER">
          <font>
             <Font size="18.0" />
          </font>
@@ -160,8 +160,8 @@
             </HBox>
          </children>
       </VBox>
-      <RadioButton fx:id="rdioSelPatient" layoutX="550.0" layoutY="182.0" mnemonicParsing="false" selected="true" text="Selected patient" />
-      <RadioButton fx:id="rdioAllPatient" layoutX="684.0" layoutY="182.0" mnemonicParsing="false" text="All patients" />
+      <RadioButton fx:id="rdioSelPatient" layoutX="550.0" layoutY="182.0" mnemonicParsing="false" selected="true" text="Selected user" />
+      <RadioButton fx:id="rdioAllPatient" layoutX="684.0" layoutY="182.0" mnemonicParsing="false" text="All users" />
       <RadioButton fx:id="rdioSelSurvey" layoutX="550.0" layoutY="214.0" mnemonicParsing="false" selected="true" text="Selected survey" />
       <RadioButton fx:id="rdioAllSurvey" layoutX="685.0" layoutY="214.0" mnemonicParsing="false" text="All surveys" />
       <Label alignment="CENTER" layoutX="558.0" layoutY="151.0" prefHeight="17.0" prefWidth="211.0" text="Data Download" textAlignment="CENTER">
@@ -169,7 +169,7 @@
             <Font size="18.0" />
          </font>
       </Label>
-      <LineChart layoutX="334.0" layoutY="287.0" prefHeight="317.0" prefWidth="481.0">
+      <LineChart layoutX="334.0" layoutY="287.0" prefHeight="317.0" prefWidth="481.0" visible="false">
         <xAxis>
           <CategoryAxis side="BOTTOM" />
         </xAxis>
@@ -177,7 +177,7 @@
           <NumberAxis side="LEFT" />
         </yAxis>
       </LineChart>
-      <HBox alignment="CENTER" layoutX="329.0" layoutY="585.0" prefHeight="47.0" prefWidth="492.0" spacing="10.0">
+      <HBox alignment="CENTER" layoutX="329.0" layoutY="585.0" prefHeight="47.0" prefWidth="492.0" spacing="10.0" visible="false">
          <children>
             <Label prefHeight="47.0" prefWidth="71.0" text="Chart type" textAlignment="CENTER" wrapText="true" />
             <ChoiceBox fx:id="cboChartType" prefHeight="31.0" prefWidth="87.0" />

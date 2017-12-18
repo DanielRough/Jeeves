@@ -189,7 +189,7 @@
                   </Pane>
                   <Pane prefHeight="379.0" prefWidth="420.0">
                      <children>
-                        <Label layoutX="14.0" layoutY="4.0" text="Patient Attributes">
+                        <Label layoutX="14.0" layoutY="4.0" text="User Attributes">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -219,7 +219,7 @@
                                           <ChoiceBox fx:id="cboAttrType" prefHeight="25.0" prefWidth="92.0" />
                                        </children>
                                     </HBox>
-                                    <Button fx:id="btnAddVar" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#addAttribute" prefHeight="25.0" prefWidth="135.0" text="Add New Attribute" textAlignment="CENTER">
+                                    <Button fx:id="btnAddVar" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#addAttribute" prefHeight="25.0" prefWidth="135.0" text="Add Attribute" textAlignment="CENTER">
                                        <HBox.margin>
                                           <Insets left="5.0" />
                                        </HBox.margin>
