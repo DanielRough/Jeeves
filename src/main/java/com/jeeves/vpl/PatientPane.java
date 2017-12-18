@@ -111,6 +111,9 @@ public class PatientPane extends Pane {
 	@FXML private TextArea txtPatientMessage;
 	@FXML private Button btnSendMessage;
 	
+	@FXML private TextArea txtAllMessage;
+	@FXML private Button btnSendAll;
+	
 	@FXML private RadioButton rdioSelPatient;
 	@FXML private RadioButton rdioAllPatient;
 	private ToggleGroup patientGroup;

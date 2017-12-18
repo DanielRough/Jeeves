@@ -388,6 +388,7 @@ public class Main extends Application {
 			views.add(exprview);
 		}
 		for (FirebaseVariable var : openProject.getvariables()) {
+			if(var == null)continue;
 			UserVariable varview = new UserVariable(var);
 			views.add(varview);
 		}
@@ -466,6 +467,7 @@ public class Main extends Application {
 //			globalVars.add(var);
 //		}
 		openProject.getvariables().forEach(variable -> {
+			if(variable != null) {
 			UserVariable global = new UserVariable(variable);
 			String varname = variable.getname();
 			boolean alreadyExists = false;
@@ -483,7 +485,7 @@ public class Main extends Application {
 				global.setHandler(viewElementHandler);
 				vboxSurveyVars.getChildren().add(global);
 			}
-
+			}
 		});
 		for (FirebaseVariable var : globalVars) {
 			openProject.getvariables().remove(var); // gotta take them out

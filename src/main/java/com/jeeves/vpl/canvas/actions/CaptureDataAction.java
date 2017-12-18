@@ -16,7 +16,7 @@ import javafx.scene.control.ComboBox;
 
 public class CaptureDataAction extends Action{
 	public final String DESC = "Capture some data from an available sensor";
-	public final String NAME = "Capture Data";
+	public final String NAME = "Sense Data";
 	
 	@FXML
 	private ComboBox<String> cboSensor;

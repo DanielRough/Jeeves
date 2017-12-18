@@ -18,7 +18,7 @@ import javafx.scene.control.Label;
 
 public class TimeExpression extends Expression { // NO_UCD (unused code)
 	public static final String DESC = "Returns true if the current date is within the specified bounds";
-	public static final String NAME = "Date Result";
+	public static final String NAME = "Time Bounds";
 	private TimeReceiver exprDateFrom;
 	private TimeReceiver exprDateTo;
 
