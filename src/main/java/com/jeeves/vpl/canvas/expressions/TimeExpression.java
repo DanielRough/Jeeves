@@ -43,20 +43,20 @@ public class TimeExpression extends Expression { // NO_UCD (unused code)
 	public void addListeners() {
 		super.addListeners();
 
-		model.getparams().put("dateFrom", exprDateFrom.getText());
-		model.getparams().put("dateTo", exprDateTo.getText());
+		model.getparams().put("timeBoundEarly", exprDateFrom.getText());
+		model.getparams().put("timeBoundLate", exprDateTo.getText());
 
 		exprDateFrom.getChildElements().addListener((ListChangeListener<ViewElement>) listener -> {
-			params.put("dateFrom",exprDateFrom.getChildModel());
+			params.put("timeBoundEarly",exprDateFrom.getChildModel());
 		});
 		exprDateFrom.getTextField().textProperty().addListener(listen -> {
-			params.put("dateFrom", exprDateFrom.getText());
+			params.put("timeBoundEarly", exprDateFrom.getText());
 		});
 		exprDateTo.getChildElements().addListener((ListChangeListener<ViewElement>) listener -> {
-			params.put("dateTo",exprDateTo.getChildModel());
+			params.put("timeBoundLate",exprDateTo.getChildModel());
 		});
 		exprDateTo.getTextField().textProperty().addListener(listen -> {
-			params.put("dateTo", exprDateTo.getText());
+			params.put("timeBoundLate", exprDateTo.getText());
 		});
 
 	}
@@ -84,12 +84,12 @@ public class TimeExpression extends Expression { // NO_UCD (unused code)
 	public void setData(FirebaseExpression model) {
 		super.setData(model);
 		Map<String, Object> params = model.getparams();
-		if (params.containsKey("dateFrom")){
-			if (params.get("dateFrom") instanceof String) {
-				exprDateFrom.setText(params.get("dateFrom").toString()); //For plain dates, no variables
+		if (params.containsKey("timeBoundEarly")){
+			if (params.get("timeBoundEarly") instanceof String) {
+				exprDateFrom.setText(params.get("timeBoundEarly").toString()); //For plain dates, no variables
 			}//Otherwise at some point we dragged a date variable into here
 			else{ 
-				String name = ((Map<String,Object>)params.get("dateFrom")).get("name").toString();
+				String name = ((Map<String,Object>)params.get("timeBoundEarly")).get("name").toString();
 				//Wee snippet of code that we use elsewhere, I haven't got time to fuck about
 				gui.registerVarListener(listener->{
 					listener.next();
@@ -105,12 +105,12 @@ public class TimeExpression extends Expression { // NO_UCD (unused code)
 			}
 			//	exprTimeVar.addChild(UserVariable.create(model.getdateFrom()), 0, 0);
 		} 
-		if (params.containsKey("dateTo")){
-			if (params.get("dateTo") instanceof String) {
+		if (params.containsKey("timeBoundLate")){
+			if (params.get("timeBoundLate") instanceof String) {
 				exprDateTo.setText(params.get("dateTo").toString()); //For plain dates, no variables
 			}//Otherwise at some point we dragged a date variable into here
 			else{ 
-				String name = ((Map<String,Object>)params.get("dateTo")).get("name").toString();
+				String name = ((Map<String,Object>)params.get("timeBoundLate")).get("name").toString();
 				//Wee snippet of code that we use elsewhere, I haven't got time to fuck about
 				gui.registerVarListener(listener->{
 					listener.next();

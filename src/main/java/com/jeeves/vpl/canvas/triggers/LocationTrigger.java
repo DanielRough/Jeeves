@@ -1,37 +1,20 @@
 package com.jeeves.vpl.canvas.triggers;
 
 import static com.jeeves.vpl.Constants.VAR_LOCATION;
-import static com.jeeves.vpl.Constants.bluetoothSensor;
-import static com.jeeves.vpl.Constants.wifiSensor;
-import static com.jeeves.vpl.Constants.sensors;
 
-import java.util.List;
-
-import com.jeeves.vpl.Constants.Sensor;
 import com.jeeves.vpl.ParentPane;
-import com.jeeves.vpl.ViewCanvas;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.expressions.UserVariable;
 import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
+import com.jeeves.vpl.firebase.FirebaseExpression;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
-import com.jeeves.vpl.firebase.FirebaseVariable;
 
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.stage.Popup;
-import javafx.util.Callback;
 
 public class LocationTrigger extends Trigger { // NO_UCD (unused code)
 	public static final String DESC = "Schedule actions to take place when a phone sensor returns a particular result";
@@ -60,8 +43,9 @@ public class LocationTrigger extends Trigger { // NO_UCD (unused code)
 	
 
 		variableReceiver.getChildElements().addListener(
-				(ListChangeListener<ViewElement>) listener -> {listener.next(); if(listener.wasRemoved())return; params.put("result", variableReceiver.getChildModel().getname());});// timeReceiverFrom.getChildElements().get(0).getModel())));			
+				(ListChangeListener<ViewElement>) listener -> {listener.next(); if(listener.wasRemoved())return; model.setlocation(variableReceiver.getChildModel());});// timeReceiverFrom.getChildElements().get(0).getModel())));			
 
+		 params.put("change", "enters");
 		cboClassifications.valueProperty()
 				.addListener((ChangeListener<String>) (arg0, arg1, arg2) -> params.put("change", arg2));
 	}
@@ -89,6 +73,7 @@ public class LocationTrigger extends Trigger { // NO_UCD (unused code)
 	public void setParentPane(ParentPane parent) {
 		super.setParentPane(parent);
 		System.out.println("THEN ME");
+		System.out.println(variableReceiver.getChildExpression());
 		if(variableReceiver.getChildExpression()!= null)
 			variableReceiver.getChildExpression().setParentPane(parent);
 
@@ -98,33 +83,43 @@ public class LocationTrigger extends Trigger { // NO_UCD (unused code)
 		super.setData(model);
 		this.model = model;
 		// Map<String,Object> params = model.getparams();
-		String result = null;
+		//String result = null;
 		setSelectedSensor();
-		if (params.containsKey("result"))
-			result = params.get("result").toString();
-		else
-			return;
-		setResult(result);
+		if(model.getlocation() != null)
+			setResult(model.getlocation());
+//		if (params.containsKey("result"))
+//			variableReceiver.addChild(UserVariable.create((FirebaseExpression)params.get("result")), 0, 0);
+
+//			result = params.get("result").toString();
+//		else
+//			return;
+	//	setResult(result);
+		
+		if(params.containsKey("change")){
+			cboClassifications.setValue(params.get("change").toString());
+		}
 	}
 
-	protected void setResult(String result) {
+	protected void setResult(FirebaseExpression result) {
 		
-		if (result != null && !result.equals("")) {
+		//if (result != null && !result.equals("")) {
 			// this.result = result;
-				gui.registerVarListener(listener->{
-					listener.next();
-					if(listener.wasAdded()){
-						List<FirebaseVariable> list = (List<FirebaseVariable>) listener.getAddedSubList();
-						if(list.get(0).getname().equals(result)){
-							variableReceiver.addChild(UserVariable.create(list.get(0)),0,0);
-							System.out.println("FIRST ME");
-						}
-						}
-				});
+			variableReceiver.addChild(UserVariable.create(result), 0, 0);
+
+//				gui.registerVarListener(listener->{
+//					listener.next();
+//					if(listener.wasAdded()){
+//						List<FirebaseVariable> list = (List<FirebaseVariable>) listener.getAddedSubList();
+//						if(list.get(0).getname().equals(result)){
+//							variableReceiver.addChild(UserVariable.create(list.get(0)),0,0);
+//							System.out.println("FIRST ME");
+//						}
+//						}
+//				});
 
 		}
 
-	}
+	//}
 
 	protected void setSelectedSensor() {
 

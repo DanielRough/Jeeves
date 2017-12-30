@@ -19,6 +19,7 @@ public class FirebaseTrigger extends FirebaseElement implements Serializable {
 	private List<String> variables;
 	private FirebaseExpression timeFrom;
 	private FirebaseExpression timeTo;
+	private FirebaseExpression location;
 	private String triggerId;
 
 
@@ -40,6 +41,12 @@ public class FirebaseTrigger extends FirebaseElement implements Serializable {
 		return dateFrom;
 	}
 
+	public FirebaseExpression getlocation() {
+		return location;
+	}
+	public void setlocation(FirebaseExpression location) {
+		this.location = location;
+	}
 	public FirebaseExpression getdateTo() {
 		return dateTo;
 	}
