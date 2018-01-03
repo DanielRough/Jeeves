@@ -1,8 +1,14 @@
 package com.jeeves.vpl;
 import static com.jeeves.vpl.Constants.makeInfoAlert;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -64,6 +70,38 @@ public class LoginRegisterPane extends Pane{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		File configfile = new File(System.getProperty("user.home") + File.separator + ".jeeves" + File.separator + "jeevesdata");
+		configfile.mkdirs();
+		File actualfile = new File(configfile.getAbsolutePath() + File.separator + "shiro.ini");
+		if(!actualfile.exists()) {
+			try {
+				actualfile.createNewFile();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//	BufferedWriter writer = new BufferedWriter(new FileWriter(configfile));
+			//		writer.append(System.getProperty("line.separator"));
+			//		writer.append((email + " = " + sha256Hash.toHex() + "," + uid));
+			//		writer.close();
+			//configfile.createNewFile();
+			InputStream shiroStream = this.getClass().getResourceAsStream("/shiro.ini");
+			BufferedReader reader = new BufferedReader(new InputStreamReader(shiroStream));
+			String line = "";
+			while(line != null) {
+				try {
+					line = reader.readLine();
+					if(line != null) {
+					Files.write(Paths.get(System.getProperty("user.home") + File.separator + ".jeeves" + File.separator + "jeevesdata" + File.separator + "shiro.ini"), System.getProperty("line.separator").getBytes(), StandardOpenOption.APPEND);
+					
+					Files.write(Paths.get(System.getProperty("user.home") + File.separator + ".jeeves" + File.separator + "jeevesdata" + File.separator + "shiro.ini"), line.getBytes(), StandardOpenOption.APPEND);
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	@FXML 
@@ -108,7 +146,7 @@ public class LoginRegisterPane extends Pane{
 			err.printStackTrace();
 			return;
 		}
-		
+
 		FirebaseAuth.getInstance().createUser(request)
 		.addOnSuccessListener(userRecord -> {
 			Platform.runLater(new Runnable(){
@@ -134,18 +172,27 @@ public class LoginRegisterPane extends Pane{
 	private void addUserToConfig(String email, String password,String uid){
 		Sha256Hash sha256Hash = new Sha256Hash(password);
 		try {
+			Files.write(Paths.get(System.getProperty("user.home") + File.separator + ".jeeves" + File.separator + "jeevesdata" + File.separator + "shiro.ini"), System.getProperty("line.separator").getBytes(), StandardOpenOption.APPEND);
 
-			Files.write(Paths.get("shiro.ini"), System.getProperty("line.separator").getBytes(), StandardOpenOption.APPEND);
-			Files.write(Paths.get("shiro.ini"), (email + " = " + sha256Hash.toHex() + "," + uid).getBytes(), StandardOpenOption.APPEND);
+
+			
+			//System.out.println("Path is " + System.getProperty("user.home") + File.separator + ".jeeves" + File.separator + "jeevesdata" + File.separator);
+			Files.write(Paths.get(System.getProperty("user.home") + File.separator + ".jeeves" + File.separator + "jeevesdata" + File.separator + "shiro.ini"), (email + " = " + sha256Hash.toHex() + "," + uid).getBytes(), StandardOpenOption.APPEND);
 
 		}catch (IOException e) {
-			System.err.println(e.getMessage());
+			e.printStackTrace();
 		}
 
 	}
 	@FXML
 	private void login(Event e){
-		InputStream shiroStream = getClass().getResourceAsStream("/shiro.ini");
+		InputStream shiroStream = null;
+		try {
+			shiroStream = new FileInputStream(new File(System.getProperty("user.home") + File.separator + ".jeeves" + File.separator + "jeevesdata" + File.separator + "shiro.ini"));
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		Ini shiroIni = new Ini();
 		shiroIni.load(shiroStream);
 		Factory<org.apache.shiro.mgt.SecurityManager> factory = new IniSecurityManagerFactory(shiroIni);
