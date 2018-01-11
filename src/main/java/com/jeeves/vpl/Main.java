@@ -22,9 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
+//
+//import org.apache.shiro.SecurityUtils;
+//import org.apache.shiro.subject.Subject;
 
 import com.jeeves.vpl.Constants.ElementType;
 import com.jeeves.vpl.canvas.expressions.Expression;
@@ -437,10 +437,10 @@ public class Main extends Application {
 
 		stage.showAndWait();
 		myPane.getChildren().remove(pane);
-		Subject currentuser = SecurityUtils.getSubject();
-		lblWelcome.setText("Welcome, " + currentuser.getPrincipal());
+	//	Subject currentuser = SecurityUtils.getSubject();
+		lblWelcome.setText("Welcome, " + FirebaseDB.currentUserEmail);
 		
-		FirebaseDB.getInstance().getUserCredentials(currentuser.getPrincipal().toString());
+		FirebaseDB.getInstance().getUserCredentials();
 		patientController = new PatientPane(this);
 		panePatients.getChildren().add(patientController);	
 	}

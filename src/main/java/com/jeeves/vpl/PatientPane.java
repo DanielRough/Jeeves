@@ -23,14 +23,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TimeZone;
-import java.util.prefs.Preferences;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.logging.Log;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -135,11 +136,27 @@ public class PatientPane extends Pane {
 
 	public Cipher cipher;
 
+	
+	public String decryptSymmetric(String msg, String symmetrickey) {
+      // Decode the encoded data with AES
+      byte[] encodedBytes = Base64.decodeBase64(msg);
+      try {
+          Cipher c = Cipher.getInstance("AES");
+          SecretKeySpec sks = new SecretKeySpec(Base64.decodeBase64(symmetrickey), "AES");
+
+          c.init(Cipher.DECRYPT_MODE, sks);
+         byte[] decodedBytes = c.doFinal(encodedBytes);
+         return new String(decodedBytes, "UTF-8");
+      } catch (Exception e) {
+    	  e.printStackTrace();
+      }
+		return msg;
+	}
 	public String decryptText(String msg, PrivateKey key)
 			throws InvalidKeyException, UnsupportedEncodingException,
 			IllegalBlockSizeException, BadPaddingException {
 		this.cipher.init(Cipher.DECRYPT_MODE, key);
-		System.out.println("Message weas " + msg);
+		//System.out.println("Message weas " + msg);
 		return new String(cipher.doFinal(Base64.decodeBase64(msg)), "UTF-8");
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -322,9 +339,17 @@ public class PatientPane extends Pane {
 					c = r.createCell(1);
 					c.setCellStyle(cellStyle);
 					c.setCellValue(nextsurvey.getuid());
-
+					String decoded = "";
 					String encodedanswers = nextsurvey.getencodedAnswers();
-					String decoded = decryptText(encodedanswers, privateKey);
+					if(nextsurvey.getencodedKey() != null) {
+					String encodedkey = nextsurvey.getencodedKey();
+					String symmetrickey = decryptText(encodedkey, privateKey);
+					//String decoded = decryptText(encodedanswers, privateKey);
+					 decoded = decryptSymmetric(encodedanswers, symmetrickey);
+					}
+					else {
+						 decoded = decryptText(encodedanswers, privateKey);
+					}
 					String[] answers = decoded.split(";");
 					int answercounter = 2;
 					for (String answer : answers) {
@@ -536,13 +561,13 @@ public class PatientPane extends Pane {
 				FirebasePatient selected = lstPatients.getSelectionModel().getSelectedItem();
 				c.next();
 				if(c.wasAdded()){
-					System.out.println("added length is " + c.getAddedSize());
+					//System.out.println("added length is " + c.getAddedSize());
 						addToTable(c.getAddedSubList()); 
 						lstPatients.getSelectionModel().select(selected);
 						updatePatient();
 				}
 				else if (c.wasRemoved()){
-					System.out.println("removed length is " + c.getRemovedSize());
+					//System.out.println("removed length is " + c.getRemovedSize());
 					removeFromTable(c.getRemoved());
 					lstPatients.getSelectionModel().select(selected);
 					updatePatient();
@@ -560,18 +585,19 @@ public class PatientPane extends Pane {
 	 * @param patient
 	 */
 	private void addToTable(List<? extends FirebasePatient> list){
-		Preferences prefs = Preferences.userRoot().node("key");
-		String privateKeyStr = prefs.get("privateKey" + FirebaseDB.getOpenProject().getname(), "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAJ1u6xx6NS0XV07/nWmpx+G45NzduB4Bc3AMbOTbgrOhsTM+3NwxZXiSDHiJgNOZF3gGP92Z1yp1wRbB+w75dwVeswdbaEkVwjn3AJPjo2VBzMz7dYHqFY+ZyvW0ML50jGBF8tEvewJg2QarAmNtP9bAWMhpl5Fv8i5AcRgqwvoZAgMBAAECgYBfzp+ADhMMZNb6OW7HXc5JXKbSjo+8mu9wce9W+ws4XB8la40m51y0GlVCiZN/sfvpTAxTxIp/yXd/bP9nJoO6KLx4YSYDeAnou6TEPnt5nNxcTcgxGJ3nUKLeI39PcjycyiWCrzx3c31YJJJbMbLwVKTRiQ5GUMc5Dghuv7nu8QJBANmDr1tyu+XK4CBmSLt98VdsI8HCamLJsPY44d67vTkztNGqTVaArhPuUid5mk7MZ1iIqcrVLU3o+QJ2UMhPzb0CQQC5SdvlMLwty1N1/ZLQfkm8UQ5R9z2mnRL0dXbKK4Kcju8T28aQ4ZZA7yzKEs26LrCd1Rl0L1C8LeyoLnh75V2NAkBtT09Fzr/8uFqwDZcJmj4559+EVRavtJpY8rcX/xMV9xUstMAO87YH0CG7MtJIPVLGXE+v3jfZSnYxNZJdSDWlAkEAtCjvqfLwFirsVP6hAR66PWQm42XeSSHTa2THgx45WlbUed+pO/hMq4ijaTxNUunRCzZIEKNtAfw5bvH4bqd/hQJAQVOoR0toId7iqCuxKl/MxtXuwrSrV5wZPsX0X2nlhuojG2B4He5PFtv+F3fLugFDeV8+DogqSXTqky0gTvKtXQ==");
+		//Preferences prefs = Preferences.userRoot().node("key");
+		///String privateKeyStr = prefs.get("privateKey" + FirebaseDB.getOpenProject().getname(), "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAJ1u6xx6NS0XV07/nWmpx+G45NzduB4Bc3AMbOTbgrOhsTM+3NwxZXiSDHiJgNOZF3gGP92Z1yp1wRbB+w75dwVeswdbaEkVwjn3AJPjo2VBzMz7dYHqFY+ZyvW0ML50jGBF8tEvewJg2QarAmNtP9bAWMhpl5Fv8i5AcRgqwvoZAgMBAAECgYBfzp+ADhMMZNb6OW7HXc5JXKbSjo+8mu9wce9W+ws4XB8la40m51y0GlVCiZN/sfvpTAxTxIp/yXd/bP9nJoO6KLx4YSYDeAnou6TEPnt5nNxcTcgxGJ3nUKLeI39PcjycyiWCrzx3c31YJJJbMbLwVKTRiQ5GUMc5Dghuv7nu8QJBANmDr1tyu+XK4CBmSLt98VdsI8HCamLJsPY44d67vTkztNGqTVaArhPuUid5mk7MZ1iIqcrVLU3o+QJ2UMhPzb0CQQC5SdvlMLwty1N1/ZLQfkm8UQ5R9z2mnRL0dXbKK4Kcju8T28aQ4ZZA7yzKEs26LrCd1Rl0L1C8LeyoLnh75V2NAkBtT09Fzr/8uFqwDZcJmj4559+EVRavtJpY8rcX/xMV9xUstMAO87YH0CG7MtJIPVLGXE+v3jfZSnYxNZJdSDWlAkEAtCjvqfLwFirsVP6hAR66PWQm42XeSSHTa2THgx45WlbUed+pO/hMq4ijaTxNUunRCzZIEKNtAfw5bvH4bqd/hQJAQVOoR0toId7iqCuxKl/MxtXuwrSrV5wZPsX0X2nlhuojG2B4He5PFtv+F3fLugFDeV8+DogqSXTqky0gTvKtXQ==");
 		FirebaseProject proj = FirebaseDB.getOpenProject();
 		if (proj == null)
 			return;
 		String name = proj.getname();
 		//String personalInfo = "";
-		
+
 		list.forEach(patient->{
 			if(patient.getCurrentStudy().equals(name))
 				try {
-					privateKey = getPrivate(privateKeyStr);
+				//	privateKey = getPrivate(privateKeyStr);
+					privateKey = getPrivate(FirebaseDB.getInstance().getProjectToken());
 
 					String personalInfo = decryptText(patient.getuserinfo(),privateKey);
 					decryptInfo(patient,personalInfo);
@@ -611,20 +637,20 @@ public class PatientPane extends Pane {
 	Map<String,FirebaseSurvey> allComplete;
 	
 	private void loadPatientTable(String name) {
-		Preferences prefs = Preferences.userRoot().node("key");
-		String privateKeyStr = prefs.get("privateKey" + FirebaseDB.getOpenProject().getname(), "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAJ1u6xx6NS0XV07/nWmpx+G45NzduB4Bc3AMbOTbgrOhsTM+3NwxZXiSDHiJgNOZF3gGP92Z1yp1wRbB+w75dwVeswdbaEkVwjn3AJPjo2VBzMz7dYHqFY+ZyvW0ML50jGBF8tEvewJg2QarAmNtP9bAWMhpl5Fv8i5AcRgqwvoZAgMBAAECgYBfzp+ADhMMZNb6OW7HXc5JXKbSjo+8mu9wce9W+ws4XB8la40m51y0GlVCiZN/sfvpTAxTxIp/yXd/bP9nJoO6KLx4YSYDeAnou6TEPnt5nNxcTcgxGJ3nUKLeI39PcjycyiWCrzx3c31YJJJbMbLwVKTRiQ5GUMc5Dghuv7nu8QJBANmDr1tyu+XK4CBmSLt98VdsI8HCamLJsPY44d67vTkztNGqTVaArhPuUid5mk7MZ1iIqcrVLU3o+QJ2UMhPzb0CQQC5SdvlMLwty1N1/ZLQfkm8UQ5R9z2mnRL0dXbKK4Kcju8T28aQ4ZZA7yzKEs26LrCd1Rl0L1C8LeyoLnh75V2NAkBtT09Fzr/8uFqwDZcJmj4559+EVRavtJpY8rcX/xMV9xUstMAO87YH0CG7MtJIPVLGXE+v3jfZSnYxNZJdSDWlAkEAtCjvqfLwFirsVP6hAR66PWQm42XeSSHTa2THgx45WlbUed+pO/hMq4ijaTxNUunRCzZIEKNtAfw5bvH4bqd/hQJAQVOoR0toId7iqCuxKl/MxtXuwrSrV5wZPsX0X2nlhuojG2B4He5PFtv+F3fLugFDeV8+DogqSXTqky0gTvKtXQ==");
+	//	Preferences prefs = Preferences.userRoot().node("key");
+	//	String privateKeyStr =  prefs.get("privateKey" + FirebaseDB.getOpenProject().getname(), "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAJ1u6xx6NS0XV07/nWmpx+G45NzduB4Bc3AMbOTbgrOhsTM+3NwxZXiSDHiJgNOZF3gGP92Z1yp1wRbB+w75dwVeswdbaEkVwjn3AJPjo2VBzMz7dYHqFY+ZyvW0ML50jGBF8tEvewJg2QarAmNtP9bAWMhpl5Fv8i5AcRgqwvoZAgMBAAECgYBfzp+ADhMMZNb6OW7HXc5JXKbSjo+8mu9wce9W+ws4XB8la40m51y0GlVCiZN/sfvpTAxTxIp/yXd/bP9nJoO6KLx4YSYDeAnou6TEPnt5nNxcTcgxGJ3nUKLeI39PcjycyiWCrzx3c31YJJJbMbLwVKTRiQ5GUMc5Dghuv7nu8QJBANmDr1tyu+XK4CBmSLt98VdsI8HCamLJsPY44d67vTkztNGqTVaArhPuUid5mk7MZ1iIqcrVLU3o+QJ2UMhPzb0CQQC5SdvlMLwty1N1/ZLQfkm8UQ5R9z2mnRL0dXbKK4Kcju8T28aQ4ZZA7yzKEs26LrCd1Rl0L1C8LeyoLnh75V2NAkBtT09Fzr/8uFqwDZcJmj4559+EVRavtJpY8rcX/xMV9xUstMAO87YH0CG7MtJIPVLGXE+v3jfZSnYxNZJdSDWlAkEAtCjvqfLwFirsVP6hAR66PWQm42XeSSHTa2THgx45WlbUed+pO/hMq4ijaTxNUunRCzZIEKNtAfw5bvH4bqd/hQJAQVOoR0toId7iqCuxKl/MxtXuwrSrV5wZPsX0X2nlhuojG2B4He5PFtv+F3fLugFDeV8+DogqSXTqky0gTvKtXQ==");
 
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
 				allowedPatients.clear();
 				FirebaseDB.getInstance().getpatients().forEach(patient -> {
-					System.out.println("THERE ARE CURRENTLY " + FirebaseDB.getInstance().getpatients().size() + " Patients");
+					//System.out.println("THERE ARE CURRENTLY " + FirebaseDB.getInstance().getpatients().size() + " Patients");
 					if (patient.getCurrentStudy() != null && patient.getCurrentStudy().equals(name))
 					try {
 						allowedPatients.add(patient);
-						privateKey = getPrivate(privateKeyStr);
-						System.out.println("NAME IS " + name);
+						privateKey = getPrivate(FirebaseDB.getInstance().getProjectToken());
+						//System.out.println("NAME IS " + name);
 						String personalInfo = decryptText(patient.getuserinfo(),privateKey);
 						decryptInfo(patient,personalInfo);
 					} catch (Exception e) {

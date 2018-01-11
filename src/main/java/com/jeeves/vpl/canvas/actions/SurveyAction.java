@@ -43,11 +43,11 @@ public class SurveyAction extends Action { // NO_UCD (unused code)
 			public void onChanged(javafx.collections.ListChangeListener.Change<? extends FirebaseSurvey> c) {
 				ObservableList<FirebaseSurvey> surveys = gui.getSurveys();
 				String value = cboSurveyName.getValue();
-				System.out.println("Value is " + value);
+				//System.out.println("Value is " + value);
 				cboSurveyName.getItems().clear();
 				surveys.forEach(survey -> {
 					cboSurveyName.getItems().add(survey.gettitle());
-					System.out.println("This survey is called " + survey.gettitle());
+					//System.out.println("This survey is called " + survey.gettitle());
 					if (survey.gettitle().equals(value))
 						cboSurveyName.setValue(value);
 					survey.title.addListener(new ChangeListener<String>() {
@@ -55,7 +55,7 @@ public class SurveyAction extends Action { // NO_UCD (unused code)
 						@Override
 						public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
 							int index = cboSurveyName.getSelectionModel().getSelectedIndex();
-							System.out.println("Index is " + index);
+							//System.out.println("Index is " + index);
 							cboSurveyName.getItems().clear();
 							surveys.forEach(survey2 -> {
 								cboSurveyName.getItems().add(survey2.gettitle());

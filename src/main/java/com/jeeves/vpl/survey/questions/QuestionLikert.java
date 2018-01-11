@@ -88,6 +88,7 @@ public class QuestionLikert extends QuestionView {
 		for (TextField field : fields) {
 			field.textProperty().addListener(change -> handleUpdateScale());
 		}
+		txtNumOptions.textProperty().addListener(change -> handleUpdateScale());
 
 	}
 
@@ -173,6 +174,8 @@ public class QuestionLikert extends QuestionView {
 		String number = txtNumOptions.getText();
 		Map<String, Object> qScaleVals = new HashMap<String, Object>();
 		qScaleVals.put("number", number);
+		if(number.isEmpty())
+			qScaleVals.put("number", "7");
 		ArrayList<String> labels = new ArrayList<String>();
 		for (TextField field : fields) {
 			labels.add(field.getText());

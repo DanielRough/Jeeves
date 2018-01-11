@@ -99,17 +99,16 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				params.put("result", cboCompMissed.getValue());
-				System.out.println("Result is " + cboCompMissed.getValue());
+				//System.out.println("Result is " + cboCompMissed.getValue());
 			}
 			
 		});
 		//if we don't already have a result, give it a default
 		if(!model.getparams().containsKey("result")){
 			cboCompMissed.setValue("completed");
-			System.out.println("THIS OUGHTA BE HAPPENIN");
+			//System.out.println("THIS OUGHTA BE HAPPENIN");
 		}
-		else
-			System.out.println("RESULT IS " + model.getparams().get("result"));
+			//System.out.println("RESULT IS " + model.getparams().get("result"));
 //		txtNumberOfTimes.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
 //
 //			@Override
@@ -129,7 +128,7 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 //			@Override
 //			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 //				params.put("numTimes", txtNumberOfTimes.getText());
-//				System.out.println("Result is " + txtNumberOfTimes.getText());
+//				//System.out.println("Result is " + txtNumberOfTimes.getText());
 //
 //			}
 //			

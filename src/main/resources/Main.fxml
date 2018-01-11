@@ -107,16 +107,20 @@
                            <children>
                               <Pane maxWidth="220.0" minWidth="220.0" prefHeight="679.0" prefWidth="220.0" style="-fx-border-color: lightblue;">
                                  <children>
-                                    <VBox fx:id="paneQuestions" layoutX="7.0" layoutY="50.0">
-                                       <padding>
-                                          <Insets left="20.0" />
-                                       </padding>
-                                    </VBox>
                                     <Label layoutX="53.0" layoutY="14.0" text="Question Types">
                                        <font>
                                           <Font name="Calibri" size="18.0" />
                                        </font>
                                     </Label>
+                                    <ScrollPane fx:id="paneScroll" hbarPolicy="NEVER" layoutX="5.0" layoutY="45.0" prefHeight="600.0" prefWidth="216.0">
+                                       <content>
+                                          <VBox fx:id="paneQuestions">
+                                             <padding>
+                                                <Insets left="20.0" />
+                                             </padding>
+                                          </VBox>
+                                       </content>
+                                    </ScrollPane>
                                  </children>
                               </Pane>
                            </children>

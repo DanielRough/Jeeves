@@ -2,6 +2,7 @@ package com.jeeves.vpl.survey.questions;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.jeeves.vpl.firebase.FirebaseQuestion;
@@ -139,7 +140,7 @@ public class QuestionMultSingle extends QuestionView {
 				qOptions.put("option" + Integer.toString(optcount++), opttext.getText());
 				model.getparams().put("options",qOptions);
 			}
-			System.out.println("In a slighlty different place I PUT " + getAssignedVar() + "," + qOptions.values().toString());
+			//System.out.println("In a slighlty different place I PUT " + getAssignedVar() + "," + qOptions.values().toString());
 
 			categoryOpts.put(getAssignedVar(), qOptions.values().toArray(opts));
 
@@ -183,9 +184,16 @@ public class QuestionMultSingle extends QuestionView {
 			return;
 		}
 
-		for (Object opt : opts.values()) {
-			handleAddOpt(paneChoiceOptsS, opt.toString());
+		Iterator<String> iter = opts.keySet().iterator();
+		while(iter.hasNext()) {
+			String key = iter.next();
+			//System.out.println("key is " + key + " and value is " + opts.get(key));
+			handleAddOpt(paneChoiceOptsS, opts.get(key).toString());
+
 		}
+//		for (Object opt : opts.values()) {
+//			handleAddOpt(paneChoiceOptsS, opt.toString());
+//		}
 	}
 
 }

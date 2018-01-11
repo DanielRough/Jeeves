@@ -16,6 +16,8 @@ public class FirebaseSurveyEntry extends FirebaseElement implements Serializable
 	private long complete;
 	private int initTime;
 	private String encodedAnswers;
+	private String encodedKey;
+	
 	private int status;
 	private int triggerType;
 	private String uid; 
@@ -29,6 +31,14 @@ public class FirebaseSurveyEntry extends FirebaseElement implements Serializable
 	public void setcomplete(long complete){
 		this.complete = complete;
 	}
+	
+	public String getencodedKey(){
+		return encodedKey;
+	}
+	public void setencodedKey(String encodedKey){
+		this.encodedKey = encodedKey;
+	}
+	
 	public String getencodedAnswers(){
 		return encodedAnswers;
 	}

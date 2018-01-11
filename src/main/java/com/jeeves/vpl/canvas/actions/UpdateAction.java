@@ -185,7 +185,7 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 	@Override
 	public void setParentPane(ParentPane parent) {
 		super.setParentPane(parent);
-		System.out.println("second you should do me");
+		//System.out.println("second you should do me");
 		if(variablereceiver.getChildExpression() != null)
 		variablereceiver.getChildExpression().setParentPane(parent);
 		if(numericreceiver.getChildExpression() != null)
@@ -200,7 +200,7 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 	@Override
 	public void setData(FirebaseAction model) {
 		super.setData(model);
-		System.out.println("first you should do me");
+		//System.out.println("first you should do me");
 		Node[] potentialWidgets = {trueButton, falseButton, numericreceiver, timereceiver, datereceiver};
 		
 		if (model.getvars().isEmpty())

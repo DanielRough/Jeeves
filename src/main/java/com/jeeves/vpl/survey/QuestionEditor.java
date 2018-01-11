@@ -2,28 +2,28 @@ package com.jeeves.vpl.survey;
 
 import static com.jeeves.vpl.Constants.BOOLEAN;
 import static com.jeeves.vpl.Constants.DATE;
-import static com.jeeves.vpl.Constants.TIME;
 import static com.jeeves.vpl.Constants.GEO;
+import static com.jeeves.vpl.Constants.MULT_MANY;
+import static com.jeeves.vpl.Constants.MULT_SINGLE;
 import static com.jeeves.vpl.Constants.NUMERIC;
 import static com.jeeves.vpl.Constants.SCALE;
-import static com.jeeves.vpl.Constants.WIFI;
-import static com.jeeves.vpl.Constants.MULT_SINGLE;
-import static com.jeeves.vpl.Constants.MULT_MANY;
-import static com.jeeves.vpl.Constants.categoryOpts;
+import static com.jeeves.vpl.Constants.TIME;
 import static com.jeeves.vpl.Constants.VAR_BOOLEAN;
+import static com.jeeves.vpl.Constants.VAR_CATEGORY;
 import static com.jeeves.vpl.Constants.VAR_CLOCK;
 import static com.jeeves.vpl.Constants.VAR_DATE;
 import static com.jeeves.vpl.Constants.VAR_LOCATION;
 import static com.jeeves.vpl.Constants.VAR_NUMERIC;
 import static com.jeeves.vpl.Constants.VAR_WIFI;
-import static com.jeeves.vpl.Constants.VAR_CATEGORY;
+import static com.jeeves.vpl.Constants.WIFI;
+import static com.jeeves.vpl.Constants.categoryOpts;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.jeeves.vpl.Main;
 import com.jeeves.vpl.canvas.expressions.UserVariable;
-import com.jeeves.vpl.firebase.FirebaseQuestion;
 import com.jeeves.vpl.firebase.FirebaseVariable;
 import com.jeeves.vpl.survey.questions.QuestionView;
 
@@ -118,7 +118,7 @@ public class QuestionEditor extends Pane {
 					String[] optsArray = new String[0];
 					try {
 					categoryOpts.put(newValue.getName(), selectedQuestion.getQuestionOptions().values().toArray(optsArray));
-					System.out.println("INTO CATEGORY OPTS I PUT " + newValue.getName() + "," + selectedQuestion.getQuestionOptions().values().toString());
+					//System.out.println("INTO CATEGORY OPTS I PUT " + newValue.getName() + "," + selectedQuestion.getQuestionOptions().values().toString());
 					}
 					catch(ArrayStoreException e) {
 						
@@ -188,10 +188,11 @@ public class QuestionEditor extends Pane {
 		
 		
 		Map<String, Object> opts = entry.getQuestionOptions();
+		TreeMap<String,Object> sortedmap = new TreeMap<String,Object>(opts);
 	//	if(opts != null)
-			selectedQuestion.showEditOpts(opts);
+			selectedQuestion.showEditOpts(sortedmap);
 			String[] optsArray = new String[0];
-			System.out.println(entry.getQuestionOptions().values().toString());
+			//System.out.println(entry.getQuestionOptions().values().toString());
 			try {
 			categoryOpts.put(entry.getAssignedVar(), entry.getQuestionOptions().values().toArray(optsArray));
 			}

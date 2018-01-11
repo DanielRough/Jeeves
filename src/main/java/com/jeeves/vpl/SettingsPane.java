@@ -93,13 +93,13 @@ public class SettingsPane extends Pane{
 			makeInfoAlert("Jeeves","ID too short","New ID must be at least 3 characters long");
 			return;
 		}
-		ObservableList<FirebaseProject> publicprojects = FirebaseDB.getInstance().getpublicprojects();
-		for(FirebaseProject proj : publicprojects){
-			if(proj.getid().equals(newId)){
-				makeInfoAlert("Jeeves","ID exists","A project with this ID already exists");
-			    return;
-			}
-		}
+//		ObservableList<FirebaseProject> publicprojects = FirebaseDB.getInstance().getpublicprojects();
+//		for(FirebaseProject proj : publicprojects){
+//			if(proj.getid().equals(newId)){
+//				makeInfoAlert("Jeeves","ID exists","A project with this ID already exists");
+//			    return;
+//			}
+//		}
 		
 		//If we made it through, we can change our current project's study ID
 		currentproject.setid(newId);

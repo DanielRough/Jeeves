@@ -92,9 +92,9 @@ public class CategoryExpression extends Expression { // NO_UCD (unused code)
 					@Override
 					public void onChanged(Change<? extends String, ? extends String[]> arg0) {
 						cboCategories.getItems().clear();
-//						if(categoryOpts == null)System.out.println("category opts is null");
-	//					if(categoryReceiver == null)System.out.println("receiver is null");
-		//				if(categoryReceiver.getChildModel() == null)System.out.println("Model is null");
+//						if(categoryOpts == null)//System.out.println("category opts is null");
+	//					if(categoryReceiver == null)//System.out.println("receiver is null");
+		//				if(categoryReceiver.getChildModel() == null)//System.out.println("Model is null");
 						//Bleugh this is awful
 						if(categoryReceiver.getChildModel() == null || !categoryOpts.containsKey(categoryReceiver.getChildModel().getname()))return;
 						cboCategories.getItems().addAll(categoryOpts.get(categoryReceiver.getChildModel().getname()));

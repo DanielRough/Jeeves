@@ -110,7 +110,7 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 	@Override
 	public void setParentPane(ParentPane parent) {
 		super.setParentPane(parent);
-		System.out.println("THEN ME");
+		//System.out.println("THEN ME");
 		if(variableReceiver.getChildExpression()!= null)
 			variableReceiver.getChildExpression().setParentPane(parent);
 
@@ -148,7 +148,7 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 						List<FirebaseVariable> list = (List<FirebaseVariable>) listener.getAddedSubList();
 						if(list.get(0).getname().equals(result)){
 							variableReceiver.addChild(UserVariable.create(list.get(0)),0,0);
-							System.out.println("FIRST ME");
+							//System.out.println("FIRST ME");
 						}
 						}
 				});

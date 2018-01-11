@@ -6,13 +6,12 @@ import static com.jeeves.vpl.Constants.PRIVATE_COLL;
 import static com.jeeves.vpl.Constants.PROJECTS_COLL;
 import static com.jeeves.vpl.Constants.PUBLIC_COLL;
 import static com.jeeves.vpl.Constants.SERVICE_JSON;
+import static com.jeeves.vpl.Constants.CLOUD_JSON;
 import static com.jeeves.vpl.Constants.generateProjectID;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -20,20 +19,28 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.prefs.Preferences;
+import java.util.concurrent.ExecutionException;
 
 import javax.crypto.Cipher;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.session.Session;
-import org.apache.shiro.subject.Subject;
+//import org.apache.shiro.SecurityUtils;
+//import org.apache.shiro.session.Session;
+//import org.apache.shiro.subject.Subject;
 
+import com.google.auth.oauth2.ServiceAccountCredentials;
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Bucket;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseCredentials;
 import com.google.firebase.auth.UserRecord;
+import com.google.firebase.cloud.StorageClient;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -43,6 +50,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.tasks.Task;
 import com.jeeves.vpl.Main;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -53,12 +61,16 @@ public class FirebaseDB {
 	private static DatabaseReference patientsRef;
 	private static DatabaseReference surveyDataRef;
 	private static DatabaseReference publicRef;
+	private static String currentUserId;
+	public static String currentUserEmail;
+	public static String currentUserPass;
 	DatabaseReference connectedRef;
+	public static String projectKey;
 	private ObservableList<FirebasePatient> newpatients = FXCollections.observableArrayList();
 	private ObservableList<FirebaseProject> newprojects = FXCollections.observableArrayList();
 	private ObservableList<FirebaseProject> publicprojects = FXCollections.observableArrayList();
 	private Main gui;
-	private Session currentsesh;
+	//private Session currentsesh;
 	private static FirebaseDB instance;
 	private static FirebaseProject openProject;
 	private String uid;
@@ -71,16 +83,36 @@ public class FirebaseDB {
 	}
 	public static void setOpenProject(FirebaseProject project){
 		openProject = project;
+
 		//Not particularly nice that I have to put the reference for survey data in here
 		if(privateRef == null || project.getname() == null)return;
+		privateRef.addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(DataSnapshot dataSnapshot) {
+				
+				Platform.runLater(new Runnable() {
+					public void run() {
+						Map<String,Object> value = (Map<String,Object>)dataSnapshot.getValue();
+						//It's a bit annoying, but this is the only bit of the project that gets updated from the Android side!
+						projectKey = value.get(project.getname() + "token").toString();
+					}
+				});
+						
+				
+			}
 		
+			@Override
+			public void onCancelled(DatabaseError arg0) {
+				//System.out.println("Naaaaah");
+			}
+		});
 		DatabaseReference globalRef = privateRef.child(PROJECTS_COLL).child(project.getname());
 		DatabaseReference surveyDataRef = globalRef.child("surveydata");
-		System.out.println("I did definitely make a reference right?");
+		//System.out.println("I did definitely make a reference right?");
 		surveyDataRef.addValueEventListener(new ValueEventListener(){
 			@Override
 			public void onCancelled(DatabaseError arg0) {
-				System.out.println("ERROR ERROR " + arg0.getDetails());
+				//System.out.println("ERROR ERROR " + arg0.getDetails());
 			}
 			Map<String,Map<String,FirebaseSurveyEntry>> surveymap = new HashMap<String,Map<String,FirebaseSurveyEntry>>();
 			Map<String,FirebaseSurveyEntry> entrymap = new HashMap<String,FirebaseSurveyEntry>();
@@ -103,13 +135,17 @@ public class FirebaseDB {
 		});
 	
 	}
-	public void getUserCredentials(String email){
-		Subject currentUser = SecurityUtils.getSubject();
-		Task<UserRecord> task = FirebaseAuth.getInstance().getUserByEmail(email)
+	public void getUserCredentials(){
+		//Subject currentUser = SecurityUtils.getSubject();
+	
+		Task<UserRecord> task = FirebaseAuth.getInstance().getUserByEmail(currentUserEmail)
 				.addOnSuccessListener(userRecord -> {
 					// See the UserRecord reference doc for the contents of userRecord.
-					currentsesh = currentUser.getSession();
-					currentsesh.setAttribute( "uid", userRecord.getUid());
+			//		currentsesh = currentUser.getSession();
+			//		currentsesh.setAttribute( "uid", userRecord.getUid());
+					
+					//Set the static thing here
+					currentUserId = userRecord.getUid();
 					FirebaseApp.getInstance().delete();
 					loaded = true;
 					firebaseLogin();
@@ -124,7 +160,7 @@ public class FirebaseDB {
 							boolean connected = snapshot.getValue(Boolean.class);
 							if (connected) {
 								connectedRef.removeEventListener(this);
-								getUserCredentials(email);
+								getUserCredentials();
 							}
 						}
 
@@ -138,27 +174,38 @@ public class FirebaseDB {
 
 	//Signs us into the database with restricted access based on the generated userid
 	public void firebaseLogin(){
-		Subject currentUser = SecurityUtils.getSubject();
-		InputStream serviceAccount;
+		//Subject currentUser = SecurityUtils.getSubject();
+	//	InputStream serviceAccount;
 		//The role of our current user represents their unique ID. 
 		//This makes sense because then each role corresponds to certain read/write privileges in Firebase
 		// Initialize the app with a custom auth variable, limiting the server's access
 		Map<String, Object> auth = new HashMap<String, Object>();
 		//	Session session = currentUser.getSession();
-		uid = currentsesh.getAttribute("uid").toString();
-		auth.put("uid", currentsesh.getAttribute("uid"));
+		//uid = currentsesh.getAttribute("uid").toString();
+		uid = currentUserId;
+		//auth.put("uid", currentsesh.getAttribute("uid"));
+		auth.put("uid", currentUserId);
 		try {
 			InputStream resource = FirebaseDB.class.getResourceAsStream(SERVICE_JSON);
 		//	File file = new File(resource.toURI());
 			//serviceAccount = new InputStream(resource);
 			//			serviceAccount = new FileInputStream(SERVICE_JSON);
 			FirebaseOptions options = new FirebaseOptions.Builder()
+			//		.setCredentials(ServiceAccountCredentials.fromStream(googleCloudCrentials))
 					.setCredential(FirebaseCredentials.fromCertificate(resource))
 					.setDatabaseUrl(DB_URL)
 					.setDatabaseAuthVariableOverride(auth)
+				    .setStorageBucket("jeeves-27914.appspot.com")
 					.build();
 			FirebaseApp.initializeApp(options);
+			resource.close();
+			 resource = FirebaseDB.class.getResourceAsStream(SERVICE_JSON);
+			
 			addListeners(); //listen on the database AS OUR CURRENT USER
+//			Storage storage = StorageOptions.newBuilder().setProjectId("firebaseId")
+//					.setCredentials(ServiceAccountCredentials.fromStream(resource))
+//					.build()
+//					.getService();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -195,10 +242,29 @@ public class FirebaseDB {
 	}
 
 
+	public void putUserCredentials(String email, String password) {
+		try {
+			UserRecord userRecord = FirebaseAuth.getInstance().getUserByEmailAsync(email).get();
+			String uid = userRecord.getUid();
+			//	privateRef =  dbRef.child(PRIVATE_COLL).child(currentsesh.getAttribute("uid").toString());
+			dbRef = FirebaseDatabase.getInstance().getReference();
+			privateRef =  dbRef.child(PRIVATE_COLL).child(uid);
+		//	privateRef.setValue("token",password);
+			privateRef.child("token").setValue(password);
+		} catch (InterruptedException | ExecutionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+
+	public String getProjectToken() {
+		return this.projectKey;
+	}
 	public void addListeners() {
 		dbRef = FirebaseDatabase.getInstance().getReference();
-		privateRef =  dbRef.child(PRIVATE_COLL).child(currentsesh.getAttribute("uid").toString());
-		System.out.println("Uid is " + currentsesh.getAttribute("uid"));
+	//	privateRef =  dbRef.child(PRIVATE_COLL).child(currentsesh.getAttribute("uid").toString());
+	//	//System.out.println("Uid is " + currentsesh.getAttribute("uid"));
+		privateRef =  dbRef.child(PRIVATE_COLL).child(currentUserId);
 		patientsRef = privateRef.child("patients");
 		publicRef = dbRef.child(PUBLIC_COLL);
 		
@@ -208,15 +274,15 @@ public class FirebaseDB {
 		    @Override
 		    public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
 		        FirebasePatient newPost = dataSnapshot.getValue(FirebasePatient.class);
-		        System.out.println("WE ADDED A CHILD");
+		        //System.out.println("WE ADDED A CHILD");
 		        newpatients.add(newPost);
 		    }
 
 		    @Override
 		    public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
-		    	System.out.println("WE CHANGED A CHILD");
+		    	//System.out.println("WE CHANGED A CHILD");
 		    	FirebasePatient changedPatient = dataSnapshot.getValue(FirebasePatient.class);
-		    	System.out.println("name of patient is " + changedPatient.getName());
+		    	//System.out.println("name of patient is " + changedPatient.getName());
 		    	newpatients.remove(changedPatient);
 		    	newpatients.add(changedPatient);
 		    }
@@ -224,10 +290,10 @@ public class FirebaseDB {
 		    @Override
 		    public void onChildRemoved(DataSnapshot dataSnapshot) {
 		        FirebasePatient newPost = dataSnapshot.getValue(FirebasePatient.class);
-		        System.out.println("WE REMOVED A CHILD");
-		    	System.out.println("name of patient is " + newPost.getName());
+		        //System.out.println("WE REMOVED A CHILD");
+		    	//System.out.println("name of patient is " + newPost.getName());
 
-		        System.out.println("removal result is " +newpatients.remove(newPost) );
+		        //System.out.println("removal result is " +newpatients.remove(newPost) );
 		        ;
 		    }
 		    @Override
@@ -239,29 +305,29 @@ public class FirebaseDB {
 		privateRef.addValueEventListener(new ValueEventListener() {
 			@Override
 			public void onCancelled(DatabaseError arg0) {
-				System.out.println("ERROR: " + arg0.getDetails());
+				//System.out.println("ERROR: " + arg0.getDetails());
 				
 			}
 			@Override
 			public void onDataChange(DataSnapshot arg0) {
-			//	System.out.println("WE CHANNNNNGEDs");
+			//	//System.out.println("WE CHANNNNNGEDs");
 				FirebasePrivate appdata = arg0.getValue(FirebasePrivate.class);
 				newprojects.clear();
 			//	newpatients.clear();
 				if (appdata != null) {
-					System.out.println("App data was not null!");
+					//System.out.println("App data was not null!");
 					Map<String, FirebaseProject> projects = appdata.getprojects();
 			//		Map<String, FirebasePatient> patients = appdata.getpatients();
 					if (projects != null)
 						for (String key : projects.keySet()) {
 							newprojects.add(projects.get(key));
-							System.out.println("Yup added a project");
+							//System.out.println("Yup added a project");
 						}
 //					if (patients != null)
 //						newpatients.addAll(patients.values());
 				}
 				else {
-					System.out.println("Oooh i'm afraid app data was null");
+					//System.out.println("Oooh i'm afraid app data was null");
 				}
 			}
 		});
@@ -363,19 +429,21 @@ public class FirebaseDB {
 		        publicKey = kp.getPublic();
 		 
 		        privateKey = kp.getPrivate();
-		        Preferences prefs = Preferences.userRoot().node("key");
+		       // Preferences prefs = Preferences.userRoot().node("key");
 		        object.setpubKey(Base64.encodeBase64String(publicKey.getEncoded()));
 
-		        //SPECIFIC PRIVATE KEY TO THIS PROJECT YOU FUCKING IDIOT
-		        prefs.put("privateKey"+object.getname(),Base64.encodeBase64String(privateKey.getEncoded()));
-		        System.out.println("Just set the private key to " + prefs.get("privateKey"+object.getname(), ""));
+//		        privateRef.child("key").setValue(Base64.encodeBase64String(privateKey.getEncoded()));
+		        privateRef.child(object.getname()+"token").setValue(Base64.encodeBase64String(privateKey.getEncoded()));
+		        //  FirebaseDB.getInstance().updateKey(object.getname(),Base64.encodeBase64String(privateKey.getEncoded()));
+		      //  prefs.put("privateKey"+object.getname(),Base64.encodeBase64String(privateKey.getEncoded()));
+		   //     //System.out.println("Just set the private key to " + prefs.get("privateKey"+object.getname(), ""));
 		        
 			} catch (NoSuchAlgorithmException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	        
-		//	publicRef = dbRef.child(PUBLIC_COLL).child(PROJECTS_COLL).child(object.getname());
+	//		publicRef = dbRef.child(PUBLIC_COLL).child(PROJECTS_COLL).child(object.getname());
 		//	globalRef = privateRef.child(PROJECTS_COLL).child(object.getname());
 			//This project needs an ID
 			String projid = generateProjectID();
@@ -400,7 +468,7 @@ public class FirebaseDB {
 		object.setlastUpdated(System.currentTimeMillis());
 		privateRef.child(PROJECTS_COLL).child(object.getname()).setValue(object);
 		
-	//	System.out.println("My uid is " + currentsesh.getAttribute("uid"));
+	//	//System.out.println("My uid is " + currentsesh.getAttribute("uid"));
 		if(object.getactive()){
 			publicRef.child(PROJECTS_COLL).child(object.getname()).setValue(object);		}
 		return true;
@@ -414,9 +482,9 @@ public class FirebaseDB {
 		return newprojects;
 	}
 
-	public ObservableList<FirebaseProject> getpublicprojects(){
-		return publicprojects;
-	}
+//	public ObservableList<FirebaseProject> getpublicprojects(){
+//		return publicprojects;
+//	}
 
 	/**
 	 * 'Publish' the study by putting it in the 'public' branch of the Firebase Database.

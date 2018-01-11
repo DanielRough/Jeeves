@@ -24,6 +24,7 @@ public class FirebaseSurvey extends FirebaseElement implements Serializable {
 	// }
 	private List<String> answers;
 	private String encodedAnswers; //I wonder if this will work
+	private String encodedKey;
 	private boolean begun; // Has the user begun completing the survey?
 	private long expiryTime;
 	private String key;
@@ -39,6 +40,12 @@ public class FirebaseSurvey extends FirebaseElement implements Serializable {
 	}
 	public String getencodedAnswers(){
 		return encodedAnswers;
+	}
+	public void setencodedKey(String encodedKey) {
+		this.encodedKey = encodedKey;
+	}
+	public String getencodedKey() {
+		return encodedKey;
 	}
 	public void setsurveyId(String id){
 		this.surveyId = id;
