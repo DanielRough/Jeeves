@@ -330,6 +330,22 @@ public class PatientPane extends Pane {
 						c = r.createCell(1);
 						c.setCellStyle(style);
 						c.setCellValue("Patient ID");
+						ObservableList<FirebaseSurvey> surveystuff = gui.getSurveys();
+						//When we download data for all surveys, want to get question text up there
+						for(FirebaseSurvey survey : surveystuff) {
+							if(survey.gettitle().equals(nextsurvey.getname())) {
+								int qcount = 2;
+								for(FirebaseQuestion q : survey.getquestions()){
+									answerlength++;
+									c = r.createCell(qcount);
+									qcount++;
+									c.setCellValue(q.getquestionText());
+									c.setCellStyle(style);
+								}
+								break;
+							}
+						}
+						
 					}
 					r = s.createRow(s.getLastRowNum() + 1);
 					c = r.createCell(0);
@@ -494,7 +510,15 @@ public class PatientPane extends Pane {
 						//	s.autoSizeColumn(0);
 
 						String encodedanswers = nextsurvey.getencodedAnswers();
-						String decoded = decryptText(encodedanswers, privateKey);
+					//	String decoded = decryptText(encodedanswers, privateKey);
+						String decoded = "";
+						//String encodedanswers = nextsurvey.getencodedAnswers();
+						//if(nextsurvey.getencodedKey() != null) {
+						String encodedkey = nextsurvey.getencodedKey();
+						String symmetrickey = decryptText(encodedkey, privateKey);
+						//String decoded = decryptText(encodedanswers, privateKey);
+						 decoded = decryptSymmetric(encodedanswers, symmetrickey);
+						 
 						String[] answers = decoded.split(";");
 //						List<String> answers = nextsurvey.getanswers();
 						int answercounter = 1;
@@ -627,10 +651,10 @@ public class PatientPane extends Pane {
 		String[] infoBits = personalInfo.split(";");
 		String name = infoBits[0];
 		String email = infoBits[1];
-		String phone = infoBits[2];
+		//String phone = infoBits[2];
 		patient.setScreenName(name);
 		patient.setEmail(email);
-		patient.setPhoneNo(phone);
+	//	patient.setPhoneNo(phone);
 	}
 
 	Map<String,FirebaseSurvey> allIncomplete;

@@ -107,7 +107,7 @@ public class DateReceiver extends ExpressionReceiver {
 	public String getText() {
 			try {
 				long epochMillis = DateUtils.parseDate(text.getText(), "dd/MM/yy").getTime();
-				return Long.toString(epochMillis);
+				return Long.toString(epochMillis + 7200000);
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				return "0";

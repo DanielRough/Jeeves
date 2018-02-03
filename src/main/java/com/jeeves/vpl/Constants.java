@@ -43,6 +43,7 @@ public class Constants {
 	public static final int BLUETOOTH = 11;
 	public static final int IMAGEPRESENT = 12;
 	public static final int TEXTPRESENT = 13;
+	public static final int HEART = 14;
 	//Variable types (these are Strings because they also refer to class names in Styles.css)
 	public static final String VAR_ANY = "Any";
 	public static final String VAR_BOOLEAN = "Boolean";
@@ -99,22 +100,22 @@ public class Constants {
 
 	//Trigger, action, other such names for dynamic loading
 	public static String[] actionNames = { "com.jeeves.vpl.canvas.actions.PromptAction",
-			"com.jeeves.vpl.canvas.actions.SendTextAction", 
+			"com.jeeves.vpl.canvas.actions.SendTextAction", "com.jeeves.vpl.canvas.actions.UpdateAction",
 			//"com.jeeves.vpl.canvas.actions.SpeakerAction",
 			"com.jeeves.vpl.canvas.actions.SurveyAction",
 			/*"com.jeeves.vpl.canvas.actions.AskForDataAction",*/ "com.jeeves.vpl.canvas.actions.CaptureDataAction",
 			"com.jeeves.vpl.canvas.actions.WaitingAction", "com.jeeves.vpl.canvas.ifsloops.IfControl"};
 	public static String[] exprNames = { "com.jeeves.vpl.canvas.expressions.AndExpression",
 			"com.jeeves.vpl.canvas.expressions.OrExpression", "com.jeeves.vpl.canvas.expressions.NotExpression",
-			"com.jeeves.vpl.canvas.expressions.EqualsExpression", "com.jeeves.vpl.canvas.expressions.GreaterExpression","com.jeeves.vpl.canvas.expressions.LessExpression","com.jeeves.vpl.canvas.expressions.LocationExpression", "com.jeeves.vpl.canvas.expressions.SensorExpression","com.jeeves.vpl.canvas.expressions.DateBeforeAfter",
-			"com.jeeves.vpl.canvas.expressions.TimeExpression","com.jeeves.vpl.canvas.expressions.DateExpression" };
+			"com.jeeves.vpl.canvas.expressions.EqualsExpression", "com.jeeves.vpl.canvas.expressions.GreaterExpression","com.jeeves.vpl.canvas.expressions.LessExpression","com.jeeves.vpl.canvas.expressions.LocationExpression", "com.jeeves.vpl.canvas.expressions.CategoryExpression","com.jeeves.vpl.canvas.expressions.DateBeforeAfter",
+			"com.jeeves.vpl.canvas.expressions.SurveyExpression","com.jeeves.vpl.canvas.expressions.TimeExpression","com.jeeves.vpl.canvas.expressions.DateExpression" };
 	public static final String[] questionNames = { "com.jeeves.vpl.survey.questions.QuestionDate","com.jeeves.vpl.survey.questions.QuestionTime",
 			"com.jeeves.vpl.survey.questions.QuestionLikert", "com.jeeves.vpl.survey.questions.QuestionLocation",
 			//"com.jeeves.vpl.survey.questions.QuestionBluetooth",
 			//"com.jeeves.vpl.survey.questions.QuestionWifi",
 			"com.jeeves.vpl.survey.questions.QuestionMultMany", "com.jeeves.vpl.survey.questions.QuestionMultSingle",
 			"com.jeeves.vpl.survey.questions.QuestionNumber", "com.jeeves.vpl.survey.questions.QuestionText",
-			"com.jeeves.vpl.survey.questions.QuestionTrueFalse","com.jeeves.vpl.survey.questions.QuestionImagePresent","com.jeeves.vpl.survey.questions.PresentText"
+			"com.jeeves.vpl.survey.questions.QuestionTrueFalse","com.jeeves.vpl.survey.questions.QuestionHeart","com.jeeves.vpl.survey.questions.QuestionImagePresent","com.jeeves.vpl.survey.questions.PresentText"
 	};
 	public static final String[] triggerNames = { "com.jeeves.vpl.canvas.triggers.BeginTrigger",
 			"com.jeeves.vpl.canvas.triggers.ButtonTrigger", "com.jeeves.vpl.canvas.triggers.ClockTriggerInterval",

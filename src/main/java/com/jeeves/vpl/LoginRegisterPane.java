@@ -237,10 +237,10 @@ public class LoginRegisterPane extends Pane{
 							String token = value.get("token").toString();
 							if(token.equals(password)) {
 								FirebaseDB.currentUserEmail = txtUsername.getText();
-								//System.out.println("OMG");
+								System.out.println("OMG");
 								stage.hide();
 							}
-							//System.out.println("Nooooooo");
+							System.out.println("Nooooooo");
 
 							lblError.setText("Error logging in. Check your password and Internet connection");			
 						}

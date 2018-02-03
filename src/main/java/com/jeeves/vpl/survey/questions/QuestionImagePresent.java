@@ -62,7 +62,7 @@ public class QuestionImagePresent extends QuestionView{
 	static Storage storage;
 	static {
         InputStream googleCloudCrentials = FirebaseDB.class.getResourceAsStream(CLOUD_JSON);
-
+        System.out.println("IS THIS HAPPPENIN");
 		try {
 			storage = StorageOptions.newBuilder().setProjectId("firebaseId")
 					.setCredentials(ServiceAccountCredentials.fromStream(googleCloudCrentials))
@@ -71,6 +71,7 @@ public class QuestionImagePresent extends QuestionView{
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.out.println("Oh no");
 		}
 	}
 //	static {

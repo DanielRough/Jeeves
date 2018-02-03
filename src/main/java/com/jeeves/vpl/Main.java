@@ -178,6 +178,7 @@ public class Main extends Application {
 		//connectedStatus = new SimpleStringProperty();
 
 		Platform.setImplicitExit(false);
+		System.out.println("IT IS " + getClass().getResource("/Main.fxml"));
 		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/Main.fxml"));
 		fxmlLoader.setController(this);
 		try {

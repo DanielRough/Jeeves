@@ -107,6 +107,8 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 			model.settriggerId(getSaltString()); // Again, update, must
 
 		});
+		//will this default to be okay?
+		setTimeReceiver.setText("0");
 		setTimeReceiver.getChildElements().addListener(
 				(ListChangeListener<ViewElement>) listener -> {
 					int index = receivers.indexOf(setTimeReceiver);

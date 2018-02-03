@@ -1,6 +1,13 @@
 package com.jeeves.vpl.canvas.actions;
 
-import static com.jeeves.vpl.Constants.*;
+import static com.jeeves.vpl.Constants.VAR_ANY;
+import static com.jeeves.vpl.Constants.VAR_BOOLEAN;
+import static com.jeeves.vpl.Constants.VAR_CLOCK;
+import static com.jeeves.vpl.Constants.VAR_DATE;
+import static com.jeeves.vpl.Constants.VAR_NONE;
+import static com.jeeves.vpl.Constants.VAR_NUMERIC;
+
+import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.ParentPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.expressions.Expression;
@@ -17,22 +24,20 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
+import javafx.scene.control.ComboBox;
 
 @SuppressWarnings("rawtypes")
 public class UpdateAction extends Action { // NO_UCD (unused code)
 	public static final String DESC = "Set one of the patient's attributes to a new value";
 	public static final String NAME = "Update patient attribute";
 	@FXML
-	private RadioButton falseButton;
-	private ToggleGroup group; // for when we're updating a
+	private ComboBox<String> cboChoice;
 								@FXML
 	private HBox hbox;
-	@FXML
-	private RadioButton trueButton;
+
 	private ViewElement value; 
 	private UserVariable variable;
 	private ExpressionReceiver variablereceiver;
@@ -58,28 +63,7 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 
 		});
 
-		//For boolean values
-		group.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
 
-			@Override
-			public void changed(ObservableValue<? extends Toggle> arg0, Toggle arg1, Toggle arg2) {
-				FirebaseExpression expr = new FirebaseExpression();
-				expr.setIsValue(true);
-				;
-				expr.setIndex(1);
-				expr.setVartype(VAR_BOOLEAN);
-				
-				if (arg2 != null && arg2.equals(trueButton)) {
-					expr.setvalue("true");
-				} else{
-					expr.setvalue("false");
-				}
-					if(vars.size()<2)
-					vars.add(null);
-				vars.set(1, expr);
-			}
-
-		});
 		//For numeric/text values
 		numericreceiver.getTextField().textProperty().addListener(listener->{
 			FirebaseExpression expr = new FirebaseExpression();
@@ -158,16 +142,13 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 		numericreceiver = new ExpressionReceiver(VAR_NONE);
 		timereceiver = new TimeReceiver(VAR_CLOCK);
 		datereceiver = new DateReceiver(VAR_DATE);
-		hbox.getChildren().add(3, numericreceiver);
 
 		hbox.setSpacing(5);
 		// hbox.setPadding(new Insets(5, 5, 5, 5));
 		hbox.getStyleClass().remove("action");
-		group = new ToggleGroup();
-
-		trueButton.setToggleGroup(group);
-		falseButton.setToggleGroup(group);
-		hbox.getChildren().removeAll(trueButton, falseButton);
+		cboChoice.getItems().add("true");
+		Constants.styleTextCombo(cboChoice);
+	
 
 	}
 
@@ -201,7 +182,7 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 	public void setData(FirebaseAction model) {
 		super.setData(model);
 		//System.out.println("first you should do me");
-		Node[] potentialWidgets = {trueButton, falseButton, numericreceiver, timereceiver, datereceiver};
+		Node[] potentialWidgets = {numericreceiver, timereceiver, datereceiver};
 		
 		if (model.getvars().isEmpty())
 			return;
@@ -212,69 +193,13 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 		variablereceiver.setReceiveType(variable.getvartype());
 		hbox.getChildren().removeAll(potentialWidgets);
 		
-		
-		if (variable.getvartype().equals(VAR_BOOLEAN)) {
-			hbox.getChildren().addAll(trueButton, falseButton);
-			trueButton.setToggleGroup(group);
-			falseButton.setToggleGroup(group);
-			if(model.getvars().size() == 1)return;
-			value = (FirebaseExpression) model.getvars().get(1);
-			//If it's boolean, it's gonna be a text value
-			boolean result = Boolean.parseBoolean(value.getvalue());
-			if (result)
-				trueButton.setSelected(true);
-			else
-				falseButton.setSelected(true);
-		} 
-		else if(variable.getvartype().equals(VAR_CLOCK)){
-			hbox.getChildren().add(timereceiver);
-			activeReceiver = timereceiver;
-			if(model.getvars().size() == 1)return;
-			value = (FirebaseExpression) model.getvars().get(1);
-			if (value.getisValue() == false){
-				timereceiver.addChild(Expression.create(value), 0, 0);
-			}
-			else{
-				String textvalue = value.getvalue();
-				timereceiver.setText(textvalue);
-			}
 
-		}
-		else if(variable.getvartype().equals(VAR_DATE)){
-			hbox.getChildren().add(datereceiver);
-			activeReceiver = datereceiver;
 
-			if(model.getvars().size() == 1)return;
-			value = (FirebaseExpression) model.getvars().get(1);
-			if (value.getisValue() == false){
-				datereceiver.addChild(Expression.create(value), 0, 0);
-			}
-			else{
-				String textvalue = value.getvalue();
-				datereceiver.setText(textvalue);
-			}
-
-		}
-		else{ //This applies for numeric and location variables, which react in the same uncomplicated way
-			hbox.getChildren().add(numericreceiver);
-			activeReceiver = numericreceiver;
-
-			numericreceiver.setReceiveType(variable.getvartype());
-			if(model.getvars().size() == 1)return;
-			value = (FirebaseExpression) model.getvars().get(1);
-			if (value.getisValue() == false){
-				numericreceiver.addChild(Expression.create(value), 0, 0); 
-			}
-			else{
-				String textvalue = value.getvalue();
-				numericreceiver.getTextField().setText(textvalue);
-			}
-		}
 
 	}
 
 	protected void updateReceivers() {
-		Node[] potentialWidgets = {trueButton, falseButton, numericreceiver, timereceiver, datereceiver};
+		Node[] potentialWidgets = { numericreceiver, timereceiver, datereceiver};
 		hbox.getChildren().removeAll(potentialWidgets);
 		if (!variablereceiver.getChildElements().isEmpty()) {
 			ViewElement child = variablereceiver.getChildElements().get(0);
@@ -283,11 +208,11 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 			vars.add(0, variable.getModel());
 			if (variable.getVarType().equals(VAR_BOOLEAN)) {
 //				hbox.getChildren().removeAll(potentialWidgets);
-				group.getToggles().clear();
-				hbox.getChildren().addAll(trueButton, falseButton);
-				trueButton.setToggleGroup(group);
-				falseButton.setToggleGroup(group);
-				group.selectToggle(trueButton);
+//				group.getToggles().clear();
+//				hbox.getChildren().addAll(trueButton, falseButton);
+//				trueButton.setToggleGroup(group);
+//				falseButton.setToggleGroup(group);
+//				group.selectToggle(trueButton);
 			} else if(variable.getVarType().equals(VAR_CLOCK)){
 				hbox.getChildren().add(timereceiver);
 				activeReceiver = timereceiver;
@@ -313,7 +238,7 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 			hbox.getChildren().remove(variablereceiver);
 			variablereceiver = new VariableReceiver(VAR_ANY);
 			hbox.getChildren().add(1, variablereceiver);
-			hbox.getChildren().removeAll(numericreceiver, trueButton, falseButton);
+		//	hbox.getChildren().removeAll(numericreceiver, trueButton, falseButton);
 			numericreceiver = new ExpressionReceiver(VAR_NONE);
 			vars.clear();
 			hbox.getChildren().add(numericreceiver);

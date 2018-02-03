@@ -305,29 +305,29 @@ public class FirebaseDB {
 		privateRef.addValueEventListener(new ValueEventListener() {
 			@Override
 			public void onCancelled(DatabaseError arg0) {
-				//System.out.println("ERROR: " + arg0.getDetails());
+				System.out.println("ERROR: " + arg0.getDetails());
 				
 			}
 			@Override
 			public void onDataChange(DataSnapshot arg0) {
-			//	//System.out.println("WE CHANNNNNGEDs");
+			System.out.println("WE CHANNNNNGEDs");
 				FirebasePrivate appdata = arg0.getValue(FirebasePrivate.class);
 				newprojects.clear();
 			//	newpatients.clear();
 				if (appdata != null) {
-					//System.out.println("App data was not null!");
+					System.out.println("App data was not null!");
 					Map<String, FirebaseProject> projects = appdata.getprojects();
 			//		Map<String, FirebasePatient> patients = appdata.getpatients();
 					if (projects != null)
 						for (String key : projects.keySet()) {
 							newprojects.add(projects.get(key));
-							//System.out.println("Yup added a project");
+							System.out.println("Yup added a project");
 						}
 //					if (patients != null)
 //						newpatients.addAll(patients.values());
 				}
 				else {
-					//System.out.println("Oooh i'm afraid app data was null");
+					System.out.println("Oooh i'm afraid app data was null");
 				}
 			}
 		});
