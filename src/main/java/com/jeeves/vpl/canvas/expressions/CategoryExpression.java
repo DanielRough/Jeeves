@@ -19,7 +19,6 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.MapChangeListener;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 
 public class CategoryExpression extends Expression { // NO_UCD (unused code)
@@ -62,14 +61,22 @@ public class CategoryExpression extends Expression { // NO_UCD (unused code)
 
 	protected void setCategory(String category) {
 		if (category != null && !category.equals("")) {
-				gui.registerVarListener(listener->{
-					listener.next();
-					if(listener.wasAdded()){
-						List<FirebaseVariable> list = (List<FirebaseVariable>) listener.getAddedSubList();
-						if(list.get(0).getname().equals(category))
+			//A thing to stop the category expressions inexplicably emptying themselves whenever a new attribute is added
+			ListChangeListener<FirebaseVariable> varlistener= new ListChangeListener<FirebaseVariable>() {
+				@Override
+				public void onChanged(Change<? extends FirebaseVariable> c) {
+					c.next();
+					if(c.wasAdded()){
+						List<FirebaseVariable> list = (List<FirebaseVariable>) c.getAddedSubList();
+						if(list.get(0).getname().equals(category)) {
 							categoryReceiver.addChild(UserVariable.create(list.get(0)),0,0);
-					}
-				});
+							gui.unregisterVarListener(this);
+						}
+					}					
+				}
+				
+			};
+			gui.registerVarListener(varlistener);
 				
 		}
 	}
@@ -91,16 +98,22 @@ public class CategoryExpression extends Expression { // NO_UCD (unused code)
 				categoryOpts.addListener(new MapChangeListener<String,String[]>(){
 					@Override
 					public void onChanged(Change<? extends String, ? extends String[]> arg0) {
+						String selected = cboCategories.getSelectionModel().getSelectedItem(); //Hopefully it has one
 						cboCategories.getItems().clear();
 //						if(categoryOpts == null)//System.out.println("category opts is null");
 	//					if(categoryReceiver == null)//System.out.println("receiver is null");
 		//				if(categoryReceiver.getChildModel() == null)//System.out.println("Model is null");
 						//Bleugh this is awful
+						System.out.println("Just cleared the categories");
 						if(categoryReceiver.getChildModel() == null || !categoryOpts.containsKey(categoryReceiver.getChildModel().getname()))return;
 						cboCategories.getItems().addAll(categoryOpts.get(categoryReceiver.getChildModel().getname()));
+						cboCategories.setValue(selected);
+						cboCategories.getSelectionModel().select(selected);
+						System.out.println("Setting cboCategories to " + selected);
 					}
 					
 				});
+				System.out.println("WHAAAAAT");
 				cboCategories.getItems().clear();
 				if(categoryReceiver.getChildModel() == null || !categoryOpts.containsKey(categoryReceiver.getChildModel().getname()))return;
 				cboCategories.getItems().addAll(categoryOpts.get(categoryReceiver.getChildModel().getname()));

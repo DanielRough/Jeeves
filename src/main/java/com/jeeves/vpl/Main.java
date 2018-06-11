@@ -511,6 +511,9 @@ public class Main extends Application {
 	public void registerVarListener(ListChangeListener<FirebaseVariable> listener) {
 		currentvariables.addListener(listener);
 	}
+	public void unregisterVarListener(ListChangeListener<FirebaseVariable> listener) {
+		currentvariables.removeListener(listener);
+	}
 	
 	public void registerSurveyDataListener(MapChangeListener<String,Object> listener){
 		currentsurveydata.addListener(listener);
