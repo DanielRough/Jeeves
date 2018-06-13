@@ -18,7 +18,6 @@ import com.jeeves.vpl.firebase.FirebaseVariable;
 import static com.jeeves.vpl.Constants.*;
 
 public class DateBeforeAfter extends Expression { // NO_UCD (unused code)
-	public static final String DESC = "Returns true if the current time is within the specified bounds of the expression time";
 	public static final String NAME = "Date Before/After";
 	private ComboBox<String> cboBeforeAfter;
 	private ComboBox<String> cboTimeDiff;
@@ -80,7 +79,7 @@ public class DateBeforeAfter extends Expression { // NO_UCD (unused code)
 		cboBeforeAfter.getItems().addAll("before", "after");
 		cboTimeDiff.getSelectionModel().clearAndSelect(0);
 		cboBeforeAfter.getSelectionModel().clearAndSelect(0);
-		styleTextCombo(cboBeforeAfter);
+		
 
 		box.getChildren().clear();
 		box.getChildren().addAll(cboTimeDiff, cboBeforeAfter, exprTimeVar);
@@ -88,10 +87,6 @@ public class DateBeforeAfter extends Expression { // NO_UCD (unused code)
 		box.setPadding(new Insets(0, 14, 0, 14));
 	}
 
-	@Override
-	public Node[] getWidgets() {
-		return new Node[] { cboTimeDiff, cboBeforeAfter, exprTimeVar };
-	}
 
 	@Override
 	public void setData(FirebaseExpression model) {
@@ -128,7 +123,6 @@ public class DateBeforeAfter extends Expression { // NO_UCD (unused code)
 	@Override
 	public void setup() {
 		name = NAME;
-		description = DESC;
 		this.varType = VAR_BOOLEAN;
 		operand.setText("is");
 		box.getStyleClass().add(this.varType);

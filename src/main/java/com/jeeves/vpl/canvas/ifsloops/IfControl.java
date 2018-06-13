@@ -15,7 +15,6 @@ import static com.jeeves.vpl.Constants.*;
  *
  */
 public class IfControl extends Control {
-	public static final String DESC = "This will execute its contained actions if the contained expression is true";
 	public static final String NAME = "If Condition";
 
 	public IfControl() {
@@ -30,7 +29,6 @@ public class IfControl extends Control {
 	public void fxmlInit() {
 		super.fxmlInit();
 		name = NAME;
-		description = DESC;
 		exprreceiver = new ExpressionReceiver(VAR_BOOLEAN);
 		evalbox.getChildren().add(1, exprreceiver);
 	}
@@ -38,11 +36,6 @@ public class IfControl extends Control {
 	@Override
 	public String getViewPath() {
 		return String.format("/controlIf.fxml", this.getClass().getSimpleName());
-	}
-
-	@Override
-	public Node[] getWidgets() {
-		return new Node[] { exprreceiver, childReceiver };
 	}
 
 }

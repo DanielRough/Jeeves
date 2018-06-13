@@ -74,7 +74,7 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 	HBox surveynode;
 
 	public QuestionView() {
-		super(FirebaseQuestion.class);
+		super(null,FirebaseQuestion.class);
 	}
 
 	public QuestionView(FirebaseQuestion model) {
@@ -241,10 +241,6 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 		return model.getquestionText();
 	}
 
-	@Override
-	public Node[] getWidgets() {
-		return new Node[] {};
-	}
 
 	public void setisMandatory(boolean mandatory){
 		model.setisMandatory(mandatory);
@@ -357,9 +353,9 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 		setImage(imagePath);
 	}
 
-	public void setReadOnly(boolean readOnly) {
-		isReadOnly = readOnly;
-	}
+//	public void setReadOnly(boolean readOnly) {
+//		isReadOnly = readOnly;
+//	}
 
 	public void showDelete() {
 		btnEdit.setVisible(true);

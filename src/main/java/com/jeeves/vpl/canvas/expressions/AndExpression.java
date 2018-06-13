@@ -7,7 +7,6 @@ import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 
 public class AndExpression extends Expression { // NO_UCD (unused code)
-	public static final String DESC = "evaluates to true if both expressions/attributes are true";
 	public static final String NAME = "Both True";
 
 	public AndExpression() {
@@ -21,7 +20,6 @@ public class AndExpression extends Expression { // NO_UCD (unused code)
 	@Override
 	public void setup() {
 		name = NAME;
-		description = DESC;
 		this.varType = VAR_BOOLEAN;
 		operand.setText("and");
 		receivers.add(new ExpressionReceiver(VAR_BOOLEAN));

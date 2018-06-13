@@ -32,7 +32,7 @@ public abstract class UIElement extends ViewElement<FirebaseUI> {
 	protected TextField editField;
 	
 	public UIElement() {
-		super(FirebaseUI.class);
+		super(null,FirebaseUI.class);
 	}
 
 	public UIElement(FirebaseUI data) {

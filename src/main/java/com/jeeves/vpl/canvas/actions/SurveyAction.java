@@ -14,7 +14,6 @@ import com.jeeves.vpl.firebase.FirebaseAction;
 import com.jeeves.vpl.firebase.FirebaseSurvey;
 
 public class SurveyAction extends Action { // NO_UCD (unused code)
-	public static final String DESC = "Notify patient that a survey is to be completed";
 	public static final String NAME = "Send Survey";
 	@FXML
 	private ComboBox<String> cboSurveyName;
@@ -90,17 +89,11 @@ public class SurveyAction extends Action { // NO_UCD (unused code)
 	public void fxmlInit() {
 		super.fxmlInit();
 		name = NAME;
-		description = DESC;
 	}
 
 	@Override
 	public String getViewPath() {
 		return String.format("/actionSendSurvey.fxml", this.getClass().getSimpleName());
-	}
-
-	@Override
-	public Node[] getWidgets() {
-		return new Node[] { cboSurveyName };
 	}
 
 	@Override

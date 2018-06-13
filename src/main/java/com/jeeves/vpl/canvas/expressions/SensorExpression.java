@@ -20,7 +20,6 @@ import com.jeeves.vpl.firebase.FirebaseExpression;
 import com.jeeves.vpl.firebase.FirebaseVariable;
 
 public class SensorExpression extends Expression { // NO_UCD (unused code)
-	public static final String DESC = "Returns true if the specified sensor returns a particular result";
 	public static final String NAME = "Sensor Result";
 	public boolean manualChange = false;
 	private ComboBox<String> cboClassifications;
@@ -88,10 +87,6 @@ public class SensorExpression extends Expression { // NO_UCD (unused code)
 		return sensorname;
 	}
 
-	@Override
-	public Node[] getWidgets() {
-		return new Node[] { cboSensor, cboClassifications };
-	}
 
 	@Override
 	public void setData(FirebaseExpression model) {
@@ -123,7 +118,6 @@ public class SensorExpression extends Expression { // NO_UCD (unused code)
 	@Override
 	public void setup() {
 		name = NAME;
-		description = DESC;
 		this.varType = VAR_BOOLEAN;
 		operand.setText("returns");
 		box.getStyleClass().add(this.varType);
@@ -136,8 +130,6 @@ public class SensorExpression extends Expression { // NO_UCD (unused code)
 		cboClassifications = new ComboBox<String>();
 		locReceiver = new ExpressionReceiver(VAR_LOCATION);
 
-		styleTextCombo(cboSensor);
-		styleTextCombo(cboClassifications);
 		setup();
 		box.getChildren().clear();
 		box.getChildren().addAll(cboSensor, operand, cboClassifications);

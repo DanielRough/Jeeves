@@ -17,9 +17,7 @@ import javafx.scene.Node;
 
 /**
  * Actions that are performed on firing Triggers
- * 
  * @author Daniel
- *
  */
 public abstract class Action extends ViewElement<FirebaseAction> {
 	public static Action create(FirebaseAction exprmodel) {
@@ -35,7 +33,7 @@ public abstract class Action extends ViewElement<FirebaseAction> {
 	protected ObservableMap<String, Object> params;
 	protected ObservableList<FirebaseExpression> vars;
 	public Action() {
-		super(FirebaseAction.class);
+		super(null,FirebaseAction.class);
 	}
 
 	public Action(FirebaseAction data) {

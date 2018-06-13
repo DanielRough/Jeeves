@@ -55,7 +55,7 @@ public abstract class Expression extends ViewElement<FirebaseExpression> impleme
 	protected String varType;
 
 	public Expression() {
-		super(FirebaseExpression.class);
+		super(null,FirebaseExpression.class);
 	}
 
 	public Expression(FirebaseExpression data) {
@@ -139,13 +139,6 @@ public abstract class Expression extends ViewElement<FirebaseExpression> impleme
 	}
 	public ObservableMap<String, Object> getparams() {
 		return params;
-	}
-	@Override
-	public Node[] getWidgets() {
-		Node[] nodes = new Node[receivers.size()];
-		for (int i = 0; i < receivers.size(); i++)
-			nodes[i] = receivers.get(i);
-		return nodes;
 	}
 
 

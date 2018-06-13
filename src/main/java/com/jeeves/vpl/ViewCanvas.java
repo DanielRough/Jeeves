@@ -22,24 +22,20 @@ import javafx.scene.shape.Rectangle;
 
 public class ViewCanvas extends Group implements ParentPane { 
 	public EventHandler<MouseEvent> mouseHandler;
+	//For making the scrollable background 'blueprint' image
 	private Rectangle bigRect = new Rectangle(-10000, -10000, 20000, 20000);
-	private ObservableList<ViewElement> currentChildren = FXCollections.observableArrayList();
+	private Pane rectPane = new Pane();
+
 	private boolean isMouseOver;
-	private Point2D minPoint;
 	private double minX = 0;
 	private double minY = 0;
 	private boolean mousepressed = false;
 	private double pressedX = 0;
 	private double pressedY = 0;
-	private Pane rectPane = new Pane();
 	private double translatedX = 0;
-
 	private double translatedY = 0;
 	public static double scaleFactor = 1.0;
-	
-	public static double getScale() {
-		return scaleFactor;
-	}
+
 	public ViewCanvas() {
 	}
 
@@ -55,26 +51,14 @@ public class ViewCanvas extends Group implements ParentPane {
 			child.setPosition(canvasPoint);
 			getChildren().add(child);
 			child.toFront();
-			currentChildren.add(child);
 			child.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> isMouseOver = true); 
 		}
 
 	}
 
-	public boolean getIsMouseOver() {
-		return isMouseOver;
-	}
-
 	@Override
 	public void removeChild(ViewElement child) {
-
 		getChildren().remove(child);
-		currentChildren.remove(child);
-
-	}
-
-	public void setIsMouseOver(boolean mouse) {
-		this.isMouseOver = mouse;
 	}
 
 	void addChildrenListener(ListChangeListener<Node> list) {
@@ -114,7 +98,6 @@ public class ViewCanvas extends Group implements ParentPane {
 			setScaleX(getScaleX() * zoomFactor);
 			setScaleY(getScaleY() * zoomFactor);
 			scaleFactor = getScaleX();
-			//System.out.println("scale is " + getScaleX());
 			setTranslateX(getTranslateX() + xr * dw / 2);
 			setTranslateY(getTranslateY() + yr * dh / 2);
 		};
@@ -128,7 +111,6 @@ public class ViewCanvas extends Group implements ParentPane {
 				isMouseOver = false;
 			}
 			if (event.getEventType().equals(MouseDragEvent.MOUSE_DRAG_RELEASED)) {
-				// TODO: Change this awful shitty line
 				if (event.getGestureSource() instanceof ViewElement && !(event.getGestureSource() instanceof UIElement)
 						&& !(event.getGestureSource() instanceof QuestionView)
 						&& !(getChildren().contains(event.getGestureSource()))) {
@@ -162,9 +144,8 @@ public class ViewCanvas extends Group implements ParentPane {
 				pressedX = event.getX();
 				pressedY = event.getY();
 				if (minX == 0) {
-					minPoint = localToScreen(parentToLocal(0, 0)); // Dumb
-					minX = minPoint.getX();
-					minY = minPoint.getY();
+					minX = localToScreen(parentToLocal(0, 0)).getX();
+					minY = localToScreen(parentToLocal(0, 0)).getY();
 				}
 				translatedX = getTranslateX();
 				translatedY = getTranslateY();

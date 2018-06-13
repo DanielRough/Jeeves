@@ -5,7 +5,6 @@ import static com.jeeves.vpl.Constants.getSaltString;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.jeeves.vpl.ActionHolder;
 import com.jeeves.vpl.Constants.ElementType;
 import com.jeeves.vpl.ParentPane;
 import com.jeeves.vpl.ViewElement;
@@ -31,7 +30,7 @@ import javafx.scene.layout.Pane;
  *
  */
 @SuppressWarnings("rawtypes")
-public abstract class Control extends Action implements ActionHolder {
+public abstract class Control extends Action {
 	private ArrayList<Action> actions;
 	@FXML
 	private Pane pane;
@@ -185,7 +184,6 @@ public abstract class Control extends Action implements ActionHolder {
 		return this;
 	}
 
-	@Override
 	public ActionReceiver getMyReceiver() {
 		return childReceiver;
 	}

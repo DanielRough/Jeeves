@@ -65,11 +65,6 @@ public class UserVariable extends Expression implements Typed {
 	}
 
 	@Override
-	public Node[] getWidgets() {
-		return new Node[] {};
-	}
-
-	@Override
 	public void setData(FirebaseExpression model) {
 		super.setData(model);
 		name = (model.getname());

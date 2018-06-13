@@ -23,6 +23,9 @@ public class Constants {
 	public static void setOpenProject(FirebaseProject proj){
 		openProject = proj;
 	}
+	
+	public static final int OBJID_LENGTH = 18;
+	public static final int PROJID_LENGTH = 5;
 	//When we first load up the triggers from file, we don't want to update the trigger IDs
 	public static boolean SHOULD_UPDATE_TRIGGERS = true;
 	public static enum ElementType {
@@ -56,6 +59,7 @@ public class Constants {
 	public static final String VAR_BLUETOOTH = "Bluetooth";
 	public static final String VAR_NONE = "None";
 	public static final String VAR_NUMERIC = "Numeric";
+	
 	public static class Sensor {
 
 		private String image;
@@ -69,8 +73,6 @@ public class Constants {
 			this.values = values;
 			this.isPull = isPull;
 		}
-		
-
 		
 		public boolean isPull(){
 			return isPull;
@@ -88,8 +90,6 @@ public class Constants {
 	// Sensor constants
 		private static Sensor accelSensor = new Sensor("Activity", "/img/icons/accelerometer.png",
 				new String[] {"Walking", "Running", "Still", "Driving"},true);
-		//LOCATIONS ARE TREATED IN A SEPARATE TRIGGER NOW
-		//public static Sensor locSensor = new Sensor(VAR_LOCATION, "/img/icons/location.png", new String[] {},true);
 		public static Sensor bluetoothSensor = new Sensor(VAR_BLUETOOTH, "/img/icons/bluetooth.png", new String[] {},true);
 		public static Sensor wifiSensor = new Sensor(VAR_WIFI, "/img/icons/wifi.png", new String[] {},true);
 		public static Sensor microphoneSensor = new Sensor("Microphone", "/img/icons/microphone.png", new String[] {"Noisy","Quiet"},true);
@@ -102,9 +102,7 @@ public class Constants {
 	//Trigger, action, other such names for dynamic loading
 	public static String[] actionNames = { "com.jeeves.vpl.canvas.actions.PromptAction",
 			"com.jeeves.vpl.canvas.actions.SendTextAction", "com.jeeves.vpl.canvas.actions.UpdateAction",
-			//"com.jeeves.vpl.canvas.actions.SpeakerAction",
-			"com.jeeves.vpl.canvas.actions.SurveyAction",
-			/*"com.jeeves.vpl.canvas.actions.AskForDataAction",*/ "com.jeeves.vpl.canvas.actions.CaptureDataAction",
+			"com.jeeves.vpl.canvas.actions.SurveyAction", "com.jeeves.vpl.canvas.actions.CaptureDataAction",
 			"com.jeeves.vpl.canvas.actions.WaitingAction", "com.jeeves.vpl.canvas.ifsloops.IfControl"};
 	public static String[] exprNames = { "com.jeeves.vpl.canvas.expressions.AndExpression",
 			"com.jeeves.vpl.canvas.expressions.OrExpression", "com.jeeves.vpl.canvas.expressions.NotExpression",
@@ -112,15 +110,12 @@ public class Constants {
 			"com.jeeves.vpl.canvas.expressions.SurveyExpression","com.jeeves.vpl.canvas.expressions.TimeExpression","com.jeeves.vpl.canvas.expressions.DateExpression" };
 	public static final String[] questionNames = { "com.jeeves.vpl.survey.questions.QuestionDate","com.jeeves.vpl.survey.questions.QuestionTime",
 			"com.jeeves.vpl.survey.questions.QuestionLikert", "com.jeeves.vpl.survey.questions.QuestionLocation",
-			//"com.jeeves.vpl.survey.questions.QuestionBluetooth",
-			//"com.jeeves.vpl.survey.questions.QuestionWifi",
 			"com.jeeves.vpl.survey.questions.QuestionMultMany", "com.jeeves.vpl.survey.questions.QuestionMultSingle",
 			"com.jeeves.vpl.survey.questions.QuestionNumber", "com.jeeves.vpl.survey.questions.QuestionText",
 			"com.jeeves.vpl.survey.questions.QuestionTrueFalse","com.jeeves.vpl.survey.questions.QuestionHeart","com.jeeves.vpl.survey.questions.QuestionAudio","com.jeeves.vpl.survey.questions.QuestionImagePresent","com.jeeves.vpl.survey.questions.PresentText"
 	};
 	public static final String[] triggerNames = { "com.jeeves.vpl.canvas.triggers.BeginTrigger",
 			"com.jeeves.vpl.canvas.triggers.ButtonTrigger", "com.jeeves.vpl.canvas.triggers.ClockTriggerInterval",
-			//"com.jeeves.vpl.canvas.triggers.ClockTriggerRandom", 
 			"com.jeeves.vpl.canvas.triggers.ClockTriggerSetTimes","com.jeeves.vpl.canvas.triggers.LocationTrigger",
 			"com.jeeves.vpl.canvas.triggers.SensorTrigger", "com.jeeves.vpl.canvas.triggers.SurveyTrigger" };
 	public static final String[] uiElementNames = { "com.jeeves.vpl.canvas.uielements.UIButton",
@@ -176,54 +171,24 @@ public class Constants {
 		}
 	};
 
-	// Finally, a static method to style the combo boxes
-	public static void styleTextCombo(ComboBox<String> combo) {
-		combo.getStyleClass().addAll("shadowy", "styled-select");
-		combo.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
-			@Override
-			public ListCell<String> call(ListView<String> param) {
-				final ListCell<String> cell = new ListCell<String>() {
-					{
-						super.getStyleClass().add("trigger");
-					}
-
-					@Override
-					public void updateItem(String item, boolean empty) {
-						super.updateItem(item, empty);
-						setText(item);
-						getStyleClass().add("mycell");
-					}
-				};
-				return cell;
-			}
-		});
-	}
 	
-	//Used for generating an ID in various elements
-	public static String getSaltString() {
+	public static String getSalt(int length) {
 		String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 		StringBuilder salt = new StringBuilder();
 		Random rnd = new Random();
-		while (salt.length() < 18) {
+		while (salt.length() < length) {
 			int index = (int) (rnd.nextFloat() * SALTCHARS.length());
 			salt.append(SALTCHARS.charAt(index));
 		}
-		String saltStr = salt.toString();
-		return saltStr;
-
+		return salt.toString();
+	}
+	//Used for generating an ID in various elements
+	public static String getSaltString() {
+		return getSalt(OBJID_LENGTH);
 	}
 	
 	//Generate a smaller project ID (easier to remember)
 	public static String generateProjectID() {
-		String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-		StringBuilder salt = new StringBuilder();
-		Random rnd = new Random();
-		while (salt.length() < 5) {
-			int index = (int) (rnd.nextFloat() * SALTCHARS.length());
-			salt.append(SALTCHARS.charAt(index));
-		}
-		String saltStr = salt.toString();
-		return saltStr;
-
+		return getSalt(PROJID_LENGTH);
 	}
 }

@@ -20,7 +20,6 @@ import javafx.scene.control.ToggleGroup;
  * @author Daniel
  */
 public class ButtonTrigger extends Trigger { // NO_UCD (unused code)
-	public static final String DESC = "Schedule actions to take place when patient presses an app button";
 	public static final String NAME = "Button Trigger";
 	@FXML
 	private ComboBox<String> cboButton;
@@ -91,17 +90,11 @@ public class ButtonTrigger extends Trigger { // NO_UCD (unused code)
 	public void fxmlInit() {
 		super.fxmlInit();
 		name = NAME;
-		description = DESC;
 	}
 
 	@Override
 	public String getViewPath() {
 		return String.format("/TriggerButton.fxml", this.getClass().getSimpleName());
-	}
-
-	@Override
-	public Node[] getWidgets() {
-		return new Node[] { cboButton };
 	}
 
 	@Override

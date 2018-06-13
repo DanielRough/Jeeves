@@ -14,7 +14,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 
 public class UILabel extends UIElement { // NO_UCD (unused code)
-	public static final String DESC = "A label to provide textual information";
 	public static final String NAME = "label";
 	@FXML
 	private Label lblLabel;
@@ -35,7 +34,6 @@ public class UILabel extends UIElement { // NO_UCD (unused code)
 	public void fxmlInit() {
 		super.fxmlInit();
 		name = NAME;
-		description = DESC;
 	}
 
 	@Override
@@ -56,11 +54,6 @@ public class UILabel extends UIElement { // NO_UCD (unused code)
 	@Override
 	public String getViewPath() {
 		return String.format("/uiLabel.fxml", this.getClass().getSimpleName());
-	}
-
-	@Override
-	public Node[] getWidgets() {
-		return new Node[] {lblLabel};
 	}
 
 	@Override

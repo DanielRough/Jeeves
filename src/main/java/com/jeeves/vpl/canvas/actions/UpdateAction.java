@@ -31,13 +31,11 @@ import javafx.scene.control.ComboBox;
 
 @SuppressWarnings("rawtypes")
 public class UpdateAction extends Action { // NO_UCD (unused code)
-	public static final String DESC = "Set one of the patient's attributes to a new value";
 	public static final String NAME = "Update patient attribute";
 	@FXML
 	private ComboBox<String> cboChoice;
-								@FXML
+	@FXML
 	private HBox hbox;
-
 	private ViewElement value; 
 	private UserVariable variable;
 	private ExpressionReceiver variablereceiver;
@@ -46,7 +44,7 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 	private DateReceiver datereceiver;
 	private ExpressionReceiver numericreceiver;
 
-	//
+	
 	public UpdateAction() {
 		this(new FirebaseAction());
 	}
@@ -136,7 +134,6 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 	public void fxmlInit() {
 		super.fxmlInit();
 		name = NAME;
-		description = DESC;
 		variablereceiver = new VariableReceiver(VAR_ANY);
 		hbox.getChildren().add(1, variablereceiver);
 		numericreceiver = new ExpressionReceiver(VAR_NONE);
@@ -147,7 +144,6 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 		// hbox.setPadding(new Insets(5, 5, 5, 5));
 		hbox.getStyleClass().remove("action");
 		cboChoice.getItems().add("true");
-		Constants.styleTextCombo(cboChoice);
 	
 
 	}
@@ -155,11 +151,6 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 	@Override
 	public String getViewPath() {
 		return String.format("/actionUpdateModel.fxml", this.getClass().getSimpleName());
-	}
-
-	@Override
-	public Node[] getWidgets() {
-		return new Node[] { numericreceiver, variablereceiver };
 	}
 
 	

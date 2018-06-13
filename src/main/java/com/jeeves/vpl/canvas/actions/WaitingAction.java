@@ -1,7 +1,6 @@
 package com.jeeves.vpl.canvas.actions;
 
 import static com.jeeves.vpl.Constants.numberHandler;
-import static com.jeeves.vpl.Constants.styleTextCombo;
 
 import java.util.Map;
 
@@ -25,7 +24,6 @@ import javafx.scene.layout.HBox;
  *
  */
 public class WaitingAction extends Action { // NO_UCD (unused code)
-	public static final String DESC = "Add a delay between actions happening";
 	public static final String NAME = "Snooze";
 	@FXML
 	private ComboBox<String> cboWaitGranularity;
@@ -79,7 +77,6 @@ public class WaitingAction extends Action { // NO_UCD (unused code)
 	public void fxmlInit() {
 		super.fxmlInit();
 		name = NAME;
-		description = DESC;
 		txtWaitTime.setPrefWidth(20);
 		txtWaitTime.setMinHeight(20);
 		txtWaitTime.setPrefHeight(20);
@@ -100,10 +97,6 @@ public class WaitingAction extends Action { // NO_UCD (unused code)
 		return String.format("/actionWaiting.fxml", this.getClass().getSimpleName());
 	}
 
-	@Override
-	public Node[] getWidgets() {
-		return new Node[] { cboWaitGranularity, txtWaitTime };
-	}
 
 	@Override
 	public void setData(FirebaseAction model) {
@@ -111,7 +104,6 @@ public class WaitingAction extends Action { // NO_UCD (unused code)
 		Map<String, Object> params = model.getparams();
 		if (params.isEmpty())
 			return;
-		styleTextCombo(cboWaitGranularity);
 
 		if (params.containsKey("granularity"))
 			cboWaitGranularity.setValue(params.get("granularity").toString());

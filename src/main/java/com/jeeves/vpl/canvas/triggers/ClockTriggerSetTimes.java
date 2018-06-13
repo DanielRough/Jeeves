@@ -32,7 +32,6 @@ import javafx.scene.layout.VBox;
  * @author Daniel
  */
 public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
-	public static final String DESC = "Schedule actions to take place at specific times";
 	public static final String NAME = "Set Times Trigger";
 	@FXML
 	private Pane pane;
@@ -72,7 +71,6 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 	public void fxmlInit() {
 		super.fxmlInit();
 		name = NAME;
-		description = DESC;
 		dateReceiverTo = new DateReceiver(VAR_DATE);
 		dateReceiverFrom = new DateReceiver(VAR_DATE);
 		paneStartDate.getChildren().add(dateReceiverFrom);
@@ -84,10 +82,6 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 		return String.format("/TriggerClockSetTime.fxml", this.getClass().getSimpleName());
 	}
 
-	@Override
-	public Node[] getWidgets() {
-		return new Node[] { dateReceiverFrom, dateReceiverTo, btnRemoveTime, btnAddTime };
-	}
 
 	@FXML
 	public void handleAddTime() {

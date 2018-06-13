@@ -21,7 +21,6 @@ import com.jeeves.vpl.firebase.FirebaseTrigger;
  * @author Daniel
  */
 public class SurveyTrigger extends Trigger { // NO_UCD (use default)
-	public static final String DESC = "Schedule actions to take place when a user has completed or ignored a survey a certain number of times";
 	public static final String NAME = "Survey Trigger";
 	@FXML
 	private ComboBox<String> cboCompMissed;
@@ -54,8 +53,8 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 				String value = cboSurvey.getValue();
 				cboSurvey.getItems().clear();
 				surveys.forEach(survey -> {
-					if (isReadOnly)
-						return;
+			//		if (isReadOnly)
+			//			return;
 					cboSurvey.getItems().add(survey.gettitle());
 					if (survey.gettitle().equals(value))
 						cboSurvey.setValue(value);
@@ -149,7 +148,6 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 	public void fxmlInit() {
 		super.fxmlInit();
 		name = NAME;
-		description = DESC;
 		cboCompMissed.getItems().clear();
 		cboCompMissed.getItems().addAll("completed", "missed");
 		cboCompMissed.setValue("missed");
@@ -158,11 +156,6 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 	@Override
 	public String getViewPath() {
 		return String.format("/TriggerSurvey.fxml", this.getClass().getSimpleName());
-	}
-
-	@Override
-	public Node[] getWidgets() {
-		return new Node[] { cboSurvey, cboCompMissed};
 	}
 
 	@Override

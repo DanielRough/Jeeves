@@ -17,7 +17,6 @@ import com.jeeves.vpl.firebase.FirebaseExpression;
 import com.jeeves.vpl.firebase.FirebaseVariable;
 
 public class LocationExpression extends Expression { // NO_UCD (unused code)
-	public static final String DESC = "Returns true if the specified sensor returns a particular result";
 	public static final String NAME = "Location";
 	public boolean manualChange = false;
 	private ExpressionReceiver locReceiver;
@@ -54,10 +53,6 @@ public class LocationExpression extends Expression { // NO_UCD (unused code)
 	}
 
 
-	@Override
-	public Node[] getWidgets() {
-		return new Node[] {};
-	}
 
 	@Override
 	public void setData(FirebaseExpression model) {
@@ -74,7 +69,6 @@ public class LocationExpression extends Expression { // NO_UCD (unused code)
 	@Override
 	public void setup() {
 		name = NAME;
-		description = DESC;
 		this.varType = VAR_BOOLEAN;
 		operand.setText("user is at");
 		box.getStyleClass().add(this.varType);

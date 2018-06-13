@@ -55,43 +55,11 @@ public class LoginRegisterPane extends Pane{
 			getChildren().add(root);
 
 			//default values for now
-			txtUsername.setText("");
-			txtPassword.setText("");
+			txtUsername.setText("danielrough@hotmail.com");
+			txtPassword.setText("command22");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-//		File configfile = new File(System.getProperty("user.home") + File.separator + ".jeeves" + File.separator + "jeevesdata");
-//		configfile.mkdirs();
-//		File actualfile = new File(configfile.getAbsolutePath() + File.separator + "shiro.ini");
-//		if(!actualfile.exists()) {
-//			try {
-//				actualfile.createNewFile();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			//	BufferedWriter writer = new BufferedWriter(new FileWriter(configfile));
-//			//		writer.append(System.getProperty("line.separator"));
-//			//		writer.append((email + " = " + sha256Hash.toHex() + "," + uid));
-//			//		writer.close();
-//			//configfile.createNewFile();
-//			InputStream shiroStream = this.getClass().getResourceAsStream("/shiro.ini");
-//			BufferedReader reader = new BufferedReader(new InputStreamReader(shiroStream));
-//			String line = "";
-//			while(line != null) {
-//				try {
-//					line = reader.readLine();
-//					if(line != null) {
-//					Files.write(Paths.get(System.getProperty("user.home") + File.separator + ".jeeves" + File.separator + "jeevesdata" + File.separator + "shiro.ini"), System.getProperty("line.separator").getBytes(), StandardOpenOption.APPEND);
-//					
-//					Files.write(Paths.get(System.getProperty("user.home") + File.separator + ".jeeves" + File.separator + "jeevesdata" + File.separator + "shiro.ini"), line.getBytes(), StandardOpenOption.APPEND);
-//					}
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
-//		}
 	}
 
 	@FXML 
@@ -161,71 +129,19 @@ public class LoginRegisterPane extends Pane{
 
 	}
 
-
-	private void addUserToConfig(String email, String password,String uid){
-		//Sha256Hash sha256Hash = new Sha256Hash(password);
-//		try {
-//			Files.write(Paths.get(System.getProperty("user.home") + File.separator + ".jeeves" + File.separator + "jeevesdata" + File.separator + "shiro.ini"), System.getProperty("line.separator").getBytes(), StandardOpenOption.APPEND);
-//
-//
-//			
-//			////System.out.println("Path is " + System.getProperty("user.home") + File.separator + ".jeeves" + File.separator + "jeevesdata" + File.separator);
-//			Files.write(Paths.get(System.getProperty("user.home") + File.separator + ".jeeves" + File.separator + "jeevesdata" + File.separator + "shiro.ini"), (email + " = " + sha256Hash.toHex() + "," + uid).getBytes(), StandardOpenOption.APPEND);
-//
-//		}catch (IOException e) {
-//			e.printStackTrace();
-//		}
-
-	}
 	@FXML
 	private void login(Event e){
-//		InputStream shiroStream = null;
-//		try {
-//			shiroStream = new FileInputStream(new File(System.getProperty("user.home") + File.separator + ".jeeves" + File.separator + "jeevesdata" + File.separator + "shiro.ini"));
-//		} catch (FileNotFoundException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
-//		Ini shiroIni = new Ini();
-//		shiroIni.load(shiroStream);
-//		Factory<org.apache.shiro.mgt.SecurityManager> factory = new IniSecurityManagerFactory(shiroIni);
-//		org.apache.shiro.mgt.SecurityManager securityManager = factory.getInstance();
-//
-//		SecurityUtils.setSecurityManager(securityManager);
 		String username = txtUsername.getText();
 		String password = txtPassword.getText();
 		authenticate(username,password);
-	//	currentUser = SecurityUtils.getSubject();
-		
-
-	//	stage.close();
-//		if ( !currentUser.isAuthenticated() ) {
-//
-//			Sha256Hash sha256Hash = new Sha256Hash(password);
-//			UsernamePasswordToken token = new UsernamePasswordToken(username, password);
-//			token.setRememberMe(true);
-//			try {
-//				currentUser.login( token );
-//				stage.close();
-//			}catch (UnknownAccountException uae) {
-//				lblError.setText("There is no user with username of " + token.getPrincipal());
-//			} catch (IncorrectCredentialsException ice) {
-//				lblError.setText("Password for account " + token.getPrincipal() + " was incorrect!");
-//			} catch (LockedAccountException lae) {
-//				lblError.setText("The account for username " + token.getPrincipal() + " is locked.  " +
-//						"Please contact your administrator to unlock it.");
-//			}	
-//		}
 	}
 	public void authenticate(String email, String password) {
 		UserRecord userRecord;
 		try {
 			userRecord = FirebaseAuth.getInstance().getUserByEmailAsync(email).get();
 			String uid = userRecord.getUid();
-			//	privateRef =  dbRef.child(PRIVATE_COLL).child(currentsesh.getAttribute("uid").toString());
 		   DatabaseReference	dbRef = FirebaseDatabase.getInstance().getReference();
 		   DatabaseReference privateRef =  dbRef.child(PRIVATE_COLL).child(uid);
-		   //System.out.println("AWAY TO TRYs");
 			privateRef.addListenerForSingleValueEvent(new ValueEventListener() {
 				@Override
 				public void onDataChange(DataSnapshot dataSnapshot) {
@@ -237,10 +153,8 @@ public class LoginRegisterPane extends Pane{
 							String token = value.get("token").toString();
 							if(token.equals(password)) {
 								FirebaseDB.currentUserEmail = txtUsername.getText();
-								System.out.println("OMG");
 								stage.hide();
 							}
-							System.out.println("Nooooooo");
 
 							lblError.setText("Error logging in. Check your password and Internet connection");			
 						}
@@ -251,7 +165,6 @@ public class LoginRegisterPane extends Pane{
 			
 				@Override
 				public void onCancelled(DatabaseError arg0) {
-					//System.out.println("Naaaaah");
 					lblError.setText("Error logging in. Check your password and Internet connection");					
 				}
 			});

@@ -14,7 +14,6 @@ import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.firebase.FirebaseUI;
 
 public class UIButton extends UIElement { // NO_UCD (unused code)
-	public static final String DESC = "A button that the patient can press";
 	public static final String NAME = "button";
 	@FXML
 	private Button btnButton;
@@ -35,7 +34,6 @@ public class UIButton extends UIElement { // NO_UCD (unused code)
 	public void fxmlInit() {
 		super.fxmlInit();
 		name = NAME;
-		description = DESC;
 	}
 
 	@Override
@@ -57,11 +55,6 @@ public class UIButton extends UIElement { // NO_UCD (unused code)
 	@Override
 	public String getViewPath() {
 		return String.format("/uiButton.fxml", this.getClass().getSimpleName());
-	}
-
-	@Override
-	public Node[] getWidgets() {
-		return new Node[] { btnButton };
 	}
 
 	@Override

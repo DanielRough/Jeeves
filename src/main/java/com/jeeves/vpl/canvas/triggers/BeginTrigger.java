@@ -6,7 +6,6 @@ import javafx.scene.Node;
 
 public class BeginTrigger extends Trigger { // NO_UCD (use default)
 
-	public static final String DESC = "Schedule actions to take place on the patient beginning the study";
 	public static final String NAME = "Begin Trigger";
 
 	public BeginTrigger() {
@@ -21,7 +20,6 @@ public class BeginTrigger extends Trigger { // NO_UCD (use default)
 	public void fxmlInit() {
 		super.fxmlInit();
 		name = NAME;
-		description = DESC;
 	}
 
 	@Override
@@ -30,8 +28,4 @@ public class BeginTrigger extends Trigger { // NO_UCD (use default)
 
 	}
 
-	@Override
-	public Node[] getWidgets() {
-		return new Node[] {};
-	}
 }

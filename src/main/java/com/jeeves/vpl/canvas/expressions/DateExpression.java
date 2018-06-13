@@ -17,7 +17,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 
 public class DateExpression extends Expression { // NO_UCD (unused code)
-	public static final String DESC = "Returns true if the current date is within the specified bounds";
 	public static final String NAME = "Date Bounds";
 	private DateReceiver exprDateFrom;
 	private DateReceiver exprDateTo;
@@ -76,11 +75,6 @@ public class DateExpression extends Expression { // NO_UCD (unused code)
 	}
 
 	@Override
-	public Node[] getWidgets() {
-		return new Node[] { exprDateFrom, exprDateTo };
-	}
-
-	@Override
 	public void setData(FirebaseExpression model) {
 		super.setData(model);
 		Map<String, Object> params = model.getparams();
@@ -132,7 +126,6 @@ public class DateExpression extends Expression { // NO_UCD (unused code)
 	@Override
 	public void setup() {
 		name = NAME;
-		description = DESC;
 		this.varType = VAR_BOOLEAN;
 		operand.setText("is");
 		box.getStyleClass().add(this.varType);

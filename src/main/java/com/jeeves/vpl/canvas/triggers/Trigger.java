@@ -50,7 +50,7 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 	protected ObservableMap<String, Object> params;
 
 	public Trigger() {
-		super(FirebaseTrigger.class);
+		super(null,FirebaseTrigger.class);
 	}
 
 
@@ -161,6 +161,7 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 	@Override
 	public void fxmlInit() {
 		this.type = ElementType.TRIGGER;
+		this.name = NAME;
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setController(this);
 		fxmlLoader.setLocation(getClass().getResource(getViewPath()));

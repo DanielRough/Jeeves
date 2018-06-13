@@ -136,7 +136,7 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 		surveyQuestions.add(index, view);
 		editor.populateQuestion(view);
 
-		view.setReadOnly(false);
+	//	view.setReadOnly(false);
 		view.addButtons();
 		view.getEditButton().setOnAction(event -> {
 			editor.populateQuestion(view);
@@ -209,10 +209,6 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 		return title;
 	}
 
-	@Override
-	public Node[] getWidgets() {
-		return new Node[] {};
-	}
 
 	public void removeQuestion(QuestionView question) {
 

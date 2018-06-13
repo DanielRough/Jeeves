@@ -79,7 +79,7 @@ public abstract class Receiver extends Pane {
 
 				// child.removeEventHandler(MouseEvent.MOUSE_PRESSED, this);
 				child.setOnMouseReleased(handler -> {
-					if (child.getWasRemoved() == false && (child.getType() == ElementType.QUESTION || child.getType() == ElementType.UIELEMENT))
+					if ((child.getType() == ElementType.QUESTION || child.getType() == ElementType.UIELEMENT))
 						addChildAtIndex(child, child.getOldIndex());
 				}); // Hopefully readds it automatically if it gets dragged out
 					// and released?

@@ -296,7 +296,7 @@ public class QuestionEditor extends Pane {
 					break;
 				}
 				
-				uservar.removeHander();
+				//uservar.removeHander();
 
 			}
 		});

@@ -27,7 +27,6 @@ import javafx.util.Callback;
  * @author Daniel
  */
 public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
-	public static final String DESC = "Schedule actions to take place at regular intervals";
 	public static final String NAME = "Repeated Time Trigger";
 	@FXML
 	private ComboBox<String> cboFixedRandom;
@@ -125,7 +124,6 @@ public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 	public void fxmlInit() {
 		super.fxmlInit();
 		name = NAME;
-		description = DESC;
 
 		paneStartDate.getChildren().add(dateReceiverFrom);
 		paneEndDate.getChildren().add(dateReceiverTo);
@@ -141,12 +139,6 @@ public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 	@Override
 	public String getViewPath() {
 		return String.format("/TriggerClockInterval.fxml", this.getClass().getSimpleName());
-	}
-
-	@Override
-	public Node[] getWidgets() {
-		return new Node[] { dateReceiverFrom, dateReceiverTo, paneIntervalFrom, paneIntervalTo, txtFieldInterval,cboFixedRandom 
-				};
 	}
 
 	@Override

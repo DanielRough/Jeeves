@@ -15,7 +15,6 @@ import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 
 public class CaptureDataAction extends Action{
-	public final String DESC = "Capture some data from an available sensor";
 	public final String NAME = "Sense Data";
 	
 	@FXML
@@ -67,7 +66,6 @@ public class CaptureDataAction extends Action{
 	public void fxmlInit() {
 		super.fxmlInit();
 		name = NAME;
-		description = DESC;
 	}
 
 	@Override
@@ -76,20 +74,11 @@ public class CaptureDataAction extends Action{
 	}
 
 	@Override
-	public Node[] getWidgets() {
-		return new Node[] { cboSensor };
-	}
-
-	@Override
 	public void setData(FirebaseAction model) {
 		super.setData(model);
-		Map<String, Object> params = model.getparams();
 		if (model.getparams().containsKey("selectedSensor")) {
 			String sensorName = model.getparams().get("selectedSensor").toString();
-		//	for (Sensor s : sensors) {
-			//	if (s.getname().equals(sensorName))
-					cboSensor.setValue(sensorName);
-			//}
+			cboSensor.setValue(sensorName);
 		} 
 		if(model.getparams().containsKey("time")) {
 			cboTime.setValue((String)model.getparams().get("time"));

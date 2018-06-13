@@ -28,7 +28,6 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Popup;
 
 public class SensorTrigger extends Trigger { // NO_UCD (unused code)
-	public static final String DESC = "Schedule actions to take place when a phone sensor returns a particular result";
 	public static final String NAME = "Sensor Trigger";
 	private ExpressionReceiver variableReceiver;
 	
@@ -89,7 +88,6 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 	public void fxmlInit() {
 		super.fxmlInit();
 		name = NAME;
-		description = DESC;
 		for (Sensor s : sensors) {
 			cboSensor.getItems().add(s.getname());
 		}
@@ -102,10 +100,6 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 		return String.format("/TriggerSensor.fxml", this.getClass().getSimpleName());
 	}
 
-	@Override
-	public Node[] getWidgets() {
-		return new Node[] { cboSensor, cboClassifications };
-	}
 	
 	@Override
 	public void setParentPane(ParentPane parent) {

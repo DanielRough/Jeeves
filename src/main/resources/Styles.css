@@ -274,6 +274,29 @@
 	-fx-effect: innershadow(three-pass-box, rgba(0, 0, 0, 0.7), 6, 0.0, 0, 2);
 }
 
+.combo-box-base {
+    -fx-background-color: #223768;
+	-fx-background-insets: 0 0 -1 0, 0, 1;
+	-fx-border-radius: 15;
+	-fx-background-radius: 15;
+	-fx-effect: innershadow(three-pass-box, rgba(0, 0, 0, 0.7), 6, 0.0, 0, 2);
+	-fx-text-fill: white;
+	-fx-color: white;
+	-fx-fill: #223768;
+}
+.combo-box-base select {
+	-fx-text-fill: white;
+	-fx-background-color: transparent;
+}
+.combo-box-base .list-view {
+	-fx-background-color: #223768;
+}
+
+.combo-box-base .list-cell {
+	-fx-text-fill: white;
+	-fx-background-color: transparent;
+	-fx-padding: 1 5 2 5;
+}
 .mycell {
 	-fx-text-fill: white;
 	-fx-font-size: 8px;

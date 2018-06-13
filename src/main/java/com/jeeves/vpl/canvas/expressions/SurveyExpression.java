@@ -1,7 +1,6 @@
 package com.jeeves.vpl.canvas.expressions;
 
 import static com.jeeves.vpl.Constants.VAR_BOOLEAN;
-import static com.jeeves.vpl.Constants.styleTextCombo;
 
 import com.jeeves.vpl.Main;
 import com.jeeves.vpl.ParentPane;
@@ -18,7 +17,6 @@ import javafx.scene.control.ComboBox;
 import javafx.stage.Popup;
 
 public class SurveyExpression extends Expression { // NO_UCD (unused code)
-	public static final String DESC = "Returns true if the specified survey was completed";
 	public static final String NAME = "Survey Result";
 	public boolean manualChange = false;
 	private ComboBox<String> cboSurveys;
@@ -114,11 +112,6 @@ public class SurveyExpression extends Expression { // NO_UCD (unused code)
 	}
 
 	@Override
-	public Node[] getWidgets() {
-		return new Node[] { cboSurveys, cboDoneOrNot };
-	}
-
-	@Override
 	public void setData(FirebaseExpression model) {
 		super.setData(model);
 		updatePane();
@@ -145,7 +138,6 @@ public class SurveyExpression extends Expression { // NO_UCD (unused code)
 	@Override
 	public void setup() {
 		name = NAME;
-		description = DESC;
 		this.varType = VAR_BOOLEAN;
 		operand.setText("was");
 		box.getStyleClass().add(this.varType);
@@ -157,8 +149,7 @@ public class SurveyExpression extends Expression { // NO_UCD (unused code)
 		cboSurveys = new ComboBox<String>();
 		cboDoneOrNot = new ComboBox<String>();
 
-		styleTextCombo(cboSurveys);
-		styleTextCombo(cboDoneOrNot);
+
 		setup();
 		box.getChildren().clear();
 		box.getChildren().addAll(cboSurveys, operand, cboDoneOrNot);

@@ -2,10 +2,9 @@ package com.jeeves.vpl.canvas.receivers;
 
 import java.util.Arrays;
 
-import com.jeeves.vpl.ActionHolder;
-import com.jeeves.vpl.Main;
 import com.jeeves.vpl.Constants.ElementType;
 import com.jeeves.vpl.ViewElement;
+import com.jeeves.vpl.canvas.ifsloops.Control;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -95,7 +94,7 @@ public class ActionReceiver extends Receiver {
 		super.addChildAtIndex(child, index);
 		addChildHandlers(child);
 		if (child.getType() == ElementType.CTRL_ACTION) {
-			((ActionHolder) child).getMyReceiver().setParentReceiver(this);
+			((Control) child).getMyReceiver().setParentReceiver(this);
 		}
 		Platform.runLater(new Runnable() {
 			@Override
@@ -258,7 +257,7 @@ public class ActionReceiver extends Receiver {
 		child.setOnMouseDragEntered(null);
 		child.setManaged(false);
 		if (child.getType() == ElementType.CTRL_ACTION) {
-			((ActionHolder) child).getMyReceiver().setParentReceiver(null);
+			((Control) child).getMyReceiver().setParentReceiver(null);
 		}
 		elements.getChildren().remove(child);
 		childList.remove(child);

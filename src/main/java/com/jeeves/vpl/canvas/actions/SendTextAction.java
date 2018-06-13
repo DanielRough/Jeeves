@@ -24,12 +24,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 
 public class SendTextAction extends Action { // NO_UCD (unused code)
-	public static final String DESC = "Send a text message to a specified recipient";
 	public static final String NAME = "Send SMS";
 	@FXML
 	public HBox hboxSMS;
 	@FXML
-	//private ComboBox<String> cboRecipient;
 	private String messagetext;
 	private TextArea smsText;
 	@FXML
@@ -100,7 +98,6 @@ public class SendTextAction extends Action { // NO_UCD (unused code)
 	public void fxmlInit() {
 		super.fxmlInit();
 		name = NAME;
-		description = DESC;
 		smsText = new TextArea();
 		numberReceiver = new ExpressionReceiver(VAR_NUMERIC);
 		hboxSMS.getChildren().add(numberReceiver);
@@ -113,10 +110,6 @@ public class SendTextAction extends Action { // NO_UCD (unused code)
 		return String.format("/actionSendText.fxml", this.getClass().getSimpleName());
 	}
 
-	@Override
-	public Node[] getWidgets() {
-		return new Node[] { txtMessage, numberReceiver};
-	}
 	@Override
 	public void setParentPane(ParentPane parent) {
 		super.setParentPane(parent);

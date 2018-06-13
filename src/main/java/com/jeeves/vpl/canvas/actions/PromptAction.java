@@ -15,7 +15,6 @@ import javafx.scene.input.MouseEvent;
 import com.jeeves.vpl.firebase.FirebaseAction;
 
 public class PromptAction extends Action { // NO_UCD (unused code)
-	public final String DESC = "Notify patient with a textual message";
 	public final String NAME = "Send Prompt";
 	private String prompttext;
 	private TextArea smsText;
@@ -80,7 +79,6 @@ public class PromptAction extends Action { // NO_UCD (unused code)
 	public void fxmlInit() {
 		super.fxmlInit();
 		name = NAME;
-		description = DESC;
 		smsText = new TextArea();
 
 	}
@@ -90,10 +88,6 @@ public class PromptAction extends Action { // NO_UCD (unused code)
 		return String.format("/actionSendPrompt.fxml", this.getClass().getSimpleName());
 	}
 
-	@Override
-	public Node[] getWidgets() {
-		return new Node[] { txtPrompt };
-	}
 
 	@Override
 	public void setData(FirebaseAction model) {

@@ -17,7 +17,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.layout.HBox;
 
 public class LocationTrigger extends Trigger { // NO_UCD (unused code)
-	public static final String DESC = "Schedule actions to take place when a phone sensor returns a particular result";
 	public static final String NAME = "Location Trigger";
 	private ExpressionReceiver variableReceiver;
 	
@@ -54,7 +53,6 @@ public class LocationTrigger extends Trigger { // NO_UCD (unused code)
 	public void fxmlInit() {
 		super.fxmlInit();
 		name = NAME;
-		description = DESC;
 		variableReceiver = new ExpressionReceiver(VAR_LOCATION);
 		hboxBox.getChildren().add(variableReceiver);
 	}
@@ -64,10 +62,6 @@ public class LocationTrigger extends Trigger { // NO_UCD (unused code)
 		return String.format("/TriggerLocation.fxml", this.getClass().getSimpleName());
 	}
 
-	@Override
-	public Node[] getWidgets() {
-		return new Node[] {cboClassifications };
-	}
 	
 	@Override
 	public void setParentPane(ParentPane parent) {

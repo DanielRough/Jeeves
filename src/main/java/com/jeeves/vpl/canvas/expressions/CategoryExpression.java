@@ -3,7 +3,6 @@ package com.jeeves.vpl.canvas.expressions;
 import static com.jeeves.vpl.Constants.VAR_BOOLEAN;
 import static com.jeeves.vpl.Constants.VAR_CATEGORY;
 import static com.jeeves.vpl.Constants.categoryOpts;
-import static com.jeeves.vpl.Constants.styleTextCombo;
 
 import java.util.List;
 
@@ -22,7 +21,6 @@ import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 
 public class CategoryExpression extends Expression { // NO_UCD (unused code)
-	public static final String DESC = "evaluates to true if the category attribute is currently the selected category";
 	public static final String NAME = "Category";
 	private ExpressionReceiver categoryReceiver;
 	private ComboBox<String> cboCategories;
@@ -80,10 +78,7 @@ public class CategoryExpression extends Expression { // NO_UCD (unused code)
 				
 		}
 	}
-	@Override
-	public Node[] getWidgets() {
-		return new Node[] {cboCategories};
-	}
+
 	
 	public CategoryExpression(FirebaseExpression data) {
 		super(data);
@@ -132,7 +127,6 @@ public class CategoryExpression extends Expression { // NO_UCD (unused code)
 	@Override
 	public void setup() {
 		name = NAME;
-		description = DESC;
 		this.varType = VAR_BOOLEAN;
 		operand.setText("is equal to");
 		categoryReceiver = new ExpressionReceiver(VAR_CATEGORY);
@@ -144,7 +138,6 @@ public class CategoryExpression extends Expression { // NO_UCD (unused code)
 	public void updatePane() {
 		super.updatePane();
 		cboCategories = new ComboBox<String>();
-		styleTextCombo(cboCategories);
 		cboCategories.setPrefHeight(20);
 		cboCategories.setMinHeight(USE_PREF_SIZE);
 		box.getChildren().addAll(categoryReceiver,operand,cboCategories);
