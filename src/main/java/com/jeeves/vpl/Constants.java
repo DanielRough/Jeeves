@@ -1,7 +1,10 @@
 package com.jeeves.vpl;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.jeeves.vpl.firebase.FirebaseProject;
 
@@ -10,44 +13,40 @@ import javafx.collections.ObservableMap;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.input.KeyEvent;
-import javafx.util.Callback;
 
 public class Constants {
-	
+
 	public static FirebaseProject openProject;
-	
+
 	public static void setOpenProject(FirebaseProject proj){
 		openProject = proj;
 	}
-	
+
 	public static final int OBJID_LENGTH = 18;
 	public static final int PROJID_LENGTH = 5;
+	
 	//When we first load up the triggers from file, we don't want to update the trigger IDs
 	public static boolean SHOULD_UPDATE_TRIGGERS = true;
+	
 	public static enum ElementType {
 		ACTION, CTRL_ACTION, EXPRESSION, QUESTION, TRIGGER, UIELEMENT, VARIABLE;
 	}
-	
+
 	//Question types (these are simple ints rather than enums for simplicity in uploading to Firebase)
-	public static final int OPEN_ENDED = 1;
-	public static final int MULT_SINGLE = 2;
-	public static final int MULT_MANY = 3; 
-	public static final int SCALE = 4;
-	public static final int DATE = 5; 
-	public static final int GEO = 6; 
-	public static final int BOOLEAN = 7;
-	public static final int NUMERIC = 8;
-	public static final int TIME = 9; 
-	public static final int WIFI = 10;
-	public static final int BLUETOOTH = 11;
-	public static final int IMAGEPRESENT = 12;
-	public static final int TEXTPRESENT = 13;
-	public static final int HEART = 14;
-	public static final int AUDIO = 15;
+	public static final String OPEN_ENDED = "OPEN_ENDED";
+	public static final String MULT_SINGLE = "MULT_SINGLE";
+	public static final String MULT_MANY = "MULT_MANY"; 
+	public static final String SCALE = "SCALE";
+	public static final String DATE = "DATE"; 
+	public static final String GEO = "GEO"; 
+	public static final String BOOLEAN = "BOOLEAN";
+	public static final String NUMERIC = "NUMERIC";
+	public static final String TIME = "TIME"; 
+	public static final String IMAGEPRESENT = "IMAGEPRESENT";
+	public static final String TEXTPRESENT = "TEXTPRESENT";
+	public static final String HEART = "HEART";
+	public static final String AUDIO = "AUDIO";
 	//Variable types (these are Strings because they also refer to class names in Styles.css)
 	public static final String VAR_ANY = "Any";
 	public static final String VAR_BOOLEAN = "Boolean";
@@ -59,7 +58,10 @@ public class Constants {
 	public static final String VAR_BLUETOOTH = "Bluetooth";
 	public static final String VAR_NONE = "None";
 	public static final String VAR_NUMERIC = "Numeric";
-	
+	public static final String VAR_RANDOM = "Random";
+
+	//Some other String constants
+	public static final String NEW_PROJ = "New Project";
 	public static class Sensor {
 
 		private String image;
@@ -73,7 +75,7 @@ public class Constants {
 			this.values = values;
 			this.isPull = isPull;
 		}
-		
+
 		public boolean isPull(){
 			return isPull;
 		}
@@ -88,47 +90,73 @@ public class Constants {
 		}
 	}
 	// Sensor constants
-		private static Sensor accelSensor = new Sensor("Activity", "/img/icons/accelerometer.png",
-				new String[] {"Walking", "Running", "Still", "Driving"},true);
-		public static Sensor bluetoothSensor = new Sensor(VAR_BLUETOOTH, "/img/icons/bluetooth.png", new String[] {},true);
-		public static Sensor wifiSensor = new Sensor(VAR_WIFI, "/img/icons/wifi.png", new String[] {},true);
-		public static Sensor microphoneSensor = new Sensor("Microphone", "/img/icons/microphone.png", new String[] {"Noisy","Quiet"},true);
-		private static Sensor smsSensor = new Sensor("SMS", "/img/icons/sms.png",
-				new String[] { "Message Sent", "Message Received" },false);
-		
-		public static final Sensor[] sensors = { accelSensor, /*locSensor, */smsSensor,wifiSensor,bluetoothSensor,microphoneSensor };
-		public static ObservableMap<String,String[]> categoryOpts = FXCollections.observableHashMap();
+	private static Sensor accelSensor = new Sensor("Activity", "/img/icons/accelerometer.png", new String[] {"Walking", "Running", "Still", "Driving"},true);
+	public static Sensor microphoneSensor = new Sensor("Microphone", "/img/icons/microphone.png", new String[] {"Noisy","Quiet"},true);
+	private static Sensor smsSensor = new Sensor("SMS", "/img/icons/sms.png", new String[] { "Message Sent", "Message Received" },false);
 
-	//Trigger, action, other such names for dynamic loading
-	public static String[] actionNames = { "com.jeeves.vpl.canvas.actions.PromptAction",
-			"com.jeeves.vpl.canvas.actions.SendTextAction", "com.jeeves.vpl.canvas.actions.UpdateAction",
-			"com.jeeves.vpl.canvas.actions.SurveyAction", "com.jeeves.vpl.canvas.actions.CaptureDataAction",
-			"com.jeeves.vpl.canvas.actions.WaitingAction", "com.jeeves.vpl.canvas.ifsloops.IfControl"};
-	public static String[] exprNames = { "com.jeeves.vpl.canvas.expressions.AndExpression",
-			"com.jeeves.vpl.canvas.expressions.OrExpression", "com.jeeves.vpl.canvas.expressions.NotExpression",
-			"com.jeeves.vpl.canvas.expressions.EqualsExpression", "com.jeeves.vpl.canvas.expressions.GreaterExpression","com.jeeves.vpl.canvas.expressions.LessExpression","com.jeeves.vpl.canvas.expressions.LocationExpression", "com.jeeves.vpl.canvas.expressions.CategoryExpression","com.jeeves.vpl.canvas.expressions.DateBeforeAfter",
-			"com.jeeves.vpl.canvas.expressions.SurveyExpression","com.jeeves.vpl.canvas.expressions.TimeExpression","com.jeeves.vpl.canvas.expressions.DateExpression" };
-	public static final String[] questionNames = { "com.jeeves.vpl.survey.questions.QuestionDate","com.jeeves.vpl.survey.questions.QuestionTime",
-			"com.jeeves.vpl.survey.questions.QuestionLikert", "com.jeeves.vpl.survey.questions.QuestionLocation",
-			"com.jeeves.vpl.survey.questions.QuestionMultMany", "com.jeeves.vpl.survey.questions.QuestionMultSingle",
-			"com.jeeves.vpl.survey.questions.QuestionNumber", "com.jeeves.vpl.survey.questions.QuestionText",
-			"com.jeeves.vpl.survey.questions.QuestionTrueFalse","com.jeeves.vpl.survey.questions.QuestionHeart","com.jeeves.vpl.survey.questions.QuestionAudio","com.jeeves.vpl.survey.questions.QuestionImagePresent","com.jeeves.vpl.survey.questions.PresentText"
+	public static final Sensor[] sensors = { accelSensor,smsSensor,microphoneSensor };
+	public static ObservableMap<String,String[]> categoryOpts = FXCollections.observableHashMap();
+
+	public static final String[][] questionNames = {
+			{DATE,"/img/icons/imgdate.png","Select a Date","QuestionDate"},
+			{TIME,"/img/icons/imgtime.png","Select a Time","QuestionTime"},
+			{SCALE,"/img/icons/imgscale.png","Select from a Likert Scale","QuestionLikert"},
+			{GEO,"/img/icons/imggeo.png","Choose a location on a map","QuestionLocation"},
+			{MULT_MANY,"/img/icons/imgmany.png","Select multiple options from a list","QuestionMultMany"},
+			{MULT_SINGLE,"/img/icons/imgsingle.png","Select one option from a list","QuestionMultSingle"},
+			{NUMERIC,"/img/icons/imgnumeric.png","Select a number","QuestionNumber"},
+			{OPEN_ENDED,"/img/icons/imgfreetext.png","Enter free text","QuestionText"},
+			{BOOLEAN,"/img/icons/imgbool.png","Choose true or false","QuestionTrueFalse"},
+			{HEART,"/img/icons/heart.png","Capture user's heart rate","QuestionHeart"},
+			{AUDIO,"/img/icons/audio.png","Play audio file to user","QuestionAudio"},
+			{IMAGEPRESENT,"/img/icons/camera.png","Present image to user","QuestionImagePresent"},
+			{TEXTPRESENT,"/img/icons/textpresent.png","Present text to user","PresentText"}
 	};
-	public static final String[] triggerNames = { "com.jeeves.vpl.canvas.triggers.BeginTrigger",
-			"com.jeeves.vpl.canvas.triggers.ButtonTrigger", "com.jeeves.vpl.canvas.triggers.ClockTriggerInterval",
-			"com.jeeves.vpl.canvas.triggers.ClockTriggerSetTimes","com.jeeves.vpl.canvas.triggers.LocationTrigger",
-			"com.jeeves.vpl.canvas.triggers.SensorTrigger", "com.jeeves.vpl.canvas.triggers.SurveyTrigger" };
-	public static final String[] uiElementNames = { "com.jeeves.vpl.canvas.uielements.UIButton",
-			"com.jeeves.vpl.canvas.uielements.UILabel" };
+	public static final Map<String,String> trigNames = Stream.of(new String[][] {
+		{"Begin Trigger","BeginTrigger"},
+		{"Button Trigger","ButtonTrigger"},
+		{"Repeated Time Trigger","ClockTriggerInterval"},
+		{"Set Times Trigger","ClockTriggerSetTimes"},
+		{"Location Trigger","LocationTrigger"},
+		{"Sensor Trigger","SensorTrigger"},
+		{"Survey Trigger","SurveyTrigger"}, 
+		}).collect(Collectors.toMap(data -> data[0], data -> data[1]));
+	public static final Map<String,String> actNames = Stream.of(new String[][] {
+		{"Prompt User","PromptAction"},
+		{"Send SMS","SendTextAction"}, 
+		{"Update User Attribute","UpdateAction"},
+		{"Send Survey","SurveyAction"}, 
+		{"Sense Data","CaptureDataAction"},
+		{"Snooze App","WaitingAction"}, 
+		{"If Condition","IfControl"}, 
+		{"While Condition","WhileControl"},
+		}).collect(Collectors.toMap(data -> data[0], data -> data[1]));
+	public static final Map<String,String> exprNames = Stream.of(new String[][] {
+		{"Both True","AndExpression"},
+		{"Either True","OrExpression"},
+		{"Not True","NotExpression"},
+		{"Equality","EqualsExpression"},
+		{"Greater Than","GreaterExpression"},
+		{"Less Than","LessExpression"},
+		{"Location","LocationExpression"},
+		{"Category","CategoryExpression"},
+		{"Date Before/After","DateBeforeAfter"},
+		{"Survey Result","SurveyExpression"},
+		{"Time Bounds","TimeExpression"},
+		{"Date Bounds","DateExpression"}
+	}).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 	
+	public static final Map<String,String> elemNames = Stream.of(new String[][] {
+		{"button","UIButton"},
+		{"label","UILabel"}, 
+		}).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 	
+
 	public static final String[] CHILD_COLOURS = new String[] { "lightcyan", "pink", "lemonchiffon", "palegreen",
 			"lavender", "sandybrown", "white" };
-	
-	public static ArrayList<Integer> CONSTRAINT_NUMS = new ArrayList<Integer>();
-	public static final String DATE_FROM = "dateFrom";
 
-	public static final String DATE_TO = "dateTo";
+	public static ArrayList<Integer> CONSTRAINT_NUMS = new ArrayList<Integer>();
+
 
 	// Database constants
 	public static final String DB_URL = "https://jeeves-27914.firebaseio.com/";
@@ -138,7 +166,7 @@ public class Constants {
 	public static final String PUBLIC_COLL = "public";
 	public static final String PATIENTS_COLL = "patients";
 	public static final String PROJECTS_COLL = "projects";
-	
+
 	// Clock trigger / time expression constants
 	public static final String[] DURATIONS_SHORT = {"minutes","hours"};
 	public static final String[] DURATIONS = { "minutes", "hours", "days", "weeks" };
@@ -146,8 +174,9 @@ public class Constants {
 	public static final String LIMIT_AFTER_HOUR = "limitAfterHour";
 	public static final String LIMIT_BEFORE_HOUR = "limitBeforeHour";
 	public static final String INTERVAL_WINDOW = "intervalWindowLength";
+	public static final String DATE_FROM = "dateFrom";
+	public static final String DATE_TO = "dateTo";
 
-	
 	//A static method to make Info alerts
 	public static void makeInfoAlert(String titleText, String headerText, String infoText){
 		Alert alert = new Alert(AlertType.INFORMATION);
@@ -171,7 +200,7 @@ public class Constants {
 		}
 	};
 
-	
+
 	public static String getSalt(int length) {
 		String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 		StringBuilder salt = new StringBuilder();
@@ -186,7 +215,7 @@ public class Constants {
 	public static String getSaltString() {
 		return getSalt(OBJID_LENGTH);
 	}
-	
+
 	//Generate a smaller project ID (easier to remember)
 	public static String generateProjectID() {
 		return getSalt(PROJID_LENGTH);

@@ -23,6 +23,10 @@ public class FirebaseUI extends FirebaseElement implements Serializable {
 		return textProperty;
 	}
 
+	public FirebaseUI() {}
+	public FirebaseUI(String name) {
+		this.name.setValue(name);
+	}
 	public String gettext() {
 		return text;
 	}

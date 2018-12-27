@@ -1,12 +1,13 @@
 package com.jeeves.vpl;
 
 import com.jeeves.vpl.Constants.ElementType;
+import com.jeeves.vpl.canvas.actions.UpdateAction;
+import com.jeeves.vpl.firebase.FirebaseAction;
 import com.jeeves.vpl.firebase.FirebaseElement;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -22,9 +23,9 @@ import javafx.scene.layout.Pane;
 
 public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 	// Create a new ViewElement from just the class name
-	public static ViewElement create(String name) {
+	public static ViewElement create(String name, String classname) {
 		try {
-			return (ViewElement) Class.forName(name).getConstructor().newInstance();
+			return (ViewElement) Class.forName(classname).getConstructor(String.class).newInstance(name);
 		} catch (Exception e) {
 			e.printStackTrace();// better than null
 		}
@@ -32,8 +33,7 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 	}
 	protected T model;
 	protected ElementType type;
-	protected String name;
-	protected ParentPane parentPane;
+	protected DragPane parentPane;
 	protected int oldIndex;
 	protected Main gui;
 
@@ -49,18 +49,13 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 	protected EventHandler<MouseEvent> releasedHandler;
 	protected EventHandler<MouseEvent> sidebarElemHandler;
 
+	//I 
 	public ViewElement(T data, Class<T> typeParameterClass) {
 		this.gui = Main.getContext();
 		fxmlInit();
-		if(data != null)
-			setData(data);
 		addListeners();
+		setData(data);
 		initEventHandlers();
-		try {
-			this.model = typeParameterClass.newInstance();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		setPickOnBounds(false);
 	}
 
@@ -84,7 +79,7 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 	}
 
 	public String getName() {
-		return name;
+		return model.getname();
 	}
 
 	// The element's position is an X,Y coordinate on the Canvas
@@ -220,7 +215,7 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 		this.addEventHandler(MouseEvent.ANY, handler);
 	}
 
-	public void setParentPane(ParentPane parent) {
+	public void setParentPane(DragPane parent) {
 		this.parentPane = parent;
 		addAllHandlers();
 	}
@@ -237,7 +232,6 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 		addEventHandler(MouseEvent.ANY, sidebarElemHandler);
 		Pane child = (Pane)getChildren().get(0);
 		for(int i = 0; i < child.getChildren().size(); i++) {
-			System.out.println(child.getChildren().get(i));
 			child.getChildren().get(i).setDisable(true);
 			child.getChildren().get(i).setMouseTransparent(true);
 		}
@@ -254,13 +248,17 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 		layoutYProperty().addListener(listener -> {
 			model.setyPos((long) getLayoutY());
 		});
-		model.settype(getInstance().getClass().getName());
-		model.setname(getName());
 
 	}
 
+	//I worry that this will overwrite the model stuff that's already in there.
 	protected void setData(T model) {
+		
 		this.model = model;
+		if(this instanceof UpdateAction) {
+			System.out.println("WOO " + ((FirebaseAction)model).getvars());
+			System.out.println("Position: " + model.getxPos() + "," + model.getyPos());
+		}
 		Point2D position = new Point2D(model.getxPos(), model.getyPos());
 		setPosition(position);
 	}

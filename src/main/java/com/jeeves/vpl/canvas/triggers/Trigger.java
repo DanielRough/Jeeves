@@ -1,12 +1,15 @@
 package com.jeeves.vpl.canvas.triggers;
 
+import static com.jeeves.vpl.Constants.SHOULD_UPDATE_TRIGGERS;
+import static com.jeeves.vpl.Constants.getSaltString;
+
+import static com.jeeves.vpl.Constants.trigNames;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import com.jeeves.vpl.Constants.ElementType;
-import com.jeeves.vpl.ParentPane;
+import com.jeeves.vpl.DragPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.actions.Action;
 import com.jeeves.vpl.canvas.receivers.ActionReceiver;
@@ -23,14 +26,12 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 
-import static com.jeeves.vpl.Constants.*;
-
 @SuppressWarnings("rawtypes")
 
 public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 	public static Trigger create(FirebaseTrigger exprmodel) {
-		String classname = exprmodel.gettype();
-
+		String trigname = exprmodel.getname();
+		String classname = "com.jeeves.vpl.canvas.triggers." + trigNames.get(trigname);
 		try {
 			return (Trigger) Class.forName(classname).getConstructor(FirebaseTrigger.class).newInstance(exprmodel);
 		} catch (Exception e) {
@@ -49,14 +50,13 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 
 	protected ObservableMap<String, Object> params;
 
-	public Trigger() {
-		super(null,FirebaseTrigger.class);
+	public Trigger() throws InstantiationException, IllegalAccessException {
+		super(FirebaseTrigger.class.newInstance(),FirebaseTrigger.class);
 	}
 
 
 	public Trigger(FirebaseTrigger data) {
 		super(data, FirebaseTrigger.class);
-		this.model = data;
 		int actionNumber = 0;
 		if (model.gettriggerId() == null){
 			if(SHOULD_UPDATE_TRIGGERS)
@@ -66,11 +66,37 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 			for(Action a : actions){
 				childReceiver.addChildAtIndex(a, actionNumber++);
 			}
+			addActionListeners();
 		loading = false; // To check whether we change the salt string on the
 		// first action initiation
 
 	}
 
+	private void addActionListeners() {
+		//IF any old action is changed
+		actions.forEach(myaction -> {
+			myaction.getparams().addListener(new MapChangeListener<String, Object>() {
+				@Override
+				public void onChanged(
+						javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
+					if(SHOULD_UPDATE_TRIGGERS)
+						model.settriggerId(getSaltString());
+				}
+
+			});
+			//Also listen on this action's expressions changing (if it has any)
+			myaction.getVars().addListener(new ListChangeListener<FirebaseExpression>(){
+
+				@Override
+				public void onChanged(
+						javafx.collections.ListChangeListener.Change<? extends FirebaseExpression> c) {
+					if(SHOULD_UPDATE_TRIGGERS)
+						model.settriggerId(getSaltString()); // Again, update,
+				}
+
+			});
+		});
+	}
 	@Override
 	public void addListeners() {
 		super.addListeners();
@@ -80,9 +106,10 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 			@Override
 			public void onChanged(
 					javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
-				if(SHOULD_UPDATE_TRIGGERS)
-					model.settriggerId(getSaltString()); // Again, update, must
-				// reset
+				if(SHOULD_UPDATE_TRIGGERS) {
+					System.out.println("DAH DAH DAH " + getInstance().getClass().getSimpleName());
+					model.settriggerId(getSaltString());
+				}
 				if (change.wasAdded()) {
 					model.getparams().put(change.getKey(), change.getValueAdded());
 				} else {
@@ -130,30 +157,7 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 				});
 			});
 		});
-		//IF any old action is changed
-		actions.forEach(myaction -> {
-			myaction.getparams().addListener(new MapChangeListener<String, Object>() {
-				@Override
-				public void onChanged(
-						javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
-					if(SHOULD_UPDATE_TRIGGERS)
-						model.settriggerId(getSaltString()); // Again, update,
-					// must reset
-				}
 
-			});
-			//Also listen on this action's expressions changing (if it has any)
-			myaction.getVars().addListener(new ListChangeListener<FirebaseExpression>(){
-
-				@Override
-				public void onChanged(
-						javafx.collections.ListChangeListener.Change<? extends FirebaseExpression> c) {
-					if(SHOULD_UPDATE_TRIGGERS)
-						model.settriggerId(getSaltString()); // Again, update,
-				}
-
-			});
-		});
 
 
 	}
@@ -161,10 +165,11 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 	@Override
 	public void fxmlInit() {
 		this.type = ElementType.TRIGGER;
-		this.name = NAME;
+		//Need to initialise a new model
+		this.model = new FirebaseTrigger();
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setController(this);
-		fxmlLoader.setLocation(getClass().getResource(getViewPath()));
+		fxmlLoader.setLocation(getClass().getResource("/" + getClass().getSimpleName() + ".fxml"));
 		try {
 			root = (Node) fxmlLoader.load();
 			getChildren().add(root);
@@ -205,10 +210,9 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 		return childReceiver;
 	}
 
-	public abstract String getViewPath();
 
 	@Override
-	public void setParentPane(ParentPane parent) {
+	public void setParentPane(DragPane parent) {
 		super.setParentPane(parent);
 		actions.forEach(action -> {
 			action.setParentPane(parent);

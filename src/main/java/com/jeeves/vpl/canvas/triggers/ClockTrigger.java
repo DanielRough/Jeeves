@@ -8,16 +8,14 @@ import static com.jeeves.vpl.Constants.VAR_CLOCK;
 import static com.jeeves.vpl.Constants.VAR_DATE;
 
 import java.net.URL;
-import java.util.ArrayList;
 
-import com.jeeves.vpl.ParentPane;
+import com.jeeves.vpl.DragPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.expressions.UserVariable;
 import com.jeeves.vpl.canvas.receivers.DateReceiver;
 import com.jeeves.vpl.canvas.receivers.TimeReceiver;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
-import com.jeeves.vpl.firebase.FirebaseVariable;
 
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
@@ -30,27 +28,6 @@ import javafx.stage.Stage;
 
 public abstract class ClockTrigger extends Trigger { // NO_UCD (use default)
 
-	public class CalendarEveryday extends Pane {
-
-		@FXML
-		private ImageView imgCalendar;
-
-		public CalendarEveryday() {
-			FXMLLoader fxmlLoader = new FXMLLoader();
-			fxmlLoader.setController(this);
-			URL location = this.getClass().getResource("/calevery.fxml");
-			fxmlLoader.setLocation(location);
-			try {
-				Node root = (Node) fxmlLoader.load();
-				getChildren().add(root);
-				imgCalendar.setImage(new Image("/img/icons/calenda.png"));
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
 	protected Pane datePane;
 	protected DateReceiver dateReceiverFrom;
 	protected DateReceiver dateReceiverTo;
@@ -59,7 +36,6 @@ public abstract class ClockTrigger extends Trigger { // NO_UCD (use default)
 
 	protected TimeReceiver timeReceiverTo;
 
-	// protected NewDatePane newDatePane;
 	public ClockTrigger(FirebaseTrigger data) {
 		super(data);
 	}
@@ -67,8 +43,6 @@ public abstract class ClockTrigger extends Trigger { // NO_UCD (use default)
 	@Override
 	public void addListeners() {
 		super.addListeners();
-		if(model.getvariables() == null)
-			model.setvariables(new ArrayList<String>());
 		
 		timeReceiverFrom.getChildElements().addListener(
 				(ListChangeListener<ViewElement>) listener ->{
@@ -200,7 +174,7 @@ public abstract class ClockTrigger extends Trigger { // NO_UCD (use default)
 	}
 
 	@Override
-	public void setParentPane(ParentPane parent) {
+	public void setParentPane(DragPane parent) {
 		super.setParentPane(parent);
 		if (timeReceiverFrom.getChildExpression() != null)
 			timeReceiverFrom.getChildExpression().setParentPane(parent);

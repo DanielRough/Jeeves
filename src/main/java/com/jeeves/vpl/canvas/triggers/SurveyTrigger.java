@@ -21,7 +21,6 @@ import com.jeeves.vpl.firebase.FirebaseTrigger;
  * @author Daniel
  */
 public class SurveyTrigger extends Trigger { // NO_UCD (use default)
-	public static final String NAME = "Survey Trigger";
 	@FXML
 	private ComboBox<String> cboCompMissed;
 	@FXML
@@ -30,14 +29,19 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 //	@FXML
 //	private TextField txtNumberOfTimes;
 
-	public SurveyTrigger() {
-		this(new FirebaseTrigger());
+	public SurveyTrigger(String name) {
+		this(new FirebaseTrigger(name));
 	}
 
 	public SurveyTrigger(FirebaseTrigger data) {
 		super(data);
 	}
 
+	{
+		cboCompMissed.getItems().clear();
+		cboCompMissed.getItems().addAll("completed", "missed");
+		cboCompMissed.setValue("missed");
+	}
 	@Override
 	public void addListeners() {
 		super.addListeners();
@@ -53,8 +57,6 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 				String value = cboSurvey.getValue();
 				cboSurvey.getItems().clear();
 				surveys.forEach(survey -> {
-			//		if (isReadOnly)
-			//			return;
 					cboSurvey.getItems().add(survey.gettitle());
 					if (survey.gettitle().equals(value))
 						cboSurvey.setValue(value);
@@ -70,7 +72,6 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 
 							if (index >= 0)
 								cboSurvey.getSelectionModel().clearAndSelect(index);
-								//	cboSurvey.setValue(surveys.get(index).gettitle());
 
 						}
 
@@ -91,88 +92,27 @@ public class SurveyTrigger extends Trigger { // NO_UCD (use default)
 
 		};
 		cboSurvey.valueProperty().addListener(listener);
-
-	//	cboSurvey.getSelectionModel().clearAndSelect(0); //default
 		cboCompMissed.valueProperty().addListener(new ChangeListener<String>(){
 
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				params.put("result", cboCompMissed.getValue());
-				//System.out.println("Result is " + cboCompMissed.getValue());
 			}
 			
 		});
-		//if we don't already have a result, give it a default
-		if(!model.getparams().containsKey("result")){
-			cboCompMissed.setValue("completed");
-			//System.out.println("THIS OUGHTA BE HAPPENIN");
-		}
-			//System.out.println("RESULT IS " + model.getparams().get("result"));
-//		txtNumberOfTimes.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
-//
-//			@Override
-//			public void handle(KeyEvent arg0) {
-//				try {
-//					Long.parseLong(arg0.getCharacter());
-//				} catch (NumberFormatException e) {
-//					arg0.consume();
-//					return;
-//				}
-//			}
-//		});
-		//txtNumberOfTimes.setText("1"); //default
-
-//		txtNumberOfTimes.textProperty().addListener(new ChangeListener<String>(){
-//
-//			@Override
-//			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-//				params.put("numTimes", txtNumberOfTimes.getText());
-//				//System.out.println("Result is " + txtNumberOfTimes.getText());
-//
-//			}
-//			
-//		});
-		//Again, if we don't already have a number of times, give it a default
-//		if(!model.getparams().containsKey("numTimes"))
-//			txtNumberOfTimes.setText("1");
-//		txtNumberOfTimes.addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
-//
-//			@Override
-//			public void handle(KeyEvent arg0) {
-//				params.put("numTimes", txtNumberOfTimes.getText());
-//			}
-//		});
 	}
 
-	@Override
-	public void fxmlInit() {
-		super.fxmlInit();
-		name = NAME;
-		cboCompMissed.getItems().clear();
-		cboCompMissed.getItems().addAll("completed", "missed");
-		cboCompMissed.setValue("missed");
-	}
-
-	@Override
-	public String getViewPath() {
-		return String.format("/TriggerSurvey.fxml", this.getClass().getSimpleName());
-	}
 
 	@Override
 	public void setData(FirebaseTrigger model) {
 		super.setData(model);
-		// Map<String,Object> params = model.getparams();
-		if (params.containsKey("selectedSurvey") && params.get("selectedSurvey") != null) { // Bah
-																							// this
-																							// is
-																							// dodgy
+		if (params.containsKey("selectedSurvey") && params.get("selectedSurvey") != null) { 
 			cboSurvey.setValue(params.get("selectedSurvey").toString());
 		}
 
 		String completed = params.containsKey("result") ? params.get("result").toString() : "missed";
 
 		cboCompMissed.setValue(completed);
-		//txtNumberOfTimes.setText(params.containsKey("numTimes") ? params.get("numTimes").toString() : "");
 
 	}
 }

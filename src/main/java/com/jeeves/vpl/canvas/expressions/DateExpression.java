@@ -1,11 +1,10 @@
 package com.jeeves.vpl.canvas.expressions;
 
-import static com.jeeves.vpl.Constants.VAR_BOOLEAN;
 import static com.jeeves.vpl.Constants.VAR_DATE;
 
 import java.util.Map;
 
-import com.jeeves.vpl.ParentPane;
+import com.jeeves.vpl.DragPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.receivers.DateReceiver;
 import com.jeeves.vpl.firebase.FirebaseExpression;
@@ -13,16 +12,14 @@ import com.jeeves.vpl.firebase.FirebaseVariable;
 
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 
 public class DateExpression extends Expression { // NO_UCD (unused code)
-	public static final String NAME = "Date Bounds";
 	private DateReceiver exprDateFrom;
 	private DateReceiver exprDateTo;
 
-	public DateExpression() {
-		this(new FirebaseExpression());
+	public DateExpression(String name) {
+		this(new FirebaseExpression(name));
 	}
 
 	public DateExpression(FirebaseExpression data) {
@@ -31,7 +28,7 @@ public class DateExpression extends Expression { // NO_UCD (unused code)
 
 	}
 	@Override
-	public void setParentPane(ParentPane parent) {
+	public void setParentPane(DragPane parent) {
 		super.setParentPane(parent);
 			if (exprDateFrom.getChildExpression() != null)
 				exprDateFrom.getChildExpression().setParentPane(parent);
@@ -41,9 +38,6 @@ public class DateExpression extends Expression { // NO_UCD (unused code)
 	@Override
 	public void addListeners() {
 		super.addListeners();
-
-		model.getparams().put("dateBoundEarly", exprDateFrom.getText());
-		model.getparams().put("dateBoundLate", exprDateTo.getText());
 
 		exprDateFrom.getChildElements().addListener((ListChangeListener<ViewElement>) listener -> {
 			params.put("dateBoundEarly",exprDateFrom.getChildModel());
@@ -125,10 +119,7 @@ public class DateExpression extends Expression { // NO_UCD (unused code)
 
 	@Override
 	public void setup() {
-		name = NAME;
-		this.varType = VAR_BOOLEAN;
 		operand.setText("is");
-		box.getStyleClass().add(this.varType);
 
 	}
 

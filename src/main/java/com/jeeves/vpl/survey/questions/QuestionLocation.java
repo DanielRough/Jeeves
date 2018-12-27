@@ -7,8 +7,8 @@ import com.jeeves.vpl.firebase.FirebaseQuestion;
 import static com.jeeves.vpl.Constants.*;
 
 public class QuestionLocation extends QuestionView {
-	public QuestionLocation() {
-		super();
+	public QuestionLocation(String label)  throws Exception {
+		this(new FirebaseQuestion(label));
 	}
 
 
@@ -18,8 +18,6 @@ public class QuestionLocation extends QuestionView {
 
 	@Override
 	public void addEventHandlers() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -27,19 +25,9 @@ public class QuestionLocation extends QuestionView {
 		return "/img/icons/imggeo.png";
 	}
 
-	@Override
-	public String getLabel() {
-		return "Choose a location on a map";
-	}
 
-	//
-	// @Override
-	// public void handleCheckQ(String scon) {
-	// // TODO Auto-generated method stub
-	//
-	// }
 	@Override
-	public int getQuestionType() {
+	public String getQuestionType() {
 		return GEO;
 	}
 
@@ -47,15 +35,6 @@ public class QuestionLocation extends QuestionView {
 	public void loadOptions() {
 
 	}
-
-	// public QuestionView clone(){
-	// return new QuestionLocation(super.getModel());
-	// }
-	// @Override
-	// public void showCheckQOpts() {
-	// // TODO Auto-generated method stub
-	//
-	// }
 	@Override
 	public void showEditOpts(Map<String, Object> opts) {
 		// TODO Auto-generated method stub

@@ -35,8 +35,8 @@ public class QuestionMultMany extends QuestionView {
 	@FXML
 	private ScrollPane paneOptionsM;
 
-	public QuestionMultMany() {
-		super();
+	public QuestionMultMany(String label)  throws Exception {
+		this(new FirebaseQuestion(label));
 	}
 
 	public QuestionMultMany(FirebaseQuestion data) {
@@ -57,13 +57,9 @@ public class QuestionMultMany extends QuestionView {
 		return "/img/icons/imgmany.png";
 	}
 
-	@Override
-	public String getLabel() {
-		return "Select multiple options from a list";
-	}
 
 	@Override
-	public int getQuestionType() {
+	public String getQuestionType() {
 		return MULT_MANY;
 	}
 

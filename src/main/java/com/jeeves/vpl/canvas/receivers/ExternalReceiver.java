@@ -1,10 +1,9 @@
 package com.jeeves.vpl.canvas.receivers;
 
 import javafx.scene.layout.VBox;
-import com.jeeves.vpl.ParentPane;
 import com.jeeves.vpl.ViewElement;
 
-public abstract class ExternalReceiver extends Receiver implements ParentPane {
+public abstract class ExternalReceiver extends Receiver{
 
 	
 	protected VBox container;

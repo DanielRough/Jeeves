@@ -7,7 +7,7 @@ import static com.jeeves.vpl.Constants.getSaltString;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.jeeves.vpl.ParentPane;
+import com.jeeves.vpl.DragPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.expressions.UserVariable;
 import com.jeeves.vpl.canvas.receivers.DateReceiver;
@@ -32,15 +32,12 @@ import javafx.scene.layout.VBox;
  * @author Daniel
  */
 public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
-	public static final String NAME = "Set Times Trigger";
 	@FXML
 	private Pane pane;
 	@FXML
 	private Pane paneEndDate;
-	// @FXML protected Pane paneDate;
 	@FXML
 	private Pane paneStartDate;
-	private int timeCount;
 	@FXML
 	protected Button btnAddTime;
 	@FXML
@@ -52,8 +49,8 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 	protected List<FirebaseExpression> times;
 	protected List<UserVariable> vars;
 	//
-	public ClockTriggerSetTimes() {
-		this(new FirebaseTrigger());
+	public ClockTriggerSetTimes(String name) {
+		this(new FirebaseTrigger(name));
 	}
 
 	public ClockTriggerSetTimes(FirebaseTrigger data) {
@@ -61,25 +58,16 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 
 	}
 
-	@Override
-	public void addListeners() {
-		super.addListeners();
-		
-	}
-
-	@Override
-	public void fxmlInit() {
-		super.fxmlInit();
-		name = NAME;
+	{
 		dateReceiverTo = new DateReceiver(VAR_DATE);
 		dateReceiverFrom = new DateReceiver(VAR_DATE);
 		paneStartDate.getChildren().add(dateReceiverFrom);
 		paneEndDate.getChildren().add(dateReceiverTo);
 	}
-
 	@Override
-	public String getViewPath() {
-		return String.format("/TriggerClockSetTime.fxml", this.getClass().getSimpleName());
+	public void addListeners() {
+		super.addListeners();
+		
 	}
 
 
@@ -98,10 +86,9 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 		setTimeReceiver.getTextField().textProperty().addListener(listen -> {
 			model.gettimes().get(myindex).setvalue(setTimeReceiver.getText());
 			model.gettimes().get(myindex).setIsValue(true);
-			model.settriggerId(getSaltString()); // Again, update, must
+			model.settriggerId(getSaltString()); 
 
 		});
-		//will this default to be okay?
 		setTimeReceiver.setText("0");
 		setTimeReceiver.getChildElements().addListener(
 				(ListChangeListener<ViewElement>) listener -> {
@@ -120,13 +107,10 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 						FirebaseExpression removedModel = (FirebaseExpression)removed.getModel();
 						model.getvariables().remove(removedModel.getname());
 						times.set(index, blankVar);
-//						times.get(index).setvalue(setTimeReceiver.getText());
-//						times.get(index).setIsValue(true);
-
 
 					}
 					model.settriggerId(getSaltString());
-				});// timeReceiverFrom.getChildElements().get(0).getModel())));
+				});
 		
 	}
 
@@ -139,8 +123,8 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 		paneTimes.getChildren().remove(lastReceiver);
 		int size = model.gettimes().size();
 		model.gettimes().remove(size-1);//remove the last one
-		receivers.remove(size-1); //Ugh
-		model.settriggerId(getSaltString()); // Again, update, must
+		receivers.remove(size-1); 
+		model.settriggerId(getSaltString()); 
 
 	}
 
@@ -197,7 +181,7 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 
 						}
 						model.settriggerId(getSaltString());
-					});// timeReceiverFrom.getChildElements().get(0).getModel())));
+					});
 		}
 		pane.setPrefHeight(USE_COMPUTED_SIZE);
 
@@ -216,7 +200,7 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 		this.dateTo = dateTo;
 	}
 	@Override
-	public void setParentPane(ParentPane parent) {
+	public void setParentPane(DragPane parent) {
 		super.setParentPane(parent);
 		//This is the only reason we have the 'vars' arraylist. 
 		vars.forEach(var->var.setParentPane(parent));

@@ -4,7 +4,7 @@ import static com.jeeves.vpl.Constants.VAR_NUMERIC;
 
 import java.util.Map;
 
-import com.jeeves.vpl.ParentPane;
+import com.jeeves.vpl.DragPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.expressions.UserVariable;
 import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
@@ -17,14 +17,12 @@ import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
-import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 
 public class SendTextAction extends Action { // NO_UCD (unused code)
-	public static final String NAME = "Send SMS";
 	@FXML
 	public HBox hboxSMS;
 	@FXML
@@ -33,8 +31,8 @@ public class SendTextAction extends Action { // NO_UCD (unused code)
 	@FXML
 	private TextField txtMessage;
 	private ExpressionReceiver numberReceiver;
-	public SendTextAction() {
-		this(new FirebaseAction());
+	public SendTextAction(String name) {
+		this(new FirebaseAction(name));
 	}
 
 	public SendTextAction(FirebaseAction data) {
@@ -44,6 +42,9 @@ public class SendTextAction extends Action { // NO_UCD (unused code)
 	@Override
 	public void addListeners() {
 		super.addListeners();
+		smsText = new TextArea();
+		numberReceiver = new ExpressionReceiver(VAR_NUMERIC);
+		hboxSMS.getChildren().add(numberReceiver);
 		smsText.setWrapText(true);
 		txtMessage.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
@@ -95,23 +96,7 @@ public class SendTextAction extends Action { // NO_UCD (unused code)
 	}
 
 	@Override
-	public void fxmlInit() {
-		super.fxmlInit();
-		name = NAME;
-		smsText = new TextArea();
-		numberReceiver = new ExpressionReceiver(VAR_NUMERIC);
-		hboxSMS.getChildren().add(numberReceiver);
-//		cboRecipient.getItems().clear();
-//		cboRecipient.getItems().addAll("Last sender", "Emergency contact", "Researcher");
-	}
-
-	@Override
-	public String getViewPath() {
-		return String.format("/actionSendText.fxml", this.getClass().getSimpleName());
-	}
-
-	@Override
-	public void setParentPane(ParentPane parent) {
+	public void setParentPane(DragPane parent) {
 		super.setParentPane(parent);
 		if(numberReceiver.getChildExpression() != null)
 			numberReceiver.getChildExpression().setParentPane(parent);

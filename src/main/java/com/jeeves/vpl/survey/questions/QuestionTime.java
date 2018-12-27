@@ -36,8 +36,8 @@ public class QuestionTime extends QuestionView {
 	@FXML
 	private VBox vboxDateOpts;
 
-	public QuestionTime() {
-		super();
+	public QuestionTime(String label)  throws Exception {
+		this(new FirebaseQuestion(label));
 	}
 
 	public QuestionTime(FirebaseQuestion data) {
@@ -50,13 +50,9 @@ public class QuestionTime extends QuestionView {
 		return "/img/icons/imgtime.png";
 	}
 
-	@Override
-	public String getLabel() {
-		return "Select a Time";
-	}
 
 	@Override
-	public int getQuestionType() {
+	public String getQuestionType() {
 		// TODO Auto-generated method stub
 		return TIME;
 	}

@@ -18,6 +18,11 @@ public class FirebaseAction extends FirebaseElement implements Serializable {
 	private boolean manual;
 	private List<FirebaseExpression> vars = new ArrayList<FirebaseExpression>();
 
+	public FirebaseAction() {}
+	
+	public FirebaseAction(String name) {
+		this.name.setValue(name);
+	}
 	public List<FirebaseAction> getactions() {
 		return actions;
 	}
@@ -25,9 +30,6 @@ public class FirebaseAction extends FirebaseElement implements Serializable {
 	public FirebaseExpression getcondition() {
 		return condition;
 	}
-
-	// Actions might also have expressions or variables tied to them. I can't be
-	// sure yet but probably
 
 	public boolean getmanual() {
 		return manual;

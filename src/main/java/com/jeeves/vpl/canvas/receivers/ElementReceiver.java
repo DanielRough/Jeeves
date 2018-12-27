@@ -1,7 +1,6 @@
 package com.jeeves.vpl.canvas.receivers;
 
 import com.jeeves.vpl.Constants.ElementType;
-import com.jeeves.vpl.ParentPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.uielements.UIElement;
 
@@ -16,7 +15,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
 @SuppressWarnings("rawtypes")
-public class ElementReceiver extends ExternalReceiver implements ParentPane {
+public class ElementReceiver extends ExternalReceiver{
 
 	UIElement newElement;
 
@@ -75,8 +74,8 @@ public class ElementReceiver extends ExternalReceiver implements ParentPane {
 						newElement = null;
 						for (Pane childy : childList) {
 							UIElement elem = (UIElement) childy;
-							if (elem.previouslyAdded == false) {
-								elem.previouslyAdded = true;
+							if (elem.getPreviouslyAdded() == false) {
+								elem.setPreviouslyAdded(true);
 								newElement = elem;
 								break;
 							}

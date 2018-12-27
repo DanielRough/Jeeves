@@ -1,11 +1,10 @@
 package com.jeeves.vpl.canvas.expressions;
 
-import static com.jeeves.vpl.Constants.VAR_BOOLEAN;
 import static com.jeeves.vpl.Constants.VAR_CLOCK;
 
 import java.util.Map;
 
-import com.jeeves.vpl.ParentPane;
+import com.jeeves.vpl.DragPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.receivers.TimeReceiver;
 import com.jeeves.vpl.firebase.FirebaseExpression;
@@ -13,16 +12,14 @@ import com.jeeves.vpl.firebase.FirebaseVariable;
 
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 
 public class TimeExpression extends Expression { // NO_UCD (unused code)
-	public static final String NAME = "Time Bounds";
 	private TimeReceiver exprDateFrom;
 	private TimeReceiver exprDateTo;
 
-	public TimeExpression() {
-		this(new FirebaseExpression());
+	public TimeExpression(String name) {
+		this(new FirebaseExpression(name));
 	}
 
 	public TimeExpression(FirebaseExpression data) {
@@ -31,7 +28,7 @@ public class TimeExpression extends Expression { // NO_UCD (unused code)
 
 	}
 	@Override
-	public void setParentPane(ParentPane parent) {
+	public void setParentPane(DragPane parent) {
 		super.setParentPane(parent);
 			if (exprDateFrom.getChildExpression() != null)
 				exprDateFrom.getChildExpression().setParentPane(parent);
@@ -41,9 +38,9 @@ public class TimeExpression extends Expression { // NO_UCD (unused code)
 	@Override
 	public void addListeners() {
 		super.addListeners();
-
-		model.getparams().put("timeBoundEarly", exprDateFrom.getText());
-		model.getparams().put("timeBoundLate", exprDateTo.getText());
+//		model.getparams().put("timeBoundEarly", exprDateFrom.getText());
+//
+//		model.getparams().put("timeBoundLate", exprDateTo.getText());
 
 		exprDateFrom.getChildElements().addListener((ListChangeListener<ViewElement>) listener -> {
 			params.put("timeBoundEarly",exprDateFrom.getChildModel());
@@ -125,10 +122,7 @@ public class TimeExpression extends Expression { // NO_UCD (unused code)
 
 	@Override
 	public void setup() {
-		name = NAME;
-		this.varType = VAR_BOOLEAN;
 		operand.setText("is");
-		box.getStyleClass().add(this.varType);
 
 	}
 

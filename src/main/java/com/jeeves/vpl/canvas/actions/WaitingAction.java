@@ -24,7 +24,6 @@ import javafx.scene.layout.HBox;
  *
  */
 public class WaitingAction extends Action { // NO_UCD (unused code)
-	public static final String NAME = "Snooze";
 	@FXML
 	private ComboBox<String> cboWaitGranularity;
 	@FXML
@@ -33,8 +32,8 @@ public class WaitingAction extends Action { // NO_UCD (unused code)
 	private TextField txtWaitTime;
 	ChangeListener<String> selectionListener;
 
-	public WaitingAction() {
-		this(new FirebaseAction());
+	public WaitingAction(String name) {
+		this(new FirebaseAction(name));
 	}
 
 	public WaitingAction(FirebaseAction data) {
@@ -42,6 +41,10 @@ public class WaitingAction extends Action { // NO_UCD (unused code)
 		cboWaitGranularity.getItems().addAll("seconds", "minutes", "hours");
 	}
 
+	{
+		setMyTooltip("","");
+
+	}
 	@Override
 	public void addListeners() {
 		super.addListeners();
@@ -73,17 +76,6 @@ public class WaitingAction extends Action { // NO_UCD (unused code)
 		cboWaitGranularity.valueProperty().addListener(selectionListener);
 	}
 
-	@Override
-	public void fxmlInit() {
-		super.fxmlInit();
-		name = NAME;
-		txtWaitTime.setPrefWidth(20);
-		txtWaitTime.setMinHeight(20);
-		txtWaitTime.setPrefHeight(20);
-		txtWaitTime.getStyleClass().add("textfield");
-		setMyTooltip("","");
-
-	}
 	public void setMyTooltip(String graphicURL, String text){
 		final Tooltip tooltip = new Tooltip();
 		tooltip.setText(
@@ -91,10 +83,6 @@ public class WaitingAction extends Action { // NO_UCD (unused code)
 		    "at least 8 characters in length\n"  
 		);
 		txtWaitTime.setTooltip(tooltip);
-	}
-	@Override
-	public String getViewPath() {
-		return String.format("/actionWaiting.fxml", this.getClass().getSimpleName());
 	}
 
 

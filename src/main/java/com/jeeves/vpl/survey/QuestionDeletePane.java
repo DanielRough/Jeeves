@@ -40,7 +40,6 @@ public class QuestionDeletePane extends Pane {
 	@FXML
 	public void delete(Event e) {
 		survey.removeQuestion(question);
-		// parent.removeFromSurvey();
 		stage.close();
 
 	}

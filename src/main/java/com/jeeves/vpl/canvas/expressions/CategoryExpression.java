@@ -1,12 +1,11 @@
 package com.jeeves.vpl.canvas.expressions;
 
-import static com.jeeves.vpl.Constants.VAR_BOOLEAN;
 import static com.jeeves.vpl.Constants.VAR_CATEGORY;
 import static com.jeeves.vpl.Constants.categoryOpts;
 
 import java.util.List;
 
-import com.jeeves.vpl.ParentPane;
+import com.jeeves.vpl.DragPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
 import com.jeeves.vpl.firebase.FirebaseExpression;
@@ -17,28 +16,25 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.MapChangeListener;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 
 public class CategoryExpression extends Expression { // NO_UCD (unused code)
-	public static final String NAME = "Category";
 	private ExpressionReceiver categoryReceiver;
 	private ComboBox<String> cboCategories;
 
-	public CategoryExpression() {
-		this(new FirebaseExpression());
+	public CategoryExpression(String name) {
+		this(new FirebaseExpression(name));
 	}
 
 	
 	@Override
-	public void setParentPane(ParentPane parent) {
+	public void setParentPane(DragPane parent) {
 		super.setParentPane(parent);
 			if (categoryReceiver.getChildExpression() != null)
 				categoryReceiver.getChildExpression().setParentPane(parent);
 			categoryReceiver.getChildElements().addListener(
 					(ListChangeListener<ViewElement>) listener -> {listener.next(); 
 					if(listener.wasRemoved())return;
-					//model.getparams().put("result", locReceiver.getChildModel().getname());
 					categoryReceiver.getChildExpression().setParentPane(parent);
 					});
 					
@@ -85,34 +81,25 @@ public class CategoryExpression extends Expression { // NO_UCD (unused code)
 		
 		categoryReceiver.getChildElements().addListener(
 				(ListChangeListener<ViewElement>) listener -> {listener.next(); 
-				//model.getparams().put("result", locReceiver.getChildModel().getname());
 				if(categoryReceiver.getChildModel() != null)
 				params.put("category", categoryReceiver.getChildModel().getname());
 				
-				//This fires when the options for any question that we've assigned to a particular category gets its options changed
 				categoryOpts.addListener(new MapChangeListener<String,String[]>(){
 					@Override
 					public void onChanged(Change<? extends String, ? extends String[]> arg0) {
 						String selected = cboCategories.getSelectionModel().getSelectedItem(); //Hopefully it has one
 						cboCategories.getItems().clear();
-//						if(categoryOpts == null)//System.out.println("category opts is null");
-	//					if(categoryReceiver == null)//System.out.println("receiver is null");
-		//				if(categoryReceiver.getChildModel() == null)//System.out.println("Model is null");
-						//Bleugh this is awful
-						System.out.println("Just cleared the categories");
 						if(categoryReceiver.getChildModel() == null || !categoryOpts.containsKey(categoryReceiver.getChildModel().getname()))return;
 						cboCategories.getItems().addAll(categoryOpts.get(categoryReceiver.getChildModel().getname()));
 						cboCategories.setValue(selected);
 						cboCategories.getSelectionModel().select(selected);
-						System.out.println("Setting cboCategories to " + selected);
 					}
 					
 				});
-				System.out.println("WHAAAAAT");
 				cboCategories.getItems().clear();
 				if(categoryReceiver.getChildModel() == null || !categoryOpts.containsKey(categoryReceiver.getChildModel().getname()))return;
 				cboCategories.getItems().addAll(categoryOpts.get(categoryReceiver.getChildModel().getname()));
-				});// timeReceiverFrom.getChildElements().get(0).getModel())));		
+				});
 		cboCategories.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 
 			@Override
@@ -126,12 +113,8 @@ public class CategoryExpression extends Expression { // NO_UCD (unused code)
 
 	@Override
 	public void setup() {
-		name = NAME;
-		this.varType = VAR_BOOLEAN;
 		operand.setText("is equal to");
 		categoryReceiver = new ExpressionReceiver(VAR_CATEGORY);
-//		receivers.add(new ExpressionReceiver(VAR_CATEGORY));
-//		receivers.add(new ExpressionReceiver(VAR_NUMERIC));
 
 	}
 	@Override

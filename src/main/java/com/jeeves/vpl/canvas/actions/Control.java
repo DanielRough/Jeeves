@@ -1,21 +1,17 @@
-package com.jeeves.vpl.canvas.ifsloops;
-
-import static com.jeeves.vpl.Constants.getSaltString;
+package com.jeeves.vpl.canvas.actions;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.jeeves.vpl.Constants.ElementType;
-import com.jeeves.vpl.ParentPane;
+import com.jeeves.vpl.DragPane;
 import com.jeeves.vpl.ViewElement;
-import com.jeeves.vpl.canvas.actions.Action;
 import com.jeeves.vpl.canvas.expressions.Expression;
 import com.jeeves.vpl.canvas.receivers.ActionReceiver;
 import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
 import com.jeeves.vpl.firebase.FirebaseAction;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
@@ -90,28 +86,7 @@ public abstract class Control extends Action {
 //				
 //			});
 		});
-		actions.forEach(myaction -> {
-			myaction.getparams().addListener(new MapChangeListener<String, Object>() {
-				@Override
-				public void onChanged(
-						javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
-					params.put("update","updated");
-					params.remove("update");						// must reset
-				}
 
-			});
-			//Also listen on this action's expressions changing (if it has any)
-			myaction.getVars().addListener(new ListChangeListener<FirebaseExpression>(){
-
-				@Override
-				public void onChanged(
-						javafx.collections.ListChangeListener.Change<? extends FirebaseExpression> c) {
-
-					params.put("update","updated");
-					params.remove("update");					}
-
-			});
-		});
 		exprreceiver.getChildElements().addListener((ListChangeListener<ViewElement>) arg0 -> {
 			if (!exprreceiver.getChildElements().isEmpty()) {
 				ViewElement child = exprreceiver.getChildElements().get(0);
@@ -209,7 +184,7 @@ public abstract class Control extends Action {
 	}
 
 	@Override
-	public void setParentPane(ParentPane parent) {
+	public void setParentPane(DragPane parent) {
 		super.setParentPane(parent);
 		actions.forEach(action -> {
 			action.setParentPane(parent);

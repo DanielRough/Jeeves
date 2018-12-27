@@ -1,24 +1,24 @@
 package com.jeeves.vpl;
 
+import static com.jeeves.vpl.Constants.NEW_PROJ;
 import static com.jeeves.vpl.Constants.SHOULD_UPDATE_TRIGGERS;
 import static com.jeeves.vpl.Constants.VAR_BOOLEAN;
+import static com.jeeves.vpl.Constants.VAR_CATEGORY;
 import static com.jeeves.vpl.Constants.VAR_CLOCK;
 import static com.jeeves.vpl.Constants.VAR_DATE;
 import static com.jeeves.vpl.Constants.VAR_LOCATION;
 import static com.jeeves.vpl.Constants.VAR_NUMERIC;
-import static com.jeeves.vpl.Constants.VAR_WIFI;
-import static com.jeeves.vpl.Constants.VAR_CATEGORY;
-import static com.jeeves.vpl.Constants.actionNames;
-import static com.jeeves.vpl.Constants.exprNames;
 import static com.jeeves.vpl.Constants.makeInfoAlert;
 import static com.jeeves.vpl.Constants.questionNames;
-import static com.jeeves.vpl.Constants.triggerNames;
-import static com.jeeves.vpl.Constants.uiElementNames;
+import static com.jeeves.vpl.Constants.trigNames;
+import static com.jeeves.vpl.Constants.actNames;
+import static com.jeeves.vpl.Constants.exprNames;
+import static com.jeeves.vpl.Constants.elemNames;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -51,7 +51,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.event.Event;
@@ -66,6 +65,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.SingleSelectionModel;
@@ -114,7 +114,6 @@ public class Main extends Application {
 	private ObservableMap<String,Map<String,FirebaseSurveyEntry>> currentsurveydata = FXCollections.observableHashMap();
 	
 	private DragPane dragPane;
-	//private FirebaseDB firebase;
 	private Map<Label, VBox> labelPaneMap;
 	private AnchorPane myPane; // The main pane
 	private PatientPane patientController;
@@ -122,9 +121,9 @@ public class Main extends Application {
 	private Stage primaryStage;
 	private ElementReceiver receiver; // Where UI elements go
 	
-	private NameComparator nameComparator;
-	private AgeComparator ageComparator;
-	private TypeComparator typeComparator;
+//	private NameComparator nameComparator;
+//	private AgeComparator ageComparator;
+//	private TypeComparator typeComparator;
 	@FXML private VBox vboxSurveyVars;
 
 	@FXML private Label lblActions;
@@ -157,6 +156,7 @@ public class Main extends Application {
 	@FXML private Label lblOpenProject;
 	private EventHandler<MouseEvent> viewElementHandler;
 
+	@FXML private CheckBox chkRandom;
 	ArrayList<ViewElement> elements;
 
 	public static Main getContext() {
@@ -175,10 +175,8 @@ public class Main extends Application {
 	private Main(Stage primaryStage) {
 		currentGUI = this;
 		this.primaryStage = primaryStage;
-		//connectedStatus = new SimpleStringProperty();
 
 		Platform.setImplicitExit(false);
-		System.out.println("IT IS " + getClass().getResource("/Main.fxml"));
 		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/Main.fxml"));
 		fxmlLoader.setController(this);
 		try {
@@ -190,6 +188,7 @@ public class Main extends Application {
 		dragPane = new DragPane(myPane.getWidth(), myPane.getHeight());
 		myPane.getChildren().add(dragPane);
 		
+		//Set up some rigour
 		primaryStage.setTitle("Jeeves");
 		primaryStage.setResizable(false);
 		primaryStage.setOnCloseRequest(event -> System.exit(0));
@@ -197,25 +196,20 @@ public class Main extends Application {
 		splitPane.lookupAll(".split-pane-divider").stream().forEach(div -> div.setMouseTransparent(true));
 
 		openProject = new FirebaseProject();
-		lblOpenProject.setText("New project");
+		lblOpenProject.setText(NEW_PROJ);
 		FirebaseDB.setOpenProject(openProject);
-		new FirebaseDB(this);
-		nameComparator = new NameComparator();
-		ageComparator = new AgeComparator();
-		typeComparator = new TypeComparator();
-		//currentproject = new FirebaseProject();
+		new FirebaseDB();
+	//	nameComparator = new NameComparator();
+		//ageComparator = new AgeComparator();
+		//typeComparator = new TypeComparator();
 
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
 				resetPanes();
 				loadCanvasElements();
-				loadVariables();
-
 			}
-		});
-
-		
+		});	
 	}
 	
 	/*
@@ -247,7 +241,6 @@ public class Main extends Application {
 	 */
 	public void updateConnectedStatus(boolean connected){
 		if(connected){
-			System.out.println("Should be setting this?");
 			lblConnection.setText("Connected!");
 			lblConnection.setStyle("-fx-text-fill: #2ba42f");
 		}
@@ -270,25 +263,27 @@ public class Main extends Application {
 			draggable.setParentPane(canvas);
 	}
 	
-	private void refreshPatientPane(){
+	private void resetPanes() {
+		currentsurveys.clear();
+		currentvariables.clear();
+		currentelements.clear();
+		currentsurveydata.clear();
+		
 		panePatients.getChildren().clear();
 		patientController = new PatientPane(this);
 		panePatients.getChildren().add(patientController);
-	}
-	private void refreshCanvas(){
+	
 		if (canvas != null && canvas.mouseHandler != null)
 			paneIntervention.removeEventHandler(MouseEvent.ANY, canvas.mouseHandler);
 		paneIntervention.getChildren().remove(canvas);
 		canvas = new ViewCanvas();
 		paneIntervention.getChildren().add(canvas);
 		canvas.addEventHandlers();
-	}
-	private void refreshInterfaceDesigner(){
+	
 		paneAndroid.getChildren().clear();
 		receiver = new ElementReceiver(215, 307);
 		paneAndroid.getChildren().add(receiver);
-	}
-	private void refreshSurveyCreator(){
+	
 		if (surveyBox.getChildren().size() > 1)
 			surveyBox.getChildren().remove(1);
 		surveyController = new SurveyPane();
@@ -306,8 +301,52 @@ public class Main extends Application {
 			}
 			
 		});
-	}
-	private void addListeners(){
+		
+		//Add the project elements
+		ArrayList<ViewElement> views = new ArrayList<ViewElement>();
+		
+		for (FirebaseTrigger trig : openProject.gettriggers()) {
+			Trigger triggerview = Trigger.create(trig);
+			views.add(triggerview);
+		}
+		for (FirebaseExpression expr : openProject.getexpressions()) {
+			Expression exprview = Expression.create(expr);
+			views.add(exprview);
+		}
+		for (FirebaseVariable var : openProject.getvariables()) {
+			if(var == null)continue;
+			UserVariable varview = new UserVariable(var);
+			views.add(varview);
+		}
+		int index = 0;
+		for (FirebaseUI var : openProject.getuidesign()) {
+
+			UIElement element = UIElement.create(var);
+			var.getMyTextProperty().addListener(change -> {
+				receiver.getChildElements().remove(element);
+				receiver.getChildElements().add(element);
+			});
+			element.setPreviouslyAdded(true);  
+			receiver.addChildAtIndex(element, index++);
+			setElementParent(element);
+			element.addEventHandler(MouseEvent.ANY, element.mainHandler);
+		}
+		for (FirebaseSurvey survey : openProject.getsurveys()) {
+			Survey surveyview = new Survey(survey);
+			surveyController.addSurvey(surveyview);
+			for (QuestionView q : surveyview.getQuestions()) {
+				setElementParent(q); // This means we can drag questions around
+			}
+		}
+		views.forEach(view -> {
+			Point2D pos = view.getPosition();
+			Point2D canvasPos = canvas.localToScene(pos);
+			canvas.addChild(view, canvasPos.getX(), canvasPos.getY());
+			setElementParent(view);
+			view.addEventHandler(MouseEvent.ANY, view.mainHandler);
+		});
+		
+		//Add listeners
 		receiver.getChildElements().addListener(new ListChangeListener<Node>() {
 			@Override
 			public void onChanged(javafx.collections.ListChangeListener.Change<? extends Node> arg0) {
@@ -351,77 +390,17 @@ public class Main extends Application {
 				}
 			}
 		};
-		canvas.addChildrenListener(canvasListener);
-	}
-	private void resetPanes() {
-		currentsurveys.clear();
-		currentvariables.clear();
-		currentelements.clear();
-		currentsurveydata.clear();
-		
-		refreshCanvas();
-		refreshInterfaceDesigner();
-		refreshSurveyCreator();
-		refreshPatientPane();
-		
-		addProjectElements();
-		addListeners();
-		
-
+		canvas.addChildrenListener(canvasListener);		
 		currentelements.addAll(openProject.getuidesign());
 		currentsurveys.addAll(openProject.getsurveys());
 		if(openProject.getsurveydata() != null)
 		currentsurveydata.putAll(openProject.getsurveydata());
-		patientController.loadPatients(); // Reset so we have the			// patients for THIS project
+		patientController.loadPatients(); // Reset so we have the patients for THIS project
 		patientController.loadSurveys();
 		tabPane.getSelectionModel().select(tabFramework);
 
 	}
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	void addProjectElements() {
-		ArrayList<ViewElement> views = new ArrayList<ViewElement>();
-		for (FirebaseTrigger trig : openProject.gettriggers()) {
-			Trigger triggerview = Trigger.create(trig);
-			views.add(triggerview);
-		}
-		for (FirebaseExpression expr : openProject.getexpressions()) {
-			Expression exprview = Expression.create(expr);
-			views.add(exprview);
-		}
-		for (FirebaseVariable var : openProject.getvariables()) {
-			if(var == null)continue;
-			UserVariable varview = new UserVariable(var);
-			views.add(varview);
-		}
-		int index = 0;
-		for (FirebaseUI var : openProject.getuidesign()) {
 
-			UIElement element = UIElement.create(var);
-			var.getMyTextProperty().addListener(change -> {
-				receiver.getChildElements().remove(element);
-				receiver.getChildElements().add(element);
-			});
-			element.previouslyAdded = true; 
-			receiver.addChildAtIndex(element, index++);
-			setElementParent(element);
-			element.addEventHandler(MouseEvent.ANY, element.mainHandler);
-		}
-		for (FirebaseSurvey survey : openProject.getsurveys()) {
-			Survey surveyview = new Survey(survey);
-			surveyController.addSurvey(surveyview);
-			for (QuestionView q : surveyview.getQuestions()) {
-				setElementParent(q); // This means we can drag questions around
-			}
-		}
-		views.forEach(view -> {
-			Point2D pos = view.getPosition();
-			Point2D canvasPos = canvas.localToScene(pos);
-			canvas.addChild(view, canvasPos.getX(), canvasPos.getY());
-			setElementParent(view);
-			view.addEventHandler(MouseEvent.ANY, view.mainHandler);
-		});
-
-	}
 	public void showLoginRegister(){
 		Stage stage = new Stage(StageStyle.UNDECORATED);
 		LoginRegisterPane root = new LoginRegisterPane(this, stage);
@@ -433,12 +412,9 @@ public class Main extends Application {
 		myPane.getChildren().add(pane);
 		
 		stage.initStyle(StageStyle.TRANSPARENT);
-		
 		stage.initOwner(splitPane.getScene().getWindow());
-
 		stage.showAndWait();
 		myPane.getChildren().remove(pane);
-	//	Subject currentuser = SecurityUtils.getSubject();
 		lblWelcome.setText("Welcome, " + FirebaseDB.currentUserEmail);
 		
 		FirebaseDB.getInstance().getUserCredentials();
@@ -450,23 +426,11 @@ public class Main extends Application {
 		openProject.getvariables().add(var);
 	}
 
-
-
-
 	public void loadVariables() {
 		currentvariables.clear();
 		vboxSurveyVars.getChildren().clear();
 
-		String[] globalVarNames = new String[] { "Missed Surveys", "Completed Surveys", "Last Survey Score",
-				"Survey Score Difference" };
 		ArrayList<FirebaseVariable> globalVars = new ArrayList<FirebaseVariable>();
-//		for (String name : globalVarNames) {
-//			FirebaseVariable var = new FirebaseVariable();
-//			var.setname(name);
-//			var.setVartype(VAR_NUMERIC);
-//			openProject.getvariables().add(var);
-//			globalVars.add(var);
-//		}
 		openProject.getvariables().forEach(variable -> {
 			if(variable != null) {
 			UserVariable global = new UserVariable(variable);
@@ -515,16 +479,13 @@ public class Main extends Application {
 		currentvariables.removeListener(listener);
 	}
 	
-	public void registerSurveyDataListener(MapChangeListener<String,Object> listener){
-		currentsurveydata.addListener(listener);
-	}
 
 	@FXML
 	public void saveAsStudyMenu(Event e) {
 		Stage stage = new Stage(StageStyle.UNDECORATED);
 		SaveAsPane root = new SaveAsPane(stage);
 		stage.setScene(new Scene(root));
-		stage.setTitle("Add property");
+		stage.setTitle("Save Study As...");
 		stage.initModality(Modality.APPLICATION_MODAL);
 		stage.initOwner(splitPane.getScene().getWindow());
 		stage.showAndWait();
@@ -532,7 +493,7 @@ public class Main extends Application {
 	}
 
 
-	private VBox createBoxyBox(ViewElement elem) {
+	private VBox createSidebarView(ViewElement elem) {
 		Label newlable = new Label(elem.getName());
 
 		HBox box = new HBox();
@@ -548,7 +509,7 @@ public class Main extends Application {
 		return boxybox;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	//Position the dividers and trash can
 	private void loadCanvasElements() {
 		Divider d1 = splitPane.getDividers().get(1);
 		d1.positionProperty().addListener(new ChangeListener<Number>() {
@@ -559,6 +520,20 @@ public class Main extends Application {
 					d1.setPosition(0.73);
 				else
 					imgTrash.setLayoutX(arg2.doubleValue() * myPane.getWidth() - 80);
+			}
+
+		});
+		DropShadow ds = new DropShadow(20, Color.AQUA);
+
+		imgTrash.addEventHandler(MouseDragEvent.ANY, new EventHandler<MouseDragEvent>() {
+
+			@Override
+			public void handle(MouseDragEvent arg0) {
+				if (arg0.getEventType().equals(MouseDragEvent.MOUSE_DRAG_ENTERED)) {
+					imgTrash.setEffect(ds);
+				} else if (arg0.getEventType().equals(MouseDragEvent.MOUSE_DRAG_EXITED)) {
+					imgTrash.setEffect(null);
+				}
 			}
 
 		});
@@ -580,7 +555,7 @@ public class Main extends Application {
 					if (clicked.getType() == ElementType.VARIABLE)
 						draggable = new UserVariable(((FirebaseExpression) clicked.getModel()));
 					else
-						draggable = ViewElement.create(clicked.getClass().getName());
+						draggable = ViewElement.create(clicked.getName(),clicked.getClass().getName());
 					setElementParent(draggable);
 					clicked.setDraggable(draggable); // DJRNEW
 
@@ -590,32 +565,47 @@ public class Main extends Application {
 		};
 		try {
 			elements = new ArrayList<ViewElement>();
-			for (String trigName : triggerNames) {
-				ViewElement trigger = ViewElement.create(trigName);
+			String prefix = "com.jeeves.vpl.";
+			Iterator<String> iter = trigNames.keySet().iterator();
+			while(iter.hasNext()) {
+				String trigName = iter.next();
+				String trigClass = trigNames.get(trigName);
+				ViewElement trigger = ViewElement.create(trigName,prefix+"canvas.triggers." +trigClass);
 				elements.add(trigger);
-				VBox boxybox = createBoxyBox(trigger);
-				paneTriggers.getChildren().add(boxybox);
+				VBox boxybox = createSidebarView(trigger);
+				paneTriggers.getChildren().add(boxybox);				
 			}
-			for (String actName : actionNames) {
-				ViewElement<FirebaseVariable> action = ViewElement.create(actName);
+			iter = actNames.keySet().iterator();
+			while(iter.hasNext()) {
+				String actName = iter.next();
+				String actClass = actNames.get(actName);
+				ViewElement<FirebaseVariable> action = ViewElement.create(actName,prefix+"canvas.actions." + actClass);
 				elements.add(action);
-				VBox boxybox = createBoxyBox(action);
+				VBox boxybox = createSidebarView(action);
 				paneActions.getChildren().add(boxybox);
 			}
-			for (String exprName : exprNames) {
-				ViewElement<FirebaseVariable> expr = ViewElement.create(exprName);
+			iter = exprNames.keySet().iterator();
+			while(iter.hasNext()) {
+				String exprName = iter.next();
+				String exprClass = exprNames.get(exprName);
+				ViewElement<FirebaseVariable> expr = ViewElement.create(exprName,prefix+"canvas.expressions." + exprClass);
 				elements.add(expr);
-				VBox boxybox = createBoxyBox(expr);
+				VBox boxybox = createSidebarView(expr);
 				paneConditions.getChildren().add(boxybox);
 			}
-			for (String uiElem : uiElementNames) {
-				ViewElement<FirebaseVariable> uielement = ViewElement.create(uiElem);
+			iter = elemNames.keySet().iterator();
+			while(iter.hasNext()) {
+				String elemName = iter.next();
+				String elemClass = elemNames.get(elemName);
+				ViewElement<FirebaseVariable> uielement = ViewElement.create(elemName,prefix+"canvas.uielements." + elemClass);
 				elements.add(uielement);
 				vboxUIElements.getChildren().add(uielement);
 			}
-			for (String qName : questionNames) {
-				ViewElement<FirebaseQuestion> question = ViewElement.create(qName);
+			for (String qName[] : questionNames) {
+				ViewElement<FirebaseQuestion> question = ViewElement.create(qName[0],prefix+"survey.questions." + qName[3]);
 				elements.add(question);
+				((QuestionView)question).setQuestionType(qName[0]);
+				((QuestionView)question).setImage(qName[1]);
 				paneQuestions.getChildren().add(question);
 			}
 			for (ViewElement element : elements) {
@@ -623,7 +613,7 @@ public class Main extends Application {
 					element.setPadding(new Insets(0,0,10,0));
 				else	
 					element.setPadding(new Insets(0, 0, 20, 0));
-				ViewElement<FirebaseVariable> draggable = ViewElement.create(element.getClass().getName());
+				ViewElement<FirebaseVariable> draggable = ViewElement.create(element.getName(),element.getClass().getName());
 				element.setDraggable(draggable); // DJRNEW
 				setElementParent(draggable);
 				element.setReadOnly();
@@ -636,6 +626,7 @@ public class Main extends Application {
 			e.printStackTrace();
 		}
 
+		//Resize the tabs depending on what's focused
 		SingleSelectionModel<Tab> selectionModel = tabPane.getSelectionModel();
 		selectionModel.selectedItemProperty().addListener(new ChangeListener<Tab>() {
 			@Override
@@ -656,20 +647,8 @@ public class Main extends Application {
 		labelPaneMap.put(lblTriggers, paneTriggers);
 		lblTriggers.setUserData("selected");
 		activeMenu = lblTriggers;
-		DropShadow ds = new DropShadow(20, Color.AQUA);
 
-		imgTrash.addEventHandler(MouseDragEvent.ANY, new EventHandler<MouseDragEvent>() {
 
-			@Override
-			public void handle(MouseDragEvent arg0) {
-				if (arg0.getEventType().equals(MouseDragEvent.MOUSE_DRAG_ENTERED)) {
-					imgTrash.setEffect(ds);
-				} else if (arg0.getEventType().equals(MouseDragEvent.MOUSE_DRAG_EXITED)) {
-					imgTrash.setEffect(null);
-				}
-			}
-
-		});
 		primaryStage.show();
 		showLoginRegister();
 
@@ -686,7 +665,7 @@ public class Main extends Application {
 		
 
 		for (ViewElement element : elements) {
-			ViewElement<FirebaseVariable> draggable = ViewElement.create(element.getClass().getName());
+			ViewElement<FirebaseVariable> draggable = ViewElement.create(element.getName(),element.getClass().getName());
 			element.setDraggable(draggable); // DJRNEW
 			setElementParent(draggable);
 			element.setReadOnly();
@@ -729,24 +708,6 @@ public class Main extends Application {
 	@FXML
 	public void newStudy(Event e) {
 		setCurrentProject(new FirebaseProject());
-		// isNewProject = true;
-		lblOpenProject.setText("New project");
-
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				resetPanes();
-				for (ViewElement element : elements) {
-					ViewElement<FirebaseVariable> draggable = ViewElement.create(element.getClass().getName());
-					element.setDraggable(draggable); // DJRNEW
-					setElementParent(draggable);
-					element.setReadOnly();
-					element.setPickOnBounds(false);
-					element.setHandler(viewElementHandler);
-				}
-				loadVariables();
-			}
-		});
 	}
 	
 	/** User press 'Open' button **/
@@ -769,11 +730,15 @@ public class Main extends Application {
 	
 	@FXML
 	public void saveStudy(Event e){
+		String toastMsg = "Project saved";
+		Point2D canvasPos = paneIntervention.localToScreen(new Point2D(0,0));
+		double canvasLength = paneIntervention.getWidth();
+		Toast.makeText(primaryStage,canvasPos.getX(),canvasPos.getY(), canvasLength, toastMsg);
 		//Do some validation on the survye names here
 				ArrayList<String> currentnames = new ArrayList<String>();
 				for(FirebaseSurvey survey : currentsurveys){
 					if(survey.gettitle().equals("New survey")){
-						makeInfoAlert("Jeeves","No name given to survey","All surveys must have a title (not 'New survey!')");
+						makeInfoAlert("Jeeves","No name given to survey","All surveys must have a title");
 
 						return;
 					}
@@ -831,6 +796,10 @@ public class Main extends Application {
 		showMenu(label);
 	}
 
+
+	/**
+	 * Potential unimplemented feature - highlighting menu in which to find a relevant element
+	 */
 	Label lastActiveMenu;
 	Label activeMenu;
 	public void highlightMenu(ElementType type,boolean shouldHighlight){
@@ -919,16 +888,46 @@ public class Main extends Application {
 		case "Date":var.setVartype(VAR_DATE); break;
 		case "Time":var.setVartype(VAR_CLOCK);break;
 		case "Location":var.setVartype(VAR_LOCATION);break;
-		case "WiFi":var.setVartype(VAR_WIFI);break;
-//		case "Bluetooth":var.setVartype(VAR_BLUETOOTH);break;
-
 		}
 		var.setisCustom(true);
 		var.settimeCreated(System.currentTimeMillis());
+		if(chkRandom.isSelected()) {
+			var.setisRandom(true);
+			Stage stage = new Stage(StageStyle.UNDECORATED);
+			stage.setTitle("Random attribute");
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.initOwner(splitPane.getScene().getWindow());
+			switch(attrType) {
+			case "Number":
+				RandomNumberPane nRoot = new RandomNumberPane(stage,var);
+				stage.setScene(new Scene(nRoot));
+				stage.showAndWait();
+				break;
+			case "Category":
+				RandomCategoryPane cRoot = new RandomCategoryPane(stage,var);
+				stage.setScene(new Scene(cRoot));
+				stage.showAndWait();
+				break;
+			case "Date": 
+				RandomDatePane dRoot = new RandomDatePane(stage,var);
+				stage.setScene(new Scene(dRoot));
+				stage.showAndWait();
+				break;
+			case "Time": 
+				RandomTimePane tRoot = new RandomTimePane(stage,var);
+				stage.setScene(new Scene(tRoot));
+				stage.showAndWait();
+				break;
+			default:addVariable(var); break;
+			}
+		}
+		else {
 		addVariable(var);
+		}
 		loadVariables();
 		
 	}
+	/*
 	class NameComparator implements Comparator<FirebaseVariable> {
 		int reverse =1;
 		public void doReverse(){reverse = -reverse;}
@@ -953,8 +952,8 @@ public class Main extends Application {
 	        return a.gettimeCreated() >= b.gettimeCreated() ? reverse : -reverse;
 	    }
 	}
-	
-	public void reAddVariables(){
+	*/
+	public void refreshAttributes(){
 		vboxSurveyVars.getChildren().clear();
 		currentvariables.forEach(variable->{
 			UserVariable global = new UserVariable(variable);
@@ -967,12 +966,12 @@ public class Main extends Application {
 		vboxSurveyVars.getChildren().add(global);
 		});
 	}
-	
+	/*
 	@FXML
 	public void sortByName(Event e){
 		nameComparator.doReverse();
 		currentvariables.sort(nameComparator);
-		reAddVariables();
+		refreshAttributes();
 	
 	}
 	
@@ -980,13 +979,14 @@ public class Main extends Application {
 	public void sortByTime(Event e){
 		ageComparator.doReverse();
 		currentvariables.sort(ageComparator);
-		reAddVariables();
+		refreshAttributes();
 	}
 	
 	@FXML
 	public void sortByType(Event e){
 		typeComparator.doReverse();
 		currentvariables.sort(typeComparator);
-		reAddVariables();
+		refreshAttributes();
 	}
+	*/
 }

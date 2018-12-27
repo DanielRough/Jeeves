@@ -2,14 +2,13 @@ package com.jeeves.vpl.canvas.triggers;
 
 import static com.jeeves.vpl.Constants.INTERVAL_TRIGGER_TIME;
 
-import com.jeeves.vpl.ParentPane;
+import com.jeeves.vpl.DragPane;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -27,12 +26,8 @@ import javafx.util.Callback;
  * @author Daniel
  */
 public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
-	public static final String NAME = "Repeated Time Trigger";
 	@FXML
 	private ComboBox<String> cboFixedRandom;
-	//private ComboBox<String> cboInterval;
-	private long dateFrom;
-	private long dateTo;
 	private String duration = "seconds";
 	private String intervalTime = "0";
 	@FXML
@@ -41,25 +36,29 @@ public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 	private Pane paneEndDate;
 	@FXML
 	private Pane paneIntervalFrom;
-
 	@FXML
 	private Pane paneIntervalTo;
-
-	// @FXML protected ImageView imgCalendar;
-	// @FXML private Pane paneDate;
 	@FXML
 	private Pane paneStartDate;
 	@FXML
 	private TextField txtFieldInterval;
 
-	public ClockTriggerInterval() {
-		this(new FirebaseTrigger());
+	public ClockTriggerInterval(String name) {
+		this(new FirebaseTrigger(name));
 	}
 
 	public ClockTriggerInterval(FirebaseTrigger data) {
 		super(data);
 	}
 
+	{
+		paneStartDate.getChildren().add(dateReceiverFrom);
+		paneEndDate.getChildren().add(dateReceiverTo);
+		paneIntervalFrom.getChildren().add(timeReceiverFrom);
+		paneIntervalTo.getChildren().add(timeReceiverTo);
+		cboFixedRandom.getItems().addAll("fixed","random");
+		cboFixedRandom.setValue("fixed");
+	}
 	@Override
 	@SuppressWarnings("rawtypes")
 	public void addListeners() {
@@ -114,37 +113,11 @@ public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 
 		cboFixedRandom.valueProperty()
 		.addListener((ChangeListener<String>) (arg0, arg1, arg2) -> params.put("fixedRandom", arg2));
-//		cboInterval.valueProperty()
-//				.addListener((ChangeListener<String>) (arg0, arg1, arg2) -> params.put("granularity", arg2));
-		if(!model.getparams().containsKey(INTERVAL_TRIGGER_TIME))
-			txtFieldInterval.setText("5");
-	}
-
-	@Override
-	public void fxmlInit() {
-		super.fxmlInit();
-		name = NAME;
-
-		paneStartDate.getChildren().add(dateReceiverFrom);
-		paneEndDate.getChildren().add(dateReceiverTo);
-		paneIntervalFrom.getChildren().add(timeReceiverFrom);
-		paneIntervalTo.getChildren().add(timeReceiverTo);
-//		styleTextCombo(cboInterval);
-//		cboInterval.getItems().addAll(DURATIONS_SHORT);
-//		cboInterval.setValue(DURATIONS_SHORT[0]);
-		cboFixedRandom.getItems().addAll("fixed","random");
-		cboFixedRandom.setValue("fixed");
-	}
-
-	@Override
-	public String getViewPath() {
-		return String.format("/TriggerClockInterval.fxml", this.getClass().getSimpleName());
 	}
 
 	@Override
 	public void setData(FirebaseTrigger model) {
 		super.setData(model);
-		// Map<String,Object> params = model.getparams();
 		if (!params.isEmpty()) {
 			if (params.containsKey("fixedRandom"))
 				duration = params.get("fixedRandom").toString();
@@ -153,7 +126,8 @@ public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 			if (params.containsKey(INTERVAL_TRIGGER_TIME))
 				intervalTime = params.get(INTERVAL_TRIGGER_TIME).toString();
 
-			txtFieldInterval.setText(intervalTime);
+			if(intervalTime != null)
+				txtFieldInterval.setText(intervalTime);
 			cboFixedRandom.setValue(duration);
 
 		}
@@ -163,17 +137,15 @@ public class ClockTriggerInterval extends ClockTrigger { // NO_UCD (use default)
 	@Override
 	public void setDateFrom(long dateFrom) {
 		super.setDateFrom(dateFrom);
-		this.dateFrom = dateFrom;
 	}
 
 	@Override
 	public void setDateTo(long dateTo) {
 		super.setDateTo(dateTo);
-		this.dateTo = dateTo;
 	}
 
 	@Override
-	public void setParentPane(ParentPane parent) {
+	public void setParentPane(DragPane parent) {
 		super.setParentPane(parent);
 
 	}

@@ -14,13 +14,12 @@ import com.jeeves.vpl.firebase.FirebaseAction;
 import com.jeeves.vpl.firebase.FirebaseSurvey;
 
 public class SurveyAction extends Action { // NO_UCD (unused code)
-	public static final String NAME = "Send Survey";
 	@FXML
 	private ComboBox<String> cboSurveyName;
 	ChangeListener<String> selectionListener;
 
-	public SurveyAction() {
-		this(new FirebaseAction());
+	public SurveyAction(String name) {
+		this(new FirebaseAction(name));
 	}
 
 	public SurveyAction(FirebaseAction data) {
@@ -54,7 +53,6 @@ public class SurveyAction extends Action { // NO_UCD (unused code)
 						@Override
 						public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
 							int index = cboSurveyName.getSelectionModel().getSelectedIndex();
-							//System.out.println("Index is " + index);
 							cboSurveyName.getItems().clear();
 							surveys.forEach(survey2 -> {
 								cboSurveyName.getItems().add(survey2.gettitle());
@@ -76,7 +74,7 @@ public class SurveyAction extends Action { // NO_UCD (unused code)
 
 			@Override
 			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
-				if (arg2 != null) // aaaaaaaargh
+				if (arg2 != null) 
 					params.put("survey", arg2);
 			}
 
@@ -85,16 +83,7 @@ public class SurveyAction extends Action { // NO_UCD (unused code)
 		cboSurveyName.getSelectionModel().selectFirst();
 	}
 
-	@Override
-	public void fxmlInit() {
-		super.fxmlInit();
-		name = NAME;
-	}
 
-	@Override
-	public String getViewPath() {
-		return String.format("/actionSendSurvey.fxml", this.getClass().getSimpleName());
-	}
 
 	@Override
 	public void setData(FirebaseAction model) {

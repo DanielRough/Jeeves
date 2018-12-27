@@ -81,14 +81,10 @@ public class PatientPane extends Pane {
 	private ObservableList<FirebasePatient> allowedPatients = FXCollections.observableArrayList();
 	private Map<String, FirebaseSurvey> completedSurveys;
 
-	private Map<String,FirebaseSurveyEntry> selectedSurveyData;
 	private Main gui;
-	private Map<String, FirebaseSurvey> incompleteSurveys;
-//	@FXML private Label lblPatientCompleted;
-//	@FXML private Label lblPatientMissed;
+	private Map<String, FirebaseSurvey> incompleteSurveys;;
 	@FXML private ListView<String> lstMessages;
 	@FXML private ListView<FirebasePatient> lstPatients;
-//	@FXML private TableView<FirebasePatient> tblPatients;
 	@FXML private TextField txtEmail;
 	@FXML private TextField txtName;
 	@FXML private TextField txtPhone;
@@ -180,10 +176,8 @@ public class PatientPane extends Pane {
 		try {
 			this.cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 		} catch (NoSuchAlgorithmException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (NoSuchPaddingException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		URL location = this.getClass().getResource("/PatientPane.fxml");
@@ -215,9 +209,6 @@ public class PatientPane extends Pane {
 			                }
 			            }
 			        );
-		//	tblPatients.getColumns().clear();
-		//	tblPatients.getColumns().addAll(nameCol);
-		//	tblPatients.setPlaceholder(new Label("No patients currently assigned to this study"));
 			 surveyGroup = new ToggleGroup();
 			 patientGroup = new ToggleGroup();
 			 rdioSelSurvey.setToggleGroup(surveyGroup);

@@ -1,14 +1,12 @@
 package com.jeeves.vpl.canvas.triggers;
 
 import static com.jeeves.vpl.Constants.VAR_LOCATION;
-import static com.jeeves.vpl.Constants.bluetoothSensor;
-import static com.jeeves.vpl.Constants.wifiSensor;
 import static com.jeeves.vpl.Constants.sensors;
 
 import java.util.List;
 
 import com.jeeves.vpl.Constants.Sensor;
-import com.jeeves.vpl.ParentPane;
+import com.jeeves.vpl.DragPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.expressions.UserVariable;
 import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
@@ -19,7 +17,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
@@ -28,7 +25,6 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Popup;
 
 public class SensorTrigger extends Trigger { // NO_UCD (unused code)
-	public static final String NAME = "Sensor Trigger";
 	private ExpressionReceiver variableReceiver;
 	
 	@FXML
@@ -45,12 +41,11 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 	protected ImageView imgBackground;
 	@FXML
 	protected ImageView imgSensorImage;
-	private Sensor selectedSensor;
 	Popup pop = new Popup();
 	ChangeListener<String> sensorlistener;
 
-	public SensorTrigger() {
-		this(new FirebaseTrigger());
+	public SensorTrigger(String name) {
+		this(new FirebaseTrigger(name));
 	}
 
 	public SensorTrigger(FirebaseTrigger data) {
@@ -58,6 +53,12 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 
 	}
 
+	{
+		for (Sensor s : sensors) {
+			cboSensor.getItems().add(s.getname());
+		}
+
+	}
 	@Override
 	public void addListeners() {
 		super.addListeners();
@@ -76,6 +77,7 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 				}
 			}
 		});
+		variableReceiver = new ExpressionReceiver(VAR_LOCATION);
 
 		variableReceiver.getChildElements().addListener(
 				(ListChangeListener<ViewElement>) listener -> {listener.next(); if(listener.wasRemoved())return; params.put("result", variableReceiver.getChildModel().getname());});// timeReceiverFrom.getChildElements().get(0).getModel())));			
@@ -84,27 +86,10 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 				.addListener((ChangeListener<String>) (arg0, arg1, arg2) -> params.put("result", arg2));
 	}
 
-	@Override
-	public void fxmlInit() {
-		super.fxmlInit();
-		name = NAME;
-		for (Sensor s : sensors) {
-			cboSensor.getItems().add(s.getname());
-		}
-		variableReceiver = new ExpressionReceiver(VAR_LOCATION);
-
-	}
 
 	@Override
-	public String getViewPath() {
-		return String.format("/TriggerSensor.fxml", this.getClass().getSimpleName());
-	}
-
-	
-	@Override
-	public void setParentPane(ParentPane parent) {
+	public void setParentPane(DragPane parent) {
 		super.setParentPane(parent);
-		//System.out.println("THEN ME");
 		if(variableReceiver.getChildExpression()!= null)
 			variableReceiver.getChildExpression().setParentPane(parent);
 
@@ -113,7 +98,6 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 	public void setData(FirebaseTrigger model) {
 		super.setData(model);
 		this.model = model;
-		// Map<String,Object> params = model.getparams();
 		String sensorName = null, result = null;
 		if (params.containsKey("selectedSensor"))
 			sensorName = params.get("selectedSensor").toString();
@@ -134,28 +118,12 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 	protected void setResult(String result) {
 		
 		if (result != null && !result.equals("")) {
-			// this.result = result;
-			if(selectedSensor == bluetoothSensor || selectedSensor == wifiSensor){
-				gui.registerVarListener(listener->{
-					listener.next();
-					if(listener.wasAdded()){
-						List<FirebaseVariable> list = (List<FirebaseVariable>) listener.getAddedSubList();
-						if(list.get(0).getname().equals(result)){
-							variableReceiver.addChild(UserVariable.create(list.get(0)),0,0);
-							//System.out.println("FIRST ME");
-						}
-						}
-				});
-				
-			}
-			else
-				cboClassifications.setValue(result);
+			cboClassifications.setValue(result);
 		}
 		
 	}
 
 	protected void setSelectedSensor(Sensor sensor) {
-		this.selectedSensor = sensor;
 		cboSensor.setValue(sensor.getname());
 		imgSensorImage.setImage(new Image(sensor.getimage()));
 		String[] classifications = (sensor.getvalues());
@@ -170,11 +138,9 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 			variableReceiver = new ExpressionReceiver(VAR_LOCATION);
 		
 		//IF our sensor has no possible classification values then it's one we have to drag a variable into
-		//hboxBox.getChildren().remove(variableReceiver);
 		if(sensor.getvalues().length == 0){
 			hboxBox.getChildren().remove(cboClassifications);
 			variableReceiver.setReceiveType(sensor.getname());
-		//	variableReceiver = new ExpressionReceiver(sensor.getname());
 			hboxBox.getChildren().add(variableReceiver);
 			
 		}
@@ -183,11 +149,6 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 			hboxBox.getChildren().add(cboClassifications);
 			hboxBox.getChildren().remove(variableReceiver);
 		}
-//		if (sensor.getname().equals("Location") && !hboxBox.getChildren().contains(variableReceiver)) { 
-//
-//		} else if (!sensor.getname().equals("Location") && !hboxBox.getChildren().contains(cboClassifications)) {
-//
-//		}
 	}
 
 }

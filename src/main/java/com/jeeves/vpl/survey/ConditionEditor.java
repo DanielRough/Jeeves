@@ -40,7 +40,6 @@ import com.jeeves.vpl.survey.questions.QuestionView;
 public class ConditionEditor extends Pane {
 	@FXML
 	public ComboBox<String> cboLessMore;
-	// information into here?
 	@FXML
 	public ComboBox<String> cboMultiChoice;
 	@FXML
@@ -53,8 +52,8 @@ public class ConditionEditor extends Pane {
 	public TextField txtNumAnswer;
 	@FXML
 	private ComboBox<String> cboBeforeAfter;
-												@FXML
-												private ComboBox<String> cboQuestionText; // Can we embed the question
+	@FXML
+	private ComboBox<String> cboQuestionText; // Can we embed the question
 	@FXML
 	private CheckBox chkAskOnCondition;
 	private ArrayList<Node> conditionPanes;
@@ -147,7 +146,7 @@ public class ConditionEditor extends Pane {
 			cboLessMore.setVisible(true);
 			String[] constraints = conditionConstraints.split(";");
 			cboLessMore.getSelectionModel().clearAndSelect(0); //Default
-			txtNumAnswer.setText("5"); //Defaut
+			txtNumAnswer.setText("5"); //Default
 			if (constraints.length > 1) {
 				cboLessMore.setValue(constraints[0]);
 				txtNumAnswer.setText(constraints[1]);
@@ -169,23 +168,13 @@ public class ConditionEditor extends Pane {
 			break;
 		case DATE:
 			hboxDateOpts.setVisible(true);
-	//		Map<String, Object> myopts = conditionQuestion.getModel().getparams();
 			paneDateTimeReceiver.getChildren().clear();
-			String askFor = "";
-//			if (myopts.containsKey("askFor"))
-//				askFor = myopts.get("askFor").toString();
-//			if(askFor.equals("date"))
-				paneDateTimeReceiver.getChildren().add(dateReceiver);
-//			else if(askFor.equals("time"))
-//				paneDateTimeReceiver.getChildren().add(timeReceiver);
-//			else
-//				paneDateTimeReceiver.getChildren().addAll(dateReceiver,timeReceiver);
+			paneDateTimeReceiver.getChildren().add(dateReceiver);
 			cboBeforeAfter.setVisible(true);
 			paneDateTimeReceiver.setVisible(true);
 			String[] dateconstraints = conditionConstraints.split(";");
 			if (dateconstraints.length > 1) {
-		//			timeReceiver.setText(dateconstraints[2]);
-					dateReceiver.setText(dateconstraints[1]);
+				dateReceiver.setText(dateconstraints[1]);
 				cboBeforeAfter.setValue(dateconstraints[0]);
 			}
 			else
@@ -193,23 +182,13 @@ public class ConditionEditor extends Pane {
 			break;
 		case TIME:
 			hboxDateOpts.setVisible(true);
-	//		Map<String, Object> myopts = conditionQuestion.getModel().getparams();
 			paneDateTimeReceiver.getChildren().clear();
-//			String askFor = "";
-//			if (myopts.containsKey("askFor"))
-//				askFor = myopts.get("askFor").toString();
-//			if(askFor.equals("date"))
-		//		paneDateTimeReceiver.getChildren().add(dateReceiver);
-//			else if(askFor.equals("time"))
-				paneDateTimeReceiver.getChildren().add(timeReceiver);
-//			else
-//				paneDateTimeReceiver.getChildren().addAll(dateReceiver,timeReceiver);
+			paneDateTimeReceiver.getChildren().add(timeReceiver);
 			cboBeforeAfter.setVisible(true);
 			paneDateTimeReceiver.setVisible(true);
 			String[] timeconstraints = conditionConstraints.split(";");
 			if (timeconstraints.length > 1) {
-					timeReceiver.setText(timeconstraints[1]);
-		//			dateReceiver.setText(dateconstraints[1]);
+				timeReceiver.setText(timeconstraints[1]);
 				cboBeforeAfter.setValue(timeconstraints[0]);
 			}
 			else

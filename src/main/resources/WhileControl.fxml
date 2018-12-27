@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<Pane fx:id="pane" minHeight="30.0" minWidth="170.0" prefHeight="30.0" styleClass="if_control" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+  <children>
+    <HBox fx:id="evalbox" alignment="CENTER_LEFT" layoutX="24.0" layoutY="-2.0" minHeight="-1.0" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
+      <children>
+        <Label alignment="CENTER_LEFT" minHeight="-1.0" prefHeight="-1.0" prefWidth="-1.0" text="while" textFill="WHITE">
+          <font>
+            <Font size="15.0" />
+          </font>
+        </Label>
+
+      </children>
+      <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+      </padding>
+    </HBox>
+      <Pane layoutX="-14.0" layoutY="9.0" prefHeight="12.0" prefWidth="15.0" snapToPixel="false" styleClass="if_control_join" />
+  </children>
+  <padding>
+    <Insets right="10.0" />
+  </padding>
+  <stylesheets>
+    <URL value="@Styles.css" />
+  </stylesheets>
+</Pane>

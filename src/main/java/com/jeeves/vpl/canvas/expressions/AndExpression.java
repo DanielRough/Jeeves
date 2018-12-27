@@ -7,10 +7,9 @@ import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 
 public class AndExpression extends Expression { // NO_UCD (unused code)
-	public static final String NAME = "Both True";
 
-	public AndExpression() {
-		this(new FirebaseExpression());
+	public AndExpression(String name) {
+		this(new FirebaseExpression(name));
 	}
 
 	public AndExpression(FirebaseExpression data) {
@@ -19,8 +18,6 @@ public class AndExpression extends Expression { // NO_UCD (unused code)
 
 	@Override
 	public void setup() {
-		name = NAME;
-		this.varType = VAR_BOOLEAN;
 		operand.setText("and");
 		receivers.add(new ExpressionReceiver(VAR_BOOLEAN));
 		receivers.add(new ExpressionReceiver(VAR_BOOLEAN));

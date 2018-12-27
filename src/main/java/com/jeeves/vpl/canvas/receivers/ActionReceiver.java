@@ -3,8 +3,8 @@ package com.jeeves.vpl.canvas.receivers;
 import java.util.Arrays;
 
 import com.jeeves.vpl.Constants.ElementType;
+import com.jeeves.vpl.canvas.actions.Control;
 import com.jeeves.vpl.ViewElement;
-import com.jeeves.vpl.canvas.ifsloops.Control;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -82,13 +82,7 @@ public class ActionReceiver extends Receiver {
 		getChildren().add(highlightPath);
 
 	}
-//
-//	@Override
-//	public void addChild(ViewElement child, double x, double y) {
-//		// TODO Auto-generated method stub
-//		super.addChild(child, x, y);
-//	}
-//	
+
 	@Override
 	public void addChildAtIndex(ViewElement child, int index){
 		super.addChildAtIndex(child, index);
@@ -107,26 +101,6 @@ public class ActionReceiver extends Receiver {
 	@Override
 	public void defineHandlers() {
 		super.defineHandlers();
-		
-		this.addEventHandler(MouseEvent.ANY, new EventHandler<MouseEvent>(){
-
-			@Override
-			public void handle(MouseEvent event) {
-				event.consume();
-				if(event.getEventType().equals(MouseEvent.MOUSE_ENTERED)){
-//					captureRect.setFill(Color.CYAN);
-				//	Main.getContext().highlightMenu(ElementType.ACTION,true);
-
-				}
-				if(event.getEventType().equals(MouseEvent.MOUSE_EXITED)){
-		//			captureRect.setFill(Color.DARKCYAN);
-			//		Main.getContext().highlightMenu(ElementType.ACTION,false);
-
-				}
-			}
-		
-			
-		});
 		mentered = event -> {
 			event.consume();
 			if (!isValidElement((ViewElement) event.getGestureSource()))
@@ -212,12 +186,6 @@ public class ActionReceiver extends Receiver {
 	}
 
 	private void heightChanged(double heightChange) {
-//		captureRect.setHeight(captureRect.getHeight() + heightChange);
-//		ObservableList<Double> points = brackets.getPoints();
-//		int length = points.size();
-//		ObservableList<Double> bottombracket = FXCollections.observableList(points.subList(length - 16, length));
-//		for (int yPoint = 1; yPoint < 16; yPoint += 2)
-//			bottombracket.set(yPoint, bottombracket.get(yPoint) + heightChange);
 		redrawLine();
 
 		if (parentReceiver != null) {

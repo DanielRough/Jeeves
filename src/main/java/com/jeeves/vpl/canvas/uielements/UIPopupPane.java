@@ -25,7 +25,6 @@ class UIPopupPane extends Pane {
 	private UIElement element;
 	@FXML
 	private TextField txtText;
-	private String currentname;
 	
 	public UIPopupPane(Stage stage, List<ViewElement> currentChildren, String currentname) {
 
@@ -33,9 +32,7 @@ class UIPopupPane extends Pane {
 		fxmlLoader.setController(this);
 		URL location = this.getClass().getResource("/uiPopup.fxml");
 		fxmlLoader.setLocation(location);
-		this.currentname = currentname;
 
-		//Hacky stuff to ensure we don't duplicate any names
 		ArrayList<String> currentnames = new ArrayList<String>();
 		for(ViewElement child : currentChildren){
 			UIElement uichild = (UIElement)child;

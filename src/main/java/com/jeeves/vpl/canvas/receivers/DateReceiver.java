@@ -33,7 +33,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class DateReceiver extends ExpressionReceiver {
-	//private long epochMillis;
 
 	public class NewSingleDatePane extends Pane {
 		@FXML
@@ -55,7 +54,6 @@ public class DateReceiver extends ExpressionReceiver {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			// getStylesheets().add(ViewElement.class.getResource("Styles.css").toExternalForm());
 		}
 
 		@FXML
@@ -109,11 +107,9 @@ public class DateReceiver extends ExpressionReceiver {
 				long epochMillis = DateUtils.parseDate(text.getText(), "dd/MM/yy").getTime();
 				return Long.toString(epochMillis + 7200000);
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
 				return "0";
 			}
 	
-//		return text.getText();
 	}
 
 	public TextField getTextField() {
@@ -163,7 +159,6 @@ public class DateReceiver extends ExpressionReceiver {
 			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
 				text.setPrefWidth(TextUtils.computeTextWidth(text.getFont(), text.getText(), 0.0D) + 20);
 				captureRect.setWidth(text.getPrefWidth());
-				// value = text.getText();
 			}
 		});
 		DateFormat df = new SimpleDateFormat("dd/MM/yy");
@@ -183,30 +178,5 @@ public class DateReceiver extends ExpressionReceiver {
 			text.setText(sdf.format(date));
 		
 	}
-//	public void setText(String newtext) {
-//		try {
-//			int totalmins = Integer.parseInt(newtext);
-//			int hours = totalmins / 60;
-//			int mins = totalmins % 60;
-//			text.setText(padWithZeroes(hours) + ":" + padWithZeroes(mins));
-//		} catch (NumberFormatException e) {
-//			text.setText(newtext);
-//		}
-//	}
-//
-//	public void setTextFromActual(String day, String month, String year) {
-////		text.setText(year);
-////		int hrs, mns;
-////		try {
-////			hrs = Integer.parseInt(hours);
-////		} catch (NumberFormatException e) {
-////			hrs = 0;
-////		}
-////		try {
-////			mns = Integer.parseInt(mins);
-////		} catch (NumberFormatException e) {
-////			mns = 0;
-////		}
-//	//	text.setText(padWithZeroes(hrs) + ":" + padWithZeroes(mns));
-//	}
+
 }

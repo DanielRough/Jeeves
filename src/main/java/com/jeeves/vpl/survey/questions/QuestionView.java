@@ -35,25 +35,16 @@ import javafx.scene.layout.VBox;
 public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 	public static QuestionView create(FirebaseQuestion question) {
 		String classname = question.gettype();
-
 		try {
-			switch ((int) question.getquestionType()) {
-
-			}
-			return (QuestionView) Class.forName(classname).getConstructor(FirebaseQuestion.class).newInstance(question); // It's
-																															// a
-																															// plain
-																															// Action
+			return (QuestionView) Class.forName(classname).getConstructor(FirebaseQuestion.class).newInstance(question); 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	// public String colourCode = "white";
 	public int colourCode = -1;
 	@FXML
 	public Label lblQuestion;
-	//public int oldIndex = 0;
 	public double originalWidth = 0;
 	private Button btnDeleteQ;
 	private Button btnEdit;
@@ -61,24 +52,22 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 	@FXML
 	private ImageView imgEntry;
 	private boolean isChild = false;
-	// protected FirebaseQuestion model;
 	protected ObservableList<QuestionView> childQuestions;
 	protected Pane optionsPane;
 	private String questionId;
 	protected QuestionView parentQuestion;
 	public StringProperty questionTextProperty;
-	private boolean isMandatory;
 	HBox buttonBox;
 
-	// protected String parentConstraints;
 	HBox surveynode;
 
-	public QuestionView() {
-		super(null,FirebaseQuestion.class);
-	}
+	public QuestionView(String label) throws InstantiationException, IllegalAccessException {
+		super(FirebaseQuestion.class.newInstance(),FirebaseQuestion.class);
+		}
 
 	public QuestionView(FirebaseQuestion model) {
 		super(model, FirebaseQuestion.class);
+		
 	}
 
 	public void addButtons() {
@@ -88,10 +77,6 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 		btnEdit.setStyle("-fx-font-size:14px");
 		btnDeleteQ = new Button("X");
 		btnDeleteQ.setStyle("-fx-font-size:14px; -fx-font-weight:bold");
-		btnEdit.setOnAction(action -> {
-		});
-		btnDeleteQ.setOnAction(action -> {
-		});
 		buttonBox.getChildren().addAll(btnEdit, btnDeleteQ);
 		buttonBox.setSpacing(10);
 
@@ -159,18 +144,12 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 		try {
 			surveynode = (HBox) surveyLoader.load();
 			getChildren().add(surveynode);
-			model = new FirebaseQuestion();
-			model.setquestionType(getQuestionType());
-			model.setquestionId(getSaltString());
 
 			setImage(getImagePath());
 			questionTextProperty = new SimpleStringProperty();
 
-			setQuestionText(getLabel());
-			// addListeners();
 			buttonBox = new HBox();
 			childQuestions = FXCollections.observableArrayList();
-			model.settype(getClass().getName());
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -199,7 +178,6 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 		return this;
 	}
 
-	public abstract String getLabel();
 
 	@Override
 	public FirebaseQuestion getModel() {
@@ -235,7 +213,7 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 		return model.getquestionText() != null ? model.getquestionText() : "";
 	}
 
-	public abstract int getQuestionType();
+	public abstract String getQuestionType();
 
 	public String getText() {
 		return model.getquestionText();
@@ -304,9 +282,14 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 
 	@Override
 	public void setData(FirebaseQuestion model) {
-		this.model = model;
+		super.setData(model);
+
 		setQuestionText(model.getquestionText());
 		setQuestionId(model.getquestionId());
+		model.setquestionType(getQuestionType());
+		model.setquestionId(getSaltString());
+		model.settype(getClass().getName());
+
 	}
 
 	public void setImage(String image) {
@@ -348,14 +331,9 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 		model.setquestionText(text);
 	}
 
-	public void setQuestionType(int type) {
+	public void setQuestionType(String type) {
 		model.setquestionType(type);
-		setImage(imagePath);
 	}
-
-//	public void setReadOnly(boolean readOnly) {
-//		isReadOnly = readOnly;
-//	}
 
 	public void showDelete() {
 		btnEdit.setVisible(true);
@@ -363,6 +341,7 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 	}
 
 	public abstract void showEditOpts(Map<String, Object> opts);
+
 
 
 

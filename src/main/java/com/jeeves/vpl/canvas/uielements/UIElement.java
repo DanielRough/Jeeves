@@ -1,10 +1,13 @@
 package com.jeeves.vpl.canvas.uielements;
 
+import static com.jeeves.vpl.Constants.elemNames;
+
 import java.io.IOException;
 import java.util.List;
 
 import com.jeeves.vpl.Constants.ElementType;
 import com.jeeves.vpl.ViewElement;
+import com.jeeves.vpl.firebase.FirebaseElement;
 import com.jeeves.vpl.firebase.FirebaseUI;
 
 import javafx.fxml.FXMLLoader;
@@ -18,35 +21,40 @@ import javafx.stage.StageStyle;
 
 public abstract class UIElement extends ViewElement<FirebaseUI> {
 	public static UIElement create(FirebaseUI exprmodel) {
-		String classname = exprmodel.gettype();
-		try {
+		String trigname = exprmodel.getname();
+		String classname = "com.jeeves.vpl.canvas.uielements." + elemNames.get(trigname);		try {
 			return (UIElement) Class.forName(classname).getConstructor(FirebaseUI.class).newInstance(exprmodel);
 		} catch (Exception e) {
-			return new UIButton(); // for safety purposes
+			e.printStackTrace();
 		}
+		return null;
 	}
-	public boolean dragged = false;
-
-	// private ElementReceiver receiver;
-	public boolean previouslyAdded = false;
+	protected boolean dragged = false;
+	protected boolean previouslyAdded = false;
 	protected TextField editField;
 	
-	public UIElement() {
-		super(null,FirebaseUI.class);
+	public void setPreviouslyAdded(boolean prevAdded) {
+		this.previouslyAdded = prevAdded;
+	}
+	public boolean getPreviouslyAdded() {
+		return previouslyAdded;
+	}
+	public UIElement() throws InstantiationException, IllegalAccessException {
+		super(FirebaseUI.class.newInstance(),FirebaseUI.class);
 	}
 
 	public UIElement(FirebaseUI data) {
 		super(data, FirebaseUI.class);
-		this.model = data;
 	}
 
 	@Override
 	public void fxmlInit() {
 		this.type = ElementType.UIELEMENT;
+		this.model = new FirebaseUI();
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		editField = new TextField();
 		fxmlLoader.setController(this);
-		fxmlLoader.setLocation(getClass().getResource(getViewPath()));
+		fxmlLoader.setLocation(getClass().getResource("/" + getClass().getSimpleName() + ".fxml"));
 		try {
 			Node root = (Node) fxmlLoader.load();
 			getChildren().add(root);
@@ -56,12 +64,11 @@ public abstract class UIElement extends ViewElement<FirebaseUI> {
 	}
 
 	public abstract Control getChild();
-
-	// public abstract StringProperty getTextProperty();
+	public abstract void setText(String text);
 	public abstract String getText();
 
-	public abstract String getViewPath();
 
+	
 	@Override
 	public void setData(FirebaseUI element) {
 		super.setData(element);
@@ -69,16 +76,12 @@ public abstract class UIElement extends ViewElement<FirebaseUI> {
 			setText(element.gettext());
 	}
 
-	public abstract void setText(String text);
-
-	
 	/**
 	 * Method called when a new UI Element is added
 	 * @param childList
 	 */
 	public void update(List<ViewElement> childList) {
 		Stage stage = new Stage(StageStyle.UNDECORATED);
-	//	setText("         "); //Get rid of its default name
 		String currentname = getText();
 		UIPopupPane root = new UIPopupPane(stage,childList,currentname);
 		root.init(this);

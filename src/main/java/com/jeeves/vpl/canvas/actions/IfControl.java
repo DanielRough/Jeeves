@@ -1,4 +1,4 @@
-package com.jeeves.vpl.canvas.ifsloops;
+package com.jeeves.vpl.canvas.actions;
 
 import javafx.scene.Node;
 
@@ -17,8 +17,8 @@ import static com.jeeves.vpl.Constants.*;
 public class IfControl extends Control {
 	public static final String NAME = "If Condition";
 
-	public IfControl() {
-		this(new FirebaseAction());
+	public IfControl(String name) {
+		this(new FirebaseAction(name));
 	}
 
 	public IfControl(FirebaseAction data) {
@@ -28,14 +28,9 @@ public class IfControl extends Control {
 	@Override
 	public void fxmlInit() {
 		super.fxmlInit();
-		name = NAME;
 		exprreceiver = new ExpressionReceiver(VAR_BOOLEAN);
 		evalbox.getChildren().add(1, exprreceiver);
 	}
 
-	@Override
-	public String getViewPath() {
-		return String.format("/controlIf.fxml", this.getClass().getSimpleName());
-	}
 
 }

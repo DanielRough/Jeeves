@@ -14,8 +14,6 @@ import static com.jeeves.vpl.Constants.VAR_CLOCK;
 import static com.jeeves.vpl.Constants.VAR_DATE;
 import static com.jeeves.vpl.Constants.VAR_LOCATION;
 import static com.jeeves.vpl.Constants.VAR_NUMERIC;
-import static com.jeeves.vpl.Constants.VAR_WIFI;
-import static com.jeeves.vpl.Constants.WIFI;
 import static com.jeeves.vpl.Constants.categoryOpts;
 
 import java.io.IOException;
@@ -117,19 +115,18 @@ public class QuestionEditor extends Pane {
 					//its possible values in the global  hashmap
 					String[] optsArray = new String[0];
 					try {
-					categoryOpts.put(newValue.getName(), selectedQuestion.getQuestionOptions().values().toArray(optsArray));
-					//System.out.println("INTO CATEGORY OPTS I PUT " + newValue.getName() + "," + selectedQuestion.getQuestionOptions().values().toString());
+						categoryOpts.put(newValue.getName(), selectedQuestion.getQuestionOptions().values().toArray(optsArray));
 					}
 					catch(ArrayStoreException e) {
-						
+
 					}
 					if(oldValue != null)
 						categoryOpts.remove(oldValue.getName());
 				}
-				}
+			}
 
 		});
-		
+
 		chkMandatory.selectedProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -166,11 +163,9 @@ public class QuestionEditor extends Pane {
 		if (entry.equals(selectedQuestion))
 			return; // Forget it, we've already selected this quesiton
 		selectedQuestion = entry;
-		
-//		entry.
 		populateVarBox();
 
-		
+
 
 		if (entry.isMandatory())
 			chkMandatory.setSelected(true);
@@ -185,21 +180,19 @@ public class QuestionEditor extends Pane {
 			});
 		} else
 			chkAssignToVar.setSelected(false);
-		
-		
+
+
 		Map<String, Object> opts = entry.getQuestionOptions();
 		TreeMap<String,Object> sortedmap = new TreeMap<String,Object>(opts);
-	//	if(opts != null)
-			selectedQuestion.showEditOpts(sortedmap);
-			String[] optsArray = new String[0];
-			//System.out.println(entry.getQuestionOptions().values().toString());
-			try {
+		selectedQuestion.showEditOpts(sortedmap);
+		String[] optsArray = new String[0];
+		try {
 			categoryOpts.put(entry.getAssignedVar(), entry.getQuestionOptions().values().toArray(optsArray));
-			}
-			catch(ArrayStoreException e) {
-				
-			}
-		
+		}
+		catch(ArrayStoreException e) {
+
+		}
+
 		if (entry.getChildQuestions().isEmpty())
 			conditionEditor.setDisable(false);
 		else
@@ -234,7 +227,7 @@ public class QuestionEditor extends Pane {
 				break;
 			else if (question.isChild())
 				continue; // Don't add the ones that are conditionally asked.
-							// Currently can't nest conditions
+			// Currently can't nest conditions
 			conditionEditor.addOption(question);
 		}
 
@@ -283,11 +276,6 @@ public class QuestionEditor extends Pane {
 						cboVars.getItems().add(uservar);
 					}
 					break;
-				case WIFI:
-					if (uservar.getVarType().equals(VAR_WIFI)) {
-						cboVars.getItems().add(uservar);
-					}
-					break;
 				case MULT_SINGLE:
 				case MULT_MANY:
 					if (uservar.getVarType().equals(VAR_CATEGORY)) {
@@ -295,9 +283,6 @@ public class QuestionEditor extends Pane {
 					}
 					break;
 				}
-				
-				//uservar.removeHander();
-
 			}
 		});
 		Callback<ListView<UserVariable>, ListCell<UserVariable>> cellFactory = new Callback<ListView<UserVariable>, ListCell<UserVariable>>() {

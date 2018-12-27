@@ -20,9 +20,13 @@ public class FirebaseExpression extends FirebaseElement implements Serializable 
 	private String value;
 	private List<FirebaseExpression> variables = new ArrayList<FirebaseExpression>();
 	private String vartype;
-
 	private long timeCreated;
 	
+	public FirebaseExpression() {}
+	
+	public FirebaseExpression(String name) {
+		this.name.setValue(name);
+	}
 	public void settimeCreated(long time){
 		this.timeCreated = time;
 		

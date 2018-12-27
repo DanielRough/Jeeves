@@ -18,12 +18,6 @@ import javafx.scene.layout.VBox;
 
 public class QuestionDate extends QuestionView {
 
-//	@FXML
-//	private RadioButton rdioDate;
-//	@FXML
-//	private RadioButton rdioTime;
-//
-//	private ToggleGroup askForGroup;
 	@FXML
 	private HBox hboxOptions;
 	@FXML
@@ -36,8 +30,8 @@ public class QuestionDate extends QuestionView {
 	@FXML
 	private VBox vboxDateOpts;
 
-	public QuestionDate() {
-		super();
+	public QuestionDate(String label)  throws Exception {
+		this(new FirebaseQuestion(label));
 	}
 
 	public QuestionDate(FirebaseQuestion data) {
@@ -46,13 +40,8 @@ public class QuestionDate extends QuestionView {
 
 	@Override
 	public void addEventHandlers() {
-
-//		askForGroup.selectedToggleProperty().addListener((x,y,z)->{
-//			model.getparams().put("askFor", z.getUserData());
-//		});
 		tgroup.selectedToggleProperty().addListener((x, y, z) -> {
 			model.getparams().put("dateConstraint", tgroup.getSelectedToggle().getUserData());
-			//model.setparams(params);
 		});
 
 	}
@@ -63,20 +52,13 @@ public class QuestionDate extends QuestionView {
 	}
 
 	@Override
-	public String getLabel() {
-		return "Select a Date";
-	}
-
-	@Override
-	public int getQuestionType() {
-		// TODO Auto-generated method stub
+	public String getQuestionType() {
 		return DATE;
 	}
 
 	@Override
 	public void loadOptions() {
 		tgroup = new ToggleGroup();
-	//	askForGroup = new ToggleGroup();
 		FXMLLoader surveyLoader = new FXMLLoader();
 		surveyLoader.setController(this);
 		surveyLoader.setLocation(getClass().getResource("/OptionsDateTime.fxml"));
@@ -86,11 +68,6 @@ public class QuestionDate extends QuestionView {
 			addEventHandlers();
 		} catch (IOException e) {
 		}
-//		rdioDate.setToggleGroup(askForGroup);
-//		rdioDate.setUserData("date");
-//		rdioTime.setToggleGroup(askForGroup);
-//		rdioTime.setUserData("time");
-
 		
 		rdioAny.setToggleGroup(tgroup);
 		rdioAny.setUserData(new Long(0));
@@ -102,16 +79,6 @@ public class QuestionDate extends QuestionView {
 
 	@Override
 	public void showEditOpts(Map<String, Object> opts) {
-
-//		if(model.getparams().containsKey("askFor")){
-//			String askFor = model.getparams().get("askFor").toString();
-//			if(askFor.equals("date"))
-//				rdioDate.setSelected(true);
-//			else if (askFor.equals("time"))
-//				rdioTime.setSelected(true);
-//
-//		}
-		
 		if (model.getparams().containsKey("dateConstraint"))
 			switch (((Long)model.getparams().get("dateConstraint")).intValue()) {
 			case 0:

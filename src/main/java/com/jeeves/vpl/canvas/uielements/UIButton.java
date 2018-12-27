@@ -14,14 +14,13 @@ import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.firebase.FirebaseUI;
 
 public class UIButton extends UIElement { // NO_UCD (unused code)
-	public static final String NAME = "button";
 	@FXML
 	private Button btnButton;
 	@FXML
 	private StackPane panePane;
 
-	public UIButton() {
-		this(new FirebaseUI());
+	public UIButton(String name) {
+		this(new FirebaseUI(name));
 	}
 
 	public UIButton(FirebaseUI data) {
@@ -30,11 +29,6 @@ public class UIButton extends UIElement { // NO_UCD (unused code)
 		addListeners();
 	}
 
-	@Override
-	public void fxmlInit() {
-		super.fxmlInit();
-		name = NAME;
-	}
 
 	@Override
 	public Control getChild() {
@@ -53,21 +47,9 @@ public class UIButton extends UIElement { // NO_UCD (unused code)
 	}
 
 	@Override
-	public String getViewPath() {
-		return String.format("/uiButton.fxml", this.getClass().getSimpleName());
-	}
-
-	@Override
-	public void setData(FirebaseUI data) {
-		super.setData(data);
-	}
-
-	@Override
 	public void setText(String text) {
 		btnButton.setText(text);
 		model.settext(text);
-//		gui.getUIElements().remove(model);
-//		gui.getUIElements().add(model);
 	}
 
 	@Override
@@ -77,7 +59,6 @@ public class UIButton extends UIElement { // NO_UCD (unused code)
 
 			@Override
 			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
-
 				model.settext(arg2);
 			}
 

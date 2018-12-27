@@ -26,18 +26,15 @@ public class QuestionMultSingle extends QuestionView {
 
 	@FXML
 	private Button btnAddOptS;
-
 	@FXML
 	private VBox paneChoiceOptsS;
-
 	@FXML
 	private Pane paneMultChoiceS;
-
 	@FXML
 	private ScrollPane paneOptionsS;
 
-	public QuestionMultSingle() {
-		super();
+	public QuestionMultSingle(String label)  throws Exception {
+		this(new FirebaseQuestion(label));
 	}
 
 	public QuestionMultSingle(FirebaseQuestion data) {
@@ -46,11 +43,10 @@ public class QuestionMultSingle extends QuestionView {
 
 	@Override
 	public void addEventHandlers() {
-		// TODO Auto-generated method stub
 		btnAddOptS.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				handleAddOpt(paneChoiceOptsS, "");// Add a blank options
+				handleAddOpt(paneChoiceOptsS, "");// Add a blank option
 			}
 		});
 	}
@@ -60,21 +56,11 @@ public class QuestionMultSingle extends QuestionView {
 	}
 
 	@Override
-	public String getLabel() {
-		return "Select one option from a list";
-	}
-
-	@Override
-	public int getQuestionType() {
+	public String getQuestionType() {
 		return MULT_SINGLE;
 	}
 
-	/**
-	 * Add an option to a multiple choice question
-	 * 
-	 * @param s
-	 *            The option text
-	 */
+
 	public void handleAddOpt(VBox choices, String s) { // NO_UCD (unused code)
 
 		HBox optionBox = new HBox();
@@ -123,15 +109,7 @@ public class QuestionMultSingle extends QuestionView {
 		optionBox.getChildren().addAll(choice, remove);
 		choices.getChildren().add(optionBox);
 		choice.textProperty().addListener(handler->{
-//			if(!getInstance().getChildQuestions().isEmpty()){
-//				//handler.consume();
-//				Alert alert = new Alert(AlertType.INFORMATION);
-//				alert.setTitle("Duplicate survey names");
-//				alert.setHeaderText(null);
-//				alert.setContentText("All surveys must have unique names");
-//				alert.showAndWait();
-//				return;
-//			}
+
 			Map<String, Object> qOptions = new HashMap<String, Object>();
 			int optcount = 1;
 			for (Node opt : choices.getChildren()) {
@@ -140,7 +118,6 @@ public class QuestionMultSingle extends QuestionView {
 				qOptions.put("option" + Integer.toString(optcount++), opttext.getText());
 				model.getparams().put("options",qOptions);
 			}
-			//System.out.println("In a slighlty different place I PUT " + getAssignedVar() + "," + qOptions.values().toString());
 
 			categoryOpts.put(getAssignedVar(), qOptions.values().toArray(opts));
 
@@ -154,9 +131,7 @@ public class QuestionMultSingle extends QuestionView {
 			TextField opttext = (TextField) optbox.getChildren().get(0);
 			qOptions.put("option" + Integer.toString(optcount++), opttext.getText());
 			model.getparams().put("options",qOptions);
-			
-			//Here we update the global categories hashmap again
-			//categoryOpts.put(getAssignedVar(), qOptions.values().toArray(opts));
+
 		}
 	}
 
@@ -187,13 +162,11 @@ public class QuestionMultSingle extends QuestionView {
 		Iterator<String> iter = opts.keySet().iterator();
 		while(iter.hasNext()) {
 			String key = iter.next();
-			//System.out.println("key is " + key + " and value is " + opts.get(key));
 			handleAddOpt(paneChoiceOptsS, opts.get(key).toString());
 
 		}
-//		for (Object opt : opts.values()) {
-//			handleAddOpt(paneChoiceOptsS, opt.toString());
-//		}
+
 	}
+
 
 }

@@ -1,9 +1,6 @@
 package com.jeeves.vpl.canvas.expressions;
 
-import static com.jeeves.vpl.Constants.VAR_BOOLEAN;
-
-import com.jeeves.vpl.Main;
-import com.jeeves.vpl.ParentPane;
+import com.jeeves.vpl.DragPane;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 import com.jeeves.vpl.firebase.FirebaseSurvey;
 
@@ -12,12 +9,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.stage.Popup;
 
 public class SurveyExpression extends Expression { // NO_UCD (unused code)
-	public static final String NAME = "Survey Result";
 	public boolean manualChange = false;
 	private ComboBox<String> cboSurveys;
 	private ComboBox<String> cboDoneOrNot;
@@ -26,11 +21,11 @@ public class SurveyExpression extends Expression { // NO_UCD (unused code)
 	Popup pop = new Popup();
 	ChangeListener<String> selectionListener;
 
-	public SurveyExpression() {
-		this(new FirebaseExpression());
+	public SurveyExpression(String name) {
+		this(new FirebaseExpression(name));
 	}
 	@Override
-	public void setParentPane(ParentPane parent) {
+	public void setParentPane(DragPane parent) {
 		super.setParentPane(parent);
 
 	}
@@ -94,10 +89,8 @@ public class SurveyExpression extends Expression { // NO_UCD (unused code)
 		params.put("result", "missed");
 		cboDoneOrNot.valueProperty()
 				.addListener((ChangeListener<String>) (arg0, arg1, arg2) -> {
-		//		model.getparams().put("result", arg2));
 				params.put("result", arg2);
 				doneOrNot = arg2;});
-				
 				
 				addListeners();
 
@@ -115,7 +108,6 @@ public class SurveyExpression extends Expression { // NO_UCD (unused code)
 	public void setData(FirebaseExpression model) {
 		super.setData(model);
 		updatePane();
-		//params = model.getparams();
 		if (model.getparams().containsKey("survey")) {
 			String surveyName = model.getparams().get("survey").toString();
 			cboSurveys.getSelectionModel().select(surveyName);
@@ -137,20 +129,14 @@ public class SurveyExpression extends Expression { // NO_UCD (unused code)
 
 	@Override
 	public void setup() {
-		name = NAME;
-		this.varType = VAR_BOOLEAN;
 		operand.setText("was");
-		box.getStyleClass().add(this.varType);
-
 	}
 
 	@Override
 	public void updatePane() {
+		super.updatePane();
 		cboSurveys = new ComboBox<String>();
 		cboDoneOrNot = new ComboBox<String>();
-
-
-		setup();
 		box.getChildren().clear();
 		box.getChildren().addAll(cboSurveys, operand, cboDoneOrNot);
 		box.setPadding(new Insets(0, 4, 0, 4));

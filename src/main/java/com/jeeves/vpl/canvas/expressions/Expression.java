@@ -1,12 +1,13 @@
 package com.jeeves.vpl.canvas.expressions;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import static com.jeeves.vpl.Constants.exprNames;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.Constants.ElementType;
-import com.jeeves.vpl.ParentPane;
+import com.jeeves.vpl.DragPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
 import com.jeeves.vpl.firebase.FirebaseExpression;
@@ -20,7 +21,6 @@ import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableMap;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 
@@ -32,30 +32,29 @@ import javafx.scene.layout.HBox;
  *
  */
 
-public abstract class Expression extends ViewElement<FirebaseExpression> implements Typed {
+public abstract class Expression extends ViewElement<FirebaseExpression>{
 	protected ObservableMap<String, Object> params;
 
 	public static Expression create(FirebaseExpression exprmodel) {
-		String classname = exprmodel.gettype();
-		try {
+		String trigname = exprmodel.getname();
+		String classname = "com.jeeves.vpl.canvas.expressions." + exprNames.get(trigname);		try {
 			return (Expression) Class.forName(classname).getConstructor(FirebaseExpression.class)
 					.newInstance(exprmodel);
 		} catch (Exception e) {
-			e.printStackTrace();
+			return new UserVariable(exprmodel);
+			//e.printStackTrace();
 		}
-		return null;
+	//	return null;
 	}
 	private Label lbracket;
 	private Label rbracket;
 	protected HBox box;
 	protected Label operand; 
-//	protected Map<String, Object> params = new HashMap<String, Object>();
 														
 	protected ArrayList<ExpressionReceiver> receivers; 
-	protected String varType;
 
-	public Expression() {
-		super(null,FirebaseExpression.class);
+	public Expression() throws InstantiationException, IllegalAccessException {
+		super(FirebaseExpression.class.newInstance(),FirebaseExpression.class);
 	}
 
 	public Expression(FirebaseExpression data) {
@@ -80,6 +79,7 @@ public abstract class Expression extends ViewElement<FirebaseExpression> impleme
 						javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
 
 					if (change.wasAdded()) {
+						System.out.println("CHAAANGE " + change);
 						model.getparams().put(change.getKey(), change.getValueAdded());
 					} else {
 						model.getparams().remove(change.getKey());
@@ -117,6 +117,7 @@ public abstract class Expression extends ViewElement<FirebaseExpression> impleme
 	@Override
 	public void fxmlInit() {
 		this.type = ElementType.EXPRESSION;
+		this.model = new FirebaseExpression();
 		receivers = new ArrayList<ExpressionReceiver>();
 		operand = new Label();
 		box = new HBox();
@@ -133,10 +134,7 @@ public abstract class Expression extends ViewElement<FirebaseExpression> impleme
 		return this;
 	}
 
-	@Override
-	public String getVarType() {
-		return varType;
-	}
+
 	public ObservableMap<String, Object> getparams() {
 		return params;
 	}
@@ -166,7 +164,7 @@ public abstract class Expression extends ViewElement<FirebaseExpression> impleme
 	}
 
 	@Override
-	public void setParentPane(ParentPane parent) {
+	public void setParentPane(DragPane parent) {
 		super.setParentPane(parent);
 		receivers.forEach(rec -> {
 			if (rec.getChildExpression() != null)
@@ -185,7 +183,7 @@ public abstract class Expression extends ViewElement<FirebaseExpression> impleme
 			box.getChildren().addAll(lbracket, receivers.get(0), operand, receivers.get(1), rbracket);
 		else if (receivers.size() == 1)
 			box.getChildren().addAll(lbracket, receivers.get(0), operand, rbracket);
-		box.getStyleClass().add(this.varType);
+		box.getStyleClass().add(Constants.VAR_BOOLEAN);
 		box.setPadding(new Insets(0, 4, 0, 4));
 	}
 

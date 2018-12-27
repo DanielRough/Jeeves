@@ -35,7 +35,6 @@ import javafx.stage.StageStyle;
 public class TimeReceiver extends ExpressionReceiver {
 	public class NewTimePane extends Pane {
 
-		// private Stage stage;
 		@FXML
 		private TextField txtHours;
 		@FXML
@@ -43,9 +42,7 @@ public class TimeReceiver extends ExpressionReceiver {
 		@FXML
 		private Button btnOK;
 		private EventHandler<MouseEvent> closeHandler;
-		private Stage stage;
-		private TextField texty;
-		
+
 		private String padWithZeroes(int number) {
 			if (number > 9)
 				return Integer.toString(number);
@@ -54,8 +51,6 @@ public class TimeReceiver extends ExpressionReceiver {
 		}
 		
 		public NewTimePane(Stage stage, TextField texty) {
-			this.stage = stage;
-			this.texty =  texty;
 			FXMLLoader fxmlLoader = new FXMLLoader();
 			fxmlLoader.setController(this);
 			URL location = this.getClass().getResource("/PopupNewTime.fxml");
@@ -188,7 +183,6 @@ public class TimeReceiver extends ExpressionReceiver {
 	public String getText() {
 		String clockText = text.getText();
 		String[] hoursmins = clockText.split(":");
-		//return milliseconds since midnight
 		String value = Integer.toString((Integer.parseInt(hoursmins[0]) * 60 + Integer.parseInt(hoursmins[1]))*60000);
 		return value;
 	}

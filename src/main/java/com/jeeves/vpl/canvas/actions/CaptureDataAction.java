@@ -15,14 +15,13 @@ import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 
 public class CaptureDataAction extends Action{
-	public final String NAME = "Sense Data";
 	
 	@FXML
 	private ComboBox<String> cboSensor;
 	@FXML
 	private ComboBox<String> cboTime;
-	public CaptureDataAction() {
-		this(new FirebaseAction());
+	public CaptureDataAction(String name) {
+		this(new FirebaseAction(name));
 	}
 
 	public CaptureDataAction(FirebaseAction data) {
@@ -58,19 +57,8 @@ public class CaptureDataAction extends Action{
 				params.put("time", arg2);
 			}
 		});
-		cboTime.setValue("10 mins");
+		//cboTime.setValue("10 mins");
 
-	}
-
-	@Override
-	public void fxmlInit() {
-		super.fxmlInit();
-		name = NAME;
-	}
-
-	@Override
-	public String getViewPath() {
-		return String.format("/actionCaptureData.fxml", this.getClass().getSimpleName());
 	}
 
 	@Override

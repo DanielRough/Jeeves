@@ -69,7 +69,7 @@ public class SaveAsPane extends Pane { // NO_UCD (use default)
 			Optional<ButtonType> result = alert.showAndWait();
 			if (result.get() == ButtonType.OK){
 				openProject.setname(newname);
-				Main.getContext().setNameLabel(newname); //the name of a project should probably be an Observable but I cba right now
+				Main.getContext().setNameLabel(newname); 
 				firebase.saveProject(oldname, openProject);
 				stage.close();
 			} else {
@@ -78,7 +78,7 @@ public class SaveAsPane extends Pane { // NO_UCD (use default)
 			}
 		}
 		else{
-			Main.getContext().setNameLabel(newname); //the name of a project should probably be an Observable but I cba right now
+			Main.getContext().setNameLabel(newname); 
 			openProject.setname(newname);
 			firebase.saveProject(oldname, openProject);
 			stage.close();

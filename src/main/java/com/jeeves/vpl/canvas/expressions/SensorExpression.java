@@ -1,26 +1,23 @@
 package com.jeeves.vpl.canvas.expressions;
 
-import static com.jeeves.vpl.Constants.*;
+import static com.jeeves.vpl.Constants.VAR_LOCATION;
+import static com.jeeves.vpl.Constants.sensors;
 
-import java.util.List;
+import com.jeeves.vpl.Constants.Sensor;
+import com.jeeves.vpl.DragPane;
+import com.jeeves.vpl.ViewElement;
+import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
+import com.jeeves.vpl.firebase.FirebaseDB;
+import com.jeeves.vpl.firebase.FirebaseExpression;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.stage.Popup;
 
-import com.jeeves.vpl.ParentPane;
-import com.jeeves.vpl.ViewElement;
-import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
-import com.jeeves.vpl.firebase.FirebaseDB;
-import com.jeeves.vpl.firebase.FirebaseExpression;
-import com.jeeves.vpl.firebase.FirebaseVariable;
-
 public class SensorExpression extends Expression { // NO_UCD (unused code)
-	public static final String NAME = "Sensor Result";
 	public boolean manualChange = false;
 	private ComboBox<String> cboClassifications;
 	private ComboBox<String> cboSensor;
@@ -28,14 +25,13 @@ public class SensorExpression extends Expression { // NO_UCD (unused code)
 	private String returnstatus;
 	private String sensorname;
 	protected String result = "";
-	private Sensor selectedSensor;
 	Popup pop = new Popup();
 
-	public SensorExpression() {
-		this(new FirebaseExpression());
+	public SensorExpression(String name) {
+		this(new FirebaseExpression(name));
 	}
 	@Override
-	public void setParentPane(ParentPane parent) {
+	public void setParentPane(DragPane parent) {
 		super.setParentPane(parent);
 			if (locReceiver.getChildExpression() != null)
 				locReceiver.getChildExpression().setParentPane(parent);
@@ -117,10 +113,7 @@ public class SensorExpression extends Expression { // NO_UCD (unused code)
 
 	@Override
 	public void setup() {
-		name = NAME;
-		this.varType = VAR_BOOLEAN;
 		operand.setText("returns");
-		box.getStyleClass().add(this.varType);
 
 	}
 
@@ -148,24 +141,12 @@ public class SensorExpression extends Expression { // NO_UCD (unused code)
 
 	protected void setResult(String result) {
 		if (result != null && !result.equals("")) {
-//			if(selectedSensor == locSensor){
-//				gui.registerVarListener(listener->{
-//					listener.next();
-//					if(listener.wasAdded()){
-//						List<FirebaseVariable> list = (List<FirebaseVariable>) listener.getAddedSubList();
-//						if(list.get(0).getname().equals(result))
-//							locReceiver.addChild(UserVariable.create(list.get(0)),0,0);
-//					}
-//				});
-//				
-//			}
 			this.result = result;
 			cboClassifications.setValue(result);
 		}
 	}
 
 	protected void setSelectedSensor(Sensor sensor) {
-		this.selectedSensor = sensor;
 		String[] classifications = (sensor.getvalues());
 		cboSensor.setValue(sensor.getname());
 		cboClassifications.getItems().clear();

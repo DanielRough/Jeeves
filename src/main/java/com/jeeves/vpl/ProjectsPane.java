@@ -6,7 +6,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.controlsfx.control.NotificationPane;
 
 import com.jeeves.vpl.firebase.FirebaseDB;
 import com.jeeves.vpl.firebase.FirebaseProject;
@@ -19,7 +18,6 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -33,16 +31,13 @@ public class ProjectsPane extends Pane {
 	@FXML private Button btnCancel;
 	@FXML private Button btnLoad;
 	@FXML private ListView<FirebaseProject> lstProjects;
-	
 	private FirebaseProject selectedProject;
 	private Main gui;
 	private ObservableList<FirebaseProject> projects;
-	private ObservableList<FirebaseProject> publicprojects;
 	private Stage stage;
 	@FXML 
 	private void close(Event e){
 		stage.close();
-
 	}
 	
 	@FXML
@@ -54,7 +49,6 @@ public class ProjectsPane extends Pane {
 		this.gui = gui;
 		this.stage = stage;
 		this.projects = FirebaseDB.getInstance().getprojects();
-		//this.publicprojects = FirebaseDB.getInstance().getpublicprojects();
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setController(this);
 
@@ -64,11 +58,10 @@ public class ProjectsPane extends Pane {
 		try {
 			Node root = (Node) fxmlLoader.load();
 			getChildren().add(root);
-	//		projects.addAll(publicprojects);
 			lstProjects.setItems(projects);
 			lstProjects.setCellFactory(projectsView -> new ProjectCell());
 		
-			//Wait for 5 seconds before declaring that, yes, no projects are gonna come
+			//Wait for 5 seconds before declaring that no projects are available
 			new Thread(() -> {
 		        try {
 		            Thread.sleep(5000);

@@ -20,14 +20,13 @@ import javafx.scene.control.ToggleGroup;
  * @author Daniel
  */
 public class ButtonTrigger extends Trigger { // NO_UCD (unused code)
-	public static final String NAME = "Button Trigger";
 	@FXML
 	private ComboBox<String> cboButton;
 	final ToggleGroup group = new ToggleGroup();
 	String value;
 
-	public ButtonTrigger() {
-		this(new FirebaseTrigger());
+	public ButtonTrigger(String name) {
+		this(new FirebaseTrigger(name));
 	}
 
 	public ButtonTrigger(FirebaseTrigger data) {
@@ -40,12 +39,7 @@ public class ButtonTrigger extends Trigger { // NO_UCD (unused code)
 		super.addListeners();
 		cboButton.getItems().clear();
 
-		ObservableList<FirebaseUI> uielements = gui.getUIElements(); // UGH THIS
-																		// IS
-																		// HORRIBLE
-																		// PLEASE
-																		// FIX
-																		// //myCanvas.getProject().getUIElements();
+		ObservableList<FirebaseUI> uielements = gui.getUIElements(); 
 		uielements.forEach(survey -> {
 			if(survey.getname().equals("button")){
 			cboButton.getItems().add(survey.gettext());
@@ -67,9 +61,7 @@ public class ButtonTrigger extends Trigger { // NO_UCD (unused code)
 						continue;
 					cboButton.getItems().add(button.gettext());
 					if (button.gettext().equals(value)) {
-						cboButton.setValue(value); // reset it if the original
-													// survey we had selected
-													// didn't change
+						cboButton.setValue(value);
 						params.put("selectedButton", value);
 					}
 				}
@@ -84,17 +76,6 @@ public class ButtonTrigger extends Trigger { // NO_UCD (unused code)
 				params.put("selectedButton", arg2);
 			}
 		});
-	}
-
-	@Override
-	public void fxmlInit() {
-		super.fxmlInit();
-		name = NAME;
-	}
-
-	@Override
-	public String getViewPath() {
-		return String.format("/TriggerButton.fxml", this.getClass().getSimpleName());
 	}
 
 	@Override

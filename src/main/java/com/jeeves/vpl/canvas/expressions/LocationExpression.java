@@ -1,33 +1,30 @@
 package com.jeeves.vpl.canvas.expressions;
 
-import static com.jeeves.vpl.Constants.*;
+import static com.jeeves.vpl.Constants.VAR_LOCATION;
 
 import java.util.List;
 
-
-import javafx.collections.ListChangeListener;
-import javafx.geometry.Insets;
-import javafx.scene.Node;
-import javafx.stage.Popup;
-
-import com.jeeves.vpl.ParentPane;
+import com.jeeves.vpl.DragPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 import com.jeeves.vpl.firebase.FirebaseVariable;
 
+import javafx.collections.ListChangeListener;
+import javafx.geometry.Insets;
+import javafx.stage.Popup;
+
 public class LocationExpression extends Expression { // NO_UCD (unused code)
-	public static final String NAME = "Location";
 	public boolean manualChange = false;
 	private ExpressionReceiver locReceiver;
 	protected String result = "";
 	Popup pop = new Popup();
 
-	public LocationExpression() {
-		this(new FirebaseExpression());
+	public LocationExpression(String name) {
+		this(new FirebaseExpression(name));
 	}
 	@Override
-	public void setParentPane(ParentPane parent) {
+	public void setParentPane(DragPane parent) {
 		super.setParentPane(parent);
 			if (locReceiver.getChildExpression() != null)
 				locReceiver.getChildExpression().setParentPane(parent);
@@ -35,18 +32,16 @@ public class LocationExpression extends Expression { // NO_UCD (unused code)
 					(ListChangeListener<ViewElement>) listener -> {listener.next(); if(listener.wasRemoved())return; 
 					locReceiver.getChildExpression().setParentPane(parent);
 
-					});// timeReceiverFrom.getChildElements().get(0).getModel())));		
-
+					});
 	}
 	public LocationExpression(FirebaseExpression data) {
 		super(data);
 
 		locReceiver.getChildElements().addListener(
 				(ListChangeListener<ViewElement>) listener -> {listener.next(); if(listener.wasRemoved())return; 
-				//model.getparams().put("result", locReceiver.getChildModel().getname());
 				params.put("result", locReceiver.getChildModel().getname());
 
-				});// timeReceiverFrom.getChildElements().get(0).getModel())));		
+				});	
 
 		params.put("selectedSensor", "Location");
 
@@ -68,27 +63,17 @@ public class LocationExpression extends Expression { // NO_UCD (unused code)
 
 	@Override
 	public void setup() {
-		name = NAME;
-		this.varType = VAR_BOOLEAN;
 		operand.setText("user is at");
-		box.getStyleClass().add(this.varType);
 
 	}
 
 	@Override
 	public void updatePane() {
-
+		super.updatePane();
 		locReceiver = new ExpressionReceiver(VAR_LOCATION);
-
-		setup();
 		box.getChildren().clear();
 		box.getChildren().addAll(operand,locReceiver);
 		box.setPadding(new Insets(0, 4, 0, 4));
-
-	}
-
-	public void updateReturnVals() {
-		
 
 	}
 

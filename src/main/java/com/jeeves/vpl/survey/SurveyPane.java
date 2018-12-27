@@ -24,12 +24,8 @@ public class SurveyPane extends Pane {
 	private Survey currentSurvey;
 	@FXML
 	private Pane paneNoSurveys;
-
-	
 	@FXML
 	private TabPane paneSurveys;
-
-	
 	private ObservableList<FirebaseSurvey> currentsurveys;
 
 	public ObservableList<Tab> getSurveyTabs(){
@@ -39,7 +35,6 @@ public class SurveyPane extends Pane {
 		currentsurveys.addListener(listener);
 	}
 	public SurveyPane() {
-		// this.currentsurveys = currentsurveys;
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setController(this);
 		URL location = this.getClass().getResource("/NoSurveys.fxml");
@@ -50,10 +45,7 @@ public class SurveyPane extends Pane {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		// getStylesheets().add(ViewElement.class.getResource("Styles.css").toExternalForm());
-		// loadSurveys();
 		CONSTRAINT_NUMS.clear();
-
 		currentsurveys = FXCollections.observableArrayList();
 		addSurveyListeners();
 	}
@@ -77,7 +69,6 @@ public class SurveyPane extends Pane {
 				if (arg2 == null)
 					return;
 				currentSurvey = (Survey) arg2.getContent();
-				// FirebaseSurvey surveyModel = currentSurvey.getModel();
 				if (currentSurvey == null) {
 					return;
 				}

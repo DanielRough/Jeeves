@@ -3,6 +3,7 @@ import static com.jeeves.vpl.Constants.PRIVATE_COLL;
 import static com.jeeves.vpl.Constants.makeInfoAlert;
 
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -137,11 +138,14 @@ public class LoginRegisterPane extends Pane{
 	}
 	public void authenticate(String email, String password) {
 		UserRecord userRecord;
-		try {
+	try {
+			
 			userRecord = FirebaseAuth.getInstance().getUserByEmailAsync(email).get();
 			String uid = userRecord.getUid();
 		   DatabaseReference	dbRef = FirebaseDatabase.getInstance().getReference();
 		   DatabaseReference privateRef =  dbRef.child(PRIVATE_COLL).child(uid);
+		  // stage.hide();
+		   
 			privateRef.addListenerForSingleValueEvent(new ValueEventListener() {
 				@Override
 				public void onDataChange(DataSnapshot dataSnapshot) {
@@ -168,9 +172,12 @@ public class LoginRegisterPane extends Pane{
 					lblError.setText("Error logging in. Check your password and Internet connection");					
 				}
 			});
-		} catch (InterruptedException | ExecutionException e) {
-			lblError.setText("Error logging in. Check your password and Internet connection");					
-
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}

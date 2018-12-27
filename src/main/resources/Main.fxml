@@ -223,6 +223,7 @@
                                           <ChoiceBox fx:id="cboAttrType" prefHeight="25.0" prefWidth="92.0" />
                                        </children>
                                     </HBox>
+                                    <CheckBox fx:id="chkRandom" mnemonicParsing="false" prefHeight="46.0" prefWidth="135.0" text="Generate random value" textAlignment="CENTER" wrapText="true" />
                                     <Button fx:id="btnAddVar" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#addAttribute" prefHeight="25.0" prefWidth="135.0" text="Add Attribute" textAlignment="CENTER">
                                        <HBox.margin>
                                           <Insets left="5.0" />
@@ -231,23 +232,6 @@
                                           <Insets />
                                        </VBox.margin>
                                     </Button>
-                                    <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="154.0" text="Sort Attributes By..." textAlignment="CENTER">
-                                       <VBox.margin>
-                                          <Insets top="20.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <Button fx:id="btnSortName" mnemonicParsing="false" onAction="#sortByName" prefHeight="25.0" prefWidth="83.0" text="Name">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font></Button>
-                                    <Button fx:id="btnSortTIme" mnemonicParsing="false" onAction="#sortByTime" text="Time Added">
-                                     <font>
-                                          <Font size="14.0" />
-                                       </font></Button>
-                                    <Button fx:id="btnType" mnemonicParsing="false" onAction="#sortByType" prefHeight="25.0" prefWidth="84.0" text="Type">
-                                    <font>
-                                          <Font size="14.0" />
-                                       </font></Button>
                                  </children>
                               </VBox>
                            </children>

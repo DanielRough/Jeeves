@@ -1,30 +1,28 @@
 package com.jeeves.vpl.canvas.expressions;
 
+import static com.jeeves.vpl.Constants.VAR_DATE;
+
 import java.util.Map;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
-import javafx.geometry.Insets;
-import javafx.scene.Node;
-import javafx.scene.control.ComboBox;
-
-import com.jeeves.vpl.ParentPane;
+import com.jeeves.vpl.DragPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.receivers.DateReceiver;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 import com.jeeves.vpl.firebase.FirebaseVariable;
 
-import static com.jeeves.vpl.Constants.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
+import javafx.geometry.Insets;
+import javafx.scene.control.ComboBox;
 
 public class DateBeforeAfter extends Expression { // NO_UCD (unused code)
-	public static final String NAME = "Date Before/After";
 	private ComboBox<String> cboBeforeAfter;
 	private ComboBox<String> cboTimeDiff;
 	private DateReceiver exprTimeVar;
 
-	public DateBeforeAfter() {
-		this(new FirebaseExpression());
+	public DateBeforeAfter(String name) {
+		this(new FirebaseExpression(name));
 	}
 
 	public DateBeforeAfter(FirebaseExpression data) {
@@ -33,7 +31,7 @@ public class DateBeforeAfter extends Expression { // NO_UCD (unused code)
 
 	}
 	@Override
-	public void setParentPane(ParentPane parent) {
+	public void setParentPane(DragPane parent) {
 		super.setParentPane(parent);
 			if (exprTimeVar.getChildExpression() != null)
 				exprTimeVar.getChildExpression().setParentPane(parent);
@@ -41,9 +39,9 @@ public class DateBeforeAfter extends Expression { // NO_UCD (unused code)
 	@Override
 	public void addListeners() {
 		super.addListeners();
-		model.getparams().put("timeDiff", cboTimeDiff.getValue());
-		model.getparams().put("beforeAfter", cboBeforeAfter.getValue());
-		model.getparams().put("timeVar", exprTimeVar.getText());
+//		model.getparams().put("timeDiff", cboTimeDiff.getValue());
+//		model.getparams().put("beforeAfter", cboBeforeAfter.getValue());
+//		model.getparams().put("timeVar", exprTimeVar.getText());
 		cboTimeDiff.valueProperty().addListener(new ChangeListener<String>() {
 
 			@Override
@@ -122,10 +120,7 @@ public class DateBeforeAfter extends Expression { // NO_UCD (unused code)
 
 	@Override
 	public void setup() {
-		name = NAME;
-		this.varType = VAR_BOOLEAN;
 		operand.setText("is");
-		box.getStyleClass().add(this.varType);
 
 	}
 

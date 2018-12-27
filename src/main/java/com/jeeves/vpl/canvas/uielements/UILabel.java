@@ -14,14 +14,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 
 public class UILabel extends UIElement { // NO_UCD (unused code)
-	public static final String NAME = "label";
 	@FXML
 	private Label lblLabel;
 	@FXML
 	public StackPane panePane;
 
-	public UILabel() {
-		this(new FirebaseUI());
+	public UILabel(String name) {
+		this(new FirebaseUI(name));
 	}
 
 	public UILabel(FirebaseUI data) {
@@ -30,11 +29,6 @@ public class UILabel extends UIElement { // NO_UCD (unused code)
 		addListeners();
 	}
 
-	@Override
-	public void fxmlInit() {
-		super.fxmlInit();
-		name = NAME;
-	}
 
 	@Override
 	public Control getChild() {
@@ -51,16 +45,7 @@ public class UILabel extends UIElement { // NO_UCD (unused code)
 		return lblLabel.getText();
 	}
 
-	@Override
-	public String getViewPath() {
-		return String.format("/uiLabel.fxml", this.getClass().getSimpleName());
-	}
 
-	@Override
-	public void setData(FirebaseUI data) {
-		super.setData(data);
-		// setText(model.gettext());
-	}
 
 	@Override
 	public void setText(String text) {
@@ -68,9 +53,6 @@ public class UILabel extends UIElement { // NO_UCD (unused code)
 		lblLabel.setText(text);
 	}
 
-	// public StringProperty getTextProperty(){
-	// return lblLabel.textProperty();
-	// }
 	@Override
 	protected void addListeners() {
 		super.addListeners();

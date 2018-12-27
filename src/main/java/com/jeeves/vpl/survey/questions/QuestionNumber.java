@@ -7,8 +7,8 @@ import static com.jeeves.vpl.Constants.*;
 
 public class QuestionNumber extends QuestionView {
 
-	public QuestionNumber() {
-		super();
+	public QuestionNumber(String label)  throws Exception {
+		this(new FirebaseQuestion(label));
 	}
 
 	public QuestionNumber(FirebaseQuestion data) {
@@ -20,13 +20,9 @@ public class QuestionNumber extends QuestionView {
 		return "/img/icons/imgnumeric.png";
 	}
 
-	@Override
-	public String getLabel() {
-		return "Enter a number";
-	}
 
 	@Override
-	public int getQuestionType() {
+	public String getQuestionType() {
 		return NUMERIC;
 	}
 

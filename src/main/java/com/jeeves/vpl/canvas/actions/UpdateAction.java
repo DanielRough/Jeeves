@@ -7,8 +7,7 @@ import static com.jeeves.vpl.Constants.VAR_DATE;
 import static com.jeeves.vpl.Constants.VAR_NONE;
 import static com.jeeves.vpl.Constants.VAR_NUMERIC;
 
-import com.jeeves.vpl.Constants;
-import com.jeeves.vpl.ParentPane;
+import com.jeeves.vpl.DragPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.expressions.Expression;
 import com.jeeves.vpl.canvas.expressions.UserVariable;
@@ -19,19 +18,14 @@ import com.jeeves.vpl.canvas.receivers.VariableReceiver;
 import com.jeeves.vpl.firebase.FirebaseAction;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.HBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.layout.HBox;
 
 @SuppressWarnings("rawtypes")
 public class UpdateAction extends Action { // NO_UCD (unused code)
-	public static final String NAME = "Update patient attribute";
 	@FXML
 	private ComboBox<String> cboChoice;
 	@FXML
@@ -45,8 +39,8 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 	private ExpressionReceiver numericreceiver;
 
 	
-	public UpdateAction() {
-		this(new FirebaseAction());
+	public UpdateAction(String name) {
+		this(new FirebaseAction(name));
 	}
 
 	public UpdateAction(FirebaseAction data) {
@@ -56,9 +50,30 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 	@Override
 	public void addListeners() {
 		super.addListeners();
+		cboChoice = new ComboBox<String>();
+		variablereceiver = new VariableReceiver(VAR_ANY);
+		hbox.getChildren().add(1, variablereceiver);
+		numericreceiver = new ExpressionReceiver(VAR_NONE);
+		timereceiver = new TimeReceiver(VAR_CLOCK);
+		datereceiver = new DateReceiver(VAR_DATE);
+		hbox.setSpacing(5);
+		hbox.getStyleClass().remove("action");
+		cboChoice.getItems().add("true");
+		cboChoice.getItems().add("false");
 		variablereceiver.getChildElements().addListener((ListChangeListener<ViewElement>) arg0 -> {
 			updateReceivers();
+		});
 
+		cboChoice.getSelectionModel().selectedItemProperty().addListener(listener->{
+			FirebaseExpression expr = new FirebaseExpression();
+			expr.setIsValue(true);
+			;
+			expr.setIndex(1);
+			expr.setVartype(VAR_BOOLEAN);
+			expr.setvalue(cboChoice.getSelectionModel().getSelectedItem());
+			if(vars.size()<2)
+				vars.add(null);
+			vars.set(1, expr);			
 		});
 
 
@@ -113,7 +128,10 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 				if (!arg0.getAddedSubList().isEmpty()) {
 					ViewElement child = getActiveReceiver().getChildElements().get(0);
 						value = (child);
-					vars.add(1, ((Expression)value).getModel());
+					if(vars.size() == 1)
+						vars.add(1, ((Expression)value).getModel());
+					else
+						vars.set(1, ((Expression)value).getModel());
 				} else {
 					value = (null);
 					vars.remove(1);
@@ -130,34 +148,12 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 		return activeReceiver;
 	}
 	public ExpressionReceiver activeReceiver;
-	@Override
-	public void fxmlInit() {
-		super.fxmlInit();
-		name = NAME;
-		variablereceiver = new VariableReceiver(VAR_ANY);
-		hbox.getChildren().add(1, variablereceiver);
-		numericreceiver = new ExpressionReceiver(VAR_NONE);
-		timereceiver = new TimeReceiver(VAR_CLOCK);
-		datereceiver = new DateReceiver(VAR_DATE);
 
-		hbox.setSpacing(5);
-		// hbox.setPadding(new Insets(5, 5, 5, 5));
-		hbox.getStyleClass().remove("action");
-		cboChoice.getItems().add("true");
-	
-
-	}
-
-	@Override
-	public String getViewPath() {
-		return String.format("/actionUpdateModel.fxml", this.getClass().getSimpleName());
-	}
 
 	
 	@Override
-	public void setParentPane(ParentPane parent) {
+	public void setParentPane(DragPane parent) {
 		super.setParentPane(parent);
-		//System.out.println("second you should do me");
 		if(variablereceiver.getChildExpression() != null)
 		variablereceiver.getChildExpression().setParentPane(parent);
 		if(numericreceiver.getChildExpression() != null)
@@ -172,53 +168,62 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 	@Override
 	public void setData(FirebaseAction model) {
 		super.setData(model);
-		//System.out.println("first you should do me");
-		Node[] potentialWidgets = {numericreceiver, timereceiver, datereceiver};
-		
+
 		if (model.getvars().isEmpty())
 			return;
-		FirebaseExpression variable = (FirebaseExpression) model.getvars().get(0);// (FirebaseExpression)params.get("variable");
-		FirebaseExpression value;// = (FirebaseExpression) vars.get(1);// (FirebaseExpression)params.get("value");
-	//	String textvalue;
+		FirebaseExpression variable = (FirebaseExpression) model.getvars().get(0);
 		variablereceiver.addChild(UserVariable.create(variable), 0, 0); 
 		variablereceiver.setReceiveType(variable.getvartype());
-		hbox.getChildren().removeAll(potentialWidgets);
-		
 
+		if(model.getvars().size()==1)
+			return;
+		FirebaseExpression value = (FirebaseExpression) model.getvars().get(1);
+		if(value.getisValue()) {
+			System.out.println("HUraay");
+			if(variable.getvartype().equals(VAR_NUMERIC)) {
+				System.out.println("WAHOO");
+				numericreceiver.getTextField().setText(value.getvalue());
+			}
+			else if(variable.getvartype().equals(VAR_BOOLEAN)) {
+				cboChoice.setValue(value.getvalue());
+			}
+			else if(variable.getvartype().equals(VAR_DATE)) {
+				datereceiver.setText(value.getvalue());
+			}
+			else if(variable.getvartype().equals(VAR_CLOCK)) {
+				timereceiver.setText(value.getvalue());
+			}
+		}
+		else {
+			activeReceiver.addChild(UserVariable.create(value), 0, 0);
+		}
 
 
 	}
 
 	protected void updateReceivers() {
-		Node[] potentialWidgets = { numericreceiver, timereceiver, datereceiver};
+		Node[] potentialWidgets = { numericreceiver, timereceiver, datereceiver,cboChoice};
 		hbox.getChildren().removeAll(potentialWidgets);
 		if (!variablereceiver.getChildElements().isEmpty()) {
 			ViewElement child = variablereceiver.getChildElements().get(0);
 			variable = ((UserVariable) child);
-			vars.clear();
-			vars.add(0, variable.getModel());
+
+			if(vars.size() == 0) //We have added this manually
+				vars.add(0, variable.getModel());
+
 			if (variable.getVarType().equals(VAR_BOOLEAN)) {
-//				hbox.getChildren().removeAll(potentialWidgets);
-//				group.getToggles().clear();
-//				hbox.getChildren().addAll(trueButton, falseButton);
-//				trueButton.setToggleGroup(group);
-//				falseButton.setToggleGroup(group);
-//				group.selectToggle(trueButton);
+				hbox.getChildren().add(cboChoice);
 			} else if(variable.getVarType().equals(VAR_CLOCK)){
 				hbox.getChildren().add(timereceiver);
 				activeReceiver = timereceiver;
-
 			}
 			else if(variable.getVarType().equals(VAR_DATE)){
 				hbox.getChildren().add(datereceiver);
 				activeReceiver = datereceiver;
-
 			}
 			else{
-//				hbox.getChildren().removeAll(valuereceiver, trueButton, falseButton);
 				hbox.getChildren().add(numericreceiver);
 				activeReceiver = numericreceiver;
-
 			}
 			variablereceiver.setReceiveType(variable.getVarType());
 			numericreceiver.setReceiveType(variable.getVarType());
@@ -227,12 +232,7 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 			variable = (null);
 			numericreceiver.setReceiveType(VAR_NONE);
 			hbox.getChildren().remove(variablereceiver);
-			variablereceiver = new VariableReceiver(VAR_ANY);
-			hbox.getChildren().add(1, variablereceiver);
-		//	hbox.getChildren().removeAll(numericreceiver, trueButton, falseButton);
-			numericreceiver = new ExpressionReceiver(VAR_NONE);
 			vars.clear();
-			hbox.getChildren().add(numericreceiver);
 			addListeners();
 		}
 	}

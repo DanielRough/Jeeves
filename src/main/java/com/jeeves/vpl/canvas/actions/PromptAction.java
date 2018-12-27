@@ -15,14 +15,13 @@ import javafx.scene.input.MouseEvent;
 import com.jeeves.vpl.firebase.FirebaseAction;
 
 public class PromptAction extends Action { // NO_UCD (unused code)
-	public final String NAME = "Send Prompt";
 	private String prompttext;
 	private TextArea smsText;
 	@FXML
 	private TextField txtPrompt;
 
-	public PromptAction() {
-		this(new FirebaseAction());
+	public PromptAction(String name) {
+		this(new FirebaseAction(name));
 	}
 
 	public PromptAction(FirebaseAction data) {
@@ -32,6 +31,7 @@ public class PromptAction extends Action { // NO_UCD (unused code)
 	@Override
 	public void addListeners() {
 		super.addListeners();
+		smsText = new TextArea();
 
 		txtPrompt.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
@@ -75,26 +75,16 @@ public class PromptAction extends Action { // NO_UCD (unused code)
 		});
 	}
 
-	@Override
-	public void fxmlInit() {
-		super.fxmlInit();
-		name = NAME;
-		smsText = new TextArea();
-
-	}
-
-	@Override
-	public String getViewPath() {
-		return String.format("/actionSendPrompt.fxml", this.getClass().getSimpleName());
-	}
 
 
 	@Override
 	public void setData(FirebaseAction model) {
 		super.setData(model);
+		
 		Map<String, Object> params = model.getparams();
 		if (!params.containsKey("msgtext"))
 			return;
+
 		prompttext = params.get("msgtext").toString();
 		txtPrompt.setText(prompttext);
 		smsText.setText(prompttext);

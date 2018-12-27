@@ -3,9 +3,7 @@ package com.jeeves.vpl;
 import com.jeeves.vpl.canvas.uielements.UIElement;
 import com.jeeves.vpl.survey.questions.QuestionView;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
@@ -20,13 +18,12 @@ import javafx.scene.shape.Rectangle;
 
 @SuppressWarnings("rawtypes")
 
-public class ViewCanvas extends Group implements ParentPane { 
+public class ViewCanvas extends DragPane { 
 	public EventHandler<MouseEvent> mouseHandler;
 	//For making the scrollable background 'blueprint' image
 	private Rectangle bigRect = new Rectangle(-10000, -10000, 20000, 20000);
 	private Pane rectPane = new Pane();
 
-	private boolean isMouseOver;
 	private double minX = 0;
 	private double minY = 0;
 	private boolean mousepressed = false;
@@ -51,7 +48,6 @@ public class ViewCanvas extends Group implements ParentPane {
 			child.setPosition(canvasPoint);
 			getChildren().add(child);
 			child.toFront();
-			child.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> isMouseOver = true); 
 		}
 
 	}
@@ -104,12 +100,6 @@ public class ViewCanvas extends Group implements ParentPane {
 		setOnScroll(scrollHandler);
 
 		EventHandler<MouseDragEvent> dragHandler = event -> {
-
-			if (event.getEventType().equals(MouseDragEvent.MOUSE_DRAG_ENTERED)) {
-				isMouseOver = true;
-			} else if (event.getEventType().equals(MouseDragEvent.MOUSE_DRAG_EXITED)) {
-				isMouseOver = false;
-			}
 			if (event.getEventType().equals(MouseDragEvent.MOUSE_DRAG_RELEASED)) {
 				if (event.getGestureSource() instanceof ViewElement && !(event.getGestureSource() instanceof UIElement)
 						&& !(event.getGestureSource() instanceof QuestionView)
@@ -131,14 +121,7 @@ public class ViewCanvas extends Group implements ParentPane {
 				event.consume();
 				return;
 			}
-			if (event.getEventType().equals(MouseEvent.MOUSE_ENTERED)) {
-				isMouseOver = true;
-			} else if (event.getEventType().equals(MouseEvent.MOUSE_MOVED)) {
-				isMouseOver = true;
-			} else if (event.getEventType().equals(MouseEvent.MOUSE_EXITED)) {
-				isMouseOver = false;
-			} else if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
-				isMouseOver = true;
+			if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
 				requestFocus();
 				mousepressed = true;
 				pressedX = event.getX();

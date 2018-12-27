@@ -1,7 +1,8 @@
 package com.jeeves.vpl.canvas.receivers;
 
-import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.Constants.ElementType;
+import com.jeeves.vpl.DragPane;
+import com.jeeves.vpl.ViewElement;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,7 +16,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 @SuppressWarnings("rawtypes")
 
-public abstract class Receiver extends Pane {
+public abstract class Receiver extends DragPane {
 	protected Rectangle captureRect; // The zone in which events are registered
 	protected ObservableList<ViewElement> childList = FXCollections.observableArrayList();
 	protected VBox elements;
@@ -77,12 +78,10 @@ public abstract class Receiver extends Pane {
 				}
 				child.setOnMousePressed(null);
 
-				// child.removeEventHandler(MouseEvent.MOUSE_PRESSED, this);
 				child.setOnMouseReleased(handler -> {
 					if ((child.getType() == ElementType.QUESTION || child.getType() == ElementType.UIELEMENT))
 						addChildAtIndex(child, child.getOldIndex());
-				}); // Hopefully readds it automatically if it gets dragged out
-					// and released?
+				}); 
 
 				removeChild(child);
 			}
@@ -126,7 +125,6 @@ public abstract class Receiver extends Pane {
 
 	protected boolean handleReleased(MouseDragEvent event) {
 		if (isValidElement((ViewElement) event.getGestureSource())) {
-			
 			//Here we want to check if we dragged our question at all. If we didn't, just add it back where it was
 			addChild((ViewElement) event.getGestureSource(), event.getSceneX(), event.getSceneY());
 			event.consume();

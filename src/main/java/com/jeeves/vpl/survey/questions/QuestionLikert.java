@@ -21,17 +21,8 @@ import static com.jeeves.vpl.Constants.*;
 
 public class QuestionLikert extends QuestionView {
 
-//	@FXML
-//	private CheckBox chkAssignScore;
-
 	private TextField[] fields;
 
-	// public QuestionLikert(FirebaseQuestion model) {
-	// super(model);
-	// setImage("/img/icons/imgscale.png");
-	//// setQuestionText("Likert Scale");
-	// // this.description = "User answers by selecting from a scale";
-	// }
 	@FXML
 	private TextField txtNumOptions;
 	@FXML
@@ -40,50 +31,17 @@ public class QuestionLikert extends QuestionView {
 	private TextField txtMiddle;
 	@FXML
 	private TextField txtEnd;
-	public QuestionLikert() {
-		super();
+	public QuestionLikert(String label)  throws Exception {
+		this(new FirebaseQuestion(label));
 	}
-	// public QuestionView clone(){
-	// return new QuestionLikert(super.getModel());
-	// }
-	//
 	public QuestionLikert(FirebaseQuestion data) {
 		super(data);
 	}
 
 	@Override
 	public void addEventHandlers() {
-		// TODO Auto-generated method stub
-		//final ToggleGroup group = new ToggleGroup();
-//		rdioButton5.setToggleGroup(group);
-//		rdioButton7.setToggleGroup(group);
-//		rdioButton7.selectedProperty().addListener(new ChangeListener<Boolean>() {
-//
-//			@Override
-//			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-//				if (newValue) {
-//					txtLikert6.setVisible(true);
-//					txtLikert7.setVisible(true);
-//					handleUpdateScale();
-//				}
-//			}
-//
-//		});
-//		rdioButton5.selectedProperty().addListener(new ChangeListener<Boolean>() {
-//
-//			@Override
-//			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-//				if (newValue) {
-//					txtLikert6.setVisible(false);
-//					txtLikert7.setVisible(false);
-//					handleUpdateScale();
-//				}
-//			}
-//
-//		});
 
 		fields = new TextField[] {txtBegin, txtMiddle, txtEnd };
-
 
 		for (TextField field : fields) {
 			field.textProperty().addListener(change -> handleUpdateScale());
@@ -97,22 +55,12 @@ public class QuestionLikert extends QuestionView {
 		return "/img/icons/imgscale.png";
 	}
 
-	@Override
-	public String getLabel() {
-		return "Select from a Likert Scale";
-	}
 
 	@Override
-	public int getQuestionType() {
+	public String getQuestionType() {
 		return SCALE;
 	}
 
-	@FXML
-	public void handleAssignScore(Event e) {
-	//	getModel().setAssign(chkAssignScore.isSelected()); // This is
-		// getting
-		// silly
-	}
 
 	@Override
 	public void loadOptions() {
@@ -130,15 +78,10 @@ public class QuestionLikert extends QuestionView {
 	@Override
 	public void fxmlInit(){
 		super.fxmlInit();
-//		int count = 1;
-//		for (TextField field : fields) {
-//			field.setText(""+count++); //add default values in so that we have at least SOME sort of parameters
-//		}
 	}
 	@Override
 	public void showEditOpts(Map<String, Object> opts) {
 		if (opts == null) {
-	//		rdioButton5.setSelected(true);
 			for (TextField field : fields) {
 				field.setText("");
 			}
@@ -146,31 +89,18 @@ public class QuestionLikert extends QuestionView {
 			if (opts.containsKey("number")) {
 				String number = opts.get("number").toString();
 				txtNumOptions.setText(number);
-//				if (number.equals("5"))
-//					rdioButton5.setSelected(true);
-//				else if (number.equals("7"))
-//					rdioButton7.setSelected(true);
 			}
 			if (opts.containsKey("labels")) {
 				@SuppressWarnings("unchecked")
 				ArrayList<String> labels = (ArrayList<String>) opts.get("labels");
-				//int count = 0;
 				for (int count = 0; count < fields.length; count++) {
 					fields[count].setText(labels.get(count));
-					//count++;
 				}
 			}
 		}
-//		boolean assigntoscore = getModel().getparams().get("assignToScore") == null ? false
-//				: Boolean.parseBoolean(getModel().getparams().get("assignToScore").toString());
-//		if (assigntoscore == true) {
-//			chkAssignScore.setSelected(true);
-//		} else
-//			chkAssignScore.setSelected(false);
 	}
 
 	private void handleUpdateScale() {
-		//String number = rdioButton5.isSelected() ? "5" : "7";
 		String number = txtNumOptions.getText();
 		Map<String, Object> qScaleVals = new HashMap<String, Object>();
 		qScaleVals.put("number", number);

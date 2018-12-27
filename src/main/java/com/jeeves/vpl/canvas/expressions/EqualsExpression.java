@@ -7,10 +7,9 @@ import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 
 public class EqualsExpression extends Expression { // NO_UCD (unused code)
-	public static final String NAME = "Equality";
 
-	public EqualsExpression() {
-		this(new FirebaseExpression());
+	public EqualsExpression(String name) {
+		this(new FirebaseExpression(name));
 	}
 
 	public EqualsExpression(FirebaseExpression data) {
@@ -19,8 +18,6 @@ public class EqualsExpression extends Expression { // NO_UCD (unused code)
 
 	@Override
 	public void setup() {
-		name = NAME;
-		this.varType = VAR_BOOLEAN;
 		operand.setText("is equal to");
 		receivers.add(new ExpressionReceiver(VAR_NUMERIC));
 		receivers.add(new ExpressionReceiver(VAR_NUMERIC));

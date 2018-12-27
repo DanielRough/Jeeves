@@ -22,7 +22,10 @@ public class FirebaseTrigger extends FirebaseElement implements Serializable {
 	private FirebaseExpression location;
 	private String triggerId;
 
-
+	public FirebaseTrigger() {}
+	public FirebaseTrigger(String name) {
+		this.name.setValue(name);
+	}
 	public List<String> getvariables(){
 		return variables;
 	}

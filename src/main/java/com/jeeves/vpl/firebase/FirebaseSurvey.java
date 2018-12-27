@@ -30,11 +30,19 @@ public class FirebaseSurvey extends FirebaseElement implements Serializable {
 	private String key;
 	private List<FirebaseQuestion> questions = new ArrayList<FirebaseQuestion>();
 	private long score;
+	private boolean fastTransition;
+
 	private long timeAlive;
 	private long timeFinished;
 	private long timeSent;
 	private String surveyId;
 	
+	public boolean getfastTransition() {
+		return fastTransition;
+	}
+	public void setfastTransition(boolean fast) {
+		this.fastTransition = fast;
+	}
 	public void setencodedAnswers(String encodedAnswers){
 		this.encodedAnswers = encodedAnswers;
 	}

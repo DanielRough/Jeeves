@@ -8,8 +8,8 @@ import com.jeeves.vpl.firebase.FirebaseQuestion;
 
 public class QuestionHeart extends QuestionView{
 
-	public QuestionHeart() {
-		super();
+	public QuestionHeart(String label)  throws Exception {
+		this(new FirebaseQuestion(label));
 	}
 
 
@@ -29,14 +29,9 @@ public class QuestionHeart extends QuestionView{
 
 	}
 
-	@Override
-	public String getLabel() {
-		return "Capture User's Heart Rate";
-
-	}
 
 	@Override
-	public int getQuestionType() {
+	public String getQuestionType() {
 		return HEART;
 
 	}

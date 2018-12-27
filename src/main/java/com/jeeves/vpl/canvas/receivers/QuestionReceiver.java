@@ -3,20 +3,17 @@ package com.jeeves.vpl.canvas.receivers;
 import java.util.List;
 
 import javafx.collections.ListChangeListener;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
 import com.jeeves.vpl.Constants.ElementType;
-import com.jeeves.vpl.ParentPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.survey.questions.QuestionView;
 
-public class QuestionReceiver extends ExternalReceiver implements ParentPane {
+public class QuestionReceiver extends ExternalReceiver{
 
 	public QuestionReceiver(double width, double height) {
 		container.getChildren().add(elements);

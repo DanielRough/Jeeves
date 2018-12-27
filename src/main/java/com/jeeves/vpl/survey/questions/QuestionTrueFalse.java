@@ -8,31 +8,9 @@ import static com.jeeves.vpl.Constants.*;
 
 public class QuestionTrueFalse extends QuestionView {
 
-	public QuestionTrueFalse() {
-		super();
+	public QuestionTrueFalse(String label) throws Exception  {
+		this(new FirebaseQuestion(label));
 	}
-	// @Override
-	// public void showCheckQOpts() {
-	// rdioTrue.setVisible(true);
-	// rdioFalse.setVisible(true);
-	// rdioFalse.setSelected(false);
-	// rdioTrue.setSelected(false);
-	//
-	// }
-	// @Override
-	// public void handleCheckQ(String scon) {
-	//
-	// if(!scon.isEmpty()){
-	// if(Boolean.parseBoolean(scon))
-	// rdioTrue.setSelected(true);
-	// else
-	// rdioFalse.setSelected(true);
-	// }
-	// else{
-	// rdioFalse.setSelected(false);
-	// rdioTrue.setSelected(false);
-	// }
-	// }
 
 	public QuestionTrueFalse(FirebaseQuestion data) {
 		super(data);
@@ -40,8 +18,6 @@ public class QuestionTrueFalse extends QuestionView {
 
 	@Override
 	public void addEventHandlers() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -49,31 +25,17 @@ public class QuestionTrueFalse extends QuestionView {
 		return "/img/icons/imgbool.png";
 	}
 
-	@Override
-	public String getLabel() {
-		return "Choose true or false";
-	}
+
 
 	@Override
-	public int getQuestionType() {
+	public String getQuestionType() {
 		return BOOLEAN;
 	}
 
-	// public QuestionView clone(){
-	// return new QuestionTrueFalse(super.getModel());
-	// }
-	//
 	@Override
 	public void loadOptions() {
 
 	}
-	// public QuestionTrueFalse(FirebaseQuestion model) {
-	// super(model);
-	// setImage("/img/icons/imgbool.png");
-	// // setQuestionText("True/False");
-	//// this.description = "User chooses yes or no";
-	// }
-
 	public void populateQ(FirebaseQuestion entry) {
 		// TODO Auto-generated method stub
 

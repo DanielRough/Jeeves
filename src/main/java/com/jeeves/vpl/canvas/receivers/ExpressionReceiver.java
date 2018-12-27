@@ -14,7 +14,6 @@ import com.jeeves.vpl.Constants.ElementType;
 import com.jeeves.vpl.TextUtils;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.expressions.Expression;
-import com.jeeves.vpl.canvas.expressions.Typed;
 import com.jeeves.vpl.canvas.expressions.UserVariable;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 
@@ -45,7 +44,7 @@ public class ExpressionReceiver extends Receiver {
 	protected double defaultOpacity;
 	TextField numericTextField;
 
-							protected String receiveType;
+	protected String receiveType;
 	protected String value; // The value is for when we don't have an Expression
 
 	public ExpressionReceiver(String receiveType) {
@@ -94,25 +93,7 @@ public class ExpressionReceiver extends Receiver {
 	@Override
 	public void defineHandlers() {
 		super.defineHandlers();
-		this.addEventHandler(MouseEvent.ANY, new EventHandler<MouseEvent>(){
 
-			@Override
-			public void handle(MouseEvent event) {
-				event.consume();
-				if(event.getEventType().equals(MouseEvent.MOUSE_ENTERED)){
-			//		captureRect.setFill(Color.CYAN);
-			//		Main.getContext().highlightMenu(ElementType.EXPRESSION,true);
-
-				}
-				if(event.getEventType().equals(MouseEvent.MOUSE_EXITED)){
-			//		captureRect.setFill(Color.DARKCYAN);
-			//		Main.getContext().highlightMenu(ElementType.EXPRESSION,false);
-
-				}
-			}
-		
-			
-		});
 		mentered = event -> {
 			event.consume();
 			if (!isValidElement((ViewElement) event.getGestureSource()))
@@ -145,11 +126,10 @@ public class ExpressionReceiver extends Receiver {
 
 	@Override
 	public boolean isValidElement(ViewElement dragged) {
-		if (dragged.getType() == ElementType.EXPRESSION || dragged.getType() == ElementType.VARIABLE) {
-
-			if (((Typed) dragged).getVarType().equals(getReceiveType()) || getReceiveType().equals(VAR_ANY))
+		if (dragged.getType() == ElementType.VARIABLE && ((UserVariable) dragged).getVarType().equals(getReceiveType()) || getReceiveType().equals(VAR_ANY))
 				return true;
-		}
+		if(dragged.getType() == ElementType.EXPRESSION && getReceiveType().equals(VAR_BOOLEAN))
+			return true;
 		return false;
 	}
 
@@ -196,7 +176,9 @@ public class ExpressionReceiver extends Receiver {
 			numericTextField.setMinHeight(20);
 			numericTextField.setPrefHeight(20);
 			numericTextField.getStyleClass().add("textfield");
-			getChildren().add(numericTextField);
+			if(!getChildren().contains(numericTextField)) {
+				getChildren().add(numericTextField);
+			}
 
 			numericTextField.toBack();
 			captureRect.setOnMousePressed(handler -> {
