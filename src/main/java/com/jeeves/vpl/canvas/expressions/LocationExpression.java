@@ -4,6 +4,7 @@ import static com.jeeves.vpl.Constants.VAR_LOCATION;
 
 import java.util.List;
 
+import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.DragPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
@@ -15,9 +16,9 @@ import javafx.geometry.Insets;
 import javafx.stage.Popup;
 
 public class LocationExpression extends Expression { // NO_UCD (unused code)
-	public boolean manualChange = false;
+	private static final String RESULT = "result";
 	private ExpressionReceiver locReceiver;
-	protected String result = "";
+	protected String locationResult = "";
 	Popup pop = new Popup();
 
 	public LocationExpression(String name) {
@@ -39,7 +40,7 @@ public class LocationExpression extends Expression { // NO_UCD (unused code)
 
 		locReceiver.getChildElements().addListener(
 				(ListChangeListener<ViewElement>) listener -> {listener.next(); if(listener.wasRemoved())return; 
-				params.put("result", locReceiver.getChildModel().getname());
+				params.put(RESULT, locReceiver.getChildModel().getname());
 
 				});	
 
@@ -54,9 +55,9 @@ public class LocationExpression extends Expression { // NO_UCD (unused code)
 		super.setData(model);
 		updatePane();
 
-		if (model.getparams().containsKey("result")) {
-			String result = model.getparams().get("result").toString();
-			setResult(result);
+		if (model.getparams().containsKey(RESULT)) {
+			String locResult = model.getparams().get(RESULT).toString();
+			setResult(locResult);
 		}
 	}
 
@@ -79,9 +80,10 @@ public class LocationExpression extends Expression { // NO_UCD (unused code)
 
 	protected void setResult(String result) {
 		if (result != null && !result.equals("")) {
-				gui.registerVarListener(listener->{
+			Constants.getOpenProject().registerVarListener(listener->{
 					listener.next();
 					if(listener.wasAdded()){
+						@SuppressWarnings("unchecked")
 						List<FirebaseVariable> list = (List<FirebaseVariable>) listener.getAddedSubList();
 						if(list.get(0).getname().equals(result))
 							locReceiver.addChild(UserVariable.create(list.get(0)),0,0);
@@ -89,7 +91,7 @@ public class LocationExpression extends Expression { // NO_UCD (unused code)
 					}
 				});
 				
-			this.result = result;
+			this.locationResult = result;
 		}
 	}
 

@@ -5,7 +5,9 @@ import static com.jeeves.vpl.Constants.VAR_CLOCK;
 import java.net.URL;
 import java.util.ArrayList;
 
-import com.jeeves.vpl.canvas.receivers.DateReceiver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.jeeves.vpl.canvas.receivers.TimeReceiver;
 import com.jeeves.vpl.firebase.FirebaseDB;
 import com.jeeves.vpl.firebase.FirebaseVariable;
@@ -20,6 +22,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class RandomTimePane extends Pane{
+	final Logger logger = LoggerFactory.getLogger(RandomTimePane.class);
 
 	@FXML HBox hBoxEarliest;
 	@FXML HBox hBoxLatest;
@@ -37,7 +40,7 @@ public class RandomTimePane extends Pane{
 		URL location = this.getClass().getResource("/RandomTime.fxml");
 		fxmlLoader.setLocation(location);
 		try {
-			Node root = (Node) fxmlLoader.load();
+			Node root = fxmlLoader.load();
 			getChildren().add(root);
 			this.stage = stage;
 			timeEarliest = new TimeReceiver(VAR_CLOCK);
@@ -45,17 +48,17 @@ public class RandomTimePane extends Pane{
 			hBoxEarliest.getChildren().add(timeEarliest);
 			hBoxLatest.getChildren().add(timeLatest);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(),e.fillInStackTrace());
 		}
 	}
 	
 	@FXML
 	public void add(Event e) {
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<>();
 		list.add(timeEarliest.getText());
 		list.add(timeLatest.getText());
 		var.setrandomOptions(list);
-		FirebaseDB.getOpenProject().getvariables().add(var);
+		FirebaseDB.getInstance().getOpenProject().getvariables().add(var);
 		stage.close();
 	}
 	@FXML

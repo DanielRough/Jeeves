@@ -16,6 +16,7 @@ import com.jeeves.vpl.survey.questions.QuestionView;
 public class QuestionReceiver extends ExternalReceiver{
 
 	public QuestionReceiver(double width, double height) {
+		addChildListeners();
 		container.getChildren().add(elements);
 		getChildren().add(container);
 
@@ -32,7 +33,7 @@ public class QuestionReceiver extends ExternalReceiver{
 	}
 
 	@Override
-	public void addChildAtIndex(ViewElement child, int index) {
+	public void addChildAtIndex(ViewElement<?> child, int index) {
 
 		QuestionView addedChild = (QuestionView) child;
 		QuestionView parentQuestion = addedChild.getParentQuestion();
@@ -71,31 +72,25 @@ public class QuestionReceiver extends ExternalReceiver{
 
 	@Override
 	public void addChildListeners() {
-		elements.getChildren().addListener(new ListChangeListener<Node>() {
-			@Override
-			public void onChanged(javafx.collections.ListChangeListener.Change<? extends Node> arg0) {
+		elements.getChildren().addListener((ListChangeListener.Change<? extends Node> arg0) ->{
 				arg0.next();
 				if (arg0.wasAdded())
 					captureRect.setHeight(captureRect.getHeight() + 55);
 				else
 					captureRect.setHeight(captureRect.getHeight() - 55);
 
-			}
-
 		});
 	}
 
-	public void addDummyView(Pane dummyView, int index) {
+	public void addDummyView(Pane dummyView) {
 		container.getChildren().add(dummyView);
 		captureRect.setHeight(captureRect.getHeight() + 55);
 		dummyView.setMouseTransparent(true);
 	}
 
 	@Override
-	public boolean isValidElement(ViewElement element) {
-		if (element.getType() == ElementType.QUESTION)
-			return true;
-		return false;
+	public boolean isValidElement(ViewElement<?> element) {
+		return (element.getType() == ElementType.QUESTION);
 	}
 
 }

@@ -16,6 +16,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.layout.HBox;
 
 public class LocationTrigger extends Trigger { 
+	public static final String CHANGE = "change";
 	public static final String NAME = "Location Trigger";
 	private ExpressionReceiver variableReceiver;
 	@FXML
@@ -41,9 +42,14 @@ public class LocationTrigger extends Trigger {
 		hboxBox.getChildren().add(variableReceiver);	
 
 		variableReceiver.getChildElements().addListener(
-				(ListChangeListener<ViewElement>) listener -> {listener.next(); if(listener.wasRemoved())return; model.setlocation(variableReceiver.getChildModel());});		
+				(ListChangeListener<ViewElement>) listener -> {
+					listener.next(); 
+					if(listener.wasRemoved()) {
+						return; 
+					}
+				model.setlocation(variableReceiver.getChildModel());});		
 		cboClassifications.valueProperty()
-				.addListener((ChangeListener<String>) (arg0, arg1, arg2) -> params.put("change", arg2));
+				.addListener((ChangeListener<String>) (arg0, arg1, arg2) -> params.put(CHANGE, arg2));
 	}
 
 	
@@ -61,8 +67,8 @@ public class LocationTrigger extends Trigger {
 		setSelectedSensor();
 		if(model.getlocation() != null)
 			setResult(model.getlocation());
-		if(params.containsKey("change")){
-			cboClassifications.setValue(params.get("change").toString());
+		if(params.containsKey(CHANGE)){
+			cboClassifications.setValue(params.get(CHANGE).toString());
 		}
 	}
 
@@ -77,8 +83,8 @@ public class LocationTrigger extends Trigger {
 		cboClassifications.getItems().clear();
 		cboClassifications.getItems().addAll("enters","leaves","stays in");
 
-		if (model.getparams().get("changes") != null)
-			cboClassifications.setValue(model.getparams().get("changes").toString());
+		if (model.getparams().get(CHANGE) != null)
+			cboClassifications.setValue(model.getparams().get(CHANGE).toString());
 		else 
 			cboClassifications.setValue("enters");
 		if (variableReceiver == null)

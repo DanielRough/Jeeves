@@ -11,20 +11,21 @@ import com.jeeves.vpl.firebase.FirebaseDB;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.scene.control.ComboBox;
 import javafx.stage.Popup;
 
 public class SensorExpression extends Expression { // NO_UCD (unused code)
-	public boolean manualChange = false;
+	private static final String RESULT = "result";
+	private static final String RETURNS = "returns";
+	private static final String SENSOR = "selectedSensor";
 	private ComboBox<String> cboClassifications;
 	private ComboBox<String> cboSensor;
 	private ExpressionReceiver locReceiver;
 	private String returnstatus;
 	private String sensorname;
-	protected String result = "";
+	protected String sensorResult = "";
 	Popup pop = new Popup();
 
 	public SensorExpression(String name) {
@@ -40,36 +41,33 @@ public class SensorExpression extends Expression { // NO_UCD (unused code)
 		super(data);
 
 		for (Sensor s : sensors) {
-			if(s.isPull()) //Only want to add sensors that we can pull from!
+			if(s.isPull()) { //Only want to add sensors that we can pull from!
 			cboSensor.getItems().add(s.getname());
+			}
 		}
-		cboSensor.valueProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
+		cboSensor.valueProperty().addListener((arg0, arg1, arg2) -> {
 				for (Sensor s : sensors) {
 					if (s.getname().equals(arg2))
 						setSelectedSensor(s);
-				//	model.getparams().put("selectedSensor", arg2);
-					params.put("selectedSensor", arg2);
+
+					params.put(SENSOR, arg2);
 					//Here we also want to change the necessary sensors of our project. There's no easy way to do this I don't think
 
 				}
 				if(arg1 != null)
-					FirebaseDB.getOpenProject().getsensors().remove(arg1);
-				FirebaseDB.getOpenProject().getsensors().add(arg2);
-			}
+					FirebaseDB.getInstance().getOpenProject().getsensors().remove(arg1);
+				FirebaseDB.getInstance().getOpenProject().getsensors().add(arg2);
 		});
 		locReceiver.getChildElements().addListener(
 				(ListChangeListener<ViewElement>) listener -> {listener.next(); if(listener.wasRemoved())return; 
-				//model.getparams().put("result", locReceiver.getChildModel().getname());
-				params.put("result", locReceiver.getChildModel().getname());
 
-				});// timeReceiverFrom.getChildElements().get(0).getModel())));		
+				params.put(RESULT, locReceiver.getChildModel().getname());
+
+				});	
 		
 		cboClassifications.valueProperty()
 				.addListener((ChangeListener<String>) (arg0, arg1, arg2) -> 
-		//		model.getparams().put("result", arg2));
-				params.put("result", arg2));
+				params.put(RESULT, arg2));
 
 				addListeners();
 
@@ -88,17 +86,17 @@ public class SensorExpression extends Expression { // NO_UCD (unused code)
 	public void setData(FirebaseExpression model) {
 		super.setData(model);
 		updatePane();
-		//params = model.getparams();
-		if (model.getparams().containsKey("selectedSensor")) {
-			String sensorName = model.getparams().get("selectedSensor").toString();
+		if (model.getparams().containsKey(SENSOR)) {
+			String sensorName = model.getparams().get(SENSOR).toString();
 			for (Sensor s : sensors) {
 				if (s.getname().equals(sensorName))
 					setSelectedSensor(s);
 			}
-		} else
+		} else {
 			return;
-		if (model.getparams().containsKey("result")) {
-			String result = model.getparams().get("result").toString();
+		}
+		if (model.getparams().containsKey(RESULT)) {
+			String result = model.getparams().get(RESULT).toString();
 			setResult(result);
 		}
 	}
@@ -113,14 +111,14 @@ public class SensorExpression extends Expression { // NO_UCD (unused code)
 
 	@Override
 	public void setup() {
-		operand.setText("returns");
+		operand.setText(RETURNS);
 
 	}
 
 	@Override
 	public void updatePane() {
-		cboSensor = new ComboBox<String>();
-		cboClassifications = new ComboBox<String>();
+		cboSensor = new ComboBox<>();
+		cboClassifications = new ComboBox<>();
 		locReceiver = new ExpressionReceiver(VAR_LOCATION);
 
 		setup();
@@ -134,14 +132,14 @@ public class SensorExpression extends Expression { // NO_UCD (unused code)
 		if (!cboSensor.getValue().equals("Location"))
 			return;
 		cboClassifications.getItems().clear();
-		if (!params.get("returns").equals(""))
-			cboClassifications.setValue(params.get("returns").toString());
+		if (!params.get(RETURNS).equals(""))
+			cboClassifications.setValue(params.get(RETURNS).toString());
 
 	}
 
 	protected void setResult(String result) {
 		if (result != null && !result.equals("")) {
-			this.result = result;
+			this.sensorResult = result;
 			cboClassifications.setValue(result);
 		}
 	}
@@ -152,8 +150,8 @@ public class SensorExpression extends Expression { // NO_UCD (unused code)
 		cboClassifications.getItems().clear();
 		cboClassifications.getItems().addAll(classifications);
 
-		if (model.getparams().get("result") != null)
-			cboClassifications.setValue(model.getparams().get("result").toString());
+		if (model.getparams().get(RESULT) != null)
+			cboClassifications.setValue(model.getparams().get(RESULT).toString());
 		else if (classifications.length > 0)
 			cboClassifications.setValue(classifications[0]);
 		if (sensor.getname().equals("Location")) { // a merciless hack that I'll

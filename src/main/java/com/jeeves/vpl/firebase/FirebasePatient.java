@@ -99,14 +99,4 @@ public class FirebasePatient implements Serializable {
 	public void setUid(String uid) {
 		this.uid = uid;
 	}
-	@Override
-	public boolean equals(Object other){
-		if(!(other instanceof FirebasePatient))
-			return false;
-		if(((FirebasePatient)other).getuserinfo() == null)
-			return false;
-		if(((FirebasePatient)other).getuserinfo().equals(this.getuserinfo()))
-			return true;
-		return false;
-	}
 }

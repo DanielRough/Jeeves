@@ -1,32 +1,20 @@
 package com.jeeves.vpl.survey;
 
-import static com.jeeves.vpl.Constants.BOOLEAN;
-import static com.jeeves.vpl.Constants.DATE;
-import static com.jeeves.vpl.Constants.GEO;
-import static com.jeeves.vpl.Constants.MULT_MANY;
-import static com.jeeves.vpl.Constants.MULT_SINGLE;
-import static com.jeeves.vpl.Constants.NUMERIC;
-import static com.jeeves.vpl.Constants.SCALE;
-import static com.jeeves.vpl.Constants.TIME;
-import static com.jeeves.vpl.Constants.VAR_BOOLEAN;
 import static com.jeeves.vpl.Constants.VAR_CATEGORY;
-import static com.jeeves.vpl.Constants.VAR_CLOCK;
-import static com.jeeves.vpl.Constants.VAR_DATE;
-import static com.jeeves.vpl.Constants.VAR_LOCATION;
-import static com.jeeves.vpl.Constants.VAR_NUMERIC;
-import static com.jeeves.vpl.Constants.categoryOpts;
-
 import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.jeeves.vpl.Main;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.canvas.expressions.UserVariable;
 import com.jeeves.vpl.firebase.FirebaseVariable;
 import com.jeeves.vpl.survey.questions.QuestionView;
 
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -49,13 +37,13 @@ import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
 
 public class QuestionEditor extends Pane {
+	final Logger logger = LoggerFactory.getLogger(QuestionEditor.class);
 
 	@FXML
 	private ComboBox<UserVariable> cboVars;
 	@FXML
 	private CheckBox chkAssignToVar;
 	private ConditionEditor conditionEditor;
-	private Main gui;
 
 	@FXML
 	private HBox hboxCondition;
@@ -81,75 +69,57 @@ public class QuestionEditor extends Pane {
 
 	public QuestionEditor(ObservableList<QuestionView> currentelements) {
 		this.surveyQuestions = currentelements;
-		this.gui = Main.getContext();
 		FXMLLoader surveyLoader = new FXMLLoader();
 		surveyLoader.setController(this);
 		surveyLoader.setLocation(getClass().getResource("/QuestionEditor.fxml"));
 		VBox surveynode;
 		try {
-			surveynode = (VBox) surveyLoader.load();
+			surveynode = surveyLoader.load();
 			this.getChildren().add(surveynode);
 			conditionEditor = new ConditionEditor();
 			surveynode.getChildren().add(1, conditionEditor);
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.exit(1);
 		}
 
-		gui.registerVarListener(new ListChangeListener<FirebaseVariable>() {
-			@Override
-			public void onChanged(Change<? extends FirebaseVariable> c) {
-				populateVarBox();
-
-			}
-		});
+		Constants.getOpenProject().registerVarListener(c-> 
+				populateVarBox()
+		);
 		populateVarBox();
 
-		cboVars.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<UserVariable>() {
-
-			@Override
-			public void changed(ObservableValue<? extends UserVariable> observable, UserVariable oldValue,
-					UserVariable newValue) {
-				if (newValue != null) {
-					selectedQuestion.setAssignedVar(newValue.getName());
-					//This is a bit nasty, but if the variable is of type 'category' then we need to update
-					//its possible values in the global  hashmap
-					String[] optsArray = new String[0];
-					try {
-						categoryOpts.put(newValue.getName(), selectedQuestion.getQuestionOptions().values().toArray(optsArray));
+		cboVars.getSelectionModel().selectedItemProperty().addListener((o,v0,v1)-> {
+				if (v1 != null) {
+					selectedQuestion.setAssignedVar(v1.getName());
+					if(v1.getModel().getvartype().equals(VAR_CATEGORY)) {
+						//This is a bit nasty, but if the variable is of type 'category' then we need to update
+						//its possible values in the global  hashmap
+						String[] optsArray = new String[0];
+						Constants.getCategoryOpts().put(v1.getName(), selectedQuestion.getQuestionOptions().values().toArray(optsArray));
+						if(v0 != null)
+							Constants.getCategoryOpts().remove(v0.getName());
 					}
-					catch(ArrayStoreException e) {
-
-					}
-					if(oldValue != null)
-						categoryOpts.remove(oldValue.getName());
 				}
-			}
+			
 
 		});
 
-		chkMandatory.selectedProperty().addListener(new ChangeListener<Boolean>(){
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				selectedQuestion.setisMandatory(newValue);
-			}
-		});
+		chkMandatory.selectedProperty().addListener((o,v0,v1)->
+				selectedQuestion.setisMandatory(v1));
 
-		chkAssignToVar.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+		chkAssignToVar.selectedProperty().addListener((arg0,arg1,arg2)-> {
 				if (chkAssignToVar.isSelected()) {
-					paneAssignToVar.getChildren().forEach(child -> {
-						child.setDisable(false);
-					});
+					paneAssignToVar.getChildren().forEach(child -> 
+						child.setDisable(false)
+					);
 					paneAssignToVar.setPrefHeight(Region.USE_COMPUTED_SIZE);
 				} else {
-					paneAssignToVar.getChildren().forEach(child -> {
-						child.setDisable(true);
-					});
+					paneAssignToVar.getChildren().forEach(child -> 
+						child.setDisable(true)
+					);
 					paneAssignToVar.setPrefHeight(0);
 					selectedQuestion.setAssignedVar("");
 				}
-			}
+			
 		});
 	}
 
@@ -158,8 +128,6 @@ public class QuestionEditor extends Pane {
 	}
 
 	public void populateQuestion(QuestionView entry) {
-		if (entry == null)
-			return;
 		if (entry.equals(selectedQuestion))
 			return; // Forget it, we've already selected this quesiton
 		selectedQuestion = entry;
@@ -167,10 +135,8 @@ public class QuestionEditor extends Pane {
 
 
 
-		if (entry.isMandatory())
-			chkMandatory.setSelected(true);
-		else
-			chkMandatory.setSelected(false);
+		chkMandatory.setSelected(entry.isMandatory());
+	
 		if (entry.getAssignedVar() != null && !entry.getAssignedVar().equals("")) {
 			chkAssignToVar.setSelected(true);
 			cboVars.getItems().forEach(variable -> {
@@ -178,41 +144,24 @@ public class QuestionEditor extends Pane {
 					cboVars.getSelectionModel().select(variable);
 				}
 			});
-		} else
+		} else {
 			chkAssignToVar.setSelected(false);
-
+		}
 
 		Map<String, Object> opts = entry.getQuestionOptions();
-		TreeMap<String,Object> sortedmap = new TreeMap<String,Object>(opts);
+		TreeMap<String,Object> sortedmap = new TreeMap<>(opts);
 		selectedQuestion.showEditOpts(sortedmap);
-		String[] optsArray = new String[0];
-		try {
-			categoryOpts.put(entry.getAssignedVar(), entry.getQuestionOptions().values().toArray(optsArray));
-		}
-		catch(ArrayStoreException e) {
+		conditionEditor.setDisable(!entry.getChildQuestions().isEmpty());
 
-		}
-
-		if (entry.getChildQuestions().isEmpty())
-			conditionEditor.setDisable(false);
-		else
-			conditionEditor.setDisable(true);
-
-		if (selectedQuestion == null)
-			return;
 		vboxOpts.getChildren().remove(3, vboxOpts.getChildren().size());
 		if (listener != null)
 			txtQText.textProperty().removeListener(listener);
-		listener = new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				entry.setQuestionText(newValue);
+		listener = (o,v0,v1) -> 
+				entry.setQuestionText(v1);
 
-			}
-		};
-		txtQText.setOnKeyReleased(handler->{
-			entry.questionTextProperty.setValue(txtQText.getText()); //This might work?
-		});
+		txtQText.setOnKeyReleased(handler->
+			entry.getQuestionTextProperty().setValue(txtQText.getText()) //This might work?
+		);
 		txtQText.textProperty().addListener(listener);
 		txtQText.setText(selectedQuestion.getText());
 		if (entry.getOptionsPane() != null)
@@ -225,71 +174,28 @@ public class QuestionEditor extends Pane {
 		for (QuestionView question : surveyQuestions) {
 			if (question.equals(entry))
 				break;
-			else if (question.isChild())
-				continue; // Don't add the ones that are conditionally asked.
-			// Currently can't nest conditions
-			conditionEditor.addOption(question);
+			else if (!question.isChild())	
+				conditionEditor.addOption(question);
 		}
 
 		conditionEditor.populate(entry);
 	}
 
 	public void populateVarBox() {
-		ObservableList<FirebaseVariable> vars = gui.getVariables();
+		ObservableList<FirebaseVariable> vars = Constants.getOpenProject().getObservableVariables();
 
 		cboVars.getItems().clear();
 		if (selectedQuestion == null)
 			return;
 		vars.forEach(entry -> {
-			if (entry.getisCustom()) {
 				UserVariable uservar = new UserVariable(entry);
-
-				// Only add valid variables that we can assign it to
-				switch (selectedQuestion.getQuestionType()) {
-				case SCALE:
-					if (uservar.getVarType().equals(VAR_NUMERIC)) {
-						cboVars.getItems().add(uservar);
-					}
-					break;
-				case GEO:
-					if (uservar.getVarType().equals(VAR_LOCATION)) {
-						cboVars.getItems().add(uservar);
-					}
-					break;
-				case BOOLEAN:
-					if (uservar.getVarType().equals(VAR_BOOLEAN)) {
-						cboVars.getItems().add(uservar);
-					}
-					break;
-				case NUMERIC:
-					if (uservar.getVarType().equals(VAR_NUMERIC)) {
-						cboVars.getItems().add(uservar);
-					}
-					break;
-				case DATE:
-					if (uservar.getVarType().equals(VAR_DATE)) {
-						cboVars.getItems().add(uservar);
-					}
-					break;
-				case TIME:
-					if (uservar.getVarType().equals(VAR_CLOCK)) {
-						cboVars.getItems().add(uservar);
-					}
-					break;
-				case MULT_SINGLE:
-				case MULT_MANY:
-					if (uservar.getVarType().equals(VAR_CATEGORY)) {
-						cboVars.getItems().add(uservar);
-					}
-					break;
+				if(uservar.getVarType().equals(selectedQuestion.getAnswerType())) {
+					cboVars.getItems().add(uservar);
 				}
-			}
+				
 		});
-		Callback<ListView<UserVariable>, ListCell<UserVariable>> cellFactory = new Callback<ListView<UserVariable>, ListCell<UserVariable>>() {
-			@Override
-			public ListCell<UserVariable> call(ListView<UserVariable> param) {
-
-				return new ListCell<UserVariable>() {
+		Callback<ListView<UserVariable>, ListCell<UserVariable>> cellFactory = param -> 
+				new ListCell<UserVariable>() {
 					@Override
 					public void updateItem(UserVariable item, boolean empty) {
 						super.updateItem(item, empty);
@@ -306,8 +212,7 @@ public class QuestionEditor extends Pane {
 						}
 					}
 				};
-			}
-		};
+			
 		cboVars.setCellFactory(cellFactory);
 		cboVars.setButtonCell(cellFactory.call(null));
 
@@ -316,10 +221,7 @@ public class QuestionEditor extends Pane {
 	public void refresh() {
 		if (selectedQuestion == null)
 			return;
-		if (selectedQuestion.getChildQuestions().isEmpty())
-			conditionEditor.setDisable(false);
-		else
-			conditionEditor.setDisable(true);
+		conditionEditor.setDisable(!selectedQuestion.getChildQuestions().isEmpty());
 	}
 
 }

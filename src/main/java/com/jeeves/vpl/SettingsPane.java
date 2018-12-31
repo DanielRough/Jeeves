@@ -2,6 +2,9 @@ package com.jeeves.vpl;
 
 import java.net.URL;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.jeeves.vpl.firebase.FirebaseDB;
 import com.jeeves.vpl.firebase.FirebaseProject;
 
@@ -20,6 +23,7 @@ import javafx.stage.Stage;
 import static com.jeeves.vpl.Constants.*;
 
 public class SettingsPane extends Pane{
+	final Logger logger = LoggerFactory.getLogger(SettingsPane.class);
 
 	private FirebaseProject currentproject;
 	private Stage stage;
@@ -34,7 +38,7 @@ public class SettingsPane extends Pane{
 	private String notPublic;
 	private String currentlyPublic;
 	
-	public SettingsPane(Main gui, Stage stage) {
+	public SettingsPane(Stage stage) {
 		this.stage = stage;
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setController(this);
@@ -44,9 +48,9 @@ public class SettingsPane extends Pane{
 
 		fxmlLoader.setLocation(location);
 		try {
-			Node root = (Node) fxmlLoader.load();
+			Node root = fxmlLoader.load();
 			getChildren().add(root);
-			currentproject = FirebaseDB.getOpenProject();
+			currentproject = FirebaseDB.getInstance().getOpenProject();
 			if(!currentproject.getactive()){
 				vboxPublished.setVisible(false);
 				vboxUnpublished.setVisible(true);
@@ -58,7 +62,7 @@ public class SettingsPane extends Pane{
 			updatePublicBit();
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(),e.fillInStackTrace());
 		}
 	}
 	
@@ -109,16 +113,9 @@ public class SettingsPane extends Pane{
 	
 	@FXML
 	public void goPublic(Event e){
-		if(!currentproject.getisPublic())
-			currentproject.setisPublic(true);
-		else
-			currentproject.setisPublic(false);
+		currentproject.setisPublic(!currentproject.getisPublic());
 		updatePublicBit();
 		FirebaseDB.getInstance().publishStudy(currentproject);
 
-	}
-	@FXML
-	public void endStudy(Event e){
-		
 	}
 }

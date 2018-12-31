@@ -79,7 +79,7 @@ public class ConditionEditor extends Pane {
 		surveyLoader.setLocation(getClass().getResource("/ConditionEditor.fxml"));
 		Pane surveynode;
 		try {
-			surveynode = (Pane) surveyLoader.load();
+			surveynode = surveyLoader.load();
 
 			this.getChildren().add(surveynode);
 			tgroup = new ToggleGroup();
@@ -91,7 +91,7 @@ public class ConditionEditor extends Pane {
 			timeReceiver = new TimeReceiver(VAR_CLOCK);
 			addListeners();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 
@@ -107,9 +107,9 @@ public class ConditionEditor extends Pane {
 	public void disable() {
 		hideConditionPanes();
 		currentQuestion.setParentQuestion(null);
-		paneCondition.getChildren().forEach(child -> {
-			child.setDisable(true);
-		});
+		paneCondition.getChildren().forEach(child -> 
+			child.setDisable(true)
+		);
 	}
 
 	public void populate(QuestionView question) {
@@ -144,13 +144,9 @@ public class ConditionEditor extends Pane {
 		case SCALE:
 			txtNumAnswer.setVisible(true);
 			cboLessMore.setVisible(true);
-			String[] constraints = conditionConstraints.split(";");
 			cboLessMore.getSelectionModel().clearAndSelect(0); //Default
 			txtNumAnswer.setText("5"); //Default
-			if (constraints.length > 1) {
-				cboLessMore.setValue(constraints[0]);
-				txtNumAnswer.setText(constraints[1]);
-			}
+			updateScaleConstraints(conditionConstraints);
 			break;
 		case MULT_SINGLE:
 		case MULT_MANY:
@@ -161,10 +157,7 @@ public class ConditionEditor extends Pane {
 				String option = opt.toString();
 				cboMultiChoice.getItems().add(option);
 			}
-			if (conditionConstraints.length() > 0)
-				cboMultiChoice.getSelectionModel().select(conditionConstraints);
-			else
-				cboMultiChoice.getSelectionModel().clearAndSelect(0); //default
+			updateMultConstraints(conditionConstraints);
 			break;
 		case DATE:
 			hboxDateOpts.setVisible(true);
@@ -172,13 +165,7 @@ public class ConditionEditor extends Pane {
 			paneDateTimeReceiver.getChildren().add(dateReceiver);
 			cboBeforeAfter.setVisible(true);
 			paneDateTimeReceiver.setVisible(true);
-			String[] dateconstraints = conditionConstraints.split(";");
-			if (dateconstraints.length > 1) {
-				dateReceiver.setText(dateconstraints[1]);
-				cboBeforeAfter.setValue(dateconstraints[0]);
-			}
-			else
-				cboBeforeAfter.getSelectionModel().clearAndSelect(0); //give it a default hopefully?
+			updateDateConstraints(conditionConstraints);
 			break;
 		case TIME:
 			hboxDateOpts.setVisible(true);
@@ -186,28 +173,60 @@ public class ConditionEditor extends Pane {
 			paneDateTimeReceiver.getChildren().add(timeReceiver);
 			cboBeforeAfter.setVisible(true);
 			paneDateTimeReceiver.setVisible(true);
-			String[] timeconstraints = conditionConstraints.split(";");
-			if (timeconstraints.length > 1) {
-				timeReceiver.setText(timeconstraints[1]);
-				cboBeforeAfter.setValue(timeconstraints[0]);
-			}
-			else
-				cboBeforeAfter.getSelectionModel().clearAndSelect(0); //give it a default hopefully?
+			updateTimeConstraints(conditionConstraints);
 			break;
 		case BOOLEAN:
 			rdioTrue.setVisible(true);
 			rdioFalse.setVisible(true);
-			if(tgroup.getSelectedToggle()!=null)
-			tgroup.getSelectedToggle().setSelected(false);
-			rdioTrue.setSelected(true);
-			if (conditionConstraints.length() > 0)
-				tgroup.selectToggle(Boolean.parseBoolean(conditionConstraints) ? rdioTrue : rdioFalse);
+			updateBooleanConstraints(conditionConstraints);
 			break;
 		case GEO:
+			break;
+		default:
 			break;
 		}
 	}
 
+	private void updateMultConstraints(String conditionConstraints) {
+		if (conditionConstraints.length() > 0)
+			cboMultiChoice.getSelectionModel().select(conditionConstraints);
+		else
+			cboMultiChoice.getSelectionModel().clearAndSelect(0); //default
+	}
+	private void updateScaleConstraints(String conditionConstraints) {
+		String[] constraints = conditionConstraints.split(";");
+		if (constraints.length > 1) {
+			cboLessMore.setValue(constraints[0]);
+			txtNumAnswer.setText(constraints[1]);
+		}
+	}
+	private void updateDateConstraints(String conditionConstraints) {
+		String[] dateconstraints = conditionConstraints.split(";");
+		if (dateconstraints.length > 1) {
+			dateReceiver.setText(dateconstraints[1]);
+			cboBeforeAfter.setValue(dateconstraints[0]);
+		}
+		else
+			cboBeforeAfter.getSelectionModel().clearAndSelect(0); //give it a default hopefully?
+	}
+	private void updateTimeConstraints(String conditionConstraints) {
+		String[] timeconstraints = conditionConstraints.split(";");
+		if (timeconstraints.length > 1) {
+			timeReceiver.setText(timeconstraints[1]);
+			cboBeforeAfter.setValue(timeconstraints[0]);
+		}
+		else
+			cboBeforeAfter.getSelectionModel().clearAndSelect(0); //give it a default hopefully?
+	}
+	private void updateBooleanConstraints(String conditionConstraints) {
+		if(tgroup.getSelectedToggle()!=null) {
+			tgroup.getSelectedToggle().setSelected(false);
+		}
+		rdioTrue.setSelected(true);
+		if (conditionConstraints.length() > 0) {
+			tgroup.selectToggle(Boolean.parseBoolean(conditionConstraints) ? rdioTrue : rdioFalse);
+		}
+	}
 	private void addListeners() {
 		chkAskOnCondition.selectedProperty().addListener((ob, old, nval) -> {
 			if (chkAskOnCondition.isSelected()) {
@@ -231,18 +250,17 @@ public class ConditionEditor extends Pane {
 		cboQuestionText.getSelectionModel().selectedItemProperty().addListener(cboQuestionListener);
 
 		txtNumAnswer.addEventHandler(KeyEvent.ANY, numberHandler);
-		txtAnswer.textProperty().addListener((ob, old, nval) -> {
-			updateCondition(txtAnswer.getText());
-		});
-		txtNumAnswer.textProperty().addListener((ob, old, nval) -> {
-			updateCondition(cboLessMore.getValue() + ";" + txtNumAnswer.getText());
-		});
-		cboMultiChoice.getSelectionModel().selectedItemProperty().addListener((ob, old, nval) -> {
-			updateCondition(nval);
-		});
-		cboLessMore.getSelectionModel().selectedItemProperty().addListener((ob, old, nval) -> {
-			updateCondition(cboLessMore.getValue() + ";" + txtNumAnswer.getText());
-		});
+		txtAnswer.textProperty().addListener((ob, old, nval) -> 
+			updateCondition(txtAnswer.getText()));
+		txtNumAnswer.textProperty().addListener((ob, old, nval) ->
+			updateCondition(cboLessMore.getValue() + ";" + txtNumAnswer.getText())
+		);
+		cboMultiChoice.getSelectionModel().selectedItemProperty().addListener((ob, old, nval) -> 
+			updateCondition(nval)
+		);
+		cboLessMore.getSelectionModel().selectedItemProperty().addListener((ob, old, nval) -> 
+			updateCondition(cboLessMore.getValue() + ";" + txtNumAnswer.getText())
+		);
 		cboBeforeAfter.getSelectionModel().selectedItemProperty().addListener((ob, old, nval) -> {
 			if(paneDateTimeReceiver.getChildren().contains(dateReceiver)){
 				updateCondition(cboBeforeAfter.getValue() + ";" + dateReceiver.getText());
@@ -251,26 +269,25 @@ public class ConditionEditor extends Pane {
 				updateCondition(cboBeforeAfter.getValue() + ";" + timeReceiver.getText());
 			}
 		});
-		tgroup.selectedToggleProperty().addListener((ob, old, nval) -> {
-			updateCondition(rdioTrue.isSelected() ? "true" : "false");
-		});
-		timeReceiver.getTextField().textProperty().addListener((ob, old, nval) -> {
-			updateCondition(cboBeforeAfter.getValue() + ";" + timeReceiver.getText());
-		});
-		dateReceiver.getTextField().textProperty().addListener((ob, old, nval) -> {
-			updateCondition(cboBeforeAfter.getValue() + ";" + dateReceiver.getText());
-		});
+		tgroup.selectedToggleProperty().addListener((ob, old, nval) -> 
+			updateCondition(rdioTrue.isSelected() ? "true" : "false")
+		);
+		timeReceiver.getTextField().textProperty().addListener((ob, old, nval) -> 
+			updateCondition(cboBeforeAfter.getValue() + ";" + timeReceiver.getText()));
+		dateReceiver.getTextField().textProperty().addListener((ob, old, nval) ->
+			updateCondition(cboBeforeAfter.getValue() + ";" + dateReceiver.getText())
+		);
 
-		conditionPanes = new ArrayList<Node>();
-		conditionQuestions = new HashMap<String, QuestionView>();
+		conditionPanes = new ArrayList<>();
+		conditionQuestions = new HashMap<>();
 		Collections.addAll(conditionPanes, txtAnswer, txtNumAnswer, hboxDateOpts, cboLessMore, cboMultiChoice,
 				cboBeforeAfter, paneDateTimeReceiver, rdioTrue, rdioFalse);
 	}
 
 	private void hideConditionPanes() {
-		conditionPanes.forEach(pane -> {
-			pane.setVisible(false);
-		});
+		conditionPanes.forEach(pane -> 
+			pane.setVisible(false)
+			);
 	}
 
 	private void updateCondition(String answer) {

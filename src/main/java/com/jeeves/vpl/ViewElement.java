@@ -1,8 +1,13 @@
 package com.jeeves.vpl;
 
+import static com.jeeves.vpl.Constants.GLOW_CLASS;
+
+import java.lang.reflect.InvocationTargetException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.jeeves.vpl.Constants.ElementType;
-import com.jeeves.vpl.canvas.actions.UpdateAction;
-import com.jeeves.vpl.firebase.FirebaseAction;
 import com.jeeves.vpl.firebase.FirebaseElement;
 
 import javafx.event.EventHandler;
@@ -23,13 +28,25 @@ import javafx.scene.layout.Pane;
 
 public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 	// Create a new ViewElement from just the class name
+	final static Logger logger = LoggerFactory.getLogger(ViewElement.class);
+
 	public static ViewElement create(String name, String classname) {
 		try {
 			return (ViewElement) Class.forName(classname).getConstructor(String.class).newInstance(name);
-		} catch (Exception e) {
-			e.printStackTrace();// better than null
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException | ClassNotFoundException e) {
+			logger.error(e.getMessage(),e.fillInStackTrace());
 		}
 		return null;
+
+	}
+	public ViewElement(T data, Class<T> typeParameterClass) {
+		this.gui = Main.getContext();
+		fxmlInit();
+		addListeners();
+		setData(data);
+		initEventHandlers();
+		setPickOnBounds(false);
 	}
 	protected T model;
 	protected ElementType type;
@@ -49,16 +66,6 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 	protected EventHandler<MouseEvent> releasedHandler;
 	protected EventHandler<MouseEvent> sidebarElemHandler;
 
-	//I 
-	public ViewElement(T data, Class<T> typeParameterClass) {
-		this.gui = Main.getContext();
-		fxmlInit();
-		addListeners();
-		setData(data);
-		initEventHandlers();
-		setPickOnBounds(false);
-	}
-
 	// Nice new convenience methods
 	public void addAllHandlers() {
 		addEventHandler(MouseEvent.ANY, mainHandler);
@@ -67,6 +74,7 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 	}
 
 	public abstract void fxmlInit();
+
 	public abstract ViewElement<T> getInstance();
 
 	public ViewElement getDraggable() {
@@ -91,6 +99,76 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 		return type;
 	}
 
+	public void addSidebarHandler() {
+		sidebarElemHandler = event -> {
+			if (event.isSecondaryButtonDown()) {
+				event.consume();
+				return;
+			}
+			setOnDragDetected(event1 -> {
+				if (event1.isSecondaryButtonDown())
+					return;
+				draggable.startFullDrag();
+			});
+			if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
+				draggable.setMouseTransparent(true);
+				draggable.setLayoutX(event.getSceneX());
+				draggable.setLayoutY(event.getSceneY());
+				draggable.getStyleClass().add(GLOW_CLASS);
+
+				setEffect(null);
+			} else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
+				draggable.setLayoutX(event.getSceneX());
+				draggable.setLayoutY(event.getSceneY());
+			} else if (event.getEventType().equals(MouseEvent.MOUSE_ENTERED)) {
+				logger.debug("I AM HERE");
+				setCursor(Cursor.HAND);
+				getStyleClass().add(GLOW_CLASS);
+			} else if (event.getEventType().equals(MouseEvent.MOUSE_EXITED)) {
+				getStyleClass().remove(GLOW_CLASS);
+			} else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
+
+				draggable.getStyleClass().remove(GLOW_CLASS);
+				draggable.addAllHandlers();
+			}
+		};
+	}
+	public void addMainHandler() {
+		mainHandler = event ->{
+			if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
+				requestFocus();
+				parentPane.addChild(getInstance(), event.getSceneX(), event.getSceneY());
+				event.consume();
+				setManaged(false);
+				toFront();
+				Point2D parentPoint = getParent().sceneToLocal(event.getSceneX(), event.getSceneY());
+				x = getLayoutX();
+				y = getLayoutY();
+				mouseX = parentPoint.getX();
+				mouseY = parentPoint.getY();
+			}
+			// An event for dragging the element about
+			else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
+				if (event.isSecondaryButtonDown()) {
+					return;
+				}
+				setMouseTransparent(true);
+				Point2D parentPoint = getParent().sceneToLocal(event.getSceneX(), event.getSceneY());
+				double offsetX = parentPoint.getX() - mouseX;
+				double offsetY = parentPoint.getY() - mouseY;
+				x += offsetX;
+				y += offsetY;
+				setLayoutX(x);
+				setLayoutY(y);
+				mouseX = parentPoint.getX();
+				mouseY = parentPoint.getY();
+
+				event.consume();
+			} else if (event.getEventType().equals(MouseEvent.MOUSE_ENTERED)) {
+				setCursor(Cursor.HAND);
+			}
+		};
+	}
 	public void initEventHandlers() {
 		draggedHandler = event -> {
 			if (event.isSecondaryButtonDown()) {
@@ -104,9 +182,8 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 		releasedHandler = event -> {
 			if (event.getButton().equals(MouseButton.SECONDARY))
 				return;
-			if (gui.isOverTrash(event.getSceneX(), event.getSceneY())) {
-				if (parentPane != null)
-					parentPane.removeChild(getInstance());
+			if (gui.isOverTrash(event.getSceneX(), event.getSceneY()) && parentPane != null) {
+				parentPane.removeChild(getInstance());
 			} else {
 				setPosition((new Point2D(getLayoutX(), getLayoutY())));
 				setCursor(Cursor.HAND);
@@ -119,82 +196,9 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 
 		// This is the handler for when the element is one of the sidebar
 		// elements
-		sidebarElemHandler = new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				if (event.isSecondaryButtonDown()) {
-					event.consume();
-					return;
-				}
-				setOnDragDetected(event1 -> {
-					if (event1.isSecondaryButtonDown())
-						return;
-					draggable.startFullDrag();
-				});
-				if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
-					draggable.setMouseTransparent(true);
-					draggable.setLayoutX(event.getSceneX());
-					draggable.setLayoutY(event.getSceneY());
-					draggable.getStyleClass().add("drop_shadow");
 
-					setEffect(null);
-				} else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
-					draggable.setLayoutX(event.getSceneX());
-					draggable.setLayoutY(event.getSceneY());
-				} else if (event.getEventType().equals(MouseEvent.MOUSE_ENTERED)) {
-					setCursor(Cursor.HAND);
-					getStyleClass().add("drop_shadow");
-				} else if (event.getEventType().equals(MouseEvent.MOUSE_EXITED)) {
-					getStyleClass().remove("drop_shadow");
-				} else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
-
-					draggable.getStyleClass().remove("drop_shadow");
-					draggable.addAllHandlers();
-				}
-			}
-		};
-
-		mainHandler = new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				if (event.isSecondaryButtonDown()) {
-					return;
-				}
-				// An event for when we press the mouse
-				else if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
-					requestFocus();
-					parentPane.addChild(getInstance(), event.getSceneX(), event.getSceneY());
-					event.consume();
-					setManaged(false);
-					toFront();
-					Point2D parentPoint = getParent().sceneToLocal(event.getSceneX(), event.getSceneY());
-					x = getLayoutX();
-					y = getLayoutY();
-					mouseX = parentPoint.getX();
-					mouseY = parentPoint.getY();
-				}
-				// An event for dragging the element about
-				else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
-					if (event.isSecondaryButtonDown()) {
-						return;
-					}
-					setMouseTransparent(true);
-					Point2D parentPoint = getParent().sceneToLocal(event.getSceneX(), event.getSceneY());
-					double offsetX = parentPoint.getX() - mouseX;
-					double offsetY = parentPoint.getY() - mouseY;
-					x += offsetX;
-					y += offsetY;
-					setLayoutX(x);
-					setLayoutY(y);
-					mouseX = parentPoint.getX();
-					mouseY = parentPoint.getY();
-
-					event.consume();
-				} else if (event.getEventType().equals(MouseEvent.MOUSE_ENTERED)) {
-					setCursor(Cursor.HAND);
-				}
-			}
-		};
+		addSidebarHandler();
+		addMainHandler();
 		addEventHandler(MouseEvent.DRAG_DETECTED, draggedHandler);
 		addEventFilter(MouseEvent.MOUSE_RELEASED, releasedHandler);
 	}
@@ -217,6 +221,8 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 
 	public void setParentPane(DragPane parent) {
 		this.parentPane = parent;
+		initEventHandlers();
+		addMainHandler();
 		addAllHandlers();
 	}
 
@@ -245,21 +251,17 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 	}
 	protected void addListeners() {
 		layoutXProperty().addListener(listener -> model.setxPos((long) getLayoutX()));
-		layoutYProperty().addListener(listener -> {
-			model.setyPos((long) getLayoutY());
-		});
+		layoutYProperty().addListener(listener -> 
+		model.setyPos((long) getLayoutY())
+				);
 
 	}
 
 	//I worry that this will overwrite the model stuff that's already in there.
 	protected void setData(T model) {
-		
+
 		this.model = model;
-		if(this instanceof UpdateAction) {
-			System.out.println("WOO " + ((FirebaseAction)model).getvars());
-			System.out.println("Position: " + model.getxPos() + "," + model.getyPos());
-		}
-		Point2D position = new Point2D(model.getxPos(), model.getyPos());
+		position = new Point2D(model.getxPos(), model.getyPos());
 		setPosition(position);
 	}
 

@@ -1,19 +1,18 @@
 package com.jeeves.vpl.canvas.expressions;
 
-import com.jeeves.vpl.DragPane;
+import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 import com.jeeves.vpl.firebase.FirebaseSurvey;
 
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.ComboBox;
 import javafx.stage.Popup;
 
 public class SurveyExpression extends Expression { // NO_UCD (unused code)
-	public boolean manualChange = false;
+	private static final String RESULT = "result";
+	private static final String SURVEY = "survey";
 	private ComboBox<String> cboSurveys;
 	private ComboBox<String> cboDoneOrNot;
 	private String surveyname;
@@ -24,59 +23,45 @@ public class SurveyExpression extends Expression { // NO_UCD (unused code)
 	public SurveyExpression(String name) {
 		this(new FirebaseExpression(name));
 	}
-	@Override
-	public void setParentPane(DragPane parent) {
-		super.setParentPane(parent);
+	public void addTitleListener(FirebaseSurvey survey) {
+		survey.getTitleProperty().addListener((arg0,arg1,arg2)->{
+			int index = cboSurveys.getSelectionModel().getSelectedIndex();
+			cboSurveys.getItems().clear();
+			Constants.getOpenProject().getObservableSurveys().forEach(survey2 -> 
+			cboSurveys.getItems().add(survey2.gettitle())
+			);
+			if (index >= 0)
+				cboSurveys.getSelectionModel().clearAndSelect(index);
 
+	});
 	}
-	
 	@Override
 	public void addListeners() {
 		super.addListeners();
-		ObservableList<FirebaseSurvey> surveys = gui.getSurveys();
+		ObservableList<FirebaseSurvey> surveys = Constants.getOpenProject().getObservableSurveys();
 
 		cboSurveys.getItems().clear();
 		surveys.forEach(survey -> {
 			cboSurveys.getItems().add(survey.gettitle());
-		});
-		gui.registerSurveyListener(new ListChangeListener<FirebaseSurvey>() {
-
-			@Override
-			public void onChanged(javafx.collections.ListChangeListener.Change<? extends FirebaseSurvey> c) {
-				ObservableList<FirebaseSurvey> surveys = gui.getSurveys();
+			addTitleListener(survey);
+	}
+		);
+		Constants.getOpenProject().registerSurveyListener(
+				(javafx.collections.ListChangeListener.Change<? extends FirebaseSurvey> c) ->{
+				ObservableList<FirebaseSurvey> newSurveys = Constants.getOpenProject().getObservableSurveys();
 				String value = cboSurveys.getValue();
 				cboSurveys.getItems().clear();
-				surveys.forEach(survey -> {
+				newSurveys.forEach(survey -> {
 					cboSurveys.getItems().add(survey.gettitle());
 					if (survey.gettitle().equals(value))
 						cboSurveys.setValue(value);
-					survey.title.addListener(new ChangeListener<String>() {
-
-						@Override
-						public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
-							int index = cboSurveys.getSelectionModel().getSelectedIndex();
-							cboSurveys.getItems().clear();
-							surveys.forEach(survey2 -> {
-								cboSurveys.getItems().add(survey2.gettitle());
-							});
-
-							if (index >= 0)
-								cboSurveys.getSelectionModel().clearAndSelect(index);
-
-						}
-
-					});
+					addTitleListener(survey);
 				});
-			}
 
 		});
-		selectionListener = new ChangeListener<String>() {
-
-			@Override
-			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
+		selectionListener = (arg0, arg1, arg2) ->{
 				if (arg2 != null) // aaaaaaaargh
-					params.put("survey", arg2);
-			}
+					params.put(SURVEY, arg2);
 
 		};
 		cboSurveys.valueProperty().addListener(selectionListener);
@@ -86,10 +71,10 @@ public class SurveyExpression extends Expression { // NO_UCD (unused code)
 		super(data);
 		
 		cboDoneOrNot.getItems().addAll("completed","missed");
-		params.put("result", "missed");
+		params.put(RESULT, "missed");
 		cboDoneOrNot.valueProperty()
 				.addListener((ChangeListener<String>) (arg0, arg1, arg2) -> {
-				params.put("result", arg2);
+				params.put(RESULT, arg2);
 				doneOrNot = arg2;});
 				
 				addListeners();
@@ -108,13 +93,14 @@ public class SurveyExpression extends Expression { // NO_UCD (unused code)
 	public void setData(FirebaseExpression model) {
 		super.setData(model);
 		updatePane();
-		if (model.getparams().containsKey("survey")) {
-			String surveyName = model.getparams().get("survey").toString();
+		if (model.getparams().containsKey(SURVEY)) {
+			String surveyName = model.getparams().get(SURVEY).toString();
 			cboSurveys.getSelectionModel().select(surveyName);
-		} else
+		} else {
 			return;
-		if (model.getparams().containsKey("result")) {
-			String result = model.getparams().get("result").toString();
+		}
+		if (model.getparams().containsKey(RESULT)) {
+			String result = model.getparams().get(RESULT).toString();
 			cboDoneOrNot.getSelectionModel().select(result);
 		}
 	}
@@ -135,8 +121,8 @@ public class SurveyExpression extends Expression { // NO_UCD (unused code)
 	@Override
 	public void updatePane() {
 		super.updatePane();
-		cboSurveys = new ComboBox<String>();
-		cboDoneOrNot = new ComboBox<String>();
+		cboSurveys = new ComboBox<>();
+		cboDoneOrNot = new ComboBox<>();
 		box.getChildren().clear();
 		box.getChildren().addAll(cboSurveys, operand, cboDoneOrNot);
 		box.setPadding(new Insets(0, 4, 0, 4));

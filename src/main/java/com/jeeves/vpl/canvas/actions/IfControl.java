@@ -1,7 +1,5 @@
 package com.jeeves.vpl.canvas.actions;
 
-import javafx.scene.Node;
-
 import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
 import com.jeeves.vpl.firebase.FirebaseAction;
 

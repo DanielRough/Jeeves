@@ -1,24 +1,26 @@
 package com.jeeves.vpl.canvas.expressions;
 
 import static com.jeeves.vpl.Constants.VAR_CATEGORY;
-import static com.jeeves.vpl.Constants.categoryOpts;
 
-import java.util.List;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.DragPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 import com.jeeves.vpl.firebase.FirebaseVariable;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
-import javafx.collections.MapChangeListener;
+import javafx.collections.MapChangeListener.Change;
 import javafx.geometry.Insets;
 import javafx.scene.control.ComboBox;
 
 public class CategoryExpression extends Expression { // NO_UCD (unused code)
+	private static final String CATEGORY = "category";
+	private static final String RESULT = "result";
 	private ExpressionReceiver categoryReceiver;
 	private ComboBox<String> cboCategories;
 
@@ -45,32 +47,31 @@ public class CategoryExpression extends Expression { // NO_UCD (unused code)
 		super.setData(model);
 		updatePane();
 
-		if (model.getparams().containsKey("category")) {
-			String category = model.getparams().get("category").toString();
+		if (model.getparams().containsKey(CATEGORY)) {
+			String category = model.getparams().get(CATEGORY).toString();
 			setCategory(category);
 		}
-		if(model.getparams().containsKey("result"))
-			cboCategories.setValue(model.getparams().get("result").toString());
+		if(model.getparams().containsKey(RESULT))
+			cboCategories.setValue(model.getparams().get(RESULT).toString());
 	}
 
 	protected void setCategory(String category) {
+		Constants.getOpenProject().getObservableVariables().forEach(variable -> {
+			if(variable.getname().equals(category)) {
+				categoryReceiver.addChild(UserVariable.create(variable),0,0);
+				return;
+			}});
 		if (category != null && !category.equals("")) {
 			//A thing to stop the category expressions inexplicably emptying themselves whenever a new attribute is added
-			ListChangeListener<FirebaseVariable> varlistener= new ListChangeListener<FirebaseVariable>() {
-				@Override
-				public void onChanged(Change<? extends FirebaseVariable> c) {
-					c.next();
-					if(c.wasAdded()){
-						List<FirebaseVariable> list = (List<FirebaseVariable>) c.getAddedSubList();
-						if(list.get(0).getname().equals(category)) {
-							categoryReceiver.addChild(UserVariable.create(list.get(0)),0,0);
-							gui.unregisterVarListener(this);
-						}
-					}					
+			ListChangeListener<FirebaseVariable> varlistener= c ->
+				Constants.getOpenProject().getObservableVariables().forEach(variable -> {
+				if(variable.getname().equals(category)) {
+					categoryReceiver.addChild(UserVariable.create(variable),0,0);
 				}
-				
-			};
-			gui.registerVarListener(varlistener);
+					
+				});			
+			
+			Constants.getOpenProject().registerVarListener(varlistener);
 				
 		}
 	}
@@ -81,34 +82,29 @@ public class CategoryExpression extends Expression { // NO_UCD (unused code)
 		
 		categoryReceiver.getChildElements().addListener(
 				(ListChangeListener<ViewElement>) listener -> {listener.next(); 
-				if(categoryReceiver.getChildModel() != null)
-				params.put("category", categoryReceiver.getChildModel().getname());
-				
-				categoryOpts.addListener(new MapChangeListener<String,String[]>(){
-					@Override
-					public void onChanged(Change<? extends String, ? extends String[]> arg0) {
+				if(categoryReceiver.getChildModel() != null) {
+					params.put(CATEGORY, categoryReceiver.getChildModel().getname());
+				}
+				Constants.getCategoryOpts().addListener((Change<? extends String, ? extends String[]> arg0)->{
 						String selected = cboCategories.getSelectionModel().getSelectedItem(); //Hopefully it has one
 						cboCategories.getItems().clear();
-						if(categoryReceiver.getChildModel() == null || !categoryOpts.containsKey(categoryReceiver.getChildModel().getname()))return;
-						cboCategories.getItems().addAll(categoryOpts.get(categoryReceiver.getChildModel().getname()));
+						if(categoryReceiver.getChildModel() == null || !Constants.getCategoryOpts().containsKey(categoryReceiver.getChildModel().getname()))return;
+						cboCategories.getItems().addAll(Constants.getCategoryOpts().get(categoryReceiver.getChildModel().getname()));
 						cboCategories.setValue(selected);
 						cboCategories.getSelectionModel().select(selected);
-					}
 					
 				});
 				cboCategories.getItems().clear();
-				if(categoryReceiver.getChildModel() == null || !categoryOpts.containsKey(categoryReceiver.getChildModel().getname()))return;
-				cboCategories.getItems().addAll(categoryOpts.get(categoryReceiver.getChildModel().getname()));
+				if(categoryReceiver.getChildModel() == null || !Constants.getCategoryOpts().containsKey(categoryReceiver.getChildModel().getname()))return;
+				Iterator<Map.Entry<String,String[]>> iter = Constants.getCategoryOpts().entrySet().iterator();
+				while(iter.hasNext()){
+					Entry<String,String[]> entry = iter.next();
+				}
+				cboCategories.getItems().addAll(Constants.getCategoryOpts().get(categoryReceiver.getChildModel().getname()));
 				});
-		cboCategories.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-
-			@Override
-			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
-				params.put("result", cboCategories.getSelectionModel().getSelectedItem());
-
-			}
-			
-		});
+		cboCategories.getSelectionModel().selectedItemProperty().addListener((arg0,arg1,arg2) ->
+				params.put(RESULT, cboCategories.getSelectionModel().getSelectedItem())
+			);
 	}
 
 	@Override
@@ -120,7 +116,7 @@ public class CategoryExpression extends Expression { // NO_UCD (unused code)
 	@Override
 	public void updatePane() {
 		super.updatePane();
-		cboCategories = new ComboBox<String>();
+		cboCategories = new ComboBox<>();
 		cboCategories.setPrefHeight(20);
 		cboCategories.setMinHeight(USE_PREF_SIZE);
 		box.getChildren().addAll(categoryReceiver,operand,cboCategories);

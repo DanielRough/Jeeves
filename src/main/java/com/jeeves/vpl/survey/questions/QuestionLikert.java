@@ -5,22 +5,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.firebase.FirebaseQuestion;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.Pane;
 import static com.jeeves.vpl.Constants.*;
 
 public class QuestionLikert extends QuestionView {
-
+	private static final String LABELS = "labels";
+	private static final String NUMBER = "number";
 	private TextField[] fields;
 
 	@FXML
@@ -31,7 +26,7 @@ public class QuestionLikert extends QuestionView {
 	private TextField txtMiddle;
 	@FXML
 	private TextField txtEnd;
-	public QuestionLikert(String label)  throws Exception {
+	public QuestionLikert(String label) {
 		this(new FirebaseQuestion(label));
 	}
 	public QuestionLikert(FirebaseQuestion data) {
@@ -68,17 +63,13 @@ public class QuestionLikert extends QuestionView {
 		surveyLoader.setController(this);
 		surveyLoader.setLocation(getClass().getResource("/OptionsLikert.fxml"));
 		try {
-			optionsPane = (Pane) surveyLoader.load();
+			optionsPane = surveyLoader.load();
 			addEventHandlers();
 		} catch (IOException e) {
-
+			System.exit(1);
 		}
 	}
 
-	@Override
-	public void fxmlInit(){
-		super.fxmlInit();
-	}
 	@Override
 	public void showEditOpts(Map<String, Object> opts) {
 		if (opts == null) {
@@ -86,13 +77,13 @@ public class QuestionLikert extends QuestionView {
 				field.setText("");
 			}
 		} else {
-			if (opts.containsKey("number")) {
-				String number = opts.get("number").toString();
+			if (opts.containsKey(NUMBER)) {
+				String number = opts.get(NUMBER).toString();
 				txtNumOptions.setText(number);
 			}
-			if (opts.containsKey("labels")) {
+			if (opts.containsKey(LABELS)) {
 				@SuppressWarnings("unchecked")
-				ArrayList<String> labels = (ArrayList<String>) opts.get("labels");
+				ArrayList<String> labels = (ArrayList<String>) opts.get(LABELS);
 				for (int count = 0; count < fields.length; count++) {
 					fields[count].setText(labels.get(count));
 				}
@@ -102,19 +93,22 @@ public class QuestionLikert extends QuestionView {
 
 	private void handleUpdateScale() {
 		String number = txtNumOptions.getText();
-		Map<String, Object> qScaleVals = new HashMap<String, Object>();
-		qScaleVals.put("number", number);
+		Map<String, Object> qScaleVals = new HashMap<>();
+		qScaleVals.put(NUMBER, number);
 		if(number.isEmpty())
-			qScaleVals.put("number", "7");
-		ArrayList<String> labels = new ArrayList<String>();
+			qScaleVals.put(NUMBER, "7");
+		ArrayList<String> labels = new ArrayList<>();
 		for (TextField field : fields) {
 			labels.add(field.getText());
 
 		}
-		qScaleVals.put("labels", labels);
+		qScaleVals.put(LABELS, labels);
 		Map<String,Object> params = model.getparams();
 		params.put("options",qScaleVals);
 
 	}
-
+	@Override
+	public String getAnswerType() {
+		return Constants.VAR_NUMERIC;
+	}
 }

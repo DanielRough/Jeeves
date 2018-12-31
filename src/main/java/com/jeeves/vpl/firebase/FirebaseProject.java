@@ -5,10 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import org.controlsfx.control.PropertySheet.Item;
-
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.expressions.Expression;
@@ -17,8 +15,9 @@ import com.jeeves.vpl.canvas.triggers.Trigger;
 import com.jeeves.vpl.canvas.uielements.UIElement;
 import com.jeeves.vpl.survey.Survey;
 
-import javafx.beans.Observable;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 
 /**
@@ -29,15 +28,13 @@ import javafx.collections.ObservableMap;
 @IgnoreExtraProperties
 public class FirebaseProject implements Serializable {
 
-	private String description;
 	private List<FirebaseExpression> expressions = new ArrayList<>();
 	private long maxNotifications;
 	private String name;
 	private String researcherno;
 	private List<FirebaseSurvey> surveys = new ArrayList<>();
 	private List<FirebaseTrigger> triggers = new ArrayList<>();
-	private Map<String,Map<String,FirebaseSurveyEntry>> surveydata = new HashMap<String,Map<String,FirebaseSurveyEntry>>();
-	private String type;
+	private Map<String,Map<String,FirebaseSurveyEntry>> surveydata = new HashMap<>();
 	private List<FirebaseUI> uidesign = new ArrayList<>();
 	private List<FirebaseVariable> variables = new ArrayList<>();
 	private List<String> sensors = new ArrayList<>();
@@ -47,8 +44,54 @@ public class FirebaseProject implements Serializable {
 	private long lastUpdated;
 	private String pubKey;
 	
+	/*
+	
+*/
 	private ObservableMap<String,Map<String,FirebaseSurveyEntry>> surveydataobservable = FXCollections.observableHashMap();
-
+	@Exclude
+	public transient ObservableList<FirebaseSurvey> currentsurveys = FXCollections
+	.observableList(surveys);
+	@Exclude
+	public transient ObservableList<FirebaseVariable> currentvariables = FXCollections
+	.observableList(variables);
+	@Exclude
+	public transient ObservableList<FirebaseUI> currentelements = FXCollections
+	.observableList(uidesign);
+	@Exclude
+	public transient ObservableMap<String,Map<String,FirebaseSurveyEntry>> currentsurveydata = FXCollections.observableHashMap();
+	@Exclude
+	public void registerElementListener(ListChangeListener<FirebaseUI> listener) {
+		currentelements.addListener(listener);
+	}
+	@Exclude
+	public void registerSurveyListener(ListChangeListener<FirebaseSurvey> listener) {
+		currentsurveys.addListener(listener);
+	}
+	@Exclude
+	public void registerVarListener(ListChangeListener<FirebaseVariable> listener) {
+		currentvariables.addListener(listener);
+	}
+	@Exclude
+	public void unregisterVarListener(ListChangeListener<FirebaseVariable> listener) {
+		currentvariables.removeListener(listener);
+	}
+	@Exclude
+	public ObservableList<FirebaseSurvey> getObservableSurveys() {
+		return currentsurveys;
+	}
+	@Exclude
+	public ObservableList<FirebaseUI> getUIElements() {
+		return currentelements;
+	}
+	@Exclude
+	public ObservableMap<String,Map<String,FirebaseSurveyEntry>> getSurveyEntries(){
+		return currentsurveydata;
+	}
+	@Exclude
+	public ObservableList<FirebaseVariable> getObservableVariables() {
+		return currentvariables;
+	}
+	
 	public void setsensors(List<String> sensors){
 		this.sensors = sensors;
 	}
@@ -91,24 +134,32 @@ public class FirebaseProject implements Serializable {
 		// empty default constructor, necessary for Firebase to be able to
 		// deserialize blog posts
 	}
-
+	public void addStuff() {
+		currentvariables = FXCollections
+				.observableList(variables);
+		currentsurveys = FXCollections
+				.observableList(surveys);
+		currentelements = FXCollections
+				.observableList(uidesign);
+	}
 
 	public void add(ViewElement elem) {
 		FirebaseElement model = elem.getModel();
-		if (elem instanceof Trigger)
+		if (elem instanceof Trigger) {
 			gettriggers().add((FirebaseTrigger) model);
-		else if (elem instanceof Expression)
+		}
+		else if (elem instanceof Expression) {
 			getexpressions().add((FirebaseExpression) model);
-		else if (elem instanceof UIElement)
-			getuidesign().add((FirebaseUI) model);
-		else if (elem instanceof UserVariable)
-			getvariables().add((FirebaseVariable) model);
-		else if (elem instanceof Survey)
-			getsurveys().add((FirebaseSurvey) model);
-	}
-
-	public String getdescription() {
-		return description;
+		}
+		else if (elem instanceof UIElement) {
+			currentelements.add((FirebaseUI)model);
+		}
+		else if (elem instanceof UserVariable) {
+			currentvariables.add((FirebaseVariable)model);
+		}
+		else if (elem instanceof Survey) {
+			currentsurveys.add((FirebaseSurvey)model);
+		}
 	}
 
 	public List<FirebaseExpression> getexpressions() {
@@ -134,7 +185,6 @@ public class FirebaseProject implements Serializable {
 	public ObservableMap<String,Map<String,FirebaseSurveyEntry>> getObservableSurveyData(){
 		return surveydataobservable;
 	}
-	public void registerSurveyDataListener(){	}
 	public void setsurveydata(Map<String,Map<String,FirebaseSurveyEntry>> surveydata){
 		this.surveydata = surveydata;
 		surveydataobservable.putAll(surveydata);
@@ -147,10 +197,6 @@ public class FirebaseProject implements Serializable {
 	
 	public List<FirebaseTrigger> gettriggers() {
 		return triggers;
-	}
-
-	public String gettype() {
-		return type;
 	}
 
 	public List<FirebaseUI> getuidesign() {

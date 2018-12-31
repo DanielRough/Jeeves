@@ -3,8 +3,6 @@ package com.jeeves.vpl.firebase;
 import java.io.Serializable;
 import java.util.List;
 
-import org.apache.poi.ss.formula.functions.T;
-
 import com.google.firebase.database.IgnoreExtraProperties;
 
 /**

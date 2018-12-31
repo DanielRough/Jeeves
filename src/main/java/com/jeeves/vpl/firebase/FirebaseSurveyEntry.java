@@ -1,9 +1,6 @@
 package com.jeeves.vpl.firebase;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.firebase.database.IgnoreExtraProperties;
 
 //Class that stores information on a patient's survey entry.
@@ -12,7 +9,6 @@ import com.google.firebase.database.IgnoreExtraProperties;
 @IgnoreExtraProperties
 public class FirebaseSurveyEntry extends FirebaseElement implements Serializable{
 
-	//private List<FirebaseQuestion> questions = new ArrayList<FirebaseQuestion>();
 	private long complete;
 	private int initTime;
 	private String encodedAnswers;
@@ -22,9 +18,7 @@ public class FirebaseSurveyEntry extends FirebaseElement implements Serializable
 	private int triggerType;
 	private String uid; 
 	
-	public FirebaseSurveyEntry() {
-	
-	}
+
 	public long getcomplete(){
 		return complete;
 	}
@@ -52,9 +46,7 @@ public class FirebaseSurveyEntry extends FirebaseElement implements Serializable
 	public void setstatus(int status){
 		this.status = status;
 	}
-//	public List<FirebaseQuestion> getquestions() {
-//		return questions;
-//	}
+
 	public int gettriggerType(){
 		return triggerType;
 	}

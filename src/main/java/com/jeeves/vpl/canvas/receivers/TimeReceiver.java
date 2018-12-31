@@ -1,34 +1,22 @@
 package com.jeeves.vpl.canvas.receivers;
 
 import java.net.URL;
-import java.util.Calendar;
-import java.util.Date;
-
 import com.jeeves.vpl.TextUtils;
 import com.jeeves.vpl.ViewElement;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBoxBuilder;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.stage.Modality;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -41,7 +29,6 @@ public class TimeReceiver extends ExpressionReceiver {
 		private TextField txtMins;
 		@FXML
 		private Button btnOK;
-		private EventHandler<MouseEvent> closeHandler;
 
 		private String padWithZeroes(int number) {
 			if (number > 9)
@@ -56,30 +43,19 @@ public class TimeReceiver extends ExpressionReceiver {
 			URL location = this.getClass().getResource("/PopupNewTime.fxml");
 			fxmlLoader.setLocation(location);
 			try {
-				Node root = (Node) fxmlLoader.load();
+				Node root = fxmlLoader.load();
 				getChildren().add(root);
 			} catch (Exception e) {
-				e.printStackTrace();
+				System.exit(1);
 			}
 			btnOK.setOnAction(handler->{
-				try{
 				int hours = Integer.parseInt(txtHours.getText());
 				int mins = Integer.parseInt(txtMins.getText());
 				texty.setText(padWithZeroes(hours) + ":" + padWithZeroes(mins));
-				}
-				catch(NumberFormatException e){
-					//do nothing
-				}
 				stage.close();
 			});
-			txtHours.addEventHandler(KeyEvent.KEY_PRESSED, handler->{
-				if(handler.getCode() == KeyCode.ENTER)
-					closeHandler.handle(null);
-			});
-			txtHours.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
 
-				@Override
-				public void handle(KeyEvent arg0) {
+			txtHours.addEventHandler(KeyEvent.KEY_TYPED,arg0 ->{
 					
 					String ch = arg0.getCharacter();
 					
@@ -89,14 +65,11 @@ public class TimeReceiver extends ExpressionReceiver {
 						int hours = Integer.parseInt(txtHours.getText() + x);
 						if (hours > 23) {
 							arg0.consume();
-							return;
 						}
 					} catch (NumberFormatException e) {
 						arg0.consume();
-						return;
 					}
 
-				}
 
 			});
 			txtHours.textProperty().addListener(listen -> {
@@ -104,16 +77,8 @@ public class TimeReceiver extends ExpressionReceiver {
 				if (hours > 2 || (txtHours.getText().length()==2))
 					txtMins.requestFocus();
 			});
-			txtMins.addEventHandler(KeyEvent.KEY_PRESSED, handler->{
-				if(handler.getCode() == KeyCode.ENTER)
-					closeHandler.handle(null);
-			});
-			txtMins.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
 
-				@Override
-				public void handle(KeyEvent arg0) {
-					if(arg0.getCode().equals(KeyCode.ENTER))
-						closeHandler.handle(null);
+			txtMins.addEventHandler(KeyEvent.KEY_TYPED, arg0 ->{
 					if (txtMins.getText().length() == 2) {
 						arg0.consume();
 						return;
@@ -125,14 +90,10 @@ public class TimeReceiver extends ExpressionReceiver {
 						int mins = Integer.parseInt(txtMins.getText() + x);
 						if (mins > 59) {
 							arg0.consume();
-							return;
 						}
 					} catch (NumberFormatException e) {
 						arg0.consume();
-
-						return;
 					}
-				}
 
 			});
 		}
@@ -169,13 +130,13 @@ public class TimeReceiver extends ExpressionReceiver {
 			EventHandler<MouseEvent> removeEvent = new EventHandler<MouseEvent>() {
 				@Override
 				public void handle(MouseEvent arg0) {
-					ViewElement child = (ViewElement) arg0.getSource();
+					ViewElement<?> child = (ViewElement<?>) arg0.getSource();
 					captureRect.setOpacity(0);
 					child.removeEventHandler(MouseEvent.MOUSE_PRESSED, this);
 					captureRect.setWidth(text.getPrefWidth());
 				}
 			};
-			((ViewElement) event.getGestureSource()).addEventHandler(MouseEvent.MOUSE_PRESSED, removeEvent);
+			((ViewElement<?>) event.getGestureSource()).addEventHandler(MouseEvent.MOUSE_PRESSED, removeEvent);
 		};
 
 	}
@@ -183,11 +144,10 @@ public class TimeReceiver extends ExpressionReceiver {
 	public String getText() {
 		String clockText = text.getText();
 		String[] hoursmins = clockText.split(":");
-		String value = Integer.toString((Integer.parseInt(hoursmins[0]) * 60 + Integer.parseInt(hoursmins[1]))*60000);
-		return value;
+		return Integer.toString((Integer.parseInt(hoursmins[0]) * 60 + Integer.parseInt(hoursmins[1]))*60000);
 	}
 
-	//
+	@Override
 	public TextField getTextField() {
 		return text;
 	}
@@ -200,7 +160,7 @@ public class TimeReceiver extends ExpressionReceiver {
 	}
 
 	@Override
-	public void removeChild(ViewElement expression) {
+	public void removeChild(ViewElement<?> expression) {
 		super.removeChild(expression);
 		captureRect.setOpacity(0);
 		captureRect.setWidth(text.getPrefWidth());
@@ -223,11 +183,8 @@ public class TimeReceiver extends ExpressionReceiver {
 			text.requestFocus();
 			text.setEditable(false);
 		});
-		text.focusedProperty().addListener(new ChangeListener<Boolean>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
-				if (arg2 == false) {
+		text.focusedProperty().addListener((arg0,arg1,arg2)-> {
+				if (!arg2) {
 					captureRect.toFront();
 				} else {
 					captureRect.requestFocus();
@@ -245,16 +202,10 @@ public class TimeReceiver extends ExpressionReceiver {
 
 				        myDialog.show();
 				}
-			}
-
 		});
-		text.textProperty().addListener(new ChangeListener<String>() {
-
-			@Override
-			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
+		text.textProperty().addListener((arg0, arg1,arg2) -> {
 				text.setPrefWidth(TextUtils.computeTextWidth(text.getFont(), text.getText(), 0.0D) + 20);
 				captureRect.setWidth(text.getPrefWidth());
-			}
 		});
 		text.setText("00:00");
 

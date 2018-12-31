@@ -4,6 +4,7 @@ import static com.jeeves.vpl.Constants.VAR_DATE;
 
 import java.util.Map;
 
+import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.DragPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.receivers.DateReceiver;
@@ -15,6 +16,8 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 
 public class DateExpression extends Expression { // NO_UCD (unused code)
+	private static final String DATEEARLY = "dateBoundEarly";
+	private static final String DATELATE = "dateBoundLate";
 	private DateReceiver exprDateFrom;
 	private DateReceiver exprDateTo;
 
@@ -39,19 +42,18 @@ public class DateExpression extends Expression { // NO_UCD (unused code)
 	public void addListeners() {
 		super.addListeners();
 
-		exprDateFrom.getChildElements().addListener((ListChangeListener<ViewElement>) listener -> {
-			params.put("dateBoundEarly",exprDateFrom.getChildModel());
-		});
-		exprDateFrom.getTextField().textProperty().addListener(listen -> {
-			params.put("dateBoundEarly", exprDateFrom.getText());
-		});
-		exprDateTo.getChildElements().addListener((ListChangeListener<ViewElement>) listener -> {
-			params.put("dateBoundLate",exprDateTo.getChildModel());
-		});
-		exprDateTo.getTextField().textProperty().addListener(listen -> {
-			params.put("dateBoundLate", exprDateTo.getText());
-		});
-
+		exprDateFrom.getChildElements().addListener((ListChangeListener<ViewElement>) listener -> 
+			params.put(DATEEARLY,exprDateFrom.getChildModel())
+		);
+		exprDateFrom.getTextField().textProperty().addListener(listen ->
+			params.put(DATEEARLY, exprDateFrom.getText())
+		);
+		exprDateTo.getChildElements().addListener((ListChangeListener<ViewElement>) listener ->
+			params.put(DATELATE,exprDateTo.getChildModel())
+		);
+		exprDateTo.getTextField().textProperty().addListener(listen -> 
+			params.put(DATELATE, exprDateTo.getText())
+		);
 	}
 
 	@Override
@@ -68,51 +70,40 @@ public class DateExpression extends Expression { // NO_UCD (unused code)
 		box.setPadding(new Insets(0, 14, 0, 14));
 	}
 
+	private void addVarListener(String date,DateReceiver receiver) {
+		@SuppressWarnings("unchecked")
+		String name = ((Map<String,Object>)params.get(date)).get("name").toString();
+		Constants.getOpenProject().registerVarListener(listener->{
+			listener.next();
+			if(listener.wasAdded()){
+				for(FirebaseVariable var : listener.getAddedSubList()){
+					if(var.getname().equals(name)){
+						receiver.addChild(UserVariable.create(var), 0,0);
+						setParentPane(parentPane);
+					}
+				}
+			}
+		});
+	}
 	@Override
 	public void setData(FirebaseExpression model) {
 		super.setData(model);
 		Map<String, Object> params = model.getparams();
-		if (params.containsKey("dateBoundEarly")){
-			if (params.get("dateBoundEarly") instanceof String) {
-				exprDateFrom.setText(params.get("dateBoundEarly").toString()); //For plain dates, no variables
+		if (params.containsKey(DATEEARLY)){
+			if (params.get(DATEEARLY) instanceof String) {
+				exprDateFrom.setText(params.get(DATEEARLY).toString()); //For plain dates, no variables
 			}//Otherwise at some point we dragged a date variable into here
 			else{ 
-				String name = ((Map<String,Object>)params.get("dateBoundEarly")).get("name").toString();
-				//Wee snippet of code that we use elsewhere, I haven't got time to fuck about
-				gui.registerVarListener(listener->{
-					listener.next();
-					if(listener.wasAdded()){
-						for(FirebaseVariable var : listener.getAddedSubList()){
-							if(var.getname().equals(name)){
-								exprDateFrom.addChild(UserVariable.create(var), 0,0);
-								setParentPane(parentPane);
-							}
-						}
-					}
-				});
+				addVarListener(DATEEARLY,exprDateFrom);
 			}
-			//	exprTimeVar.addChild(UserVariable.create(model.getdateFrom()), 0, 0);
 		} 
-		if (params.containsKey("dateBoundLate")){
-			if (params.get("dateBoundLate") instanceof String) {
-				exprDateTo.setText(params.get("dateBoundLate").toString()); //For plain dates, no variables
+		if (params.containsKey(DATELATE)){
+			if (params.get(DATELATE) instanceof String) {
+				exprDateTo.setText(params.get(DATELATE).toString()); //For plain dates, no variables
 			}//Otherwise at some point we dragged a date variable into here
 			else{ 
-				String name = ((Map<String,Object>)params.get("dateBoundLate")).get("name").toString();
-				//Wee snippet of code that we use elsewhere, I haven't got time to fuck about
-				gui.registerVarListener(listener->{
-					listener.next();
-					if(listener.wasAdded()){
-						for(FirebaseVariable var : listener.getAddedSubList()){
-							if(var.getname().equals(name)){
-								exprDateTo.addChild(UserVariable.create(var), 0,0);
-								setParentPane(parentPane);
-							}
-						}
-					}
-				});
+				addVarListener(DATELATE,exprDateTo);
 			}
-			//	exprTimeVar.addChild(UserVariable.create(model.getdateFrom()), 0, 0);
 		} 
 	}
 

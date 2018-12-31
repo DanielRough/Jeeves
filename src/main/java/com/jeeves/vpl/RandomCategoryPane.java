@@ -2,6 +2,9 @@ package com.jeeves.vpl;
 
 import java.net.URL;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.jeeves.vpl.firebase.FirebaseDB;
 import com.jeeves.vpl.firebase.FirebaseVariable;
 
@@ -16,6 +19,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class RandomCategoryPane extends Pane{
+	final Logger logger = LoggerFactory.getLogger(RandomCategoryPane.class);
 
 	@FXML private Button btnAdd;
 	@FXML private Button btnAddOption;
@@ -33,21 +37,21 @@ public class RandomCategoryPane extends Pane{
 		URL location = this.getClass().getResource("/RandomCategory.fxml");
 		fxmlLoader.setLocation(location);
 		try {
-			Node root = (Node) fxmlLoader.load();
+			Node root = fxmlLoader.load();
 			getChildren().add(root);
 			this.stage = stage;
-			lstList.selectionModelProperty().addListener(changed->{
-				btnDelete.setDisable(false);
-			});
+			lstList.selectionModelProperty().addListener(changed->
+				btnDelete.setDisable(false)
+			);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(),e.fillInStackTrace());
 		}
 	}
 	@FXML
 	public void add(Event e) {
-		var.setrandomOptions(lstList.getItems());;
-		FirebaseDB.getOpenProject().getvariables().add(var);
+		var.setrandomOptions(lstList.getItems());
+		FirebaseDB.getInstance().getOpenProject().getvariables().add(var);
 		stage.close();
 	}	
 	@FXML

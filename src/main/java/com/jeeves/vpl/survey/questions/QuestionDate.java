@@ -5,6 +5,7 @@ import static com.jeeves.vpl.Constants.DATE;
 import java.io.IOException;
 import java.util.Map;
 
+import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.firebase.FirebaseQuestion;
 
 import javafx.fxml.FXML;
@@ -12,12 +13,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 
 public class QuestionDate extends QuestionView {
-
+	private static final String DATE_CON = "dateConstraint";
 	@FXML
 	private HBox hboxOptions;
 	@FXML
@@ -30,7 +30,7 @@ public class QuestionDate extends QuestionView {
 	@FXML
 	private VBox vboxDateOpts;
 
-	public QuestionDate(String label)  throws Exception {
+	public QuestionDate(String label) {
 		this(new FirebaseQuestion(label));
 	}
 
@@ -40,9 +40,9 @@ public class QuestionDate extends QuestionView {
 
 	@Override
 	public void addEventHandlers() {
-		tgroup.selectedToggleProperty().addListener((x, y, z) -> {
-			model.getparams().put("dateConstraint", tgroup.getSelectedToggle().getUserData());
-		});
+		tgroup.selectedToggleProperty().addListener((x, y, z) ->
+			model.getparams().put(DATE, tgroup.getSelectedToggle().getUserData())
+		);
 
 	}
 
@@ -63,24 +63,25 @@ public class QuestionDate extends QuestionView {
 		surveyLoader.setController(this);
 		surveyLoader.setLocation(getClass().getResource("/OptionsDateTime.fxml"));
 		try {
-			optionsPane = (Pane) surveyLoader.load();
+			optionsPane = surveyLoader.load();
 
 			addEventHandlers();
 		} catch (IOException e) {
+			System.exit(1);
 		}
 		
 		rdioAny.setToggleGroup(tgroup);
-		rdioAny.setUserData(new Long(0));
+		rdioAny.setUserData(0);
 		rdioFuture.setToggleGroup(tgroup);
-		rdioFuture.setUserData(new Long(1));
+		rdioFuture.setUserData(1);
 		rdioPast.setToggleGroup(tgroup);
-		rdioPast.setUserData(new Long(2));
+		rdioPast.setUserData(2);
 	}
 
 	@Override
 	public void showEditOpts(Map<String, Object> opts) {
-		if (model.getparams().containsKey("dateConstraint"))
-			switch (((Long)model.getparams().get("dateConstraint")).intValue()) {
+		if (model.getparams().containsKey(DATE_CON))
+			switch (((Long)model.getparams().get(DATE_CON)).intValue()) {
 			case 0:
 				tgroup.selectToggle(rdioAny);
 				break;
@@ -90,7 +91,12 @@ public class QuestionDate extends QuestionView {
 			case 2:
 				tgroup.selectToggle(rdioPast);
 				break;
+			default:
+				break;
 			}
 	}
-
+	@Override
+	public String getAnswerType() {
+		return Constants.VAR_DATE;
+	}
 }

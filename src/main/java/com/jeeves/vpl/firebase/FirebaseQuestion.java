@@ -69,7 +69,7 @@ public class FirebaseQuestion extends FirebaseElement implements Serializable {
 	}
 
 	public void setAssign(boolean assign) {
-		params.put("assignToScore", assign);
+		getparams().put("assignToScore", assign);
 	}
 
 	public void setAssignedVar(String assignedVar) {

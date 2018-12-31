@@ -11,17 +11,16 @@ public abstract class ExternalReceiver extends Receiver{
 	public ExternalReceiver() {
 		elements = new VBox();
 		container = new VBox();
-		addChildListeners();
 	}
 	
 
 	public abstract void addChildListeners();
 
 	@Override
-	public abstract boolean isValidElement(ViewElement element);
+	public abstract boolean isValidElement(ViewElement<?> element);
 
 	@Override
-	public void removeChild(ViewElement child) {
+	public void removeChild(ViewElement<?> child) {
 		child.setOnMouseDragExited(null);
 		child.setOnMouseDragReleased(null);
 		child.setOnMouseDragEntered(null);

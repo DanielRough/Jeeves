@@ -33,8 +33,8 @@ class UIPopupPane extends Pane {
 		URL location = this.getClass().getResource("/uiPopup.fxml");
 		fxmlLoader.setLocation(location);
 
-		ArrayList<String> currentnames = new ArrayList<String>();
-		for(ViewElement child : currentChildren){
+		ArrayList<String> currentnames = new ArrayList<>();
+		for(ViewElement<?> child : currentChildren){
 			UIElement uichild = (UIElement)child;
 			if(uichild instanceof UIButton){
 				currentnames.add(uichild.getText());
@@ -42,15 +42,15 @@ class UIPopupPane extends Pane {
 		}
 
 		try {
-			Node root = (Node) fxmlLoader.load();
+			Node root = fxmlLoader.load();
 			getChildren().add(root);
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.exit(1);
 		}
 		txtText.requestFocus();
-		btnCancel.setOnAction(click -> {
-			stage.hide();
-		});
+		btnCancel.setOnAction(click -> 
+			stage.hide()
+		);
 		btnOkay.setOnAction(click -> {
 			if(element instanceof UIButton && !txtText.getText().equals(currentname) && currentnames.contains(txtText.getText())){
 				Alert alert = new Alert(AlertType.INFORMATION);

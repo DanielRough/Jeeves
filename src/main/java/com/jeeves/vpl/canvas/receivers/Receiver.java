@@ -14,10 +14,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-@SuppressWarnings("rawtypes")
 
 public abstract class Receiver extends DragPane {
 	protected Rectangle captureRect; // The zone in which events are registered
+	@SuppressWarnings("rawtypes")
 	protected ObservableList<ViewElement> childList = FXCollections.observableArrayList();
 	protected VBox elements;
 	protected int hoveredIndex = -1;
@@ -41,7 +41,8 @@ public abstract class Receiver extends DragPane {
 		captureRect.addEventFilter(MouseDragEvent.MOUSE_DRAG_RELEASED, mreleased);
 	}
 
-	public void addChild(ViewElement child, double x, double y) {
+	@Override
+	public void addChild(ViewElement<?> child, double x, double y) {
 		hoveredIndex = 0;
 		Point2D point = elements.sceneToLocal(x, y);
 		for (int i = 0; i < elements.getChildren().size(); i++) {
@@ -57,7 +58,7 @@ public abstract class Receiver extends DragPane {
 	}
 
 	// Another method for when we KNOW the index it has to go to
-	public void addChildAtIndex(ViewElement child, int index) {
+	public void addChildAtIndex(ViewElement<?> child, int index) {
 		if (index > -1) {
 			elements.getChildren().add(index, child);
 			childList.add(index, child);
@@ -66,12 +67,10 @@ public abstract class Receiver extends DragPane {
 			elements.getChildren().add(child);
 			childList.add(child);
 		}
-		// child.parentPane = this;
+
 		child.setManaged(true); // So it sits in the appropriate place
 		child.setMouseTransparent(false);
-		EventHandler<MouseEvent> removeHandler = new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent e) {
+		EventHandler<MouseEvent> removeHandler = e->{
 				e.consume();
 				if (e.isSecondaryButtonDown()) {
 					return;
@@ -84,7 +83,7 @@ public abstract class Receiver extends DragPane {
 				}); 
 
 				removeChild(child);
-			}
+			
 		};
 		child.setOnMousePressed(removeHandler);
 		child.setOnMouseDragReleased(event -> {
@@ -94,39 +93,35 @@ public abstract class Receiver extends DragPane {
 	}
 
 	public void defineHandlers() {
-		mentered = event -> {
-			handleEntered(event);
-		};
-		mexited = event -> {
-			handleExited(event);
-		};
-		mreleased = event -> {
-			handleReleased(event);
-		};
+		mentered = this::handleEntered;
+		mexited = this::handleExited;
+		mreleased = this::handleReleased;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public ObservableList<ViewElement> getChildElements() {
 		return childList;
-	};
+	}
 
-	public abstract boolean isValidElement(ViewElement element);
+	public abstract boolean isValidElement(ViewElement<?> element);
 
-	public abstract void removeChild(ViewElement element);
+	@Override
+	public abstract void removeChild(ViewElement<?> element);
 
 	protected boolean handleEntered(MouseDragEvent event) {
 		setPickOnBounds(true);
-		return (isValidElement((ViewElement) event.getGestureSource()));
+		return (isValidElement((ViewElement<?>) event.getGestureSource()));
 	}
 
 	protected boolean handleExited(MouseDragEvent event) {
 		event.consume();
-		return (isValidElement((ViewElement) event.getGestureSource()));
+		return (isValidElement((ViewElement<?>) event.getGestureSource()));
 	}
 
 	protected boolean handleReleased(MouseDragEvent event) {
-		if (isValidElement((ViewElement) event.getGestureSource())) {
+		if (isValidElement((ViewElement<?>) event.getGestureSource())) {
 			//Here we want to check if we dragged our question at all. If we didn't, just add it back where it was
-			addChild((ViewElement) event.getGestureSource(), event.getSceneX(), event.getSceneY());
+			addChild((ViewElement<?>) event.getGestureSource(), event.getSceneX(), event.getSceneY());
 			event.consume();
 			return true;
 		}

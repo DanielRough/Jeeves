@@ -1,15 +1,20 @@
 package com.jeeves.vpl;
 import static com.jeeves.vpl.Constants.PRIVATE_COLL;
 import static com.jeeves.vpl.Constants.makeInfoAlert;
+import static com.jeeves.vpl.Constants.TITLE;
+import static com.jeeves.vpl.Constants.REG_ERROR;
 
+import java.io.IOException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.shiro.subject.Subject;
 
+import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutureCallback;
+import com.google.api.core.ApiFutures;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserRecord;
 import com.google.firebase.auth.UserRecord.CreateRequest;
@@ -43,26 +48,21 @@ public class LoginRegisterPane extends Pane{
 	@FXML private Label lblError;
 	Subject currentUser;
 
-	public LoginRegisterPane(Main gui, Stage stage) {
+	public LoginRegisterPane(Stage stage) throws IOException {
 		this.stage = stage;
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setController(this);
-
 		URL location = this.getClass().getResource("/LoginRegister.fxml");
-
 		fxmlLoader.setLocation(location);
-		try {
-			Node root = (Node) fxmlLoader.load();
-			getChildren().add(root);
+		Node root = fxmlLoader.load();
+		getChildren().add(root);
+		//default values for now
+		txtUsername.setText("drrough@mail.com");
+		txtPassword.setText("command22");
 
-			//default values for now
-			txtUsername.setText("danielrough@hotmail.com");
-			txtPassword.setText("command22");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@FXML 
 	private void validate(Event e){
 		String email = txtEmail.getText();
@@ -72,23 +72,23 @@ public class LoginRegisterPane extends Pane{
 		String lastName = txtLastName.getText();
 		CreateRequest request = null;
 		if(firstName == null || firstName.isEmpty()){
-			makeInfoAlert("Jeeves","Registration error","Please enter your first name");
+			makeInfoAlert(TITLE,REG_ERROR,"Please enter your first name");
 			return;
 		}
 		if(lastName == null || lastName.isEmpty()){
-			makeInfoAlert("Jeeves","Registration error","Please enter your last name");
+			makeInfoAlert(TITLE,REG_ERROR,"Please enter your last name");
 			return;
 		}
 		if(email == null || email.isEmpty() ||  !EmailValidator.getInstance().isValid(email)){
-			makeInfoAlert("Jeeves","Registration error","Please enter a valid email address");
+			makeInfoAlert(TITLE,REG_ERROR,"Please enter a valid email address");
 			return;
 		}
 		if(password == null || password.isEmpty()){
-			makeInfoAlert("Jeeves","Registration error","Please enter a password");
+			makeInfoAlert(TITLE,REG_ERROR,"Please enter a password");
 			return;
 		}
 		if(passwordconfirm == null || passwordconfirm.isEmpty() || !password.equals(passwordconfirm)){
-			makeInfoAlert("Jeeves","Registration error","Make sure your passwords match!");
+			makeInfoAlert(TITLE,REG_ERROR,"Make sure your passwords match!");
 			return;
 		}
 		//This should all be fine with validation above, but it's in a try-catch just in case...
@@ -101,84 +101,64 @@ public class LoginRegisterPane extends Pane{
 					.setDisabled(false);
 		}
 		catch(Exception err){
-			makeInfoAlert("Jeeves","Registration failed", "Sorry, that didn't work. " + err.getMessage());
-			err.printStackTrace();
+			makeInfoAlert(TITLE,"Registration failed", "Sorry, that didn't work. " + err.getMessage());
 			return;
 		}
+		ApiFuture<UserRecord> userRecord = FirebaseAuth.getInstance().createUserAsync(request);
+		ApiFutures.addCallback(userRecord, new ApiFutureCallback<UserRecord>() {
+			@Override
+			public void onSuccess(UserRecord result) {
+				makeInfoAlert(TITLE,"Success","Successfully registered! You can now log into Jeeves");
+			}
 
-		FirebaseAuth.getInstance().createUser(request)
-		.addOnSuccessListener(userRecord -> {
-			Platform.runLater(new Runnable(){
-				public void run(){
-					//Not very secure tbh
-					FirebaseDB.getInstance().putUserCredentials(email,password);
-					makeInfoAlert("Jeeves","Registration successful","Successfully registered " + email + ". You can now log in to Jeeves!");
-				}
-			});
-
-		//	addUserToConfig(email,password,userRecord.getUid());
-		})
-		//It's not always that the user already exists, but...almost always.
-		.addOnFailureListener(err -> {
-			
-			Platform.runLater(new Runnable(){
-				public void run(){
-					makeInfoAlert("Jeeves","Registration failed", "Sorry, that didn't work. A user with this email address already exists!");
-				}
-			});
+			@Override
+			public void onFailure(Throwable t) {
+				makeInfoAlert(TITLE,"Registration failed", "Sorry, that didn't work. "
+						+ "A user with this email address already exists!");
+			}
 		});
+		FirebaseAuth.getInstance().createUserAsync(request);
 
 	}
 
 	@FXML
-	private void login(Event e){
+	private void login(Event e) throws InterruptedException, ExecutionException{
 		String username = txtUsername.getText();
 		String password = txtPassword.getText();
 		authenticate(username,password);
 	}
-	public void authenticate(String email, String password) {
+	public void authenticate(String email, String password) throws InterruptedException, ExecutionException {
 		UserRecord userRecord;
-	try {
-			
-			userRecord = FirebaseAuth.getInstance().getUserByEmailAsync(email).get();
-			String uid = userRecord.getUid();
-		   DatabaseReference	dbRef = FirebaseDatabase.getInstance().getReference();
-		   DatabaseReference privateRef =  dbRef.child(PRIVATE_COLL).child(uid);
-		  // stage.hide();
-		   
-			privateRef.addListenerForSingleValueEvent(new ValueEventListener() {
-				@Override
-				public void onDataChange(DataSnapshot dataSnapshot) {
-					
-					Platform.runLater(new Runnable() {
-						public void run() {
-							Map<String,Object> value = (Map<String,Object>)dataSnapshot.getValue();
-							//It's a bit annoying, but this is the only bit of the project that gets updated from the Android side!
-							String token = value.get("token").toString();
-							if(token.equals(password)) {
-								FirebaseDB.currentUserEmail = txtUsername.getText();
-								stage.hide();
-							}
+		userRecord = FirebaseAuth.getInstance().getUserByEmailAsync(email).get();
+		String uid = userRecord.getUid();
+		DatabaseReference	dbRef = FirebaseDatabase.getInstance().getReference();
+		DatabaseReference privateRef =  dbRef.child(PRIVATE_COLL).child(uid);
+		privateRef.addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(DataSnapshot dataSnapshot) {
 
-							lblError.setText("Error logging in. Check your password and Internet connection");			
-						}
-					});
-							
-					
-				}
-			
-				@Override
-				public void onCancelled(DatabaseError arg0) {
-					lblError.setText("Error logging in. Check your password and Internet connection");					
-				}
-			});
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+				Platform.runLater(()->{
+					@SuppressWarnings("unchecked")
+					Map<String,Object> value = (Map<String,Object>)dataSnapshot.getValue();
+					//It's a bit annoying, but this is the only bit of the project that gets updated from the Android side!
+					String token = value.get("token").toString();
+					if(token.equals(password)) {
+						FirebaseDB.getInstance().setCurrentUserEmail(txtUsername.getText());
+						stage.hide();
+					}
+
+					lblError.setText("Error logging in. Check your password and Internet connection");			
+				});
+
+
+			}
+
+			@Override
+			public void onCancelled(DatabaseError arg0) {
+				lblError.setText("Error logging in. Check your password and Internet connection");					
+			}
+		});
+
 
 	}
 	@FXML

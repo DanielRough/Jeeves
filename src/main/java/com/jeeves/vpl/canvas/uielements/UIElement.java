@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.jeeves.vpl.Constants.ElementType;
 import com.jeeves.vpl.ViewElement;
-import com.jeeves.vpl.firebase.FirebaseElement;
 import com.jeeves.vpl.firebase.FirebaseUI;
 
 import javafx.fxml.FXMLLoader;
@@ -25,7 +24,7 @@ public abstract class UIElement extends ViewElement<FirebaseUI> {
 		String classname = "com.jeeves.vpl.canvas.uielements." + elemNames.get(trigname);		try {
 			return (UIElement) Class.forName(classname).getConstructor(FirebaseUI.class).newInstance(exprmodel);
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.exit(1);
 		}
 		return null;
 	}
@@ -56,10 +55,10 @@ public abstract class UIElement extends ViewElement<FirebaseUI> {
 		fxmlLoader.setController(this);
 		fxmlLoader.setLocation(getClass().getResource("/" + getClass().getSimpleName() + ".fxml"));
 		try {
-			Node root = (Node) fxmlLoader.load();
+			Node root = fxmlLoader.load();
 			getChildren().add(root);
 		} catch (IOException exception) {
-			throw new RuntimeException(exception);
+			System.exit(1);
 		}
 	}
 

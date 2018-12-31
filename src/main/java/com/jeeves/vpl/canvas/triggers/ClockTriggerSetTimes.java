@@ -10,7 +10,6 @@ import java.util.List;
 import com.jeeves.vpl.DragPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.expressions.UserVariable;
-import com.jeeves.vpl.canvas.receivers.DateReceiver;
 import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
 import com.jeeves.vpl.canvas.receivers.TimeReceiver;
 import com.jeeves.vpl.firebase.FirebaseExpression;
@@ -42,8 +41,6 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 	protected Button btnAddTime;
 	@FXML
 	protected Button btnRemoveTime;
-	protected long dateFrom;
-	protected long dateTo;
 	@FXML
 	protected VBox paneTimes;
 	protected List<FirebaseExpression> times;
@@ -55,19 +52,8 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 
 	public ClockTriggerSetTimes(FirebaseTrigger data) {
 		super(data);
-
-	}
-
-	{
-		dateReceiverTo = new DateReceiver(VAR_DATE);
-		dateReceiverFrom = new DateReceiver(VAR_DATE);
 		paneStartDate.getChildren().add(dateReceiverFrom);
 		paneEndDate.getChildren().add(dateReceiverTo);
-	}
-	@Override
-	public void addListeners() {
-		super.addListeners();
-		
 	}
 
 
@@ -81,7 +67,7 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 		if(model.gettimes() == null)
 			model.settimes(new ArrayList<FirebaseExpression>());
 		model.gettimes().add(new FirebaseExpression());
-		
+
 		model.settriggerId(getSaltString());
 		setTimeReceiver.getTextField().textProperty().addListener(listen -> {
 			model.gettimes().get(myindex).setvalue(setTimeReceiver.getText());
@@ -103,7 +89,7 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 						FirebaseVariable blankVar = new FirebaseVariable();
 						blankVar.setvalue(setTimeReceiver.getText());
 						blankVar.setIsValue(true);
-						ViewElement removed = listener.getRemoved().get(0);
+						ViewElement<?> removed = listener.getRemoved().get(0);
 						FirebaseExpression removedModel = (FirebaseExpression)removed.getModel();
 						model.getvariables().remove(removedModel.getname());
 						times.set(index, blankVar);
@@ -111,15 +97,15 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 					}
 					model.settriggerId(getSaltString());
 				});
-		
+
 	}
 
 	@FXML
 	public void handleRemoveTime() {
-		ObservableList<Node> times = paneTimes.getChildren();
-		if (times.isEmpty())
+		ObservableList<Node> removedTimes = paneTimes.getChildren();
+		if (removedTimes.isEmpty())
 			return;
-		TimeReceiver lastReceiver = (TimeReceiver) times.get(times.size() - 1);
+		TimeReceiver lastReceiver = (TimeReceiver) removedTimes.get(removedTimes.size() - 1);
 		paneTimes.getChildren().remove(lastReceiver);
 		int size = model.gettimes().size();
 		model.gettimes().remove(size-1);//remove the last one
@@ -132,78 +118,68 @@ public class ClockTriggerSetTimes extends ClockTrigger { // NO_UCD (use default)
 	@Override
 	public void setData(FirebaseTrigger model) {
 		super.setData(model);
-		receivers = new ArrayList<ExpressionReceiver>();
+		receivers = new ArrayList<>();
 		if(model.gettimes() == null)
 			model.settimes(new ArrayList<FirebaseExpression>());
-		vars = new ArrayList<UserVariable>();
-		
-		this.times = (List<FirebaseExpression>) model.gettimes();
-		if(times != null)
-		for(int i = 0; i < times.size(); i++){
-			FirebaseExpression time = times.get(i);
-			TimeReceiver newTimeReceiver = new TimeReceiver(VAR_CLOCK);
-			receivers.add(newTimeReceiver);
-			paneTimes.getChildren().add(newTimeReceiver);
-			if(time.getisValue()){
-				newTimeReceiver.setText(time.getvalue());
+		vars = new ArrayList<>();
+
+		this.times =  model.gettimes();
+		if(times != null) {
+			for(int i = 0; i < times.size(); i++){
+				FirebaseExpression time = times.get(i);
+				TimeReceiver newTimeReceiver = new TimeReceiver(VAR_CLOCK);
+				receivers.add(newTimeReceiver);
+				paneTimes.getChildren().add(newTimeReceiver);
+				if(time.getisValue()){
+					newTimeReceiver.setText(time.getvalue());
+				}
+				else{
+					UserVariable timevar = UserVariable.create(time);
+					newTimeReceiver.addChild(timevar, 0, 0);
+					vars.add(timevar);
+				}
+
+				newTimeReceiver.getTextField().textProperty().addListener(listen -> {
+					int index = receivers.indexOf(newTimeReceiver);
+					times.get(index).setvalue(newTimeReceiver.getText());
+					times.get(index).setIsValue(true);
+					model.settriggerId(getSaltString()); // Again, update, must
+
+				});
+				newTimeReceiver.getChildElements().addListener(
+						(ListChangeListener<ViewElement>) listener -> {
+							int index = receivers.indexOf(newTimeReceiver);
+							listener.next();
+							if(listener.wasAdded()){
+								model.getvariables().add(newTimeReceiver.getChildModel().getname());
+								times.set(index,newTimeReceiver.getChildModel());
+
+							}
+							else{
+								FirebaseVariable blankVar = new FirebaseVariable();
+								blankVar.setvalue(newTimeReceiver.getText());
+								blankVar.setIsValue(true);
+								ViewElement<?> removed = listener.getRemoved().get(0);
+								FirebaseExpression removedModel = (FirebaseExpression)removed.getModel();
+								model.getvariables().remove(removedModel.getname());
+								times.set(index, blankVar);
+
+
+							}
+							model.settriggerId(getSaltString());
+						});
 			}
-			else{
-				UserVariable timevar = UserVariable.create(time);
-				newTimeReceiver.addChild(timevar, 0, 0);
-				vars.add(timevar);
-			}
-			
-			newTimeReceiver.getTextField().textProperty().addListener(listen -> {
-				int index = receivers.indexOf(newTimeReceiver);
-				times.get(index).setvalue(newTimeReceiver.getText());
-				times.get(index).setIsValue(true);
-				model.settriggerId(getSaltString()); // Again, update, must
-
-			});
-			newTimeReceiver.getChildElements().addListener(
-					(ListChangeListener<ViewElement>) listener -> {
-						int index = receivers.indexOf(newTimeReceiver);
-						listener.next();
-						if(listener.wasAdded()){
-							model.getvariables().add(newTimeReceiver.getChildModel().getname());
-							times.set(index,newTimeReceiver.getChildModel());
-
-						}
-						else{
-							FirebaseVariable blankVar = new FirebaseVariable();
-							blankVar.setvalue(newTimeReceiver.getText());
-							blankVar.setIsValue(true);
-							ViewElement removed = listener.getRemoved().get(0);
-							FirebaseExpression removedModel = (FirebaseExpression)removed.getModel();
-							model.getvariables().remove(removedModel.getname());
-							times.set(index, blankVar);
-
-
-						}
-						model.settriggerId(getSaltString());
-					});
 		}
 		pane.setPrefHeight(USE_COMPUTED_SIZE);
 
-		
+
 	}
 
-	@Override
-	public void setDateFrom(long dateFrom) {
-		super.setDateFrom(dateFrom);
-		this.dateFrom = dateFrom;
-	}
-
-	@Override
-	public void setDateTo(long dateTo) {
-		super.setDateTo(dateTo);
-		this.dateTo = dateTo;
-	}
 	@Override
 	public void setParentPane(DragPane parent) {
 		super.setParentPane(parent);
 		//This is the only reason we have the 'vars' arraylist. 
 		vars.forEach(var->var.setParentPane(parent));
 	}
-	
+
 }

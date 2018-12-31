@@ -1,6 +1,5 @@
 package com.jeeves.vpl.canvas.expressions;
 
-import static com.jeeves.vpl.Constants.VAR_BOOLEAN;
 import static com.jeeves.vpl.Constants.VAR_NUMERIC;
 
 import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;

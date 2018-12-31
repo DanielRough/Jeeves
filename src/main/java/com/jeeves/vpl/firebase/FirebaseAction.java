@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.firebase.database.IgnoreExtraProperties;
-
 /**
  * Created by Daniel on 26/05/15.
  */
@@ -16,12 +14,12 @@ public class FirebaseAction extends FirebaseElement implements Serializable {
 	private List<FirebaseAction> actions;
 	private FirebaseExpression condition;
 	private boolean manual;
-	private List<FirebaseExpression> vars = new ArrayList<FirebaseExpression>();
+	private List<FirebaseExpression> vars = new ArrayList<>();
 
 	public FirebaseAction() {}
 	
 	public FirebaseAction(String name) {
-		this.name.setValue(name);
+		this.setname(name);
 	}
 	public List<FirebaseAction> getactions() {
 		return actions;

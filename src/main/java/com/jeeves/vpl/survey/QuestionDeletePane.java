@@ -24,11 +24,11 @@ public class QuestionDeletePane extends Pane {
 		URL location = this.getClass().getResource("/PopupDeleteQuestion.fxml");
 		fxmlLoader.setLocation(location);
 		try {
-			Node root = (Node) fxmlLoader.load();
+			Node root = fxmlLoader.load();
 			getChildren().add(root);
 			this.stage = stage;
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 

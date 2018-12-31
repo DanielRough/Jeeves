@@ -1,13 +1,11 @@
 package com.jeeves.vpl.survey;
 
-import static com.jeeves.vpl.Constants.CONSTRAINT_NUMS;
 
 import java.net.URL;
 
+import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.firebase.FirebaseSurvey;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -21,7 +19,6 @@ import javafx.scene.layout.Pane;
 
 public class SurveyPane extends Pane {
 
-	private Survey currentSurvey;
 	@FXML
 	private Pane paneNoSurveys;
 	@FXML
@@ -40,12 +37,12 @@ public class SurveyPane extends Pane {
 		URL location = this.getClass().getResource("/NoSurveys.fxml");
 		fxmlLoader.setLocation(location);
 		try {
-			Node root = (Node) fxmlLoader.load();
+			Node root = fxmlLoader.load();
 			getChildren().add(root);
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.exit(1);
 		}
-		CONSTRAINT_NUMS.clear();
+		Constants.getConstraintNums().clear();
 		currentsurveys = FXCollections.observableArrayList();
 		addSurveyListeners();
 	}
@@ -62,20 +59,10 @@ public class SurveyPane extends Pane {
 	}
 
 	public void addSurveyListeners() {
-		paneSurveys.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Tab> arg0, Tab arg1, Tab arg2) {
+		paneSurveys.getSelectionModel().selectedItemProperty().addListener((arg0,arg1,arg2)->{
 				if (arg2 == null)
-					return;
-				currentSurvey = (Survey) arg2.getContent();
-				if (currentSurvey == null) {
-					return;
-				}
-			}
-
+					return;			
 		});
-
 	}
 
 
@@ -85,8 +72,7 @@ public class SurveyPane extends Pane {
 		Survey surveyview = new Survey(new FirebaseSurvey());
 		surveyview.setData(survey);
 		survey.settitle("New survey");
-		currentsurveys.add(survey);
-
+		Constants.getOpenProject().add(surveyview);
 		addSurvey(surveyview);
 
 	}

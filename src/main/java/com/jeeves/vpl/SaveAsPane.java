@@ -3,6 +3,9 @@ package com.jeeves.vpl;
 import java.net.URL;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.jeeves.vpl.firebase.FirebaseDB;
 import com.jeeves.vpl.firebase.FirebaseProject;
 
@@ -20,6 +23,8 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class SaveAsPane extends Pane { // NO_UCD (use default)
+	final Logger logger = LoggerFactory.getLogger(SaveAsPane.class);
+
 	@FXML private Button btnSave;
 	@FXML private TextField txtSaveAsName;
 
@@ -32,18 +37,15 @@ public class SaveAsPane extends Pane { // NO_UCD (use default)
 		URL location = this.getClass().getResource("/PopupSaveAs.fxml");
 		fxmlLoader.setLocation(location);
 		try {
-			Node root = (Node) fxmlLoader.load();
+			Node root =fxmlLoader.load();
 			getChildren().add(root);
 			this.stage = stage;
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(),e.fillInStackTrace());
 		}
-		txtSaveAsName.textProperty().addListener(listen -> {
-			if (txtSaveAsName.getText().equals(""))
-				btnSave.setDisable(true);
-			else
-				btnSave.setDisable(false);
-		});
+		txtSaveAsName.textProperty().addListener(listen -> 
+				btnSave.setDisable(txtSaveAsName.getText().equals(""))
+		);
 	}
 
 	@FXML
@@ -53,7 +55,7 @@ public class SaveAsPane extends Pane { // NO_UCD (use default)
 
 	@FXML
 	public void handleSaveAsClick(Event e) {
-		FirebaseProject openProject = FirebaseDB.getOpenProject();
+		FirebaseProject openProject = FirebaseDB.getInstance().getOpenProject();
 		FirebaseDB firebase = FirebaseDB.getInstance();
 		String oldname = openProject.getname();
 		String newname = txtSaveAsName.getText();
@@ -67,14 +69,13 @@ public class SaveAsPane extends Pane { // NO_UCD (use default)
 			alert.setHeaderText(null);
 			alert.setContentText("A study with name " + newname + " already exists. Overwrite this study?");
 			Optional<ButtonType> result = alert.showAndWait();
-			if (result.get() == ButtonType.OK){
+			if (result.isPresent() && result.get() == ButtonType.OK){
 				openProject.setname(newname);
 				Main.getContext().setNameLabel(newname); 
 				firebase.saveProject(oldname, openProject);
 				stage.close();
 			} else {
 				stage.close();
-				return;
 			}
 		}
 		else{

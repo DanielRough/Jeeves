@@ -14,12 +14,9 @@ import com.jeeves.vpl.survey.questions.QuestionView;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
@@ -34,7 +31,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
@@ -42,6 +38,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class Survey extends ViewElement<FirebaseSurvey> {
+	private static final String NEW = "New Survey";
 	@FXML
 	private Button btnAddChoiceOpt;
 	@FXML
@@ -98,16 +95,13 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 	private ListChangeListener<Node> receiverListener;
 	@Override
 	public void addListeners() {
-		receiverListener = new ListChangeListener<Node>() {
-			@Override
-			public void onChanged(javafx.collections.ListChangeListener.Change<? extends Node> arg0) {
+		receiverListener = (ListChangeListener.Change<? extends Node> arg0) ->{
 				//new question, better update the survey ID!
 				getModel().setsurveyId(getSaltString());
 				arg0.next();
 				if (arg0.wasAdded()) {
-					ViewElement added = (ViewElement) arg0.getAddedSubList().get(0);
+					ViewElement<?> added = (ViewElement<?>) arg0.getAddedSubList().get(0);
 					int index = receiver.getChildElements().indexOf(added);
-					System.out.println("MAYBE");
 					model.getquestions().add(index, (FirebaseQuestion) added.getModel());
 					addQuestion(index,(QuestionView)added);
 					editor.populateQuestion((QuestionView) arg0.getAddedSubList().get(0));
@@ -115,7 +109,6 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 				} else {
 					QuestionView removed = (QuestionView) arg0.getRemoved().get(0);
 					surveyQuestions.remove(removed);
-					System.out.println("LIKELY NOT");
 					model.getquestions().remove(removed.getModel());
 
 					if (editor.getSelectedQuestion() != null && editor.getSelectedQuestion().equals(removed)) {
@@ -124,14 +117,14 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 						paneEditor.getChildren().add(editor);
 						paneEditor.setDisable(true);
 					}
-				}
+				
 
 			}
 
 		};
 		receiver.getChildElements().addListener(receiverListener);
 		paneReceiver.getChildren().add(receiver);
-		receiver.addDummyView(paneDropRect, 0);
+		receiver.addDummyView(paneDropRect);
 	}
 
 	public void addQuestion(int index, QuestionView view) {
@@ -143,14 +136,10 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 			editor.populateQuestion(view);
 			paneEditor.setDisable(false);
 		});
-		view.questionTextProperty.addListener(new ChangeListener<String>(){
-
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				if(!newValue.isEmpty())
-				getModel().setsurveyId(getSaltString()); //question text changed, again survey ID needs to be updated
-			}
-			
+		view.getQuestionTextProperty().addListener((o,v0,v1) -> {
+				if(!v1.isEmpty()) {
+					getModel().setsurveyId(getSaltString()); //question text changed, again survey ID needs to be updated
+				}
 		});
 		view.getDeleteButton().setOnAction(event -> {
 			Stage stage = new Stage(StageStyle.UNDECORATED);
@@ -174,25 +163,20 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 		editor = new QuestionEditor(surveyQuestions);
 
 		try {
-			surveynode = (Pane) surveyLoader.load();
+			surveynode = surveyLoader.load();
 
 			this.getChildren().add(surveynode);
 			paneEditor.getChildren().add(editor);
 			addProperties();
 			receiver = new QuestionReceiver(paneReceiver.getPrefWidth(), paneReceiver.getPrefHeight());
-			surveynode.setOnMouseDragged(new EventHandler<MouseEvent>() {
-				@Override
-				public void handle(MouseEvent arg0) {
-					arg0.consume();
-				}
-			});
+			surveynode.setOnMouseDragged(arg0->arg0.consume());
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 
 	@Override
-	public ViewElement getInstance() {
+	public ViewElement<FirebaseSurvey> getInstance() {
 		return this;
 	}
 
@@ -229,7 +213,7 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 		addProperties();
 		txtSurveyName.setText(model.gettitle());
 		//THIS IS TO STOP THEM RENAMING SURVEYS ONCE THE THING IS PUBLISHED
-				if(FirebaseDB.getOpenProject().getactive() && model.gettitle() != null)
+				if(FirebaseDB.getInstance().getOpenProject().getactive() && model.gettitle() != null)
 					txtSurveyName.setDisable(true);
 		if (model.getexpiryTime() > 0) {
 			chkExpiry.setSelected(true);
@@ -254,11 +238,11 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 			//New stuff to set the parent question in here
 			FirebaseQuestion condition = newquestion.getconditionQuestion();
 			if(condition != null){
-				for(QuestionView q : this.surveyQuestions)
-					//TODO: Replace with IDs
+				for(QuestionView q : this.surveyQuestions) {
 					if(q.getQuestionId().equals(condition.getquestionId())){
 						question.setParentQuestion(q);
 					}
+				}
 			}
 		}
 		receiver.getChildElements().addListener(receiverListener);
@@ -274,10 +258,7 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 	}
 
 	private void addProperties() {
-		chkExpiry.selectedProperty().addListener(new ChangeListener<Boolean>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+		chkExpiry.selectedProperty().addListener((arg0,arg1,arg2)-> {
 				if (chkExpiry.isSelected()) {
 					txtExpiry.setDisable(false);
 				} else {
@@ -287,50 +268,40 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 				}
 				getModel().setsurveyId(getSaltString()); //question text changed, again survey ID needs to be updated
 
-			}
+			
 		});
 
-		chkFastTranslation.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+		chkFastTranslation.selectedProperty().addListener((o,v0,v1)->{
 				getModel().setfastTransition(chkFastTranslation.isSelected());
 				getModel().setsurveyId(getSaltString()); //question text changed, again survey ID needs to be updated
 
-			}
 		});
 		
-		txtSurveyName.setOnKeyReleased(new EventHandler<KeyEvent>() {
-
-			@Override
-			public void handle(KeyEvent event) {
+		txtSurveyName.setOnKeyReleased(event -> {
 				setTitle(txtSurveyName.getText());
 				getModel().settitle(txtSurveyName.getText());
 				parentTab.setText(txtSurveyName.getText());
 				if (txtSurveyName.getText() == null || txtSurveyName.getText().isEmpty()) {
-					setTitle("New Survey");
-					getModel().settitle("New Survey");
-					parentTab.setText("New Survey");
+					setTitle(NEW);
+					getModel().settitle(NEW);
+					parentTab.setText(NEW);
 				}
-			}
+			
 		});
 
-		txtExpiry.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
-
-			@Override
-			public void handle(KeyEvent arg0) {
+		txtExpiry.addEventHandler(KeyEvent.KEY_TYPED,arg0 -> {
 				try {
 					Long.parseLong(arg0.getCharacter());
 
 				} catch (NumberFormatException e) {
 					arg0.consume();
-					return;
 				}
 
-			}
+			
 		});
-		txtExpiry.textProperty().addListener(change -> {
-			getModel().setexpiryTime(Long.parseLong(txtExpiry.getText()));
-		});
+		txtExpiry.textProperty().addListener(change -> 
+			getModel().setexpiryTime(Long.parseLong(txtExpiry.getText()))
+			);
 
 	}
 

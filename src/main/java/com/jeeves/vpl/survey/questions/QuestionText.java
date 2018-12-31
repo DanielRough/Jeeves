@@ -2,12 +2,13 @@ package com.jeeves.vpl.survey.questions;
 
 import java.util.Map;
 
+import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.firebase.FirebaseQuestion;
 
 import static com.jeeves.vpl.Constants.*;
 
 public class QuestionText extends QuestionView {
-	public QuestionText(String label)  throws Exception {
+	public QuestionText(String label) {
 		this(new FirebaseQuestion(label));
 	}
 
@@ -17,8 +18,7 @@ public class QuestionText extends QuestionView {
 
 	@Override
 	public void addEventHandlers() {
-		// TODO Auto-generated method stub
-
+		//No handlers
 	}
 
 	@Override
@@ -33,13 +33,15 @@ public class QuestionText extends QuestionView {
 
 	@Override
 	public void loadOptions() {
-
+		//No options
 	}
 
 	@Override
 	public void showEditOpts(Map<String, Object> opts) {
-		// TODO Auto-generated method stub
-
+		//No options
 	}
-
+	@Override
+	public String getAnswerType() {
+		return Constants.VAR_NONE;
+	}
 }

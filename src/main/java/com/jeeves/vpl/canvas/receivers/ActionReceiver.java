@@ -7,13 +7,9 @@ import com.jeeves.vpl.canvas.actions.Control;
 import com.jeeves.vpl.ViewElement;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -29,7 +25,6 @@ import javafx.scene.shape.Polygon;
  *
  * @author Daniel
  */
-@SuppressWarnings("rawtypes")
 public class ActionReceiver extends Receiver {
 	private Polygon brackets;
 	private Path receiverPath; // The black bit
@@ -84,18 +79,15 @@ public class ActionReceiver extends Receiver {
 	}
 
 	@Override
-	public void addChildAtIndex(ViewElement child, int index){
+	public void addChildAtIndex(ViewElement<?> child, int index){
 		super.addChildAtIndex(child, index);
 		addChildHandlers(child);
 		if (child.getType() == ElementType.CTRL_ACTION) {
 			((Control) child).getMyReceiver().setParentReceiver(this);
 		}
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				heightChanged(child.getHeight());
-			}
-		});
+		Platform.runLater(()->
+				heightChanged(child.getHeight())
+		);
 	}
 
 	@Override
@@ -103,7 +95,7 @@ public class ActionReceiver extends Receiver {
 		super.defineHandlers();
 		mentered = event -> {
 			event.consume();
-			if (!isValidElement((ViewElement) event.getGestureSource()))
+			if (!isValidElement((ViewElement<?>) event.getGestureSource()))
 				return;
 			int lenElements = receiverPath.getElements().size();
 			highlightPath.getElements().addAll(receiverPath.getElements().subList(lenElements - 7, lenElements));
@@ -111,13 +103,13 @@ public class ActionReceiver extends Receiver {
 		};
 		mexited = event -> {
 			event.consume();
-			if (!isValidElement((ViewElement) event.getGestureSource()))
+			if (!isValidElement((ViewElement<?>) event.getGestureSource()))
 				return;
 			highlightPath.getElements().clear();
 		};
 	}
 
-	private void addChildHandlers(ViewElement child) {
+	private void addChildHandlers(ViewElement<?> child) {
 
 		child.setOnMouseDragExited(event -> {
 			hoveredIndex = -1;
@@ -139,7 +131,7 @@ public class ActionReceiver extends Receiver {
 			int childOrder = childList.indexOf(child);
 			if (childOrder < 0)
 				return;
-			if (!isValidElement((ViewElement) event.getGestureSource()))
+			if (!isValidElement((ViewElement<?>) event.getGestureSource()))
 				return;
 			highlightPath.getElements()
 					.addAll(receiverPath.getElements().subList((childOrder * 7 + 2), (childOrder * 7 + 8)));
@@ -151,7 +143,7 @@ public class ActionReceiver extends Receiver {
 
 		receiverPath.getElements().removeAll(receiverPath.getElements());
 		receiverPath.getElements().addAll(new MoveTo(25.0, 10.0), new LineTo(25, 10));
-		LineTo lastline = new LineTo();
+		LineTo lastline;
 		double yPos = 0;
 		for (Pane child : childList) {
 			lastline = (LineTo) receiverPath.getElements().get(receiverPath.getElements().size() - 1);
@@ -191,19 +183,13 @@ public class ActionReceiver extends Receiver {
 		if (parentReceiver != null) {
 			parentReceiver.heightChanged(heightChange);
 		}
-		heightProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+		heightProperty().addListener((arg0,arg1,arg2)-> {
 				if (parentReceiver == null)
 					return;
-				Platform.runLater(new Runnable() {
-					@Override
-					public void run() {
+				Platform.runLater(()->{
 						parentReceiver.redrawLine();
 						parentReceiver.requestLayout();
-					}
 				});
-			}
 		});
 	}
 
@@ -212,14 +198,12 @@ public class ActionReceiver extends Receiver {
 	 * is a valid action
 	 */
 	@Override
-	public boolean isValidElement(ViewElement dragged) {
-		if (!(dragged.getType() == ElementType.ACTION || dragged.getType() == ElementType.CTRL_ACTION))
-			return false;
-		return true;
+	public boolean isValidElement(ViewElement<?> dragged) {
+		return (dragged.getType() == ElementType.ACTION || dragged.getType() == ElementType.CTRL_ACTION);
 	}
 
 	@Override
-	public void removeChild(ViewElement child) {
+	public void removeChild(ViewElement<?> child) {
 		child.setOnMouseDragExited(null);
 		child.setOnMouseDragReleased(null);
 		child.setOnMouseDragEntered(null);
@@ -229,11 +213,8 @@ public class ActionReceiver extends Receiver {
 		}
 		elements.getChildren().remove(child);
 		childList.remove(child);
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				heightChanged(-child.getHeight());
-			}
-		});
+		Platform.runLater(() ->
+				heightChanged(-child.getHeight())
+		);
 	}
 }

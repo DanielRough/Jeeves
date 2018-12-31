@@ -13,7 +13,6 @@ import com.jeeves.vpl.firebase.FirebaseAction;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 
 import javafx.collections.ListChangeListener;
-import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -27,6 +26,8 @@ import javafx.scene.layout.Pane;
  */
 @SuppressWarnings("rawtypes")
 public abstract class Control extends Action {
+	private static final String UPDATE = "update";
+	private static final String UPDATED = "updated";
 	private ArrayList<Action> actions;
 	@FXML
 	private Pane pane;
@@ -47,66 +48,54 @@ public abstract class Control extends Action {
 	public void addListeners() {
 		super.addListeners();
 		childReceiver.getChildElements().addListener((ListChangeListener<ViewElement>) arg0 -> {
-			ArrayList<Action> newActions = new ArrayList<Action>();
+			ArrayList<Action> newActions = new ArrayList<>();
 			if (model.getactions() == null)
 				model.setactions(new ArrayList<FirebaseAction>());
 			model.getactions().clear();
-			params.put("update","updated");
-			params.remove("update");
+			params.put(UPDATE,UPDATED);
+			params.remove(UPDATE);
 			childReceiver.getChildElements().forEach(element -> {
 				Action myaction = (Action)element;
 				newActions.add(myaction);
 				model.getactions().add((FirebaseAction) element.getModel());
-				myaction.getparams().addListener(new MapChangeListener<String, Object>() {
-					@Override
-					public void onChanged(
-							javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
+				myaction.getparams().addListener((
+							javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change)-> {
 						//Merciless hack to update parent receiver
-						params.put("update","updated");
-						params.remove("update");
+						params.put(UPDATE,UPDATED);
+						params.remove(UPDATE);
 					}
 
-				});
+				);
 				//Also listen on this action's expressions changing (if it has any)
-				myaction.getVars().addListener(new ListChangeListener<FirebaseExpression>(){
-
-					@Override
-					public void onChanged(
-							javafx.collections.ListChangeListener.Change<? extends FirebaseExpression> c) {
+				myaction.getVars().addListener((
+							javafx.collections.ListChangeListener.Change<? extends FirebaseExpression> c) ->{
 						//Merciless hack to update parent receiver
-						params.put("update","updated");
-						params.remove("update");
-					}
+						params.put(UPDATE,UPDATED);
+						params.remove(UPDATE);
+					
 					
 				});
 			});
 			
-//			this.actions = newActions;
-//			actions.forEach(myaction -> {
-//				
-//			});
 		});
 
 		exprreceiver.getChildElements().addListener((ListChangeListener<ViewElement>) arg0 -> {
 			if (!exprreceiver.getChildElements().isEmpty()) {
-				ViewElement child = exprreceiver.getChildElements().get(0);
+				ViewElement<?> child = exprreceiver.getChildElements().get(0);
 				Expression variable = ((Expression) child);
 				
 				//Here, whenever the parameters change, we remove and re-add it to the model.
 				//This triggers a change in the getVars() of the Action, which in turn triggers a change in the trigger
 				//Basically by adjusting the parameters of an expression in our action, we update the whole trigger config. Woohoo!
-				variable.getparams().addListener(new MapChangeListener<String,Object>(){
-
-					@Override
-					public void onChanged(
-							javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
+				variable.getparams().addListener((
+							javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) ->{
 						vars.clear();
 						vars.add(0,variable.getModel());
-						params.put("update","updated");
-						params.remove("update");	
+						params.put(UPDATE,UPDATED);
+						params.remove(UPDATE);	
 					}
 					
-				});
+				);
 				vars.clear();
 				vars.add(0, variable.getModel());				
 				model.setcondition((FirebaseExpression) child.getModel());
@@ -123,21 +112,15 @@ public abstract class Control extends Action {
 		//Here, whenever the parameters change, we remove and re-add it to the model.
 		//This triggers a change in the getVars() of the Action, which in turn triggers a change in the trigger
 		//Basically by adjusting the parameters of an expression in our action, we update the whole trigger config. Woohoo!
-		variable.getparams().addListener(new MapChangeListener<String,Object>(){
-
-			@Override
-			public void onChanged(
-					javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
+		variable.getparams().addListener(
+					(javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change)-> {
 				vars.clear();
 				vars.add(0,variable.getModel());
-				params.put("update","updated");
-				params.remove("update");	
+				params.put(UPDATE,UPDATED);
+				params.remove(UPDATE);	
 			}
 			
-		});
-//		vars.clear();
-//		vars.add(0, variable.getModel());				
-//		model.setcondition((FirebaseExpression) child.getModel());
+		);
 	}
 
 	@Override
@@ -166,9 +149,9 @@ public abstract class Control extends Action {
 	@Override
 	public void setData(FirebaseAction model) {
 		super.setData(model);
-		actions = new ArrayList<Action>();
+		actions = new ArrayList<>();
 		if (model.getactions() != null) {
-			List<FirebaseAction> onReceive = new ArrayList<FirebaseAction>(model.getactions()); 
+			List<FirebaseAction> onReceive = new ArrayList<>(model.getactions()); 
 			for (FirebaseAction action : onReceive) {
 				Action myaction = Action.create(action);
 				actions.add(myaction);
@@ -186,9 +169,9 @@ public abstract class Control extends Action {
 	@Override
 	public void setParentPane(DragPane parent) {
 		super.setParentPane(parent);
-		actions.forEach(action -> {
-			action.setParentPane(parent);
-		});
+		actions.forEach(action -> 
+			action.setParentPane(parent)
+		);
 		if (exprreceiver.getChildExpression() != null)
 			exprreceiver.getChildExpression().setParentPane(parent);
 	}

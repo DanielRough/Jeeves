@@ -22,10 +22,6 @@ public class VariableReceiver extends ExpressionReceiver {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean isValidElement(ViewElement dragged) {
-		if (dragged.getType() == ElementType.VARIABLE) {
-			if (((UserVariable) dragged).getVarType() == getReceiveType() || getReceiveType().equals(VAR_ANY))
-				return true;
-		}
-		return false;
+		return (dragged.getType() == ElementType.VARIABLE && (((UserVariable) dragged).getVarType() == getReceiveType() || getReceiveType().equals(VAR_ANY)));
 	}
 }

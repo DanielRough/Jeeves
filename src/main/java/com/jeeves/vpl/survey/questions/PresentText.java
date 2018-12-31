@@ -6,20 +6,18 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.event.ChangeListener;
-
 import com.google.cloud.storage.Storage;
+import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.firebase.FirebaseQuestion;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.Pane;
 
 public class PresentText extends QuestionView{
 	@FXML
 	private TextArea txtPresent;
-	public PresentText(String label)  throws Exception {
+	public PresentText(String label) {
 		this(new FirebaseQuestion(label));
 	}
 
@@ -31,7 +29,7 @@ public class PresentText extends QuestionView{
 	@Override
 	public void addEventHandlers() {
 		txtPresent.textProperty().addListener(change -> {
-			Map<String, Object> textOpts = new HashMap<String, Object>();
+			Map<String, Object> textOpts = new HashMap<>();
 			textOpts.put("text", txtPresent.getText());
 			model.getparams().put("options",textOpts);
 		});
@@ -55,10 +53,10 @@ public class PresentText extends QuestionView{
 		surveyLoader.setController(this);
 		surveyLoader.setLocation(getClass().getResource("/OptionsTextPresent.fxml"));
 		try {
-			optionsPane = (Pane) surveyLoader.load();
+			optionsPane = surveyLoader.load();
 			addEventHandlers();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.exit(1);
 		}		
 	}
 
@@ -68,6 +66,12 @@ public class PresentText extends QuestionView{
 			String text = (String)opts.get("text");
 			txtPresent.setText(text);
 		}
+	}
+
+
+	@Override
+	public String getAnswerType() {
+		return Constants.VAR_NONE;
 	}
 
 

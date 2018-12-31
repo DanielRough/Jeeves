@@ -1,17 +1,17 @@
 package com.jeeves.vpl.survey.questions;
 
-import static com.jeeves.vpl.Constants.AUDIO;
 import static com.jeeves.vpl.Constants.CLOUD_JSON;
-
-import java.io.ByteArrayInputStream;
+import static com.jeeves.vpl.Constants.AUDIO;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.storage.Blob;
@@ -21,28 +21,28 @@ import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.firebase.cloud.StorageClient;
+import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.firebase.FirebaseDB;
 import com.jeeves.vpl.firebase.FirebaseQuestion;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 
 public class QuestionAudio extends QuestionView{
+	final static Logger logger = LoggerFactory.getLogger(QuestionAudio.class);
+	private static final String AUDIOSTR = "audio";
 	@FXML
 	private TextField txtImage;
 	@FXML
 	private Button btnBrowse;
 	@FXML
 	private ImageView imgImage;
-	public QuestionAudio(String label)  throws Exception {
+	public QuestionAudio(String label) {
 		this(new FirebaseQuestion(label));
 	}
 
@@ -55,18 +55,17 @@ public class QuestionAudio extends QuestionView{
 					.build()
 					.getService();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(),e.fillInStackTrace());
 		}
 	}
 	public QuestionAudio(FirebaseQuestion data) {
 		super(data);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void addEventHandlers() {
-		btnBrowse.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent e) {
+		btnBrowse.setOnAction(e -> {
 				final FileChooser fileChooser = new FileChooser();
 
 				Bucket bucket = StorageClient.getInstance().bucket();
@@ -74,13 +73,12 @@ public class QuestionAudio extends QuestionView{
 				if (file != null) {
 					txtImage.setText(file.getAbsolutePath());
 					imgImage.setImage(new Image(getClass().getResourceAsStream(getImagePath())));
-					Map<String, Object> audioOpts = new HashMap<String, Object>();
+					Map<String, Object> audioOpts = new HashMap<>();
 					audioOpts.put("fullpath", file.getAbsolutePath());
-					audioOpts.put("audio", file.getName());
+					audioOpts.put(AUDIOSTR, file.getName());
 					model.getparams().put("options",audioOpts);
 					try {
-						@SuppressWarnings("deprecation")
-						BlobInfo blobInfo =
+						
 						storage.create(
 								BlobInfo
 								.newBuilder(bucket.getName(), file.getName())
@@ -89,10 +87,10 @@ public class QuestionAudio extends QuestionView{
 								.build(),
 								new FileInputStream(file));
 					} catch (FileNotFoundException e1) {
-						e1.printStackTrace();
+						logger.error(e1.getMessage(),e1.fillInStackTrace());
 					} 
 
-				}	}
+				}	
 		});		
 	}
 
@@ -112,9 +110,10 @@ public class QuestionAudio extends QuestionView{
 		surveyLoader.setController(this);
 		surveyLoader.setLocation(getClass().getResource("/OptionsAudioPresent.fxml"));
 		try {
-			optionsPane = (Pane) surveyLoader.load();
+			optionsPane = surveyLoader.load();
 			addEventHandlers();
 		} catch (IOException e) {
+			logger.error(e.getMessage(),e.fillInStackTrace());
 		}		
 	}
 
@@ -123,9 +122,9 @@ public class QuestionAudio extends QuestionView{
 		String audioName = "";
 		if(opts != null) {
 
-			if(opts.containsKey("audio")) {
-				txtImage.setText(opts.get("audio").toString());
-				audioName = opts.get("audio").toString();
+			if(opts.containsKey(AUDIOSTR)) {
+				txtImage.setText(opts.get(AUDIOSTR).toString());
+				audioName = opts.get(AUDIOSTR).toString();
 			}
 			else
 				return;
@@ -138,14 +137,14 @@ public class QuestionAudio extends QuestionView{
 		if (blob == null) {
 			return;
 		}
-		PrintStream writeTo = System.out;
 		if (blob.getSize() < 1_000_000) {
 			imgImage.setImage(new Image(getClass().getResourceAsStream(getImagePath())));
-		} else {
-
 		}
 
 	}
 
-
+	@Override
+	public String getAnswerType() {
+		return Constants.VAR_NONE;
+	}
 }

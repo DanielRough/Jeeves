@@ -1,11 +1,13 @@
 package com.jeeves.vpl;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.jeeves.vpl.firebase.FirebaseDB;
 import com.jeeves.vpl.firebase.FirebaseProject;
 
 import javafx.collections.FXCollections;
@@ -17,22 +19,33 @@ import javafx.scene.input.KeyEvent;
 
 public class Constants {
 
-	public static FirebaseProject openProject;
-
-	public static void setOpenProject(FirebaseProject proj){
-		openProject = proj;
+	public static FirebaseProject getOpenProject() {
+		return FirebaseDB.getInstance().getOpenProject();
 	}
 
 	public static final int OBJID_LENGTH = 18;
 	public static final int PROJID_LENGTH = 5;
 	
 	//When we first load up the triggers from file, we don't want to update the trigger IDs
-	public static boolean SHOULD_UPDATE_TRIGGERS = true;
+	private static boolean shouldUpdateTriggers = true;
 	
-	public static enum ElementType {
+	public static void setUpdateTriggers(boolean update) {
+		shouldUpdateTriggers = update;
+	}
+	public static boolean shouldUpdateTriggers() {
+		return shouldUpdateTriggers;
+	}
+	public enum ElementType {
 		ACTION, CTRL_ACTION, EXPRESSION, QUESTION, TRIGGER, UIELEMENT, VARIABLE;
 	}
 
+
+	public static final String TITLE = "Jeeves";
+	public static final String GLOW_CLASS = "drop_shadow";
+	public static final String SELECTED = "selected";
+	public static final String SENSOR = "selectedSensor";
+	
+	public static final String REG_ERROR = "Registration Error";
 	//Question types (these are simple ints rather than enums for simplicity in uploading to Firebase)
 	public static final String OPEN_ENDED = "OPEN_ENDED";
 	public static final String MULT_SINGLE = "MULT_SINGLE";
@@ -47,6 +60,10 @@ public class Constants {
 	public static final String TEXTPRESENT = "TEXTPRESENT";
 	public static final String HEART = "HEART";
 	public static final String AUDIO = "AUDIO";
+	
+	public static final String USER_BOOLEAN = "True/False";
+	public static final String USER_NUMERIC = "Number";
+	
 	//Variable types (these are Strings because they also refer to class names in Styles.css)
 	public static final String VAR_ANY = "Any";
 	public static final String VAR_BOOLEAN = "Boolean";
@@ -91,12 +108,18 @@ public class Constants {
 	}
 	// Sensor constants
 	private static Sensor accelSensor = new Sensor("Activity", "/img/icons/accelerometer.png", new String[] {"Walking", "Running", "Still", "Driving"},true);
-	public static Sensor microphoneSensor = new Sensor("Microphone", "/img/icons/microphone.png", new String[] {"Noisy","Quiet"},true);
+	private static Sensor microphoneSensor = new Sensor("Microphone", "/img/icons/microphone.png", new String[] {"Noisy","Quiet"},true);
 	private static Sensor smsSensor = new Sensor("SMS", "/img/icons/sms.png", new String[] { "Message Sent", "Message Received" },false);
 
 	public static final Sensor[] sensors = { accelSensor,smsSensor,microphoneSensor };
-	public static ObservableMap<String,String[]> categoryOpts = FXCollections.observableHashMap();
+	private static ObservableMap<String,String[]> categoryOpts = FXCollections.observableHashMap();
 
+	public static ObservableMap<String,String[]> getCategoryOpts(){
+		return categoryOpts;
+	}
+	public static void addCategoryOpt(String name,String[] values) {
+		categoryOpts.put(name, values);
+	}
 	public static final String[][] questionNames = {
 			{DATE,"/img/icons/imgdate.png","Select a Date","QuestionDate"},
 			{TIME,"/img/icons/imgtime.png","Select a Time","QuestionTime"},
@@ -138,8 +161,8 @@ public class Constants {
 		{"Equality","EqualsExpression"},
 		{"Greater Than","GreaterExpression"},
 		{"Less Than","LessExpression"},
-		{"Location","LocationExpression"},
-		{"Category","CategoryExpression"},
+		{VAR_LOCATION,"LocationExpression"},
+		{VAR_CATEGORY,"CategoryExpression"},
 		{"Date Before/After","DateBeforeAfter"},
 		{"Survey Result","SurveyExpression"},
 		{"Time Bounds","TimeExpression"},
@@ -155,9 +178,11 @@ public class Constants {
 	public static final String[] CHILD_COLOURS = new String[] { "lightcyan", "pink", "lemonchiffon", "palegreen",
 			"lavender", "sandybrown", "white" };
 
-	public static ArrayList<Integer> CONSTRAINT_NUMS = new ArrayList<Integer>();
+	private static List<Integer> constraintNums = new ArrayList<>();
 
-
+	public static List<Integer> getConstraintNums(){
+		return constraintNums;
+	}
 	// Database constants
 	public static final String DB_URL = "https://jeeves-27914.firebaseio.com/";
 	public static final String SERVICE_JSON = "/Jeeves-9b9326e90601.json";
@@ -187,27 +212,23 @@ public class Constants {
 	}
 	// A static event handler for ensuring we don't enter non-numeric characters
 	// into a numeric text box
-	public static EventHandler<KeyEvent> numberHandler = new EventHandler<KeyEvent>() {
-		@Override
-		public void handle(KeyEvent arg0) {
+	public static EventHandler<KeyEvent> numberHandler = arg0 ->{
 			if (arg0.getEventType().equals(KeyEvent.KEY_TYPED))
 				try {
 					Long.parseLong(arg0.getCharacter());
 				} catch (NumberFormatException e) {
 					arg0.consume();
-					return;
 				}
-		}
 	};
 
 
 	public static String getSalt(int length) {
-		String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+		String saltChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 		StringBuilder salt = new StringBuilder();
 		Random rnd = new Random();
 		while (salt.length() < length) {
-			int index = (int) (rnd.nextFloat() * SALTCHARS.length());
-			salt.append(SALTCHARS.charAt(index));
+			int index = (int) (rnd.nextFloat() * saltChars.length());
+			salt.append(saltChars.charAt(index));
 		}
 		return salt.toString();
 	}

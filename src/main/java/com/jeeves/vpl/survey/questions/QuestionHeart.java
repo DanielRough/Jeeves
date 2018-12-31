@@ -4,23 +4,18 @@ import static com.jeeves.vpl.Constants.HEART;
 
 import java.util.Map;
 
+import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.firebase.FirebaseQuestion;
 
 public class QuestionHeart extends QuestionView{
 
-	public QuestionHeart(String label)  throws Exception {
+	public QuestionHeart(String label) {
 		this(new FirebaseQuestion(label));
 	}
 
 
 	public QuestionHeart(FirebaseQuestion data) {
 		super(data);
-	}
-
-	@Override
-	public void addEventHandlers() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -36,16 +31,29 @@ public class QuestionHeart extends QuestionView{
 
 	}
 
+
+	@Override
+	public void addEventHandlers() {
+		//Does not need any
+	}
+
+
 	@Override
 	public void loadOptions() {
-		// TODO Auto-generated method stub
+		//Has no options
 		
 	}
 
+
 	@Override
 	public void showEditOpts(Map<String, Object> opts) {
-		// TODO Auto-generated method stub
-		
+		//Has no options
 	}
+
+	@Override
+	public String getAnswerType() {
+		return Constants.VAR_NONE;
+	}
+
 
 }

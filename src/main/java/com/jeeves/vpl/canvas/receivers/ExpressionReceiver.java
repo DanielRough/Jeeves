@@ -9,7 +9,6 @@ import static com.jeeves.vpl.Constants.VAR_NONE;
 import static com.jeeves.vpl.Constants.VAR_NUMERIC;
 import static com.jeeves.vpl.Constants.numberHandler;
 
-import com.jeeves.vpl.Main;
 import com.jeeves.vpl.Constants.ElementType;
 import com.jeeves.vpl.TextUtils;
 import com.jeeves.vpl.ViewElement;
@@ -18,7 +17,7 @@ import com.jeeves.vpl.canvas.expressions.UserVariable;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -113,7 +112,7 @@ public class ExpressionReceiver extends Receiver {
 	}
 
 	public FirebaseExpression getChildModel() {
-		return containedExpression == null ? null : (FirebaseExpression) containedExpression.getModel();
+		return containedExpression == null ? null : containedExpression.getModel();
 	}
 
 	public String getReceiveType() {
@@ -125,16 +124,14 @@ public class ExpressionReceiver extends Receiver {
 	}
 
 	@Override
-	public boolean isValidElement(ViewElement dragged) {
+	public boolean isValidElement(ViewElement<?> dragged) {
 		if (dragged.getType() == ElementType.VARIABLE && ((UserVariable) dragged).getVarType().equals(getReceiveType()) || getReceiveType().equals(VAR_ANY))
 				return true;
-		if(dragged.getType() == ElementType.EXPRESSION && getReceiveType().equals(VAR_BOOLEAN))
-			return true;
-		return false;
+		return (dragged.getType() == ElementType.EXPRESSION && getReceiveType().equals(VAR_BOOLEAN));
 	}
 
 	@Override
-	public void removeChild(ViewElement expression) {
+	public void removeChild(ViewElement<?> expression) {
 		containedExpression = null;
 
 		childList.remove(0);
@@ -187,23 +184,16 @@ public class ExpressionReceiver extends Receiver {
 				numericTextField.requestFocus();
 			});
 
-			this.getChildren().addListener(new ListChangeListener<Node>() {
-
-				@Override
-				public void onChanged(Change c) {
+			this.getChildren().addListener((ListChangeListener.Change<? extends Node> c)->{
 					c.next();
 					if (c.wasAdded() && c.getAddedSubList().get(0) instanceof ViewElement) {
 						numericTextField.setText("");
 						numericTextField.setPrefWidth(20);
 					}
-				}
 
 			});
 			numericTextField.addEventFilter(KeyEvent.KEY_TYPED, numberHandler);
-			ChangeListener<String> textChanged = new ChangeListener<String>() {
-
-				@Override
-				public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
+			ChangeListener<String> textChanged = (arg0,arg1,arg2)-> {
 					numericTextField.setPrefWidth(
 							TextUtils.computeTextWidth(numericTextField.getFont(), numericTextField.getText(), 0.0D)
 									+ 10);
@@ -216,21 +206,17 @@ public class ExpressionReceiver extends Receiver {
 					model.setVartype("");
 					UserVariable var = UserVariable.create(model);
 					addChild(var,0,0);
-				}
 
 			};
-			numericTextField.focusedProperty().addListener(new ChangeListener<Boolean>() {
-
-				@Override
-				public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
-					if (arg2 == false)
+			numericTextField.focusedProperty().addListener((arg0,arg1,arg2)-> {
+					if (!arg2)
 						captureRect.toFront();
-				}
 
 			});
 			numericTextField.textProperty().addListener(textChanged);
 			break;
-
+			default:
+				break;
 		}
 	}
 

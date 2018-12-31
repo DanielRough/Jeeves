@@ -1,12 +1,16 @@
 package com.jeeves.vpl;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -16,6 +20,8 @@ import javafx.util.Duration;
 
 public final class Toast
 {
+	final static Logger logger = LoggerFactory.getLogger(Toast.class);
+
     public static void makeText(Stage ownerStage, double xPos, double yPos, double length, String toastMsg)
     {
         Stage toastStage=new Stage();
@@ -25,15 +31,9 @@ public final class Toast
 
         Text text = new Text(toastMsg);
         text.setFont(Font.font("Verdana", 24));
-        text.setFill(Color.DARKVIOLET);
-
-        Button okbutton = new Button();
-        okbutton.setText("Cancel");
-        AnchorPane root = new AnchorPane();
-        root.getChildren().addAll(text,okbutton);
-      //  AnchorPane.setLeftAnchor(text, 10.0);
-        AnchorPane.setRightAnchor(okbutton, 0.0);
-      //  root.setPrefHeight(50);
+        HBox root = new HBox();
+        root.setAlignment(Pos.CENTER);
+        root.getChildren().add(text);
         root.setStyle("-fx-background-color: rgba(0, 0, 0, 0.2); -fx-padding: 10px " + (length-40-text.getBoundsInParent().getWidth()) + "px 10px 40px");
         root.setOpacity(0);
 
@@ -47,8 +47,8 @@ public final class Toast
         Timeline fadeInTimeline = new Timeline();
         KeyFrame fadeInKey1 = new KeyFrame(Duration.millis(150), new KeyValue (toastStage.getScene().getRoot().opacityProperty(), 0.6)); 
         fadeInTimeline.getKeyFrames().add(fadeInKey1);   
-        fadeInTimeline.setOnFinished((ae) -> 
-        {
+        fadeInTimeline.setOnFinished(ae -> 
+        
             new Thread(() -> {
                 try
                 {
@@ -56,16 +56,16 @@ public final class Toast
                 }
                 catch (InterruptedException e)
                 {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    logger.error(e.getMessage(),e.fillInStackTrace());
+                    Thread.currentThread().interrupt();
                 }
                    Timeline fadeOutTimeline = new Timeline();
                     KeyFrame fadeOutKey1 = new KeyFrame(Duration.millis(500), new KeyValue (toastStage.getScene().getRoot().opacityProperty(), 0)); 
                     fadeOutTimeline.getKeyFrames().add(fadeOutKey1);   
-                    fadeOutTimeline.setOnFinished((aeb) -> toastStage.close()); 
+                    fadeOutTimeline.setOnFinished(aeb -> toastStage.close()); 
                     fadeOutTimeline.play();
-            }).start();
-        }); 
+            }).start()
+        ); 
         fadeInTimeline.play();
     }
 }

@@ -1,12 +1,13 @@
 package com.jeeves.vpl.survey.questions;
 
 import static com.jeeves.vpl.Constants.CHILD_COLOURS;
-import static com.jeeves.vpl.Constants.CONSTRAINT_NUMS;
 import static com.jeeves.vpl.Constants.getSaltString;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.Constants.ElementType;
 import com.jeeves.vpl.Main;
 import com.jeeves.vpl.ViewElement;
@@ -22,7 +23,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -38,17 +38,16 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 		try {
 			return (QuestionView) Class.forName(classname).getConstructor(FirebaseQuestion.class).newInstance(question); 
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.exit(1);
 		}
 		return null;
 	}
-	public int colourCode = -1;
+	private int colourCode = -1;
 	@FXML
 	public Label lblQuestion;
-	public double originalWidth = 0;
+	private double originalWidth = 0;
 	private Button btnDeleteQ;
 	private Button btnEdit;
-	private String imagePath;
 	@FXML
 	private ImageView imgEntry;
 	private boolean isChild = false;
@@ -56,12 +55,14 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 	protected Pane optionsPane;
 	private String questionId;
 	protected QuestionView parentQuestion;
-	public StringProperty questionTextProperty;
+	private StringProperty questionTextProperty;
 	HBox buttonBox;
 
 	HBox surveynode;
 
-	public QuestionView(String label) throws InstantiationException, IllegalAccessException {
+	public abstract String getAnswerType();
+	
+	public QuestionView() throws InstantiationException, IllegalAccessException {
 		super(FirebaseQuestion.class.newInstance(),FirebaseQuestion.class);
 		}
 
@@ -70,6 +71,9 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 		
 	}
 
+	public StringProperty getQuestionTextProperty() {
+		return questionTextProperty;
+	}
 	public void addButtons() {
 		if (surveynode.getChildren().contains(buttonBox))
 			return;
@@ -88,21 +92,22 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 
 	public void addChildQuestion(QuestionView q) {
 		childQuestions.add(q);
-		q.indent();
+		q.indentQuestion();
 		btnDeleteQ.setDisable(true); // shouldn't be able to delete a parent
 		if (colourCode == -1) { // we ain't got no colour on the parent, add a
 								// new colour to them both
 			// find the minimum number that isn't there
+			List<Integer> constraintNums = Constants.getConstraintNums();
 			for (int i = 0; i < 6; i++) {
-				if (!CONSTRAINT_NUMS.contains(i)) {
+				if (!constraintNums.contains(i)) {
 					colourCode = i;
-					CONSTRAINT_NUMS.add(i);
+					constraintNums.add(i);
 					break;
 				}
 			}
 			//let's start again
 			if(colourCode == -1){
-				CONSTRAINT_NUMS.clear();
+				constraintNums.clear();
 				colourCode = 0;
 			}
 			setColour(colourCode);
@@ -120,16 +125,9 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 	@Override
 	public void addListeners() {
 		super.addListeners();
-		EventHandler<MouseEvent> pressedHandler = new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent arg0) {
+		EventHandler<MouseEvent> pressedHandler = arg0 -> 
 				setOldIndex(((VBox) getParent()).getChildren().indexOf(getInstance())); // Bleugh
-			}
-
-		};
 		this.addEventHandler(MouseEvent.MOUSE_PRESSED, pressedHandler);
-		
 	}
 
 	@Override
@@ -142,7 +140,7 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 		surveyLoader.setLocation(getClass().getResource("/QuestionView.fxml"));
 
 		try {
-			surveynode = (HBox) surveyLoader.load();
+			surveynode = surveyLoader.load();
 			getChildren().add(surveynode);
 
 			setImage(getImagePath());
@@ -152,7 +150,7 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 			childQuestions = FXCollections.observableArrayList();
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 
@@ -205,7 +203,7 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> getQuestionOptions() {
 		if(model.getparams().get("options") == null)
-			return new HashMap<String,Object>();
+			return new HashMap<>();
 		return (Map<String,Object>)model.getparams().get("options");
 	}
 
@@ -227,14 +225,12 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 	public boolean isMandatory(){
 		return model.getisMandatory();
 	}
-	public void indent() {
+	public void indentQuestion() {
 
-		Platform.runLater(new Runnable(){
-			public void run(){
+		Platform.runLater(() ->{
 				lblQuestion.setMaxWidth(parentQuestion.lblQuestion.getWidth() - 30);
 				setPrefWidth(parentQuestion.getWidth() - 30);
 				buttonBox.setPadding(new Insets(0,20,0,0));
-			}
 		});
 	}
 	
@@ -259,7 +255,7 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 		if (childQuestions.isEmpty()) { // If there are no constraints, and this
 										// isn't already a child then we can
 										// remove the colour
-			CONSTRAINT_NUMS.remove((Integer) colourCode);
+			Constants.getConstraintNums().remove((Integer) colourCode);
 			setColour(6);
 			colourCode = -1;
 			btnDeleteQ.setDisable(false);
@@ -272,7 +268,6 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 	}
 
 	public void setColour(int colour) {
-		// this.colourCode = colour;
 		this.colourCode = colour;
 		surveynode.setStyle("-fx-background-color: " + CHILD_COLOURS[colourCode]);
 		for (QuestionView children : childQuestions) {
@@ -302,11 +297,9 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 	}
 
 	public void setParentQuestion(QuestionView q) {
-		Platform.runLater(new Runnable(){
-			public void run(){
+		Platform.runLater(()->{
 				if (originalWidth == 0)
 					originalWidth = getWidth(); // Set the original width
-			}
 		});
 	
 		if (parentQuestion != null) // If we currently have a parent question

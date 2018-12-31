@@ -8,11 +8,8 @@ import com.jeeves.vpl.Constants.ElementType;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.firebase.FirebaseAction;
 import com.jeeves.vpl.firebase.FirebaseExpression;
-import com.jeeves.vpl.firebase.FirebaseTrigger;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXMLLoader;
@@ -29,7 +26,7 @@ public abstract class Action extends ViewElement<FirebaseAction> {
 		try {
 			return (Action) Class.forName(classname).getConstructor(FirebaseAction.class).newInstance(exprmodel); 
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.exit(1);
 		}
 		return null;
 	}
@@ -51,21 +48,17 @@ public abstract class Action extends ViewElement<FirebaseAction> {
 		super.addListeners();
 		params = FXCollections.observableHashMap();
 		if (params != null) {
-			params.addListener(new MapChangeListener<String, Object>() {
-
-				@Override
-				public void onChanged(
-						javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
+			params.addListener(
+						(javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) ->{
 
 					if (change.wasAdded()) {
-						System.out.println("OOOH " + getInstance().getClass().getSimpleName());
 						model.getparams().put(change.getKey(), change.getValueAdded());
 					} else {
 						model.getparams().remove(change.getKey());
 					}
 				}
 
-			});
+			);
 		}
 	}
 
@@ -78,10 +71,10 @@ public abstract class Action extends ViewElement<FirebaseAction> {
 		fxmlLoader.setController(this);
 		fxmlLoader.setLocation(getClass().getResource("/" + getClass().getSimpleName() + ".fxml"));
 		try {
-			Node root = (Node) fxmlLoader.load();
+			Node root = fxmlLoader.load();
 			getChildren().add(root);
 		} catch (IOException exception) {
-			throw new RuntimeException(exception);
+			System.exit(1);
 		}
 
 	}
@@ -102,13 +95,9 @@ public abstract class Action extends ViewElement<FirebaseAction> {
 	protected void setData(FirebaseAction data) {
 		super.setData(data);
 		vars = FXCollections.observableArrayList(model.getvars());
-		System.out.println("Here vars are " + model.getvars());
-		vars.addListener(new ListChangeListener<FirebaseExpression>(){
-			@Override
-			public void onChanged(javafx.collections.ListChangeListener.Change<? extends FirebaseExpression> c) {
-				System.out.println("Resetting vars to " + vars);
-				model.setvars(vars);//Will this work? Somehow I highly doubt it, circular logic and that
-			}
-		});
+		vars.addListener((javafx.collections.ListChangeListener.Change<? extends FirebaseExpression> c) ->
+				model.setvars(vars)
+			
+		);
 	}
 }

@@ -1,22 +1,25 @@
 package com.jeeves.vpl.canvas.expressions;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.jeeves.vpl.Constants.ElementType;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class UserVariable extends Expression {
+	final static Logger logger = LoggerFactory.getLogger(UserVariable.class);
+
 	public static UserVariable create(FirebaseExpression exprmodel) {
 		try {
 			return new UserVariable(exprmodel);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(),e.fillInStackTrace());
 		}
 		return null;
 	}
@@ -26,7 +29,7 @@ public class UserVariable extends Expression {
 
 	protected String varValue; // NO_UCD (use private)
 
-	public UserVariable() throws Exception {
+	public UserVariable() throws InstantiationException, IllegalAccessException {
 		super();
 	}
 
@@ -73,7 +76,7 @@ public class UserVariable extends Expression {
 		testImg.setY(2);
 		getChildren().add(testImg);
 		
-		if(model.getisValue() == false){
+		if(!model.getisValue()){
 		getChildren().add(label);
 		label.setAlignment(Pos.CENTER);
 		label.autosize();
@@ -82,5 +85,6 @@ public class UserVariable extends Expression {
 
 	@Override
 	public void setup() {
+	//Unused for variables, no setup required
 	}
 }

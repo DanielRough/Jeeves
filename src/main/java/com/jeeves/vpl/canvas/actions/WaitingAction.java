@@ -8,12 +8,9 @@ import com.jeeves.vpl.TextUtils;
 import com.jeeves.vpl.firebase.FirebaseAction;
 
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 
@@ -24,6 +21,7 @@ import javafx.scene.layout.HBox;
  *
  */
 public class WaitingAction extends Action { // NO_UCD (unused code)
+	private static final String GRAN = "granularity";
 	@FXML
 	private ComboBox<String> cboWaitGranularity;
 	@FXML
@@ -41,48 +39,27 @@ public class WaitingAction extends Action { // NO_UCD (unused code)
 		cboWaitGranularity.getItems().addAll("seconds", "minutes", "hours");
 	}
 
-	{
-		setMyTooltip("","");
-
-	}
 	@Override
 	public void addListeners() {
 		super.addListeners();
-		ChangeListener<String> textChanged = new ChangeListener<String>() {
-
-			@Override
-			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
+		ChangeListener<String> textChanged = (arg0,arg1,arg2)->{
 
 				txtWaitTime.setPrefWidth(
 						TextUtils.computeTextWidth(txtWaitTime.getFont(), txtWaitTime.getText(), 0.0D) + 10);
 				autosize();
 				params.put("time", txtWaitTime.getText());
-			}
 
 		};
 		txtWaitTime.addEventFilter(KeyEvent.KEY_TYPED, numberHandler);
 
 		txtWaitTime.textProperty().addListener(textChanged);
-		selectionListener = new ChangeListener<String>() {
-
-			@Override
-			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
+		selectionListener = (arg0,arg1,arg2)->{
 				if (arg2 != null) // aaaaaaaargh
 
-					params.put("granularity", arg2);
-			}
+					params.put(GRAN, arg2);
 
 		};
 		cboWaitGranularity.valueProperty().addListener(selectionListener);
-	}
-
-	public void setMyTooltip(String graphicURL, String text){
-		final Tooltip tooltip = new Tooltip();
-		tooltip.setText(
-		    "\nYour password must be\n" +
-		    "at least 8 characters in length\n"  
-		);
-		txtWaitTime.setTooltip(tooltip);
 	}
 
 
@@ -93,8 +70,8 @@ public class WaitingAction extends Action { // NO_UCD (unused code)
 		if (params.isEmpty())
 			return;
 
-		if (params.containsKey("granularity"))
-			cboWaitGranularity.setValue(params.get("granularity").toString());
+		if (params.containsKey(GRAN))
+			cboWaitGranularity.setValue(params.get(GRAN).toString());
 		if (params.containsKey("time"))
 			txtWaitTime.setText(params.get("time").toString());
 	}

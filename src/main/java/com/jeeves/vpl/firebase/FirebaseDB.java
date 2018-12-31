@@ -6,10 +6,9 @@ import static com.jeeves.vpl.Constants.PRIVATE_COLL;
 import static com.jeeves.vpl.Constants.PROJECTS_COLL;
 import static com.jeeves.vpl.Constants.PUBLIC_COLL;
 import static com.jeeves.vpl.Constants.SERVICE_JSON;
-import static com.jeeves.vpl.Constants.CLOUD_JSON;
 import static com.jeeves.vpl.Constants.generateProjectID;
+import static com.jeeves.vpl.Constants.makeInfoAlert;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyPair;
@@ -24,30 +23,23 @@ import java.util.concurrent.ExecutionException;
 import javax.crypto.Cipher;
 
 import org.apache.commons.codec.binary.Base64;
-//import org.apache.shiro.SecurityUtils;
-//import org.apache.shiro.session.Session;
-//import org.apache.shiro.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.google.auth.oauth2.ServiceAccountCredentials;
-import com.google.cloud.storage.Blob;
-import com.google.cloud.storage.BlobId;
-import com.google.cloud.storage.BlobInfo;
-import com.google.cloud.storage.Bucket;
-import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageOptions;
+import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutureCallback;
+import com.google.api.core.ApiFutures;
+import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseCredentials;
 import com.google.firebase.auth.UserRecord;
-import com.google.firebase.cloud.StorageClient;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.tasks.Task;
 import com.jeeves.vpl.Main;
 
 import javafx.application.Platform;
@@ -56,66 +48,52 @@ import javafx.collections.ObservableList;
 @SuppressWarnings("deprecation")
 
 public class FirebaseDB {
-
-	private static DatabaseReference dbRef;// = myFirebaseRef.child(DBNAME);
-	private static DatabaseReference privateRef;
-	private static DatabaseReference patientsRef;
-	private static DatabaseReference publicRef;
-	private static String currentUserId;
-	public static String currentUserEmail;
-	public static String currentUserPass;
+	final Logger logger = LoggerFactory.getLogger(FirebaseDB.class);
+	private static final String TOKEN = "token";
+	private DatabaseReference dbRef;
+	private DatabaseReference privateRef;
+	private DatabaseReference publicRef;
+	private String currentUserId;
+	private String currentUserEmail;
 	DatabaseReference connectedRef;
-	public static String projectKey;
+	private String projectKey;
 	private ObservableList<FirebasePatient> newpatients = FXCollections.observableArrayList();
 	private ObservableList<FirebaseProject> newprojects = FXCollections.observableArrayList();
 	private ObservableList<FirebaseProject> publicprojects = FXCollections.observableArrayList();
 	private static FirebaseDB instance;
-	private static FirebaseProject openProject;
+	private FirebaseProject openProject;
 	private String uid;
+	
+
 	public static FirebaseDB getInstance(){
+		if(instance == null)
+			instance = new FirebaseDB();
 		return instance;
 	}
-	public static FirebaseProject getOpenProject(){
+	public FirebaseProject getOpenProject(){
 		return openProject;
 	}
-	public static void setOpenProject(FirebaseProject project){
+	public void setOpenProject(FirebaseProject project){
 		openProject = project;
-
+		openProject.addStuff();
 		//Not particularly nice that I have to put the reference for survey data in here
 		if(privateRef == null || project.getname() == null)return;
-		privateRef.addListenerForSingleValueEvent(new ValueEventListener() {
-			@Override
-			public void onDataChange(DataSnapshot dataSnapshot) {
-				
-				Platform.runLater(new Runnable() {
-					public void run() {
-						Map<String,Object> value = (Map<String,Object>)dataSnapshot.getValue();
-						//It's a bit annoying, but this is the only bit of the project that gets updated from the Android side!
-						projectKey = value.get(project.getname() + "token").toString();
-					}
-				});
-						
-				
-			}
-		
-			@Override
-			public void onCancelled(DatabaseError arg0) {
-			}
-		});
+
 		DatabaseReference globalRef = privateRef.child(PROJECTS_COLL).child(project.getname());
 		DatabaseReference surveyDataRef = globalRef.child("surveydata");
 
 		surveyDataRef.addValueEventListener(new ValueEventListener(){
 			@Override
 			public void onCancelled(DatabaseError arg0) {
+				logger.error(arg0.getMessage(),arg0.getDetails());
 			}
-			Map<String,Map<String,FirebaseSurveyEntry>> surveymap = new HashMap<String,Map<String,FirebaseSurveyEntry>>();
-			Map<String,FirebaseSurveyEntry> entrymap = new HashMap<String,FirebaseSurveyEntry>();
+			Map<String,Map<String,FirebaseSurveyEntry>> surveymap = new HashMap<>();
+			Map<String,FirebaseSurveyEntry> entrymap = new HashMap<>();
 			
 			@Override
 			public void onDataChange(DataSnapshot arg0) {
 				for(DataSnapshot listofentries : arg0.getChildren()) {
-					entrymap = new HashMap<String,FirebaseSurveyEntry>();
+					entrymap = new HashMap<>();
 					String surveyname = listofentries.getKey();
 					for(DataSnapshot entry : listofentries.getChildren()) {
 						FirebaseSurveyEntry surveyentry = entry.getValue(FirebaseSurveyEntry.class);
@@ -130,72 +108,54 @@ public class FirebaseDB {
 	
 	}
 	public void getUserCredentials(){	
-		Task<UserRecord> task = FirebaseAuth.getInstance().getUserByEmail(currentUserEmail)
-				.addOnSuccessListener(userRecord -> {
-					
-					//Set the static thing here
-					currentUserId = userRecord.getUid();
+		ApiFuture<UserRecord> task = FirebaseAuth.getInstance().getUserByEmailAsync(getCurrentUserEmail());
+		ApiFutures.addCallback(task, new ApiFutureCallback<UserRecord>() {
+			    @Override
+			    public void onSuccess(UserRecord result) {
+			    	currentUserId = result.getUid();
 					FirebaseApp.getInstance().delete();
-					firebaseLogin();
-				})
-				.addOnFailureListener(e -> {
-					System.err.println("Error fetching user data: " + e.getMessage());
-					connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
-					connectedRef.addValueEventListener(new ValueEventListener() {
-						@Override
-						public void onDataChange(DataSnapshot snapshot) {
-							boolean connected = snapshot.getValue(Boolean.class);
-							if (connected) {
-								connectedRef.removeEventListener(this);
-								getUserCredentials();
-							}
-						}
-						@Override
-						public void onCancelled(DatabaseError error) {
-							System.err.println("Listener was cancelled");
-						}
-					});
-				});
+					firebaseLogin();			    }
+
+			    @Override
+			    public void onFailure(Throwable t) {
+					makeInfoAlert("Jeeves","Registration failed", "Sorry, that didn't work. A user with this email address already exists!");
+			    }
+			  });		
 	}
 
 	//Signs us into the database with restricted access based on the generated userid
 	public void firebaseLogin(){
-		Map<String, Object> auth = new HashMap<String, Object>();
+		Map<String, Object> auth = new HashMap<>();
 		uid = currentUserId;
 		auth.put("uid", currentUserId);
 		try {
 			InputStream resource = FirebaseDB.class.getResourceAsStream(SERVICE_JSON);
 			FirebaseOptions options = new FirebaseOptions.Builder()
-					.setCredential(FirebaseCredentials.fromCertificate(resource))
+					.setCredentials(GoogleCredentials.fromStream(resource))
 					.setDatabaseUrl(DB_URL)
 					.setDatabaseAuthVariableOverride(auth)
 				    .setStorageBucket("jeeves-27914.appspot.com")
 					.build();
 			FirebaseApp.initializeApp(options);
 			resource.close();
-			 resource = FirebaseDB.class.getResourceAsStream(SERVICE_JSON);
 			
 			addListeners(); //listen on the database AS OUR CURRENT USER
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
-		} 
+			logger.error("Error",e.fillInStackTrace());
+			System.exit(1);
+		}
 
 	}
 	public FirebaseDB() {
-		instance = this;
 		try {
 			InputStream stream = FirebaseDB.class.getResourceAsStream(SERVICE_JSON);
 			FirebaseOptions options = new FirebaseOptions.Builder()
-					.setCredential(FirebaseCredentials.fromCertificate(stream))
+					.setCredentials(GoogleCredentials.fromStream(stream))
 					.setDatabaseUrl(DB_URL)
 					.build();
 			FirebaseApp.initializeApp(options);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.exit(1);
 		}
 
 	}
@@ -204,12 +164,14 @@ public class FirebaseDB {
 	public void putUserCredentials(String email, String password) {
 		try {
 			UserRecord userRecord = FirebaseAuth.getInstance().getUserByEmailAsync(email).get();
-			String uid = userRecord.getUid();
+			String userId = userRecord.getUid();
 			dbRef = FirebaseDatabase.getInstance().getReference();
-			privateRef =  dbRef.child(PRIVATE_COLL).child(uid);
-			privateRef.child("token").setValue(password);
-		} catch (InterruptedException | ExecutionException e1) {
-			e1.printStackTrace();
+			privateRef =  dbRef.child(PRIVATE_COLL).child(userId);
+			privateRef.child(TOKEN).setValueAsync(password);
+		} catch (ExecutionException e1) {
+			System.exit(1);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
 		}
 	}
 
@@ -217,11 +179,11 @@ public class FirebaseDB {
 		return projectKey;
 	}
 	public void addListeners() {
+	
 		dbRef = FirebaseDatabase.getInstance().getReference();
 		privateRef =  dbRef.child(PRIVATE_COLL).child(currentUserId);
-		patientsRef = privateRef.child("patients");
+		DatabaseReference patientsRef = privateRef.child("patients");
 		publicRef = dbRef.child(PUBLIC_COLL);
-		
 		//We now have listeners for individual patients rather than just clearing and adding them all every time an
 		//update happens. This should make the patients pane function more cleanly
 		patientsRef.addChildEventListener(new ChildEventListener() {
@@ -240,27 +202,34 @@ public class FirebaseDB {
 
 		    @Override
 		    public void onChildRemoved(DataSnapshot dataSnapshot) {
+				logger.debug(dataSnapshot.toString());
 		    }
 		    @Override
-		    public void onChildMoved(DataSnapshot dataSnapshot, String prevChildKey) {}
+		    public void onChildMoved(DataSnapshot dataSnapshot, String prevChildKey) {
+				logger.debug(dataSnapshot.toString());
+		    }
 
 		    @Override
-		    public void onCancelled(DatabaseError databaseError) {}
+		    public void onCancelled(DatabaseError arg0) {
+				logger.error(arg0.getMessage(),arg0.getDetails());
+		    }
 		});
 		privateRef.addValueEventListener(new ValueEventListener() {
 			@Override
 			public void onCancelled(DatabaseError arg0) {
-				System.out.println("ERROR: " + arg0.getDetails());
+				logger.error(arg0.getMessage(),arg0.getDetails());
 			}
 			@Override
 			public void onDataChange(DataSnapshot arg0) {
 				FirebasePrivate appdata = arg0.getValue(FirebasePrivate.class);
+
 				newprojects.clear();
+
 				if (appdata != null) {
 					Map<String, FirebaseProject> projects = appdata.getprojects();
 					if (projects != null)
-						for (String key : projects.keySet()) {
-							newprojects.add(projects.get(key));
+						for (Map.Entry<String,FirebaseProject> entry : projects.entrySet()) {
+							newprojects.add(projects.get(entry.getKey()));
 						}
 				}
 			}
@@ -268,6 +237,7 @@ public class FirebaseDB {
 		publicRef.addValueEventListener(new ValueEventListener() {
 			@Override
 			public void onCancelled(DatabaseError arg0) {
+				logger.error(arg0.getMessage(),arg0.getDetails());
 			}
 
 			@Override
@@ -285,56 +255,55 @@ public class FirebaseDB {
 			@Override
 			public void onDataChange(DataSnapshot snapshot) {
 				boolean connected = snapshot.getValue(Boolean.class);
-
-				if (connected) {
-					Main.getContext().updateConnectedStatus(true);
-				} else {
-					Main.getContext().updateConnectedStatus(false);
-				}
+				Platform.runLater(()->Main.getContext().updateConnectedStatus(connected));
+				
 			}
 
 			@Override
-			public void onCancelled(DatabaseError error) {
-				System.err.println("Listener was cancelled");
+			public void onCancelled(DatabaseError arg0) {
+				logger.error(arg0.getMessage(),arg0.getDetails());
 			}
 		});
 	}
 
 	public boolean addPatient(FirebasePatient object) {
 		DatabaseReference globalRef = privateRef.child(PATIENTS_COLL).child(object.getUid());
-		globalRef.setValue(object);
+		globalRef.setValueAsync(object);
 		return true;
 	}
 
 	public void sendPatientFeedback(FirebasePatient patient, String feedback){
         final DatabaseReference firebaseFeedback =  privateRef.child(PATIENTS_COLL).child(patient.getName()).child("feedback").child(Long.toString(System.currentTimeMillis()));
-        firebaseFeedback.setValue("You: " + feedback);
+        firebaseFeedback.setValueAsync("You: " + feedback);
 	}
 
 	KeyPairGenerator kpg;
     KeyPair kp;
     PublicKey publicKey;
     PrivateKey privateKey;
-    byte [] encryptedBytes,decryptedBytes;
-    Cipher cipher,cipher1;
-    String encrypted,decrypted;
+    byte [] encryptedBytes;
+    byte [] decryptedBytes;
+    Cipher cipher;
+    Cipher cipher1;
+    String encrypted;
+    String decrypted;
 
 	public boolean saveProject(String oldname, FirebaseProject object) {
 		if (oldname == null){
 			try {
 				kpg = KeyPairGenerator.getInstance("RSA");
-				kpg.initialize(1024);
+				kpg.initialize(2048);
 		        kp = kpg.genKeyPair();
 		        publicKey = kp.getPublic();
 		 
 		        privateKey = kp.getPrivate();
 		        object.setpubKey(Base64.encodeBase64String(publicKey.getEncoded()));
 
-		        privateRef.child(object.getname()+"token").setValue(Base64.encodeBase64String(privateKey.getEncoded()));
+		        privateRef.child(object.getname()+TOKEN).setValueAsync(Base64.encodeBase64String(privateKey.getEncoded()));
 		  
 		        
 			} catch (NoSuchAlgorithmException e) {
-				e.printStackTrace();
+				System.exit(1);
 			}
 	        
 
@@ -345,10 +314,10 @@ public class FirebaseDB {
 		}
 
 		object.setlastUpdated(System.currentTimeMillis());
-		privateRef.child(PROJECTS_COLL).child(object.getname()).setValue(object);
+		privateRef.child(PROJECTS_COLL).child(object.getname()).setValueAsync(object);
 		
 		if(object.getactive()){
-			publicRef.child(PROJECTS_COLL).child(object.getname()).setValue(object);		}
+			publicRef.child(PROJECTS_COLL).child(object.getname()).setValueAsync(object);		}
 		return true;
 	}
 
@@ -368,9 +337,15 @@ public class FirebaseDB {
 	public void publishStudy(FirebaseProject project){
 		DatabaseReference privateProjectRef = privateRef.child(PROJECTS_COLL).child(project.getname());
 		project.setactive(true);
-		privateProjectRef.setValue(project);
+		privateProjectRef.setValueAsync(project);
 		DatabaseReference globalRef = publicRef.child(PROJECTS_COLL).child(project.getname());
-		globalRef.setValue(project);
+		globalRef.setValueAsync(project);
+	}
+	public String getCurrentUserEmail() {
+		return currentUserEmail;
+	}
+	public void setCurrentUserEmail(String currentUserEmail) {
+		this.currentUserEmail = currentUserEmail;
 	}
 
 }

@@ -3,18 +3,12 @@ package com.jeeves.vpl.canvas.triggers;
 import static com.jeeves.vpl.Constants.VAR_LOCATION;
 import static com.jeeves.vpl.Constants.sensors;
 
-import java.util.List;
-
 import com.jeeves.vpl.Constants.Sensor;
 import com.jeeves.vpl.DragPane;
 import com.jeeves.vpl.ViewElement;
-import com.jeeves.vpl.canvas.expressions.UserVariable;
 import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
-import com.jeeves.vpl.firebase.FirebaseVariable;
-
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -25,6 +19,9 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Popup;
 
 public class SensorTrigger extends Trigger { // NO_UCD (unused code)
+	private static final String RESULT = "result";
+	private static final String SENSOR = "selectedSensor";
+	
 	private ExpressionReceiver variableReceiver;
 	
 	@FXML
@@ -50,40 +47,39 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 
 	public SensorTrigger(FirebaseTrigger data) {
 		super(data);
-
-	}
-
-	{
 		for (Sensor s : sensors) {
 			cboSensor.getItems().add(s.getname());
 		}
-
 	}
+
 	@Override
 	public void addListeners() {
 		super.addListeners();
 
-		cboSensor.valueProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
+		cboSensor.valueProperty().addListener((arg0,arg1,arg2)-> {
 				if (arg1 != null && arg1.equals(arg2))
 					return;
 				for (Sensor s : sensors) {
 					if (s.getname().equals(arg2)) {
 						setSelectedSensor(s);
-						params.put("selectedSensor", arg2);
+						params.put(SENSOR, arg2);
 						break;
 					}
 				}
-			}
 		});
 		variableReceiver = new ExpressionReceiver(VAR_LOCATION);
 
 		variableReceiver.getChildElements().addListener(
-				(ListChangeListener<ViewElement>) listener -> {listener.next(); if(listener.wasRemoved())return; params.put("result", variableReceiver.getChildModel().getname());});// timeReceiverFrom.getChildElements().get(0).getModel())));			
+				(ListChangeListener<ViewElement>) listener -> {
+					listener.next(); 
+					if(listener.wasRemoved()) {
+						return; 
+					}
+					params.put(RESULT, variableReceiver.getChildModel().getname());
+				});
 
 		cboClassifications.valueProperty()
-				.addListener((ChangeListener<String>) (arg0, arg1, arg2) -> params.put("result", arg2));
+				.addListener((ChangeListener<String>) (arg0, arg1, arg2) -> params.put(RESULT, arg2));
 	}
 
 
@@ -98,9 +94,10 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 	public void setData(FirebaseTrigger model) {
 		super.setData(model);
 		this.model = model;
-		String sensorName = null, result = null;
-		if (params.containsKey("selectedSensor"))
-			sensorName = params.get("selectedSensor").toString();
+		String sensorName = null;
+		String result = null;
+		if (params.containsKey(SENSOR))
+			sensorName = params.get(SENSOR).toString();
 		else
 			return;
 		for (Sensor s : sensors) {
@@ -108,8 +105,8 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 				setSelectedSensor(s);
 			}
 		}
-		if (params.containsKey("result"))
-			result = params.get("result").toString();
+		if (params.containsKey(RESULT))
+			result = params.get(RESULT).toString();
 		else
 			return;
 		setResult(result);
@@ -130,8 +127,8 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 		cboClassifications.getItems().clear();
 		cboClassifications.getItems().addAll(classifications);
 
-		if (model.getparams().get("result") != null)
-			cboClassifications.setValue(model.getparams().get("result").toString());
+		if (model.getparams().get(RESULT) != null)
+			cboClassifications.setValue(model.getparams().get(RESULT).toString());
 		else if (classifications.length > 0)
 			cboClassifications.setValue(classifications[0]);
 		if (variableReceiver == null)

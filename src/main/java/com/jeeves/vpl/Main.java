@@ -1,30 +1,27 @@
 package com.jeeves.vpl;
 
+import static com.jeeves.vpl.Constants.GLOW_CLASS;
 import static com.jeeves.vpl.Constants.NEW_PROJ;
-import static com.jeeves.vpl.Constants.SHOULD_UPDATE_TRIGGERS;
+import static com.jeeves.vpl.Constants.SELECTED;
+import static com.jeeves.vpl.Constants.TITLE;
+import static com.jeeves.vpl.Constants.USER_BOOLEAN;
+import static com.jeeves.vpl.Constants.USER_NUMERIC;
 import static com.jeeves.vpl.Constants.VAR_BOOLEAN;
-import static com.jeeves.vpl.Constants.VAR_CATEGORY;
-import static com.jeeves.vpl.Constants.VAR_CLOCK;
-import static com.jeeves.vpl.Constants.VAR_DATE;
-import static com.jeeves.vpl.Constants.VAR_LOCATION;
 import static com.jeeves.vpl.Constants.VAR_NUMERIC;
+import static com.jeeves.vpl.Constants.actNames;
+import static com.jeeves.vpl.Constants.elemNames;
+import static com.jeeves.vpl.Constants.exprNames;
 import static com.jeeves.vpl.Constants.makeInfoAlert;
 import static com.jeeves.vpl.Constants.questionNames;
+import static com.jeeves.vpl.Constants.setUpdateTriggers;
 import static com.jeeves.vpl.Constants.trigNames;
-import static com.jeeves.vpl.Constants.actNames;
-import static com.jeeves.vpl.Constants.exprNames;
-import static com.jeeves.vpl.Constants.elemNames;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-//
-//import org.apache.shiro.SecurityUtils;
-//import org.apache.shiro.subject.Subject;
 
 import com.jeeves.vpl.Constants.ElementType;
 import com.jeeves.vpl.canvas.expressions.Expression;
@@ -35,9 +32,7 @@ import com.jeeves.vpl.canvas.uielements.UIElement;
 import com.jeeves.vpl.firebase.FirebaseDB;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 import com.jeeves.vpl.firebase.FirebaseProject;
-import com.jeeves.vpl.firebase.FirebaseQuestion;
 import com.jeeves.vpl.firebase.FirebaseSurvey;
-import com.jeeves.vpl.firebase.FirebaseSurveyEntry;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
 import com.jeeves.vpl.firebase.FirebaseUI;
 import com.jeeves.vpl.firebase.FirebaseVariable;
@@ -47,19 +42,12 @@ import com.jeeves.vpl.survey.questions.QuestionView;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -104,26 +92,13 @@ public class Main extends Application {
 	private ViewCanvas canvas; // The canvas group that contains the project
 
 	private FirebaseProject openProject; // The currently selected project
-	
-	private ObservableList<FirebaseSurvey> currentsurveys = FXCollections
-			.observableList(new ArrayList<FirebaseSurvey>());
-	private ObservableList<FirebaseVariable> currentvariables = FXCollections
-			.observableList(new ArrayList<FirebaseVariable>());
-	private ObservableList<FirebaseUI> currentelements = FXCollections
-			.observableList(new ArrayList<FirebaseUI>());
-	private ObservableMap<String,Map<String,FirebaseSurveyEntry>> currentsurveydata = FXCollections.observableHashMap();
-	
+
 	private DragPane dragPane;
 	private Map<Label, VBox> labelPaneMap;
 	private AnchorPane myPane; // The main pane
 	private PatientPane patientController;
-	private SurveyPane surveyController;
 	private Stage primaryStage;
-	private ElementReceiver receiver; // Where UI elements go
-	
-//	private NameComparator nameComparator;
-//	private AgeComparator ageComparator;
-//	private TypeComparator typeComparator;
+
 	@FXML private VBox vboxSurveyVars;
 
 	@FXML private Label lblActions;
@@ -137,7 +112,7 @@ public class Main extends Application {
 	@FXML private Pane paneAndroid;
 	@FXML private Pane panePatients;
 	@FXML private ImageView imgTrash;
-	
+
 	@FXML private Button btnAddVar;
 	@FXML private TextField txtAttrName;
 	@FXML private ChoiceBox<String> cboAttrType;
@@ -157,7 +132,7 @@ public class Main extends Application {
 	private EventHandler<MouseEvent> viewElementHandler;
 
 	@FXML private CheckBox chkRandom;
-	ArrayList<ViewElement> elements;
+	ArrayList<ViewElement<?>> elements;
 
 	public static Main getContext() {
 		return currentGUI;
@@ -171,25 +146,19 @@ public class Main extends Application {
 	}
 	public Main() {
 	}
-	
-	private Main(Stage primaryStage) {
-		currentGUI = this;
-		this.primaryStage = primaryStage;
 
+	private Main(Stage primaryStage) throws IOException {
+		this.primaryStage = primaryStage;
+		currentGUI = this;
 		Platform.setImplicitExit(false);
 		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/Main.fxml"));
 		fxmlLoader.setController(this);
-		try {
-			myPane = (AnchorPane) fxmlLoader.load();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+		myPane = fxmlLoader.load();
 		Scene scene = new Scene(myPane);
 		dragPane = new DragPane(myPane.getWidth(), myPane.getHeight());
 		myPane.getChildren().add(dragPane);
-		
-		//Set up some rigour
-		primaryStage.setTitle("Jeeves");
+
+		primaryStage.setTitle(TITLE);
 		primaryStage.setResizable(false);
 		primaryStage.setOnCloseRequest(event -> System.exit(0));
 		primaryStage.setScene(scene);
@@ -197,44 +166,19 @@ public class Main extends Application {
 
 		openProject = new FirebaseProject();
 		lblOpenProject.setText(NEW_PROJ);
-		FirebaseDB.setOpenProject(openProject);
-		new FirebaseDB();
-	//	nameComparator = new NameComparator();
-		//ageComparator = new AgeComparator();
-		//typeComparator = new TypeComparator();
+		FirebaseDB.getInstance().setOpenProject(openProject);
 
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
+
+		Platform.runLater(() ->{
 				resetPanes();
 				loadCanvasElements();
-			}
-		});	
+			});	
 	}
-	
-	/*
-	 * GETTER AND SETTER METHODS
-	 */
+
 	public AnchorPane getMainPane() {
 		return myPane;
 	}
 
-	public ObservableList<FirebaseSurvey> getSurveys() {
-		return currentsurveys;
-	}
-
-	public ObservableList<FirebaseUI> getUIElements() {
-		return currentelements;
-	}
-
-	public ObservableMap<String,Map<String,FirebaseSurveyEntry>> getSurveyEntries(){
-		return currentsurveydata;
-	}
-	
-	public ObservableList<FirebaseVariable> getVariables() {
-		return currentvariables;
-	}
-	
 	/**
 	 * It's helpful to know whether we have an Internet connection, it may be that we don't see changes 
 	 * propagate to the database immediately so it'd be nice to know why
@@ -255,56 +199,39 @@ public class Main extends Application {
 	 * needs to be manually done here
 	 * @param draggable
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings("rawtypes")
 	private void setElementParent(ViewElement draggable) {
 		if (draggable.getType() == ElementType.UIELEMENT || draggable.getType() == ElementType.QUESTION)
 			draggable.setParentPane(dragPane);
 		else
 			draggable.setParentPane(canvas);
 	}
-	
+
 	private void resetPanes() {
-		currentsurveys.clear();
-		currentvariables.clear();
-		currentelements.clear();
-		currentsurveydata.clear();
-		
+		SurveyPane surveyController;
+		ElementReceiver receiver; 
 		panePatients.getChildren().clear();
-		patientController = new PatientPane(this);
+		patientController = new PatientPane();
 		panePatients.getChildren().add(patientController);
-	
+
 		if (canvas != null && canvas.mouseHandler != null)
 			paneIntervention.removeEventHandler(MouseEvent.ANY, canvas.mouseHandler);
 		paneIntervention.getChildren().remove(canvas);
 		canvas = new ViewCanvas();
 		paneIntervention.getChildren().add(canvas);
-		canvas.addEventHandlers();
-	
+
 		paneAndroid.getChildren().clear();
 		receiver = new ElementReceiver(215, 307);
 		paneAndroid.getChildren().add(receiver);
-	
+
 		if (surveyBox.getChildren().size() > 1)
 			surveyBox.getChildren().remove(1);
 		surveyController = new SurveyPane();
-		
 		surveyBox.getChildren().add(surveyController); // reset dat shit
-		surveyController.registerSurveyListener(new ListChangeListener<FirebaseSurvey>(){
 
-			@Override
-			public void onChanged(javafx.collections.ListChangeListener.Change<? extends FirebaseSurvey> c) {
-				c.next();
-				if(c.wasAdded()){
-					c.getAddedSubList().forEach(survey->{currentsurveys.add(survey);openProject.getsurveys().add(survey);});
-					
-				}
-			}
-			
-		});
-		
 		//Add the project elements
-		ArrayList<ViewElement> views = new ArrayList<ViewElement>();
-		
+		ArrayList<ViewElement<?>> views = new ArrayList<>();
+
 		for (FirebaseTrigger trig : openProject.gettriggers()) {
 			Trigger triggerview = Trigger.create(trig);
 			views.add(triggerview);
@@ -345,56 +272,8 @@ public class Main extends Application {
 			setElementParent(view);
 			view.addEventHandler(MouseEvent.ANY, view.mainHandler);
 		});
-		
-		//Add listeners
-		receiver.getChildElements().addListener(new ListChangeListener<Node>() {
-			@Override
-			public void onChanged(javafx.collections.ListChangeListener.Change<? extends Node> arg0) {
-				arg0.next();
-				if (arg0.wasAdded()) {
-					ViewElement added = (ViewElement) arg0.getAddedSubList().get(0);
-					int index = receiver.getChildElements().indexOf(added);
-					FirebaseUI uiModel = (FirebaseUI) added.getModel();
-					
-					if(uiModel.gettext()!=null){
-						openProject.getuidesign().add(index, uiModel);
-						currentelements.add(index, uiModel);
-					}
-					else
-					//We wait until we've set the text before we actually add it
-					uiModel.getMyTextProperty().addListener(listener ->{
-						openProject.getuidesign().add(index, uiModel);
-						currentelements.add(index, uiModel);
-					});
-				} else {
-					List<ViewElement> removed = (List<ViewElement>) arg0.getRemoved();
-					removed.forEach(elem -> {
-						openProject.getuidesign().remove(elem.getModel());
-						currentelements.remove(elem.getModel());
-					});
-				}
-			}
-		});
-		ListChangeListener<Node> canvasListener = new ListChangeListener<Node>() {
-			@Override
-			public void onChanged(javafx.collections.ListChangeListener.Change<? extends Node> arg0) {
-				while (arg0.next()) {
-					if (arg0.wasAdded()) {
-						List addedlist = arg0.getAddedSubList();
-						openProject.add((ViewElement) addedlist.get(0));
-					} else if (arg0.wasRemoved()) {
-						List removedlist = arg0.getRemoved();
-						openProject.remove((ViewElement) removedlist.get(0));
-
-					}
-				}
-			}
-		};
-		canvas.addChildrenListener(canvasListener);		
-		currentelements.addAll(openProject.getuidesign());
-		currentsurveys.addAll(openProject.getsurveys());
-		if(openProject.getsurveydata() != null)
-		currentsurveydata.putAll(openProject.getsurveydata());
+		canvas.addEventHandlers();
+		receiver.addChildListeners();
 		patientController.loadPatients(); // Reset so we have the patients for THIS project
 		patientController.loadSurveys();
 		tabPane.getSelectionModel().select(tabFramework);
@@ -403,22 +282,27 @@ public class Main extends Application {
 
 	public void showLoginRegister(){
 		Stage stage = new Stage(StageStyle.UNDECORATED);
-		LoginRegisterPane root = new LoginRegisterPane(this, stage);
-		stage.setScene(new Scene(root));
+		LoginRegisterPane root;
+		try {
+			root = new LoginRegisterPane(stage);
+			stage.setScene(new Scene(root));
+		} catch (IOException e) {
+			System.exit(1);
+		}
 		Pane pane = new Pane();
 		pane.getStyleClass().add("shadowpane");
 		pane.setPrefWidth(myPane.getPrefWidth());
 		pane.setPrefHeight(myPane.getPrefHeight());
 		myPane.getChildren().add(pane);
-		
+
 		stage.initStyle(StageStyle.TRANSPARENT);
 		stage.initOwner(splitPane.getScene().getWindow());
 		stage.showAndWait();
 		myPane.getChildren().remove(pane);
-		lblWelcome.setText("Welcome, " + FirebaseDB.currentUserEmail);
-		
+		lblWelcome.setText("Welcome, " + FirebaseDB.getInstance().getCurrentUserEmail());
+
 		FirebaseDB.getInstance().getUserCredentials();
-		patientController = new PatientPane(this);
+		patientController = new PatientPane();
 		panePatients.getChildren().add(patientController);	
 	}
 
@@ -427,58 +311,28 @@ public class Main extends Application {
 	}
 
 	public void loadVariables() {
-		currentvariables.clear();
 		vboxSurveyVars.getChildren().clear();
 
-		ArrayList<FirebaseVariable> globalVars = new ArrayList<FirebaseVariable>();
 		openProject.getvariables().forEach(variable -> {
 			if(variable != null) {
-			UserVariable global = new UserVariable(variable);
-			String varname = variable.getname();
-			boolean alreadyExists = false;
-
-			for (int i = 0; i < currentvariables.size(); i++) {
-				if (currentvariables.get(i).getname().equals(varname))
-					alreadyExists = true;
-			}
-			if (alreadyExists == false) {
-				currentvariables.add(variable);
-				ViewElement<FirebaseExpression> draggable = new UserVariable(variable);
-				global.setDraggable(draggable); // DJRNEW
-				global.setReadOnly();
-				setElementParent(draggable);
-				global.setHandler(viewElementHandler);
-				vboxSurveyVars.getChildren().add(global);
-			}
+				UserVariable global = new UserVariable(variable);
+					ViewElement<FirebaseExpression> draggable = new UserVariable(variable);
+					global.setDraggable(draggable); // DJRNEW
+					global.setReadOnly();
+					setElementParent(draggable);
+					global.setHandler(viewElementHandler);
+					vboxSurveyVars.getChildren().add(global);
 			}
 		});
-		for (FirebaseVariable var : globalVars) {
-			openProject.getvariables().remove(var); // gotta take them out
-														// again or they get
-														// duplicated every time
-		}
-		//TODO: These should really be read from the Constants class
+
 		cboAttrType.getItems().clear();
-		cboAttrType.getItems().addAll("True/False","Number","Category","Date","Time","Location","WiFi");
+		cboAttrType.getItems().addAll("True/False","Number","Category","Date","Time","Location");
 	}
 
 
 
-	public void registerElementListener(ListChangeListener<FirebaseUI> listener) {
-		currentelements.addListener(listener);
-	}
 
-	public void registerSurveyListener(ListChangeListener<FirebaseSurvey> listener) {
-		currentsurveys.addListener(listener);
-	}
 
-	public void registerVarListener(ListChangeListener<FirebaseVariable> listener) {
-		currentvariables.addListener(listener);
-	}
-	public void unregisterVarListener(ListChangeListener<FirebaseVariable> listener) {
-		currentvariables.removeListener(listener);
-	}
-	
 
 	@FXML
 	public void saveAsStudyMenu(Event e) {
@@ -493,7 +347,7 @@ public class Main extends Application {
 	}
 
 
-	private VBox createSidebarView(ViewElement elem) {
+	private VBox createSidebarView(ViewElement<?> elem) {
 		Label newlable = new Label(elem.getName());
 
 		HBox box = new HBox();
@@ -505,52 +359,52 @@ public class Main extends Application {
 		boxybox.getChildren().addAll(box, elem);
 		boxybox.setFillWidth(true);
 		newlable.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
-		
+
 		return boxybox;
 	}
 
-	//Position the dividers and trash can
-	private void loadCanvasElements() {
+	private void loadType(Map<String,String> names,String suffix,VBox container) {
+		Iterator<String> iter = names.keySet().iterator();
+		String prefix = "com.jeeves.vpl.";
+		while(iter.hasNext()) {
+			String actName = iter.next();
+			String actClass = names.get(actName);
+			ViewElement<?> action = ViewElement.create(actName,prefix+suffix+ actClass);
+			elements.add(action);
+			VBox boxybox = createSidebarView(action);
+			container.getChildren().add(boxybox);
+		}
+	}
+	
+	private void addCanvasListeners() {
 		Divider d1 = splitPane.getDividers().get(1);
-		d1.positionProperty().addListener(new ChangeListener<Number>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-				if (arg2.doubleValue() < 0.73)
+		d1.positionProperty().addListener((arg0,arg1,arg2)->{
+				if (arg2.doubleValue() < 0.73) {
 					d1.setPosition(0.73);
-				else
-					imgTrash.setLayoutX(arg2.doubleValue() * myPane.getWidth() - 80);
-			}
-
-		});
+					return;
+				}
+				imgTrash.setLayoutX(arg2.doubleValue() * myPane.getWidth() - 80);
+			});
 		DropShadow ds = new DropShadow(20, Color.AQUA);
 
-		imgTrash.addEventHandler(MouseDragEvent.ANY, new EventHandler<MouseDragEvent>() {
-
-			@Override
-			public void handle(MouseDragEvent arg0) {
+		imgTrash.addEventHandler(MouseDragEvent.ANY, arg0->{
 				if (arg0.getEventType().equals(MouseDragEvent.MOUSE_DRAG_ENTERED)) {
 					imgTrash.setEffect(ds);
 				} else if (arg0.getEventType().equals(MouseDragEvent.MOUSE_DRAG_EXITED)) {
 					imgTrash.setEffect(null);
 				}
-			}
-
-		});
+			});
 		d1.setPosition(0.73);
-		viewElementHandler = new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent arg0) {
-				ViewElement clicked = ((ViewElement) arg0.getSource());
+		viewElementHandler = arg0->{
+				ViewElement<?> clicked = ((ViewElement<?>) arg0.getSource());
 				if (arg0.isSecondaryButtonDown())
 					return;
-				if (arg0.getEventType() == MouseEvent.MOUSE_PRESSED)
+				else if (arg0.getEventType() == MouseEvent.MOUSE_PRESSED)
 					myPane.getChildren().add(clicked.getDraggable());
-				if (arg0.getEventType() == MouseEvent.MOUSE_RELEASED) {
+				else if (arg0.getEventType() == MouseEvent.MOUSE_RELEASED) {
 					myPane.getChildren().remove(clicked.getDraggable());
-					// }
-					ViewElement<FirebaseExpression> draggable = null;
+
+					ViewElement<?> draggable = null;
 					// annoying exception for user variables
 					if (clicked.getType() == ElementType.VARIABLE)
 						draggable = new UserVariable(((FirebaseExpression) clicked.getModel()));
@@ -560,60 +414,32 @@ public class Main extends Application {
 					clicked.setDraggable(draggable); // DJRNEW
 
 				}
-			}
-
-		};
-		try {
-			elements = new ArrayList<ViewElement>();
+			};
+	}
+	//Position the dividers and trash can
+	private void loadCanvasElements() {
+		addCanvasListeners();
+		
+		
+			elements = new ArrayList<>();
 			String prefix = "com.jeeves.vpl.";
-			Iterator<String> iter = trigNames.keySet().iterator();
-			while(iter.hasNext()) {
-				String trigName = iter.next();
-				String trigClass = trigNames.get(trigName);
-				ViewElement trigger = ViewElement.create(trigName,prefix+"canvas.triggers." +trigClass);
-				elements.add(trigger);
-				VBox boxybox = createSidebarView(trigger);
-				paneTriggers.getChildren().add(boxybox);				
-			}
-			iter = actNames.keySet().iterator();
-			while(iter.hasNext()) {
-				String actName = iter.next();
-				String actClass = actNames.get(actName);
-				ViewElement<FirebaseVariable> action = ViewElement.create(actName,prefix+"canvas.actions." + actClass);
-				elements.add(action);
-				VBox boxybox = createSidebarView(action);
-				paneActions.getChildren().add(boxybox);
-			}
-			iter = exprNames.keySet().iterator();
-			while(iter.hasNext()) {
-				String exprName = iter.next();
-				String exprClass = exprNames.get(exprName);
-				ViewElement<FirebaseVariable> expr = ViewElement.create(exprName,prefix+"canvas.expressions." + exprClass);
-				elements.add(expr);
-				VBox boxybox = createSidebarView(expr);
-				paneConditions.getChildren().add(boxybox);
-			}
-			iter = elemNames.keySet().iterator();
-			while(iter.hasNext()) {
-				String elemName = iter.next();
-				String elemClass = elemNames.get(elemName);
-				ViewElement<FirebaseVariable> uielement = ViewElement.create(elemName,prefix+"canvas.uielements." + elemClass);
-				elements.add(uielement);
-				vboxUIElements.getChildren().add(uielement);
-			}
-			for (String qName[] : questionNames) {
-				ViewElement<FirebaseQuestion> question = ViewElement.create(qName[0],prefix+"survey.questions." + qName[3]);
+			loadType(trigNames,"canvas.triggers.",paneTriggers);
+			loadType(actNames,"canvas.actions.",paneActions);
+			loadType(exprNames,"canvas.expressions.",paneConditions);
+			loadType(elemNames,"canvas.uielements.",vboxUIElements);
+			for (String[] qName : questionNames) {
+				ViewElement<?> question = ViewElement.create(qName[0],prefix+"survey.questions." + qName[3]);
 				elements.add(question);
 				((QuestionView)question).setQuestionType(qName[0]);
 				((QuestionView)question).setImage(qName[1]);
 				paneQuestions.getChildren().add(question);
 			}
-			for (ViewElement element : elements) {
+			for (ViewElement<?> element : elements) {
 				if(element instanceof QuestionView)
 					element.setPadding(new Insets(0,0,10,0));
 				else	
 					element.setPadding(new Insets(0, 0, 20, 0));
-				ViewElement<FirebaseVariable> draggable = ViewElement.create(element.getName(),element.getClass().getName());
+				ViewElement<?> draggable = ViewElement.create(element.getName(),element.getClass().getName());
 				element.setDraggable(draggable); // DJRNEW
 				setElementParent(draggable);
 				element.setReadOnly();
@@ -622,15 +448,11 @@ public class Main extends Application {
 
 			}
 			loadVariables();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		
 
 		//Resize the tabs depending on what's focused
 		SingleSelectionModel<Tab> selectionModel = tabPane.getSelectionModel();
-		selectionModel.selectedItemProperty().addListener(new ChangeListener<Tab>() {
-			@Override
-			public void changed(ObservableValue<? extends Tab> arg0, Tab arg1, Tab arg2) {
+		selectionModel.selectedItemProperty().addListener((arg0,arg1,arg2)->{
 				Divider divider = splitPane.getDividers().get(0);
 				if (arg2 != null && arg2.equals(tabFramework))
 					divider.setPosition(0.25);
@@ -638,14 +460,13 @@ public class Main extends Application {
 					divider.setPosition(0.6);
 				else
 					divider.setPosition(0.75);
-			}
-		});
+			});
 
-		labelPaneMap = new HashMap<Label, VBox>();
+		labelPaneMap = new HashMap<>();
 		labelPaneMap.put(lblActions, paneActions);
 		labelPaneMap.put(lblConditions, paneConditions);
 		labelPaneMap.put(lblTriggers, paneTriggers);
-		lblTriggers.setUserData("selected");
+		lblTriggers.setUserData(SELECTED);
 		activeMenu = lblTriggers;
 
 
@@ -655,17 +476,17 @@ public class Main extends Application {
 	}
 
 	public void setCurrentProject(FirebaseProject project){
-		SHOULD_UPDATE_TRIGGERS = false;
-		
+		setUpdateTriggers(false);
+
 		openProject = project;
 		lblOpenProject.setText(project.getname());
-		FirebaseDB.setOpenProject(openProject);
-		primaryStage.setTitle("Jeeves");
+		FirebaseDB.getInstance().setOpenProject(openProject);
+		primaryStage.setTitle(TITLE);
 		resetPanes();
-		
 
-		for (ViewElement element : elements) {
-			ViewElement<FirebaseVariable> draggable = ViewElement.create(element.getName(),element.getClass().getName());
+
+		for (ViewElement<?> element : elements) {
+			ViewElement<?> draggable = ViewElement.create(element.getName(),element.getClass().getName());
 			element.setDraggable(draggable); // DJRNEW
 			setElementParent(draggable);
 			element.setReadOnly();
@@ -673,7 +494,7 @@ public class Main extends Application {
 			element.setHandler(viewElementHandler);
 		}
 		loadVariables();
-		SHOULD_UPDATE_TRIGGERS = true;
+		setUpdateTriggers(true);
 	}
 
 	/**Method called from SaveAsPane until I can be bothered with a better way of doing things**/
@@ -683,14 +504,14 @@ public class Main extends Application {
 	@FXML
 	private void removeHighlight(Event e) {
 		Label label = (Label) e.getSource();
-		if (label.getUserData() == null || !label.getUserData().equals("selected"))
+		if (label.getUserData() == null || !label.getUserData().equals(SELECTED))
 			label.setTextFill(Color.BLACK);
 	}
 
 	@FXML
 	public void addGlow(Event e){
 		ImageView image = (ImageView)e.getSource();
-		image.getStyleClass().add("drop_shadow");
+		image.getStyleClass().add(GLOW_CLASS);
 		VBox parent = (VBox)image.getParent();
 		Label txtDescr = (Label)parent.getChildren().get(1);
 		txtDescr.setVisible(true);
@@ -698,18 +519,18 @@ public class Main extends Application {
 	@FXML
 	public void removeGlow(Event e){
 		ImageView image = (ImageView)e.getSource();
-		image.getStyleClass().remove("drop_shadow");
+		image.getStyleClass().remove(GLOW_CLASS);
 		VBox parent = (VBox)image.getParent();
 		Label txtDescr = (Label)parent.getChildren().get(1);
 		txtDescr.setVisible(false);
 	}
-	
+
 	/** User press 'New' button **/
 	@FXML
 	public void newStudy(Event e) {
 		setCurrentProject(new FirebaseProject());
 	}
-	
+
 	/** User press 'Open' button **/
 	@FXML
 	public void openStudy(Event e){
@@ -721,70 +542,55 @@ public class Main extends Application {
 		stage.initOwner(splitPane.getScene().getWindow());
 		stage.showAndWait();
 	}
-	
+
 	@FXML
 	private void addHighlight(Event e) {
 		Label label = (Label) e.getSource();
 		label.setTextFill(Color.ORANGE);
 	}
-	
+
 	@FXML
 	public void saveStudy(Event e){
 		String toastMsg = "Project saved";
 		Point2D canvasPos = paneIntervention.localToScreen(new Point2D(0,0));
 		double canvasLength = paneIntervention.getWidth();
+		if (openProject.getname() == null) {
+			saveAsStudyMenu(e);
+		} else {
+			FirebaseDB.getInstance().saveProject(openProject.getname(), this.openProject);
+		}
 		Toast.makeText(primaryStage,canvasPos.getX(),canvasPos.getY(), canvasLength, toastMsg);
-		//Do some validation on the survye names here
-				ArrayList<String> currentnames = new ArrayList<String>();
-				for(FirebaseSurvey survey : currentsurveys){
-					if(survey.gettitle().equals("New survey")){
-						makeInfoAlert("Jeeves","No name given to survey","All surveys must have a title");
-
-						return;
-					}
-					else if(currentnames.contains(survey.gettitle())){
-						makeInfoAlert("Jeeves","Duplicate survey names","All surveys must have unique names");
-						return;
-					}
-					currentnames.add(survey.gettitle());
-				};
-				if (openProject.getname() == null) {
-					saveAsStudyMenu(e);
-					return;
-				} else {
-					FirebaseDB.getInstance().saveProject(openProject.getname(), this.openProject);
-				}
 
 	}
-	
+
 	@FXML
 	public void openSettings(Event e){
 		Stage stage = new Stage(StageStyle.UNDECORATED);
-		SettingsPane root = new SettingsPane(this,stage);
+		SettingsPane root = new SettingsPane(stage);
 		stage.setScene(new Scene(root));
 		stage.setTitle("Settings");
 		stage.initModality(Modality.APPLICATION_MODAL);
 		stage.initOwner(splitPane.getScene().getWindow());
 		stage.showAndWait();
 	}
-	
+
 	@FXML
 	public void publish(Event e){
 		if(openProject.getactive()){
-			makeInfoAlert("Jeeves", "Already published","Your study is already published!");
-			    return;
+			makeInfoAlert(TITLE, "Already published","Your study is already published!");
+			return;
 		}
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Confirm Publish");
 		alert.setHeaderText("Publish study " + openProject.getname() + "?");
 		alert.setContentText("This will allow other researchers to view the study spec, and allow you to assign patients to the study");
 		Optional<ButtonType> result = alert.showAndWait();
-		if (result.get() == ButtonType.OK){
-		    FirebaseDB.getInstance().publishStudy(openProject);
-		    makeInfoAlert("Study published","Successfully published!","Your study is now published! Configuration settings, including the study ID that you distribute to patients, are available in the Settings menu");
+		if (result.isPresent() && result.get() == ButtonType.OK){
+			FirebaseDB.getInstance().publishStudy(openProject);
+			makeInfoAlert("Study published","Successfully published!","Your study is now published! Configuration settings, including the study ID that you distribute to patients, are available in the Settings menu");
 		} 
 	}
-	
+
 	@FXML
 	public void exit(Event e){
 		System.exit(0);
@@ -803,18 +609,18 @@ public class Main extends Application {
 	Label lastActiveMenu;
 	Label activeMenu;
 	public void highlightMenu(ElementType type,boolean shouldHighlight){
-		
-		if(shouldHighlight==false){
+
+		if(!shouldHighlight){
 			showMenu(lastActiveMenu);
 		}
 		else
 			lastActiveMenu = activeMenu;
-		
+
 		switch(type){
 		case ACTION:
 			if(shouldHighlight){
-			showMenu(lblActions);
-			paneActions.getChildren().forEach(action->action.getStyleClass().add("light_drop_shadow"));
+				showMenu(lblActions);
+				paneActions.getChildren().forEach(action->action.getStyleClass().add("light_drop_shadow"));
 			}
 			else
 				paneActions.getChildren().forEach(action->action.getStyleClass().remove("light_drop_shadow"));
@@ -822,20 +628,20 @@ public class Main extends Application {
 			break;
 		case TRIGGER:
 			if(shouldHighlight){
-			showMenu(lblTriggers);
-			paneTriggers.getChildren().forEach(action->action.getStyleClass().add("drop_shadow"));
+				showMenu(lblTriggers);
+				paneTriggers.getChildren().forEach(action->action.getStyleClass().add(GLOW_CLASS));
 			}
 			else
-				paneTriggers.getChildren().forEach(action->action.getStyleClass().remove("drop_shadow"));
+				paneTriggers.getChildren().forEach(action->action.getStyleClass().remove(GLOW_CLASS));
 
 			break;
 		case EXPRESSION:
 			if(shouldHighlight){
-			showMenu(lblConditions);
-			paneConditions.getChildren().forEach(action->action.getStyleClass().add("drop_shadow"));
+				showMenu(lblConditions);
+				paneConditions.getChildren().forEach(action->action.getStyleClass().add(GLOW_CLASS));
 			}
 			else
-				paneConditions.getChildren().forEach(action->action.getStyleClass().remove("drop_shadow"));
+				paneConditions.getChildren().forEach(action->action.getStyleClass().remove(GLOW_CLASS));
 
 			break;
 		default:
@@ -847,7 +653,7 @@ public class Main extends Application {
 			lbl.setUserData("unselected");
 			lbl.setTextFill(Color.BLACK);
 		});
-		label.setUserData("selected");
+		label.setUserData(SELECTED);
 		label.setTextFill(Color.ORANGE);
 		labelPaneMap.entrySet().forEach(pane -> {
 			pane.getValue().setVisible(false);
@@ -866,9 +672,9 @@ public class Main extends Application {
 	}
 
 
-	
+
 	//Attributes stuff
-	
+
 	@FXML
 	public void addAttribute(Event e){
 		FirebaseVariable var = new FirebaseVariable();
@@ -882,12 +688,9 @@ public class Main extends Application {
 			return;
 		}
 		switch(attrType){
-		case "True/False":var.setVartype(VAR_BOOLEAN);break;
-		case "Number":var.setVartype(VAR_NUMERIC);break;
-		case "Category":var.setVartype(VAR_CATEGORY);break;
-		case "Date":var.setVartype(VAR_DATE); break;
-		case "Time":var.setVartype(VAR_CLOCK);break;
-		case "Location":var.setVartype(VAR_LOCATION);break;
+		case USER_BOOLEAN:var.setVartype(VAR_BOOLEAN);break;
+		case USER_NUMERIC:var.setVartype(VAR_NUMERIC);break;
+		default :var.setVartype(attrType);break;
 		}
 		var.setisCustom(true);
 		var.settimeCreated(System.currentTimeMillis());
@@ -922,71 +725,24 @@ public class Main extends Application {
 			}
 		}
 		else {
-		addVariable(var);
+			addVariable(var);
 		}
 		loadVariables();
-		
+
 	}
-	/*
-	class NameComparator implements Comparator<FirebaseVariable> {
-		int reverse =1;
-		public void doReverse(){reverse = -reverse;}
-	    @Override
-	    public int compare(FirebaseVariable a, FirebaseVariable b) {
-	    	return reverse * a.getname().compareToIgnoreCase(b.getname());
-	    }
-	}
-	class TypeComparator implements Comparator<FirebaseVariable> {
-		int reverse =1;
-		public void doReverse(){reverse = -reverse;}
-		@Override
-	    public int compare(FirebaseVariable a, FirebaseVariable b) {
-	        return reverse * a.getvartype().compareToIgnoreCase(b.getvartype());
-	    }
-	}
-	class AgeComparator implements Comparator<FirebaseVariable> {
-	    int reverse =1;
-		public void doReverse(){reverse = -reverse;}
-	    @Override
-	    public int compare(FirebaseVariable a, FirebaseVariable b) {
-	        return a.gettimeCreated() >= b.gettimeCreated() ? reverse : -reverse;
-	    }
-	}
-	*/
+
 	public void refreshAttributes(){
 		vboxSurveyVars.getChildren().clear();
-		currentvariables.forEach(variable->{
+		Constants.getOpenProject().getObservableVariables().forEach(variable->{
 			UserVariable global = new UserVariable(variable);
 
-		ViewElement<FirebaseExpression> draggable = new UserVariable(variable);
-		global.setDraggable(draggable); // DJRNEW
-		global.setReadOnly();
-		setElementParent(draggable);
-		global.setHandler(viewElementHandler);
-		vboxSurveyVars.getChildren().add(global);
+			ViewElement<FirebaseExpression> draggable = new UserVariable(variable);
+			global.setDraggable(draggable); // DJRNEW
+			global.setReadOnly();
+			setElementParent(draggable);
+			global.setHandler(viewElementHandler);
+			vboxSurveyVars.getChildren().add(global);
 		});
 	}
-	/*
-	@FXML
-	public void sortByName(Event e){
-		nameComparator.doReverse();
-		currentvariables.sort(nameComparator);
-		refreshAttributes();
-	
-	}
-	
-	@FXML
-	public void sortByTime(Event e){
-		ageComparator.doReverse();
-		currentvariables.sort(ageComparator);
-		refreshAttributes();
-	}
-	
-	@FXML
-	public void sortByType(Event e){
-		typeComparator.doReverse();
-		currentvariables.sort(typeComparator);
-		refreshAttributes();
-	}
-	*/
+
 }

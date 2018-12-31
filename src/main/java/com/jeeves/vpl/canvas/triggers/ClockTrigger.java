@@ -7,7 +7,6 @@ import static com.jeeves.vpl.Constants.LIMIT_BEFORE_HOUR;
 import static com.jeeves.vpl.Constants.VAR_CLOCK;
 import static com.jeeves.vpl.Constants.VAR_DATE;
 
-import java.net.URL;
 
 import com.jeeves.vpl.DragPane;
 import com.jeeves.vpl.ViewElement;
@@ -18,11 +17,6 @@ import com.jeeves.vpl.firebase.FirebaseExpression;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
 
 import javafx.collections.ListChangeListener;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -43,7 +37,7 @@ public abstract class ClockTrigger extends Trigger { // NO_UCD (use default)
 	@Override
 	public void addListeners() {
 		super.addListeners();
-		
+
 		timeReceiverFrom.getChildElements().addListener(
 				(ListChangeListener<ViewElement>) listener ->{
 					listener.next();
@@ -51,7 +45,7 @@ public abstract class ClockTrigger extends Trigger { // NO_UCD (use default)
 						model.getvariables().add(timeReceiverFrom.getChildModel().getname());
 					}
 					else{
-						ViewElement removed = listener.getRemoved().get(0);
+						ViewElement<?> removed = listener.getRemoved().get(0);
 						FirebaseExpression removedModel = (FirebaseExpression)removed.getModel();
 						model.getvariables().remove(removedModel.getname());
 					}
@@ -68,7 +62,7 @@ public abstract class ClockTrigger extends Trigger { // NO_UCD (use default)
 					}
 					else{
 						
-						ViewElement removed = listener.getRemoved().get(0);
+						ViewElement<?> removed = listener.getRemoved().get(0);
 						FirebaseExpression removedModel = (FirebaseExpression)removed.getModel();
 						model.getvariables().remove(removedModel.getname());
 					}
@@ -76,13 +70,13 @@ public abstract class ClockTrigger extends Trigger { // NO_UCD (use default)
 					params.put(LIMIT_AFTER_HOUR,0);
 				});
 		
-		timeReceiverFrom.getTextField().textProperty().addListener(listen -> {
-			params.put(LIMIT_BEFORE_HOUR, Long.parseLong(timeReceiverFrom.getText()));
-		});
+		timeReceiverFrom.getTextField().textProperty().addListener(listen -> 
+			params.put(LIMIT_BEFORE_HOUR, Long.parseLong(timeReceiverFrom.getText()))
+		);
 		
-		timeReceiverTo.getTextField().textProperty().addListener(listen -> {
-			params.put(LIMIT_AFTER_HOUR, Long.parseLong(timeReceiverTo.getText()));
-		});
+		timeReceiverTo.getTextField().textProperty().addListener(listen -> 
+			params.put(LIMIT_AFTER_HOUR, Long.parseLong(timeReceiverTo.getText()))
+		);
 		
 		dateReceiverFrom.getChildElements().addListener((ListChangeListener<ViewElement>) listener -> {
 			listener.next();
@@ -90,7 +84,7 @@ public abstract class ClockTrigger extends Trigger { // NO_UCD (use default)
 				model.getvariables().add(dateReceiverFrom.getChildModel().getname());
 			}
 			else{
-				ViewElement removed = listener.getRemoved().get(0);
+				ViewElement<?> removed = listener.getRemoved().get(0);
 				FirebaseExpression removedModel = (FirebaseExpression)removed.getModel();
 				model.getvariables().remove(removedModel.getname());
 			}
@@ -106,7 +100,7 @@ public abstract class ClockTrigger extends Trigger { // NO_UCD (use default)
 						model.getvariables().add(dateReceiverTo.getChildModel().getname());
 					}
 					else{
-						ViewElement removed = listener.getRemoved().get(0);
+						ViewElement<?> removed = listener.getRemoved().get(0);
 						FirebaseExpression removedModel = (FirebaseExpression)removed.getModel();
 						model.getvariables().remove(removedModel.getname());
 					}
@@ -114,13 +108,13 @@ public abstract class ClockTrigger extends Trigger { // NO_UCD (use default)
 					params.put(DATE_TO, System.currentTimeMillis());
 				});
 		
-		dateReceiverFrom.getTextField().textProperty().addListener(listen -> {
-			params.put(DATE_FROM, Long.parseLong(dateReceiverFrom.getText()));
-		});
+		dateReceiverFrom.getTextField().textProperty().addListener(listen -> 
+			params.put(DATE_FROM, Long.parseLong(dateReceiverFrom.getText()))
+		);
 		
-		dateReceiverTo.getTextField().textProperty().addListener(listen -> {
-			params.put(DATE_TO, Long.parseLong(dateReceiverTo.getText()));
-		});
+		dateReceiverTo.getTextField().textProperty().addListener(listen -> 
+			params.put(DATE_TO, Long.parseLong(dateReceiverTo.getText()))
+		);
 
 
 	}

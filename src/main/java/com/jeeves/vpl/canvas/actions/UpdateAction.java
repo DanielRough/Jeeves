@@ -31,7 +31,6 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 	@FXML
 	private HBox hbox;
 	private ViewElement value; 
-	private UserVariable variable;
 	private ExpressionReceiver variablereceiver;
 	ListChangeListener<ViewElement> mylistener;
 	private TimeReceiver timereceiver;
@@ -50,7 +49,7 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 	@Override
 	public void addListeners() {
 		super.addListeners();
-		cboChoice = new ComboBox<String>();
+		cboChoice = new ComboBox<>();
 		variablereceiver = new VariableReceiver(VAR_ANY);
 		hbox.getChildren().add(1, variablereceiver);
 		numericreceiver = new ExpressionReceiver(VAR_NONE);
@@ -60,14 +59,13 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 		hbox.getStyleClass().remove("action");
 		cboChoice.getItems().add("true");
 		cboChoice.getItems().add("false");
-		variablereceiver.getChildElements().addListener((ListChangeListener<ViewElement>) arg0 -> {
-			updateReceivers();
-		});
+		variablereceiver.getChildElements().addListener((ListChangeListener<ViewElement>) arg0 -> 
+			updateReceivers()
+		);
 
 		cboChoice.getSelectionModel().selectedItemProperty().addListener(listener->{
 			FirebaseExpression expr = new FirebaseExpression();
 			expr.setIsValue(true);
-			;
 			expr.setIndex(1);
 			expr.setVartype(VAR_BOOLEAN);
 			expr.setvalue(cboChoice.getSelectionModel().getSelectedItem());
@@ -81,7 +79,6 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 		numericreceiver.getTextField().textProperty().addListener(listener->{
 			FirebaseExpression expr = new FirebaseExpression();
 			expr.setIsValue(true);
-			;
 			expr.setIndex(1);
 			expr.setVartype(VAR_NUMERIC);
 			expr.setvalue(numericreceiver.getTextField().getText());
@@ -93,7 +90,6 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 		timereceiver.getTextField().textProperty().addListener(listener->{
 			FirebaseExpression expr = new FirebaseExpression();
 			expr.setIsValue(true);
-			;
 			expr.setIndex(1);
 			expr.setVartype(VAR_CLOCK);
 			expr.setvalue(timereceiver.getText());
@@ -106,7 +102,6 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 		datereceiver.getTextField().textProperty().addListener(listener->{
 			FirebaseExpression expr = new FirebaseExpression();
 			expr.setIsValue(true);
-			;
 			expr.setIndex(1);
 			expr.setVartype(VAR_DATE);
 			expr.setvalue(datereceiver.getText());
@@ -120,23 +115,16 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 			datereceiver.getChildElements().removeListener(mylistener);
 
 		}
-		mylistener = new ListChangeListener<ViewElement>() {
-
-			@Override
-			public void onChanged(javafx.collections.ListChangeListener.Change<? extends ViewElement> arg0) {
+		mylistener = (javafx.collections.ListChangeListener.Change<? extends ViewElement> arg0)-> {
 				arg0.next();
 				if (!arg0.getAddedSubList().isEmpty()) {
 					ViewElement child = getActiveReceiver().getChildElements().get(0);
 						value = (child);
-					if(vars.size() == 1)
 						vars.add(1, ((Expression)value).getModel());
-					else
-						vars.set(1, ((Expression)value).getModel());
 				} else {
 					value = (null);
 					vars.remove(1);
 				}
-			}
 
 		};
 		numericreceiver.getChildElements().addListener(mylistener);
@@ -147,22 +135,25 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 	public ExpressionReceiver getActiveReceiver(){
 		return activeReceiver;
 	}
-	public ExpressionReceiver activeReceiver;
+	private ExpressionReceiver activeReceiver;
 
 
 	
 	@Override
 	public void setParentPane(DragPane parent) {
 		super.setParentPane(parent);
-		if(variablereceiver.getChildExpression() != null)
-		variablereceiver.getChildExpression().setParentPane(parent);
-		if(numericreceiver.getChildExpression() != null)
+		if(variablereceiver.getChildExpression() != null) {
+			variablereceiver.getChildExpression().setParentPane(parent);
+		}
+		if(numericreceiver.getChildExpression() != null) {
 			numericreceiver.getChildExpression().setParentPane(parent);
-		if(timereceiver.getChildExpression() != null)
+		}
+		if(timereceiver.getChildExpression() != null) {
 			timereceiver.getChildExpression().setParentPane(parent);
-		if(datereceiver.getChildExpression() != null)
+		}
+		if(datereceiver.getChildExpression() != null) {
 			datereceiver.getChildExpression().setParentPane(parent);
-
+		}
 	}
 	
 	@Override
@@ -171,44 +162,43 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 
 		if (model.getvars().isEmpty())
 			return;
-		FirebaseExpression variable = (FirebaseExpression) model.getvars().get(0);
-		variablereceiver.addChild(UserVariable.create(variable), 0, 0); 
-		variablereceiver.setReceiveType(variable.getvartype());
+		FirebaseExpression newVariable = model.getvars().get(0);
+		variablereceiver.addChild(UserVariable.create(newVariable), 0, 0); 
+		variablereceiver.setReceiveType(newVariable.getvartype());
 
 		if(model.getvars().size()==1)
 			return;
-		FirebaseExpression value = (FirebaseExpression) model.getvars().get(1);
-		if(value.getisValue()) {
-			System.out.println("HUraay");
-			if(variable.getvartype().equals(VAR_NUMERIC)) {
-				System.out.println("WAHOO");
-				numericreceiver.getTextField().setText(value.getvalue());
+		FirebaseExpression newValue =  model.getvars().get(1);
+		if(newValue.getisValue()) {
+			if(newVariable.getvartype().equals(VAR_NUMERIC)) {
+				numericreceiver.getTextField().setText(newValue.getvalue());
 			}
-			else if(variable.getvartype().equals(VAR_BOOLEAN)) {
-				cboChoice.setValue(value.getvalue());
+			else if(newVariable.getvartype().equals(VAR_BOOLEAN)) {
+				cboChoice.setValue(newValue.getvalue());
 			}
-			else if(variable.getvartype().equals(VAR_DATE)) {
-				datereceiver.setText(value.getvalue());
+			else if(newVariable.getvartype().equals(VAR_DATE)) {
+				datereceiver.setText(newValue.getvalue());
 			}
-			else if(variable.getvartype().equals(VAR_CLOCK)) {
-				timereceiver.setText(value.getvalue());
+			else if(newVariable.getvartype().equals(VAR_CLOCK)) {
+				timereceiver.setText(newValue.getvalue());
 			}
 		}
 		else {
-			activeReceiver.addChild(UserVariable.create(value), 0, 0);
+			activeReceiver.addChild(UserVariable.create(newValue), 0, 0);
 		}
 
 
 	}
 
 	protected void updateReceivers() {
+		UserVariable variable;
 		Node[] potentialWidgets = { numericreceiver, timereceiver, datereceiver,cboChoice};
 		hbox.getChildren().removeAll(potentialWidgets);
 		if (!variablereceiver.getChildElements().isEmpty()) {
 			ViewElement child = variablereceiver.getChildElements().get(0);
 			variable = ((UserVariable) child);
 
-			if(vars.size() == 0) //We have added this manually
+			if(vars.isEmpty()) //We have added this manually
 				vars.add(0, variable.getModel());
 
 			if (variable.getVarType().equals(VAR_BOOLEAN)) {
@@ -229,7 +219,6 @@ public class UpdateAction extends Action { // NO_UCD (unused code)
 			numericreceiver.setReceiveType(variable.getVarType());
 
 		} else {
-			variable = (null);
 			numericreceiver.setReceiveType(VAR_NONE);
 			hbox.getChildren().remove(variablereceiver);
 			vars.clear();

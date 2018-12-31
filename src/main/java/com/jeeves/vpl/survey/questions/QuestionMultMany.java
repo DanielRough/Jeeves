@@ -4,10 +4,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.firebase.FirebaseQuestion;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -22,7 +21,8 @@ import javafx.scene.layout.VBox;
 import static com.jeeves.vpl.Constants.*;
 
 public class QuestionMultMany extends QuestionView {
-
+	private static final String OPTION = "option";
+	private static final String OPTIONS = "options";
 	@FXML
 	private Button btnAddOptM;
 
@@ -35,7 +35,7 @@ public class QuestionMultMany extends QuestionView {
 	@FXML
 	private ScrollPane paneOptionsM;
 
-	public QuestionMultMany(String label)  throws Exception {
+	public QuestionMultMany(String label) {
 		this(new FirebaseQuestion(label));
 	}
 
@@ -44,13 +44,8 @@ public class QuestionMultMany extends QuestionView {
 	}
 	@Override
 	public void addEventHandlers() {
-		// TODO Auto-generated method stub
-		btnAddOptM.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent e) {
-				handleAddOpt(paneChoiceOptsM, "");// Add a blank options
-			}
-		});
+		btnAddOptM.setOnAction(e -> 
+				handleAddOpt(paneChoiceOptsM, ""));
 	}
 	@Override
 	public String getImagePath() {
@@ -76,9 +71,7 @@ public class QuestionMultMany extends QuestionView {
 		choice.setText(s);
 		Button remove = new Button();
 		remove.setText("X");
-		remove.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent e) {
+		remove.setOnAction(e -> {
 				if(choices.getChildren().size() == 1){ //THIS IS OUR LAST OPTION DON'T REMOVE IT
 					e.consume();
 					Alert alert = new Alert(AlertType.INFORMATION);
@@ -97,46 +90,37 @@ public class QuestionMultMany extends QuestionView {
 					return;
 				}
 				choices.getChildren().remove(optionBox);
-				Map<String, Object> qOptions = new HashMap<String, Object>();
+				Map<String, Object> qOptions = new HashMap<>();
 				int optcount = 1;
 				for (Node opt : choices.getChildren()) {
 					HBox optbox = (HBox) opt;
 					TextField opttext = (TextField) optbox.getChildren().get(0);
-					qOptions.put("option" + Integer.toString(optcount++), opttext.getText());
-					model.getparams().put("options",qOptions);
+					qOptions.put(OPTION + Integer.toString(optcount++), opttext.getText());
+					model.getparams().put(OPTIONS,qOptions);
 				}
-			}
+			
 		});
 
 		optionBox.getChildren().addAll(choice, remove);
 		choices.getChildren().add(optionBox);
 		choice.textProperty().addListener(handler->{
-//			if(!getInstance().getChildQuestions().isEmpty()){
-//			//	handler.consume();
-//				Alert alert = new Alert(AlertType.INFORMATION);
-//				alert.setTitle("Duplicate survey names");
-//				alert.setHeaderText(null);
-//				alert.setContentText("All surveys must have unique names");
-//				alert.showAndWait();
-//				return;
-//			}
-			Map<String, Object> qOptions = new HashMap<String, Object>();
+			Map<String, Object> qOptions = new HashMap<>();
 			int optcount = 1;
 			for (Node opt : choices.getChildren()) {
 				HBox optbox = (HBox) opt;
 				TextField opttext = (TextField) optbox.getChildren().get(0);
-				qOptions.put("option" + Integer.toString(optcount++), opttext.getText());
-				model.getparams().put("options",qOptions);
+				qOptions.put(OPTION + Integer.toString(optcount++), opttext.getText());
+				model.getparams().put(OPTIONS,qOptions);
 			}
 		});
-		Map<String, Object> qOptions = new HashMap<String, Object>();
+		Map<String, Object> qOptions = new HashMap<>();
 		int optcount = 1;
 
 		for (Node opt : choices.getChildren()) {
 			HBox optbox = (HBox) opt;
 			TextField opttext = (TextField) optbox.getChildren().get(0);
-			qOptions.put("option" + Integer.toString(optcount++), opttext.getText());
-			model.getparams().put("options",qOptions);
+			qOptions.put(OPTION + Integer.toString(optcount++), opttext.getText());
+			model.getparams().put(OPTIONS,qOptions);
 		}
 	}
 
@@ -147,11 +131,10 @@ public class QuestionMultMany extends QuestionView {
 		surveyLoader.setController(this);
 		surveyLoader.setLocation(getClass().getResource("/OptionsMultiChoiceMany.fxml"));
 		try {
-			optionsPane = (Pane) surveyLoader.load();
+			optionsPane = surveyLoader.load();
 			addEventHandlers();
-//			handleAddOpt(paneChoiceOptsM,"A");
-//			handleAddOpt(paneChoiceOptsM,"B");
 		} catch (IOException e) {
+			System.exit(1);
 		}
 	}
 
@@ -168,5 +151,8 @@ public class QuestionMultMany extends QuestionView {
 			handleAddOpt(paneChoiceOptsM, opt.toString());
 		}
 	}
-
+	@Override
+	public String getAnswerType() {
+		return Constants.VAR_CATEGORY;
+	}
 }

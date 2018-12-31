@@ -16,7 +16,7 @@ import com.google.firebase.database.IgnoreExtraProperties;
 public class FirebaseUI extends FirebaseElement implements Serializable {
 	private String text;
 	@Exclude
-	private StringProperty textProperty = new SimpleStringProperty();
+	private transient StringProperty textProperty = new SimpleStringProperty();
 
 	@Exclude
 	public StringProperty getMyTextProperty() {
@@ -25,7 +25,7 @@ public class FirebaseUI extends FirebaseElement implements Serializable {
 
 	public FirebaseUI() {}
 	public FirebaseUI(String name) {
-		this.name.setValue(name);
+		this.setname(name);
 	}
 	public String gettext() {
 		return text;

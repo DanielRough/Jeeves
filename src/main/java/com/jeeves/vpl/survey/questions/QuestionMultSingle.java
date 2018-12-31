@@ -5,10 +5,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.firebase.FirebaseQuestion;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -23,7 +22,8 @@ import javafx.scene.layout.VBox;
 import static com.jeeves.vpl.Constants.*;
 
 public class QuestionMultSingle extends QuestionView {
-
+	private static final String OPTION = "option";
+	private static final String OPTIONS = "options";
 	@FXML
 	private Button btnAddOptS;
 	@FXML
@@ -33,7 +33,7 @@ public class QuestionMultSingle extends QuestionView {
 	@FXML
 	private ScrollPane paneOptionsS;
 
-	public QuestionMultSingle(String label)  throws Exception {
+	public QuestionMultSingle(String label) {
 		this(new FirebaseQuestion(label));
 	}
 
@@ -43,12 +43,9 @@ public class QuestionMultSingle extends QuestionView {
 
 	@Override
 	public void addEventHandlers() {
-		btnAddOptS.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent e) {
-				handleAddOpt(paneChoiceOptsS, "");// Add a blank option
-			}
-		});
+		btnAddOptS.setOnAction(e -> 
+				handleAddOpt(paneChoiceOptsS, "")
+			);
 	}
 	@Override
 	public String getImagePath() {
@@ -71,9 +68,7 @@ public class QuestionMultSingle extends QuestionView {
 		String[] opts = new String[0];
 
 		remove.setText("X");
-		remove.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent e) {
+		remove.setOnAction(e -> {
 				if(choices.getChildren().size() == 1){ //THIS IS OUR LAST OPTION DON'T REMOVE IT
 					e.consume();
 					Alert alert = new Alert(AlertType.INFORMATION);
@@ -92,45 +87,45 @@ public class QuestionMultSingle extends QuestionView {
 					return;
 				}
 				choices.getChildren().remove(optionBox);
-				Map<String, Object> qOptions = new HashMap<String, Object>();
+				Map<String, Object> qOptions = new HashMap<>();
 				int optcount = 1;
 				for (Node opt : choices.getChildren()) {
 					HBox optbox = (HBox) opt;
 					TextField opttext = (TextField) optbox.getChildren().get(0);
-					qOptions.put("option" + Integer.toString(optcount++), opttext.getText());
-					model.getparams().put("options",qOptions);
-					categoryOpts.put(getAssignedVar(), qOptions.values().toArray(opts));
+					qOptions.put(OPTION + Integer.toString(optcount++), opttext.getText());
+					model.getparams().put(OPTIONS,qOptions);
+					Constants.getCategoryOpts().put(getAssignedVar(), qOptions.values().toArray(opts));
 
 					
 				}
-			}
+			
 		});
 
 		optionBox.getChildren().addAll(choice, remove);
 		choices.getChildren().add(optionBox);
 		choice.textProperty().addListener(handler->{
 
-			Map<String, Object> qOptions = new HashMap<String, Object>();
+			Map<String, Object> qOptions = new HashMap<>();
 			int optcount = 1;
 			for (Node opt : choices.getChildren()) {
 				HBox optbox = (HBox) opt;
 				TextField opttext = (TextField) optbox.getChildren().get(0);
-				qOptions.put("option" + Integer.toString(optcount++), opttext.getText());
-				model.getparams().put("options",qOptions);
+				qOptions.put(OPTION + Integer.toString(optcount++), opttext.getText());
+				model.getparams().put(OPTIONS,qOptions);
 			}
 
-			categoryOpts.put(getAssignedVar(), qOptions.values().toArray(opts));
+			Constants.getCategoryOpts().put(getAssignedVar(), qOptions.values().toArray(opts));
 
 		});
 
-		Map<String, Object> qOptions = new HashMap<String, Object>();
+		Map<String, Object> qOptions = new HashMap<>();
 		int optcount = 1;
 
 		for (Node opt : choices.getChildren()) {
 			HBox optbox = (HBox) opt;
 			TextField opttext = (TextField) optbox.getChildren().get(0);
-			qOptions.put("option" + Integer.toString(optcount++), opttext.getText());
-			model.getparams().put("options",qOptions);
+			qOptions.put(OPTION + Integer.toString(optcount++), opttext.getText());
+			model.getparams().put(OPTIONS,qOptions);
 
 		}
 	}
@@ -142,10 +137,11 @@ public class QuestionMultSingle extends QuestionView {
 		surveyLoader.setController(this);
 		surveyLoader.setLocation(getClass().getResource("/OptionsMultiChoiceSingle.fxml"));
 		try {
-			optionsPane = (Pane) surveyLoader.load();
+			optionsPane = surveyLoader.load();
 			addEventHandlers();
 
 		} catch (IOException e) {
+			System.exit(1);
 		}
 	}
 
@@ -168,5 +164,8 @@ public class QuestionMultSingle extends QuestionView {
 
 	}
 
-
+	@Override
+	public String getAnswerType() {
+		return Constants.VAR_CATEGORY;
+	}
 }

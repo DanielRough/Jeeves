@@ -18,14 +18,14 @@ public class FirebaseExpression extends FirebaseElement implements Serializable 
 	private boolean isCustom;
 	private boolean isValue;
 	private String value;
-	private List<FirebaseExpression> variables = new ArrayList<FirebaseExpression>();
+	private List<FirebaseExpression> variables = new ArrayList<>();
 	private String vartype;
 	private long timeCreated;
 	
 	public FirebaseExpression() {}
 	
 	public FirebaseExpression(String name) {
-		this.name.setValue(name);
+		this.setname(name);
 	}
 	public void settimeCreated(long time){
 		this.timeCreated = time;

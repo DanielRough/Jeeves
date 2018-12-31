@@ -15,12 +15,12 @@ import com.google.firebase.database.IgnoreExtraProperties;
 @IgnoreExtraProperties
 public class FirebaseElement implements Serializable {
 
-	public StringProperty name = new SimpleStringProperty();
+	private StringProperty name = new SimpleStringProperty();
 	private String description;
 	private String type;
 	private long xPos;
 	private long yPos;
-	protected Map<String, Object> params = new HashMap<String, Object>();
+	protected Map<String, Object> params = new HashMap<>();
 
 	public String getdescription() {
 		return description;

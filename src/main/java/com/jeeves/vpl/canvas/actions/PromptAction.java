@@ -1,22 +1,16 @@
 package com.jeeves.vpl.canvas.actions;
 
 import java.util.Map;
-
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
-import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 
 import com.jeeves.vpl.firebase.FirebaseAction;
 
 public class PromptAction extends Action { // NO_UCD (unused code)
-	private String prompttext;
 	private TextArea smsText;
+	private static final String MSG_TEXT = "msgtext";
 	@FXML
 	private TextField txtPrompt;
 
@@ -33,10 +27,7 @@ public class PromptAction extends Action { // NO_UCD (unused code)
 		super.addListeners();
 		smsText = new TextArea();
 
-		txtPrompt.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent arg0) {
+		txtPrompt.setOnMouseClicked(arg0->{
 				smsText.setVisible(true);
 				gui.getMainPane().getChildren().add(smsText);
 				smsText.toFront();
@@ -46,32 +37,23 @@ public class PromptAction extends Action { // NO_UCD (unused code)
 				smsText.requestFocus();
 				smsText.setPrefWidth(Math.max(txtPrompt.getWidth(), smsText.getWidth()));
 
-			}
-
 		});
-		smsText.focusedProperty().addListener(new ChangeListener<Boolean>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+		smsText.focusedProperty().addListener((arg0,arg1,arg2)-> {
 
 				if (arg2.equals(false)) { 
 					gui.getMainPane().getChildren().remove(smsText);
 					smsText.setVisible(false);
 
 				}
-			}
 
 		});
-		smsText.textProperty().addListener(new ChangeListener<String>() {
-
-			@Override
-			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
+		smsText.textProperty().addListener((arg0,arg1,arg2)-> {
 
 				smsText.setPrefWidth(Math.max(smsText.getWidth(), txtPrompt.getWidth()));
 				smsText.setPrefColumnCount(arg2.length() + 1);
-				params.put("msgtext", smsText.getText());// }
+				params.put(MSG_TEXT, smsText.getText());
 				txtPrompt.setText(smsText.getText());
-			}
+			
 		});
 	}
 
@@ -80,12 +62,12 @@ public class PromptAction extends Action { // NO_UCD (unused code)
 	@Override
 	public void setData(FirebaseAction model) {
 		super.setData(model);
-		
+		String prompttext;
 		Map<String, Object> params = model.getparams();
-		if (!params.containsKey("msgtext"))
+		if (!params.containsKey(MSG_TEXT))
 			return;
 
-		prompttext = params.get("msgtext").toString();
+		prompttext = params.get(MSG_TEXT).toString();
 		txtPrompt.setText(prompttext);
 		smsText.setText(prompttext);
 

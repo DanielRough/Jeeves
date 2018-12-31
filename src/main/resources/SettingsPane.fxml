@@ -69,12 +69,6 @@
                      </font>
                   </Button>
                   <Separator prefWidth="200.0" />
-                  <Label prefHeight="65.0" prefWidth="242.0" text="If you need to end your study now, hit the 'End Study' button below. This will stop data collection from all assigned patients." textAlignment="CENTER" wrapText="true" />
-                  <Button fx:id="btnEndStudy" alignment="CENTER" mnemonicParsing="false" onAction="#endStudy" prefHeight="28.0" prefWidth="242.0" text="End Study" textAlignment="CENTER">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                  </Button>
                </children>
             </VBox>
          </children>

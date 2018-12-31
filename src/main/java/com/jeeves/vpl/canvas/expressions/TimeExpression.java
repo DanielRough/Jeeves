@@ -4,6 +4,7 @@ import static com.jeeves.vpl.Constants.VAR_CLOCK;
 
 import java.util.Map;
 
+import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.DragPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.receivers.TimeReceiver;
@@ -15,6 +16,8 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 
 public class TimeExpression extends Expression { // NO_UCD (unused code)
+	private static final String TIMEEARLY = "timeBoundEarly";
+	private static final String TIMELATE = "timeBoundLate";
 	private TimeReceiver exprDateFrom;
 	private TimeReceiver exprDateTo;
 
@@ -38,22 +41,19 @@ public class TimeExpression extends Expression { // NO_UCD (unused code)
 	@Override
 	public void addListeners() {
 		super.addListeners();
-//		model.getparams().put("timeBoundEarly", exprDateFrom.getText());
-//
-//		model.getparams().put("timeBoundLate", exprDateTo.getText());
 
-		exprDateFrom.getChildElements().addListener((ListChangeListener<ViewElement>) listener -> {
-			params.put("timeBoundEarly",exprDateFrom.getChildModel());
-		});
-		exprDateFrom.getTextField().textProperty().addListener(listen -> {
-			params.put("timeBoundEarly", exprDateFrom.getText());
-		});
-		exprDateTo.getChildElements().addListener((ListChangeListener<ViewElement>) listener -> {
-			params.put("timeBoundLate",exprDateTo.getChildModel());
-		});
-		exprDateTo.getTextField().textProperty().addListener(listen -> {
-			params.put("timeBoundLate", exprDateTo.getText());
-		});
+		exprDateFrom.getChildElements().addListener((ListChangeListener<ViewElement>) listener -> 
+			params.put(TIMEEARLY,exprDateFrom.getChildModel())
+		);
+		exprDateFrom.getTextField().textProperty().addListener(listen -> 
+			params.put(TIMEEARLY, exprDateFrom.getText())
+		);
+		exprDateTo.getChildElements().addListener((ListChangeListener<ViewElement>) listener -> 
+			params.put(TIMELATE,exprDateTo.getChildModel())
+		);
+		exprDateTo.getTextField().textProperty().addListener(listen -> 
+			params.put(TIMELATE, exprDateTo.getText())
+		);
 
 	}
 
@@ -71,51 +71,43 @@ public class TimeExpression extends Expression { // NO_UCD (unused code)
 		box.setPadding(new Insets(0, 14, 0, 14));
 	}
 
+	private void addVarListener(String date,TimeReceiver receiver) {
+		@SuppressWarnings("unchecked")
+		String name = ((Map<String,Object>)params.get(date)).get("name").toString();
+		//Wee snippet of code that we use elsewhere, I haven't got time to fuck about
+		Constants.getOpenProject().registerVarListener(listener->{
+			listener.next();
+			if(listener.wasAdded()){
+				for(FirebaseVariable var : listener.getAddedSubList()){
+					if(var.getname().equals(name)){
+						receiver.addChild(UserVariable.create(var), 0,0);
+						setParentPane(parentPane);
+					}
+				}
+			}
+		});
+	}
 	@Override
 	public void setData(FirebaseExpression model) {
 		super.setData(model);
 		Map<String, Object> params = model.getparams();
-		if (params.containsKey("timeBoundEarly")){
-			if (params.get("timeBoundEarly") instanceof String) {
-				exprDateFrom.setText(params.get("timeBoundEarly").toString()); //For plain dates, no variables
+		if (params.containsKey(TIMEEARLY)){
+			if (params.get(TIMEEARLY) instanceof String) {
+				exprDateFrom.setText(params.get(TIMEEARLY).toString()); //For plain dates, no variables
 			}//Otherwise at some point we dragged a date variable into here
 			else{ 
-				String name = ((Map<String,Object>)params.get("timeBoundEarly")).get("name").toString();
-				//Wee snippet of code that we use elsewhere, I haven't got time to fuck about
-				gui.registerVarListener(listener->{
-					listener.next();
-					if(listener.wasAdded()){
-						for(FirebaseVariable var : listener.getAddedSubList()){
-							if(var.getname().equals(name)){
-								exprDateFrom.addChild(UserVariable.create(var), 0,0);
-								setParentPane(parentPane);
-							}
-						}
-					}
-				});
+				addVarListener(TIMEEARLY,exprDateFrom);
 			}
-			//	exprTimeVar.addChild(UserVariable.create(model.getdateFrom()), 0, 0);
+
 		} 
-		if (params.containsKey("timeBoundLate")){
-			if (params.get("timeBoundLate") instanceof String) {
+		if (params.containsKey(TIMELATE)){
+			if (params.get(TIMELATE) instanceof String) {
 				exprDateTo.setText(params.get("dateTo").toString()); //For plain dates, no variables
 			}//Otherwise at some point we dragged a date variable into here
 			else{ 
-				String name = ((Map<String,Object>)params.get("timeBoundLate")).get("name").toString();
-				//Wee snippet of code that we use elsewhere, I haven't got time to fuck about
-				gui.registerVarListener(listener->{
-					listener.next();
-					if(listener.wasAdded()){
-						for(FirebaseVariable var : listener.getAddedSubList()){
-							if(var.getname().equals(name)){
-								exprDateTo.addChild(UserVariable.create(var), 0,0);
-								setParentPane(parentPane);
-							}
-						}
-					}
-				});
+				addVarListener(TIMELATE,exprDateTo);
+
 			}
-			//	exprTimeVar.addChild(UserVariable.create(model.getdateFrom()), 0, 0);
 		} 
 	}
 

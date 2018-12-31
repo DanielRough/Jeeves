@@ -6,13 +6,13 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.jeeves.vpl.firebase.FirebaseDB;
 import com.jeeves.vpl.firebase.FirebaseProject;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -27,6 +27,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class ProjectsPane extends Pane {
+	final Logger logger = LoggerFactory.getLogger(ProjectsPane.class);
 
 	@FXML private Button btnCancel;
 	@FXML private Button btnLoad;
@@ -35,11 +36,12 @@ public class ProjectsPane extends Pane {
 	private Main gui;
 	private ObservableList<FirebaseProject> projects;
 	private Stage stage;
+	
 	@FXML 
 	private void close(Event e){
 		stage.close();
 	}
-	
+
 	@FXML
 	private void loadProject(Event e){
 		gui.setCurrentProject(selectedProject);
@@ -56,43 +58,37 @@ public class ProjectsPane extends Pane {
 
 		fxmlLoader.setLocation(location);
 		try {
-			Node root = (Node) fxmlLoader.load();
+			Node root = fxmlLoader.load();
 			getChildren().add(root);
 			lstProjects.setItems(projects);
 			lstProjects.setCellFactory(projectsView -> new ProjectCell());
-		
+
 			//Wait for 5 seconds before declaring that no projects are available
 			new Thread(() -> {
-		        try {
-		            Thread.sleep(5000);
-		            if(projects.size() == 0)
-		            	Platform.runLater(new Runnable(){
-		    				public void run(){
-		    					lstProjects.setPlaceholder(new Label("No projects currently available."));
-		    				}
-		    			});		        }
-		        catch (Exception e){
-		            System.err.println(e);
-		        }
-		    }).start();
-			
-			lstProjects.setPlaceholder(new Label("Loading projects..."));
-			
-			
-			lstProjects.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<FirebaseProject>(){
-
-				@Override
-				public void changed(ObservableValue<? extends FirebaseProject> observable, FirebaseProject oldValue,
-						FirebaseProject newValue) {
-						btnLoad.setDisable(false);
-						selectedProject = newValue;
+				try {
+					Thread.sleep(5000);
+					if(projects.isEmpty()) {
+						Platform.runLater(()->
+						lstProjects.setPlaceholder(new Label("No projects currently available."))
+						);		        
+					}
 				}
-				
+				catch (Exception e){
+					logger.error(e.getMessage(),e.fillInStackTrace());
+				}
+			}).start();
+
+			lstProjects.setPlaceholder(new Label("Loading projects..."));
+
+
+			lstProjects.getSelectionModel().selectedItemProperty().addListener((o,v0,v1)->{
+				btnLoad.setDisable(false);
+				selectedProject = v1;
 			});
 
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(),e.fillInStackTrace());
 		}
 	}
 	private class ProjectCell extends ListCell<FirebaseProject>{
@@ -102,58 +98,58 @@ public class ProjectsPane extends Pane {
 		@FXML private Label lblPatients;
 		@FXML private HBox hbox;
 		FXMLLoader fxmlLoader;
-        int patientCount = 0;
+		int patientCount = 0;
 
 		@Override
-	    protected void updateItem(FirebaseProject project, boolean empty) {
-	        super.updateItem(project, empty);
+		protected void updateItem(FirebaseProject project, boolean empty) {
+			super.updateItem(project, empty);
 
-	        if(empty || project == null) {
+			if(empty || project == null) {
 
-	            setText(null);
-	            setGraphic(null);
+				setText(null);
+				setGraphic(null);
 
-	        } else {
-	            if (fxmlLoader == null) {
-	            	fxmlLoader = new FXMLLoader(getClass().getResource("/ProjectCell.fxml"));
-	            	fxmlLoader.setController(this);
+			} else {
+				if (fxmlLoader == null) {
+					fxmlLoader = new FXMLLoader(getClass().getResource("/ProjectCell.fxml"));
+					fxmlLoader.setController(this);
 
-	                try {
-	                	fxmlLoader.load();
-	                } catch (IOException e) {
-	                    e.printStackTrace();
-	                }
+					try {
+						fxmlLoader.load();
+					} catch (IOException e) {
+						logger.error(e.getMessage(),e.fillInStackTrace());
+					}
 
-	            }
+				}
 
-	            lblProjectName.setText(project.getname());
-	            DateFormat formatter = new SimpleDateFormat("dd/MM/yy HH:mm");
-	            Date date = new Date();
-	            date.setTime(project.getlastUpdated());
-	            String dateStr = formatter.format(date);
-	            lblLastUpdated.setText(dateStr);
-	            if(project.getactive()){
-	            	lblStatus.setText("Status: Running");
-	            	lblStatus.setStyle("-fx-text-fill: green");
-	            }
-	            else{
-	            	lblStatus.setText("Status: Unpublished");
-	            	lblStatus.setStyle("-fx-text-fill: red");
-	            }
-	            FirebaseDB.getInstance().getpatients().forEach(patient->{
-	            	String study = patient.getCurrentStudy();
-	            	
-	            	if(study != null && study.equals(project.getname()))
-	            		patientCount++;
-	            });
-	            lblPatients.setText("Patients: " + patientCount);
-	            patientCount = 0;
-	            }
+				lblProjectName.setText(project.getname());
+				DateFormat formatter = new SimpleDateFormat("dd/MM/yy HH:mm");
+				Date date = new Date();
+				date.setTime(project.getlastUpdated());
+				String dateStr = formatter.format(date);
+				lblLastUpdated.setText(dateStr);
+				if(project.getactive()){
+					lblStatus.setText("Status: Running");
+					lblStatus.setStyle("-fx-text-fill: green");
+				}
+				else{
+					lblStatus.setText("Status: Unpublished");
+					lblStatus.setStyle("-fx-text-fill: red");
+				}
+				FirebaseDB.getInstance().getpatients().forEach(patient->{
+					String study = patient.getCurrentStudy();
 
-	            setText(null);
-	            setGraphic(hbox);
-	        }
+					if(study != null && study.equals(project.getname()))
+						patientCount++;
+				});
+				lblPatients.setText("Patients: " + patientCount);
+				patientCount = 0;
+			}
 
-	    }
+			setText(null);
+			setGraphic(hbox);
+		}
+
 	}
+}
 

@@ -13,11 +13,8 @@ import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 import com.jeeves.vpl.firebase.FirebaseVariable;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableMap;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -33,6 +30,7 @@ import javafx.scene.layout.HBox;
  */
 
 public abstract class Expression extends ViewElement<FirebaseExpression>{
+	private static final String UPDATE = "update";
 	protected ObservableMap<String, Object> params;
 
 	public static Expression create(FirebaseExpression exprmodel) {
@@ -42,12 +40,9 @@ public abstract class Expression extends ViewElement<FirebaseExpression>{
 					.newInstance(exprmodel);
 		} catch (Exception e) {
 			return new UserVariable(exprmodel);
-			//e.printStackTrace();
 		}
-	//	return null;
 	}
-	private Label lbracket;
-	private Label rbracket;
+
 	protected HBox box;
 	protected Label operand; 
 														
@@ -72,42 +67,34 @@ public abstract class Expression extends ViewElement<FirebaseExpression>{
 		super.addListeners();
 		params = FXCollections.observableHashMap();
 		if (params != null) {
-			params.addListener(new MapChangeListener<String, Object>() {
-
-				@Override
-				public void onChanged(
-						javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) {
+			params.addListener((
+						javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) ->{
 
 					if (change.wasAdded()) {
-						System.out.println("CHAAANGE " + change);
 						model.getparams().put(change.getKey(), change.getValueAdded());
 					} else {
 						model.getparams().remove(change.getKey());
 					}
-				}
 
 			});
 		}
 		for (ExpressionReceiver receiver : receivers) {
-			receiver.getTextField().textProperty().addListener(new ChangeListener<String>(){
-				public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-					// TODO Auto-generated method stub
+			receiver.getTextField().textProperty().addListener((o, v0, v1)-> {
 					FirebaseVariable var = new FirebaseVariable();
-					var.setvalue(newValue);
+					var.setvalue(v1);
 					var.setIsValue(true);
 					UserVariable variable = UserVariable.create(var);
 					addExprToReceiver(variable,receivers.indexOf(receiver));
-					params.put("update","updated");
-					params.remove("update");	
-				}});			
+					params.put(UPDATE,"updated");
+					params.remove(UPDATE);	
+				});			
 			receiver.getChildElements().addListener((ListChangeListener<ViewElement>) arg0 -> {
-				// ViewElement expr = receiver.getChildElements().get(0);
 				if (!receiver.getChildElements().isEmpty())
 					addExprToReceiver(receiver.getChildElements().get(0), receivers.indexOf(receiver));
 				else
 					removeExprFromReceiver(receivers.indexOf(receiver));
-				params.put("update","updated");
-				params.remove("update");	
+				params.put(UPDATE,"updated");
+				params.remove(UPDATE);	
 				autosize();
 			});
 			
@@ -118,7 +105,7 @@ public abstract class Expression extends ViewElement<FirebaseExpression>{
 	public void fxmlInit() {
 		this.type = ElementType.EXPRESSION;
 		this.model = new FirebaseExpression();
-		receivers = new ArrayList<ExpressionReceiver>();
+		receivers = new ArrayList<>();
 		operand = new Label();
 		box = new HBox();
 		box.setSpacing(2);
@@ -149,14 +136,13 @@ public abstract class Expression extends ViewElement<FirebaseExpression>{
 			return;
 		for (FirebaseExpression var : variables) {
 			int index = (int) (var.getindex());
-			if (index > 1)
+			if (index > 1) {
 				continue; // Temporary fix hopefully
-			//if (var.getisValue() == false) {
+			}
 				Expression expr = Expression.create(var);
 				receivers.get(index).addChild(expr, 0, 0); // I cannot foresee
 															// this working tbh
 				expr.parentPane = this.parentPane;
-		//	}
 			
 
 		}
@@ -176,6 +162,8 @@ public abstract class Expression extends ViewElement<FirebaseExpression>{
 
 	public void updatePane() {
 		setup();
+		Label lbracket;
+		Label rbracket;
 		lbracket = new Label("(");
 		rbracket = new Label(")");
 		box.getChildren().removeAll(box.getChildren());
@@ -187,7 +175,7 @@ public abstract class Expression extends ViewElement<FirebaseExpression>{
 		box.setPadding(new Insets(0, 4, 0, 4));
 	}
 
-	private void addExprToReceiver(ViewElement childModel, int index) {
+	private void addExprToReceiver(ViewElement<?> childModel, int index) {
 		((FirebaseExpression) childModel.getModel()).setIndex(index); 
 		if (model.getvariables().size() > index)
 			model.getvariables().set(index, (FirebaseExpression) childModel.getModel());

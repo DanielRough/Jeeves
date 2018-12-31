@@ -3,8 +3,8 @@ package com.jeeves.vpl.firebase;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -17,26 +17,28 @@ import javafx.beans.property.StringProperty;
 @IgnoreExtraProperties
 public class FirebaseSurvey extends FirebaseElement implements Serializable {
 
-	public StringProperty title = new SimpleStringProperty();
-	//
-	// public StringProperty gettitleproperty() {
-	// return title;
-	// }
+	@Exclude
+	private transient StringProperty titleProperty = new SimpleStringProperty();
+
 	private List<String> answers;
 	private String encodedAnswers; //I wonder if this will work
 	private String encodedKey;
 	private boolean begun; // Has the user begun completing the survey?
 	private long expiryTime;
 	private String key;
-	private List<FirebaseQuestion> questions = new ArrayList<FirebaseQuestion>();
+	private List<FirebaseQuestion> questions = new ArrayList<>();
 	private long score;
 	private boolean fastTransition;
-
+	private String title;
 	private long timeAlive;
 	private long timeFinished;
 	private long timeSent;
 	private String surveyId;
 	
+	@Exclude
+	public StringProperty getTitleProperty() {
+		return titleProperty;
+	}
 	public boolean getfastTransition() {
 		return fastTransition;
 	}
@@ -60,9 +62,6 @@ public class FirebaseSurvey extends FirebaseElement implements Serializable {
 	}
 	public String getsurveyId(){
 		return surveyId;
-	}
-	public FirebaseSurvey() {
-
 	}
 
 	public List<String> getanswers() {
@@ -102,7 +101,7 @@ public class FirebaseSurvey extends FirebaseElement implements Serializable {
 	}
 
 	public String gettitle() {
-		return title.get();
+		return titleProperty.get();
 	}
 
 	public void setanswers(List<String> answers) {
@@ -130,7 +129,8 @@ public class FirebaseSurvey extends FirebaseElement implements Serializable {
 	}
 
 	public void settitle(String title) {
-		this.title.set(title);
+		this.titleProperty.set(title);
+		this.title = title;
 	}
 
 }

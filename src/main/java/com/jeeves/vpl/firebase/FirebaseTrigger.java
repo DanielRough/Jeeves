@@ -1,6 +1,7 @@
 package com.jeeves.vpl.firebase;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.firebase.database.IgnoreExtraProperties;
@@ -15,8 +16,8 @@ public class FirebaseTrigger extends FirebaseElement implements Serializable {
 	private long clocktype = 0;
 	private FirebaseExpression dateFrom;
 	private FirebaseExpression dateTo;
-	private List<FirebaseExpression> times;
-	private List<String> variables;
+	private List<FirebaseExpression> times = new ArrayList<>();
+	private List<String> variables = new ArrayList<>();
 	private FirebaseExpression timeFrom;
 	private FirebaseExpression timeTo;
 	private FirebaseExpression location;
@@ -24,7 +25,7 @@ public class FirebaseTrigger extends FirebaseElement implements Serializable {
 
 	public FirebaseTrigger() {}
 	public FirebaseTrigger(String name) {
-		this.name.setValue(name);
+		this.setname(name);
 	}
 	public List<String> getvariables(){
 		return variables;
