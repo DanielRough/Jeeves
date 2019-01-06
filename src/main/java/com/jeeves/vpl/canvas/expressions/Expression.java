@@ -65,7 +65,7 @@ public abstract class Expression extends ViewElement<FirebaseExpression>{
 	@Override
 	public void addListeners() {
 		super.addListeners();
-		params = FXCollections.observableHashMap();
+		params = FXCollections.observableMap(model.getparams());
 		if (params != null) {
 			params.addListener((
 						javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) ->{

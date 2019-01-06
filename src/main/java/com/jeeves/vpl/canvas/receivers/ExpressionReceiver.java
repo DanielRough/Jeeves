@@ -3,8 +3,6 @@ package com.jeeves.vpl.canvas.receivers;
 import static com.jeeves.vpl.Constants.VAR_ANY;
 import static com.jeeves.vpl.Constants.VAR_BOOLEAN;
 import static com.jeeves.vpl.Constants.VAR_LOCATION;
-import static com.jeeves.vpl.Constants.VAR_BLUETOOTH;
-import static com.jeeves.vpl.Constants.VAR_WIFI;
 import static com.jeeves.vpl.Constants.VAR_NONE;
 import static com.jeeves.vpl.Constants.VAR_NUMERIC;
 import static com.jeeves.vpl.Constants.numberHandler;
@@ -153,8 +151,6 @@ public class ExpressionReceiver extends Receiver {
 			captureRect.setFill(Color.DARKCYAN);
 			break;
 		case VAR_LOCATION:
-		case VAR_BLUETOOTH:
-		case VAR_WIFI:
 			captureRect.setArcWidth(20);
 			captureRect.setArcHeight(20);
 			captureRect.setFill(Color.THISTLE);

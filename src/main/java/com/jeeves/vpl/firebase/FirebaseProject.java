@@ -47,7 +47,8 @@ public class FirebaseProject implements Serializable {
 	/*
 	
 */
-	private ObservableMap<String,Map<String,FirebaseSurveyEntry>> surveydataobservable = FXCollections.observableHashMap();
+	@Exclude
+	public transient ObservableMap<String,Map<String,FirebaseSurveyEntry>> surveydataobservable = FXCollections.observableMap(surveydata);
 	@Exclude
 	public transient ObservableList<FirebaseSurvey> currentsurveys = FXCollections
 	.observableList(surveys);
@@ -57,8 +58,6 @@ public class FirebaseProject implements Serializable {
 	@Exclude
 	public transient ObservableList<FirebaseUI> currentelements = FXCollections
 	.observableList(uidesign);
-	@Exclude
-	public transient ObservableMap<String,Map<String,FirebaseSurveyEntry>> currentsurveydata = FXCollections.observableHashMap();
 	@Exclude
 	public void registerElementListener(ListChangeListener<FirebaseUI> listener) {
 		currentelements.addListener(listener);
@@ -85,7 +84,7 @@ public class FirebaseProject implements Serializable {
 	}
 	@Exclude
 	public ObservableMap<String,Map<String,FirebaseSurveyEntry>> getSurveyEntries(){
-		return currentsurveydata;
+		return surveydataobservable;
 	}
 	@Exclude
 	public ObservableList<FirebaseVariable> getObservableVariables() {
@@ -141,6 +140,8 @@ public class FirebaseProject implements Serializable {
 				.observableList(surveys);
 		currentelements = FXCollections
 				.observableList(uidesign);
+		surveydataobservable = FXCollections
+				.observableMap(surveydata);
 	}
 
 	public void add(ViewElement elem) {
@@ -182,9 +183,6 @@ public class FirebaseProject implements Serializable {
 		return surveydata;	
 	}
 	
-	public ObservableMap<String,Map<String,FirebaseSurveyEntry>> getObservableSurveyData(){
-		return surveydataobservable;
-	}
 	public void setsurveydata(Map<String,Map<String,FirebaseSurveyEntry>> surveydata){
 		this.surveydata = surveydata;
 		surveydataobservable.putAll(surveydata);

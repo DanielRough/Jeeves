@@ -4,6 +4,8 @@ import static com.jeeves.vpl.Constants.VAR_DATE;
 
 import java.util.Map;
 
+import org.apache.poi.util.SystemOutLogger;
+
 import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.DragPane;
 import com.jeeves.vpl.ViewElement;
@@ -27,7 +29,7 @@ public class DateExpression extends Expression { // NO_UCD (unused code)
 
 	public DateExpression(FirebaseExpression data) {
 		super(data);
-		addListeners();
+	//	addListeners();
 
 	}
 	@Override
@@ -54,6 +56,8 @@ public class DateExpression extends Expression { // NO_UCD (unused code)
 		exprDateTo.getTextField().textProperty().addListener(listen -> 
 			params.put(DATELATE, exprDateTo.getText())
 		);
+
+
 	}
 
 	@Override
@@ -71,12 +75,26 @@ public class DateExpression extends Expression { // NO_UCD (unused code)
 	}
 
 	private void addVarListener(String date,DateReceiver receiver) {
-		@SuppressWarnings("unchecked")
+		System.out.println("hkjhkjh NOS");
+		Map<String, Object> params = model.getparams();
+
+		//@SuppressWarnings("unchecked")
 		String name = ((Map<String,Object>)params.get(date)).get("name").toString();
+		System.out.println("FUCK NOS");
+
+		for(FirebaseVariable var : Constants.getOpenProject().getObservableVariables()){
+			System.out.println("AAH " + var.getname());
+
+			if(var.getname().equals(name)){
+				receiver.addChild(UserVariable.create(var), 0,0);
+				setParentPane(parentPane);
+			}
+		}
 		Constants.getOpenProject().registerVarListener(listener->{
 			listener.next();
 			if(listener.wasAdded()){
 				for(FirebaseVariable var : listener.getAddedSubList()){
+					System.out.println("OOH " + var.getname());
 					if(var.getname().equals(name)){
 						receiver.addChild(UserVariable.create(var), 0,0);
 						setParentPane(parentPane);
@@ -88,6 +106,7 @@ public class DateExpression extends Expression { // NO_UCD (unused code)
 	@Override
 	public void setData(FirebaseExpression model) {
 		super.setData(model);
+
 		Map<String, Object> params = model.getparams();
 		if (params.containsKey(DATEEARLY)){
 			if (params.get(DATEEARLY) instanceof String) {

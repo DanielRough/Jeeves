@@ -8,7 +8,7 @@ public class FirebasePrivate implements Serializable {
 
 	private Map<String, FirebasePatient> patients;
 	private Map<String, FirebaseProject> projects;
-	private Map<String, FirebaseVariable> systemvars;
+	private Map<String, String> tokens;
 
 	public Map<String, FirebasePatient> getpatients() {
 		return patients;
@@ -18,8 +18,8 @@ public class FirebasePrivate implements Serializable {
 		return projects;
 	}
 
-	public Map<String, FirebaseVariable> getsystemvars() {
-		return systemvars;
+	public Map<String, String> gettokens() {
+		return tokens;
 	}
 
 	public void setPatients(Map<String, FirebasePatient> patients) {
@@ -30,8 +30,8 @@ public class FirebasePrivate implements Serializable {
 		this.projects = projects;
 	}
 
-	public void setSystemvars(Map<String, FirebaseVariable> systemvars) {
-		this.systemvars = systemvars;
+	public void settokens(Map<String, String> tokens) {
+		this.tokens = tokens;
 	}
 
 }

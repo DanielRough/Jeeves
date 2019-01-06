@@ -42,7 +42,8 @@ public class CaptureDataAction extends Action{
 			}
 			if(arg1 != null)
 				FirebaseDB.getInstance().getOpenProject().getsensors().remove(arg1);
-			FirebaseDB.getInstance().getOpenProject().getsensors().add(arg2);
+			if(!FirebaseDB.getInstance().getOpenProject().getsensors().contains(arg2))
+				FirebaseDB.getInstance().getOpenProject().getsensors().add(arg2);
 		}
 				);
 		cboTime.valueProperty().addListener((arg0,arg1,arg2) ->

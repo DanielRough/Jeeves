@@ -7,6 +7,7 @@ import com.jeeves.vpl.Constants.Sensor;
 import com.jeeves.vpl.DragPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
+import com.jeeves.vpl.firebase.FirebaseDB;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
@@ -66,6 +67,10 @@ public class SensorTrigger extends Trigger { // NO_UCD (unused code)
 						break;
 					}
 				}
+				if(arg1 != null)
+					FirebaseDB.getInstance().getOpenProject().getsensors().remove(arg1);
+				if(!FirebaseDB.getInstance().getOpenProject().getsensors().contains(arg2))
+					FirebaseDB.getInstance().getOpenProject().getsensors().add(arg2);
 		});
 		variableReceiver = new ExpressionReceiver(VAR_LOCATION);
 

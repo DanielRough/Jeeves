@@ -70,9 +70,7 @@ public class Constants {
 	public static final String VAR_CLOCK = "Time";
 	public static final String VAR_DATE = "Date";
 	public static final String VAR_LOCATION = "Location";
-	public static final String VAR_WIFI = "WiFi";
 	public static final String VAR_CATEGORY = "Category";
-	public static final String VAR_BLUETOOTH = "Bluetooth";
 	public static final String VAR_NONE = "None";
 	public static final String VAR_NUMERIC = "Numeric";
 	public static final String VAR_RANDOM = "Random";

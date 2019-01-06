@@ -16,7 +16,9 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -50,6 +52,7 @@ import javafx.collections.ObservableList;
 public class FirebaseDB {
 	final Logger logger = LoggerFactory.getLogger(FirebaseDB.class);
 	private static final String TOKEN = "token";
+	private static final String TOKENS = "tokens";
 	private DatabaseReference dbRef;
 	private DatabaseReference privateRef;
 	private DatabaseReference publicRef;
@@ -59,10 +62,12 @@ public class FirebaseDB {
 	private String projectKey;
 	private ObservableList<FirebasePatient> newpatients = FXCollections.observableArrayList();
 	private ObservableList<FirebaseProject> newprojects = FXCollections.observableArrayList();
+	
 	private ObservableList<FirebaseProject> publicprojects = FXCollections.observableArrayList();
 	private static FirebaseDB instance;
 	private FirebaseProject openProject;
 	private String uid;
+	private Map<String,String> projectTokens = new HashMap<>();
 	
 
 	public static FirebaseDB getInstance(){
@@ -80,6 +85,8 @@ public class FirebaseDB {
 		if(privateRef == null || project.getname() == null)return;
 
 		DatabaseReference globalRef = privateRef.child(PROJECTS_COLL).child(project.getname());
+		projectKey =projectTokens.get(project.getname()+ TOKEN);
+		System.out.println("PROJECT KEY IS " + projectKey);
 		DatabaseReference surveyDataRef = globalRef.child("surveydata");
 
 		surveyDataRef.addValueEventListener(new ValueEventListener(){
@@ -176,6 +183,7 @@ public class FirebaseDB {
 	}
 
 	public String getProjectToken() {
+		System.out.println("it's can" + projectKey);
 		return projectKey;
 	}
 	public void addListeners() {
@@ -196,12 +204,13 @@ public class FirebaseDB {
 		    @Override
 		    public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
 		    	FirebasePatient changedPatient = dataSnapshot.getValue(FirebasePatient.class);
-		    	newpatients.remove(changedPatient);
 		    	newpatients.add(changedPatient);
 		    }
 
 		    @Override
 		    public void onChildRemoved(DataSnapshot dataSnapshot) {
+		    	FirebasePatient removed = dataSnapshot.getValue(FirebasePatient.class);
+		    	newpatients.remove(removed);
 				logger.debug(dataSnapshot.toString());
 		    }
 		    @Override
@@ -222,7 +231,6 @@ public class FirebaseDB {
 			@Override
 			public void onDataChange(DataSnapshot arg0) {
 				FirebasePrivate appdata = arg0.getValue(FirebasePrivate.class);
-
 				newprojects.clear();
 
 				if (appdata != null) {
@@ -230,8 +238,10 @@ public class FirebaseDB {
 					if (projects != null)
 						for (Map.Entry<String,FirebaseProject> entry : projects.entrySet()) {
 							newprojects.add(projects.get(entry.getKey()));
+							
 						}
 				}
+				projectTokens = appdata.gettokens();
 			}
 		});
 		publicRef.addValueEventListener(new ValueEventListener() {
@@ -298,8 +308,8 @@ public class FirebaseDB {
 		 
 		        privateKey = kp.getPrivate();
 		        object.setpubKey(Base64.encodeBase64String(publicKey.getEncoded()));
-
-		        privateRef.child(object.getname()+TOKEN).setValueAsync(Base64.encodeBase64String(privateKey.getEncoded()));
+		        privateRef.child(TOKENS).child(object.getname()+TOKEN).setValueAsync(Base64.encodeBase64String(privateKey.getEncoded()));
+//		        privateRef.child(object.getname()+TOKEN).setValueAsync(Base64.encodeBase64String(privateKey.getEncoded()));
 		  
 		        
 			} catch (NoSuchAlgorithmException e) {

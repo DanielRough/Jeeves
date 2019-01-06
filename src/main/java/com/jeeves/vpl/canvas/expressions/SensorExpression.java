@@ -56,7 +56,8 @@ public class SensorExpression extends Expression { // NO_UCD (unused code)
 				}
 				if(arg1 != null)
 					FirebaseDB.getInstance().getOpenProject().getsensors().remove(arg1);
-				FirebaseDB.getInstance().getOpenProject().getsensors().add(arg2);
+				if(!FirebaseDB.getInstance().getOpenProject().getsensors().contains(arg2))
+					FirebaseDB.getInstance().getOpenProject().getsensors().add(arg2);
 		});
 		locReceiver.getChildElements().addListener(
 				(ListChangeListener<ViewElement>) listener -> {listener.next(); if(listener.wasRemoved())return; 

@@ -23,11 +23,12 @@ public class TimeExpression extends Expression { // NO_UCD (unused code)
 
 	public TimeExpression(String name) {
 		this(new FirebaseExpression(name));
+		
 	}
 
 	public TimeExpression(FirebaseExpression data) {
 		super(data);
-		addListeners();
+	//	addListeners();
 
 	}
 	@Override
@@ -41,6 +42,8 @@ public class TimeExpression extends Expression { // NO_UCD (unused code)
 	@Override
 	public void addListeners() {
 		super.addListeners();
+		params.put(TIMEEARLY, exprDateFrom.getText());
+		params.put(TIMELATE, exprDateTo.getText());
 
 		exprDateFrom.getChildElements().addListener((ListChangeListener<ViewElement>) listener -> 
 			params.put(TIMEEARLY,exprDateFrom.getChildModel())
@@ -73,7 +76,15 @@ public class TimeExpression extends Expression { // NO_UCD (unused code)
 
 	private void addVarListener(String date,TimeReceiver receiver) {
 		@SuppressWarnings("unchecked")
+		Map<String, Object> params = model.getparams();
+
 		String name = ((Map<String,Object>)params.get(date)).get("name").toString();
+		for(FirebaseVariable var : Constants.getOpenProject().getObservableVariables()){
+			if(var.getname().equals(name)){
+				receiver.addChild(UserVariable.create(var), 0,0);
+				setParentPane(parentPane);
+			}
+		}
 		//Wee snippet of code that we use elsewhere, I haven't got time to fuck about
 		Constants.getOpenProject().registerVarListener(listener->{
 			listener.next();
@@ -90,6 +101,7 @@ public class TimeExpression extends Expression { // NO_UCD (unused code)
 	@Override
 	public void setData(FirebaseExpression model) {
 		super.setData(model);
+
 		Map<String, Object> params = model.getparams();
 		if (params.containsKey(TIMEEARLY)){
 			if (params.get(TIMEEARLY) instanceof String) {
@@ -102,7 +114,7 @@ public class TimeExpression extends Expression { // NO_UCD (unused code)
 		} 
 		if (params.containsKey(TIMELATE)){
 			if (params.get(TIMELATE) instanceof String) {
-				exprDateTo.setText(params.get("dateTo").toString()); //For plain dates, no variables
+				exprDateTo.setText(params.get(TIMELATE).toString()); //For plain dates, no variables
 			}//Otherwise at some point we dragged a date variable into here
 			else{ 
 				addVarListener(TIMELATE,exprDateTo);

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TimeZone;
+import java.util.TreeMap;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -183,7 +184,8 @@ public class PatientPane extends Pane {
 				public void updateItem(FirebasePatient item, boolean empty) {
 					super.updateItem(item, empty);
 					if(item != null) {
-						setText(item.getScreenName());
+						Platform.runLater(()->
+						setText(item.getScreenName()));
 					}
 				}
 			}
@@ -218,16 +220,21 @@ public class PatientPane extends Pane {
 	public List<FirebaseSurveyEntry> createSurveyList() {
 		ArrayList<FirebaseSurveyEntry> surveylist = new ArrayList<>();
 		Map<String,Map<String,FirebaseSurveyEntry>> surveydata = Constants.getOpenProject().getSurveyEntries();
-		ArrayList<String> allSurveyNames = new ArrayList<>(surveydata.keySet());
-
-		String surveyname = "";
-
-		if(rdioSelSurvey.isSelected())
-			surveyname = lstSurveys.getSelectionModel().getSelectedItem();
-		for(String name : allSurveyNames) {
+		ArrayList<String> allSurveyIds = new ArrayList<>(surveydata.keySet());
+		System.out.println("ALL NAMES: " + allSurveyIds.toString());
+		Map<String,FirebaseSurvey> surveyIdMap = new HashMap<>();
+		for(FirebaseSurvey survey :FirebaseDB.getInstance().getOpenProject().getsurveys()) {
+			surveyIdMap.put(survey.gettitle(), survey);
+		}
+		String surveyId = "";
+		if(rdioSelSurvey.isSelected()) {
+			String surveyname = lstSurveys.getSelectionModel().getSelectedItem();
+			surveyId = surveyIdMap.get(surveyname).getsurveyId();
+		}
+		for(String id : allSurveyIds) {
 			//If we've selected a specific survey, only want the results for that one
-			if(!surveyname.equals("") && !surveyname.equals(name))continue;
-			Map<String,FirebaseSurveyEntry> data = surveydata.get(name);
+			if(!surveyId.equals("") && !surveyId.equals(id))continue;
+			Map<String,FirebaseSurveyEntry> data = surveydata.get(id);
 
 			if (data == null || data.isEmpty()) {
 				return surveylist;
@@ -235,7 +242,7 @@ public class PatientPane extends Pane {
 			Iterator<FirebaseSurveyEntry> iter = data.values().iterator();
 			while(iter.hasNext()) {
 				FirebaseSurveyEntry newentry = iter.next();
-				newentry.setname(name);
+				newentry.setname(id);
 				surveylist.add(newentry);
 			}
 		}
@@ -569,17 +576,21 @@ public class PatientPane extends Pane {
 	Map<String,FirebaseSurvey> allComplete;
 
 	private void loadPatientTable(String name) {
+		System.out.println("Loading pateinet table");
 		Platform.runLater(()->{
 			allowedPatients.clear();
+			
 			FirebaseDB.getInstance().getpatients().forEach(patient -> {
-
+				System.out.println("FOUND A PATIENT");
 				if (patient.getCurrentStudy() != null && patient.getCurrentStudy().equals(name)) {
 					try {
+						System.out.println("CORRECT");
 						allowedPatients.add(patient);
 						privateKey = getPrivate(FirebaseDB.getInstance().getProjectToken());
 						String personalInfo = decryptText(patient.getuserinfo(),privateKey);
 						decryptInfo(patient,personalInfo);
 					} catch (Exception e) {
+						e.printStackTrace();
 						logger.error(e.getMessage(),e.fillInStackTrace());
 					}
 				}
@@ -594,7 +605,7 @@ public class PatientPane extends Pane {
 
 	private void updateSurvey(){
 		String surveyname = lstSurveys.getSelectionModel().getSelectedItem();
-		Map<String,Map<String,FirebaseSurveyEntry>> surveydata = FirebaseDB.getInstance().getOpenProject().getObservableSurveyData();
+		Map<String,Map<String,FirebaseSurveyEntry>> surveydata = FirebaseDB.getInstance().getOpenProject().getSurveyEntries();
 		Map<String,FirebaseSurveyEntry> data = surveydata.get(surveyname);
 		if(data == null){
 			lblSent.setText("0");
@@ -659,12 +670,19 @@ public class PatientPane extends Pane {
 			}
 			lstMessages.getItems().clear();
 
+			TreeMap<String,Object> orderedFeedback;
 			Map<String, Object> feedback = selectedPatient.getfeedback();
+			if(feedback != null) {
+				orderedFeedback = new TreeMap(feedback);
+			}
+			else {
+				orderedFeedback = new TreeMap();
+			}
 			Date date = new Date();
-			DateFormat df = new SimpleDateFormat("dd MMM kk:mm");
+			DateFormat df = new SimpleDateFormat("dd MMM HH:mm");
 			df.setTimeZone(TimeZone.getTimeZone("GMT"));
 
-			Iterator<Entry<String, Object>> feeds = feedback.entrySet().iterator();
+			Iterator<Entry<String, Object>> feeds = orderedFeedback.entrySet().iterator();
 			ObservableList<String> items = FXCollections.observableArrayList();
 			while (feeds.hasNext()) {
 				Entry<String, Object> feed = feeds.next();
@@ -685,6 +703,9 @@ public class PatientPane extends Pane {
 						if(item.contains("You: " )){
 							setStyle("-fx-background-color: lightgrey");
 						}
+						else {
+							setStyle("-fx-background-color: white");
+						}
 						setGraphic(null);
 
 					}
@@ -696,9 +717,10 @@ public class PatientPane extends Pane {
 
 			incompleteSurveys = selectedPatient.getincomplete();
 			completedSurveys = selectedPatient.getcomplete();
-			int incomplete  = incompleteSurveys.values().size();
+			int incomplete  = incompleteSurveys == null ? 0 : incompleteSurveys.values().size();
 			lblMissed.setText(Integer.toString(incomplete));
-			lblComplete.setText(Integer.toString(completedSurveys.size()));
+			int complete = completedSurveys == null ? 0 : completedSurveys.values().size();
+			lblComplete.setText(Integer.toString(complete));
 
 			txtName.setText(selectedPatient.getScreenName());
 			txtEmail.setText(selectedPatient.getEmail());
