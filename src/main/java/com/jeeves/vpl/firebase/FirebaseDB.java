@@ -120,6 +120,7 @@ public class FirebaseDB {
 			    @Override
 			    public void onSuccess(UserRecord result) {
 			    	currentUserId = result.getUid();
+			    	System.out.println("UID IS " + currentUserId);
 					FirebaseApp.getInstance().delete();
 					firebaseLogin();			    }
 
@@ -190,6 +191,7 @@ public class FirebaseDB {
 	
 		dbRef = FirebaseDatabase.getInstance().getReference();
 		privateRef =  dbRef.child(PRIVATE_COLL).child(currentUserId);
+		System.out.println("REF is " + privateRef.toString());
 		DatabaseReference patientsRef = privateRef.child("patients");
 		publicRef = dbRef.child(PUBLIC_COLL);
 		//We now have listeners for individual patients rather than just clearing and adding them all every time an
@@ -197,7 +199,10 @@ public class FirebaseDB {
 		patientsRef.addChildEventListener(new ChildEventListener() {
 		    @Override
 		    public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
+		    	System.out.println("ADDING PATIENT");
+		    	System.out.println(dataSnapshot.getKey());
 		        FirebasePatient newPost = dataSnapshot.getValue(FirebasePatient.class);
+		        System.out.println("Did it");
 		        newpatients.add(newPost);
 		    }
 
@@ -230,7 +235,9 @@ public class FirebaseDB {
 			}
 			@Override
 			public void onDataChange(DataSnapshot arg0) {
+				System.out.println("HEre we go");
 				FirebasePrivate appdata = arg0.getValue(FirebasePrivate.class);
+				System.out.println("oh it worked");
 				newprojects.clear();
 
 				if (appdata != null) {
@@ -241,6 +248,8 @@ public class FirebaseDB {
 							
 						}
 				}
+				System.out.println("I wonder...");
+				System.out.println(appdata);
 				projectTokens = appdata.gettokens();
 			}
 		});

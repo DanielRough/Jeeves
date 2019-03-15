@@ -8,6 +8,9 @@ import static com.jeeves.vpl.Constants.USER_BOOLEAN;
 import static com.jeeves.vpl.Constants.USER_NUMERIC;
 import static com.jeeves.vpl.Constants.VAR_BOOLEAN;
 import static com.jeeves.vpl.Constants.VAR_NUMERIC;
+import static com.jeeves.vpl.Constants.VAR_CATEGORY;
+import static com.jeeves.vpl.Constants.VAR_DATE;
+import static com.jeeves.vpl.Constants.VAR_CLOCK;
 import static com.jeeves.vpl.Constants.actNames;
 import static com.jeeves.vpl.Constants.elemNames;
 import static com.jeeves.vpl.Constants.exprNames;
@@ -114,6 +117,10 @@ public class Main extends Application {
 	@FXML private ImageView imgTrash;
 
 	@FXML private Button btnAddVar;
+	@FXML private Button btnDeleteVar;
+	@FXML private Button btnInspectVar;
+	@FXML private Label lblSelected;
+	private UserVariable selectedVar;
 	@FXML private TextField txtAttrName;
 	@FXML private ChoiceBox<String> cboAttrType;
 
@@ -310,6 +317,9 @@ public class Main extends Application {
 		openProject.getvariables().add(var);
 	}
 
+	/**
+	 * Physically add the attribute blocks to the menu
+	 */
 	public void loadVariables() {
 		vboxSurveyVars.getChildren().clear();
 
@@ -322,6 +332,17 @@ public class Main extends Application {
 					setElementParent(draggable);
 					global.setHandler(viewElementHandler);
 					vboxSurveyVars.getChildren().add(global);
+					global.addEventHandler(MouseEvent.MOUSE_ENTERED, (x)->{
+						btnDeleteVar.setDisable(false);
+						if(variable.getisRandom()) {
+							btnInspectVar.setDisable(false);
+						}
+						else {
+							btnInspectVar.setDisable(true);
+						}
+						lblSelected.setText("selected: " + global.getName());
+						selectedVar = global;
+					});
 			}
 		});
 
@@ -676,6 +697,53 @@ public class Main extends Application {
 	//Attributes stuff
 
 	@FXML
+	public void inspectAttribute(Event e) {
+		String attrType = selectedVar.getVarType();
+		Stage stage = new Stage(StageStyle.UNDECORATED);
+		stage.setTitle(selectedVar.getName() + " details");
+		stage.initModality(Modality.APPLICATION_MODAL);
+		stage.initOwner(splitPane.getScene().getWindow());
+		switch(attrType) {
+		case VAR_NUMERIC:
+			RandomNumberPane nRoot = new RandomNumberPane(stage,(FirebaseVariable)selectedVar.getModel(),false);
+			stage.setScene(new Scene(nRoot));
+			stage.showAndWait();
+			break;
+		case VAR_CATEGORY:
+			RandomCategoryPane cRoot = new RandomCategoryPane(stage,(FirebaseVariable)selectedVar.getModel(),false);
+			stage.setScene(new Scene(cRoot));
+			stage.showAndWait();
+			break;
+		case VAR_DATE: 
+			RandomDatePane dRoot = new RandomDatePane(stage,(FirebaseVariable)selectedVar.getModel(),false);
+			stage.setScene(new Scene(dRoot));
+			stage.showAndWait();
+			break;
+		case VAR_CLOCK: 
+			RandomTimePane tRoot = new RandomTimePane(stage,(FirebaseVariable)selectedVar.getModel(),false);
+			stage.setScene(new Scene(tRoot));
+			stage.showAndWait();
+			break;
+		default:break;
+		}
+	}
+	@FXML
+	public void deleteAttribute(Event e) {
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle("Jeeves");
+		alert.setHeaderText("Delete Attribute");
+		alert.setContentText("Do you really want to delete attribute " + selectedVar.getName() + "?");
+		Optional<ButtonType> result = alert.showAndWait();
+		if(result.get().equals(ButtonType.OK)) {
+			openProject.getvariables().remove(selectedVar.getModel());
+			selectedVar = null;
+			btnDeleteVar.setDisable(true);
+			btnInspectVar.setDisable(true);
+			lblSelected.setText("selected:  *none*");
+			loadVariables();
+		}
+	}
+	@FXML
 	public void addAttribute(Event e){
 		FirebaseVariable var = new FirebaseVariable();
 		String attrName = txtAttrName.getText();
@@ -702,22 +770,22 @@ public class Main extends Application {
 			stage.initOwner(splitPane.getScene().getWindow());
 			switch(attrType) {
 			case "Number":
-				RandomNumberPane nRoot = new RandomNumberPane(stage,var);
+				RandomNumberPane nRoot = new RandomNumberPane(stage,var,true);
 				stage.setScene(new Scene(nRoot));
 				stage.showAndWait();
 				break;
 			case "Category":
-				RandomCategoryPane cRoot = new RandomCategoryPane(stage,var);
+				RandomCategoryPane cRoot = new RandomCategoryPane(stage,var,true);
 				stage.setScene(new Scene(cRoot));
 				stage.showAndWait();
 				break;
 			case "Date": 
-				RandomDatePane dRoot = new RandomDatePane(stage,var);
+				RandomDatePane dRoot = new RandomDatePane(stage,var,true);
 				stage.setScene(new Scene(dRoot));
 				stage.showAndWait();
 				break;
 			case "Time": 
-				RandomTimePane tRoot = new RandomTimePane(stage,var);
+				RandomTimePane tRoot = new RandomTimePane(stage,var,true);
 				stage.setScene(new Scene(tRoot));
 				stage.showAndWait();
 				break;

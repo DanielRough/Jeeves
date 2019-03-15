@@ -6,6 +6,7 @@ import com.jeeves.vpl.DragPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.expressions.UserVariable;
 import com.jeeves.vpl.canvas.receivers.ExpressionReceiver;
+import com.jeeves.vpl.firebase.FirebaseDB;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
 
@@ -38,6 +39,7 @@ public class LocationTrigger extends Trigger {
 	@Override
 	public void addListeners() {
 		super.addListeners();
+		FirebaseDB.getInstance().getOpenProject().getsensors().add("Location");
 		variableReceiver = new ExpressionReceiver(VAR_LOCATION);
 		hboxBox.getChildren().add(variableReceiver);	
 

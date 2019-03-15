@@ -2,6 +2,7 @@ package com.jeeves.vpl;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,7 @@ public class RandomNumberPane extends Pane {
 
 	private Stage stage;
 	private FirebaseVariable var;
-	public RandomNumberPane(Stage stage,FirebaseVariable var) {
+	public RandomNumberPane(Stage stage,FirebaseVariable var, boolean isNew) {
 		this.stage = stage;
 		this.var = var;
 		FXMLLoader fxmlLoader = new FXMLLoader();
@@ -42,6 +43,16 @@ public class RandomNumberPane extends Pane {
 			txtMin.setOnKeyTyped(Constants.numberHandler);
 			txtMax.setOnKeyTyped(Constants.numberHandler);
 			txtStep.setOnKeyTyped(Constants.numberHandler);
+			if(!isNew) {
+				List<String> options = var.getrandomOptions();
+				txtMin.setText(options.get(0));
+				txtMax.setText(options.get(1));
+				txtStep.setText(options.get(2));
+				txtMin.setDisable(true);
+				txtMax.setDisable(true);
+				txtStep.setDisable(true);
+				btnAdd.setDisable(true);
+			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e.fillInStackTrace());
 		}

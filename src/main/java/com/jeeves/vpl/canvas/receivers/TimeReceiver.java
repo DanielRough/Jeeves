@@ -180,9 +180,24 @@ public class TimeReceiver extends ExpressionReceiver {
 		text.setPrefHeight(20);
 		text.getStyleClass().add("timevar");
 		captureRect.setOnMouseClicked(event -> {
-			text.requestFocus();
-			text.setEditable(false);
+			event.consume();
+			 final Stage myDialog = new Stage();
+
+				NewTimePane pane = new NewTimePane(myDialog,text);
+			        myDialog.initModality(Modality.APPLICATION_MODAL);
+			        Scene myDialogScene = new Scene(pane);
+			        myDialog.setScene(myDialogScene);
+					Point2D screenpoint = text.localToScreen(new Point2D(text.getLayoutX(), text.getLayoutY()));
+			        myDialog.setX(screenpoint.getX()+50);
+			        myDialog.setY(screenpoint.getY());
+			        myDialog.initStyle(StageStyle.TRANSPARENT);
+			        myDialog.setIconified(false);
+
+			        myDialog.show();
+			//text.requestFocus();
+			//text.setEditable(false);
 		});
+		/*
 		text.focusedProperty().addListener((arg0,arg1,arg2)-> {
 				if (!arg2) {
 					captureRect.toFront();
@@ -202,7 +217,7 @@ public class TimeReceiver extends ExpressionReceiver {
 
 				        myDialog.show();
 				}
-		});
+		});*/
 		text.textProperty().addListener((arg0, arg1,arg2) -> {
 				text.setPrefWidth(TextUtils.computeTextWidth(text.getFont(), text.getText(), 0.0D) + 20);
 				captureRect.setWidth(text.getPrefWidth());

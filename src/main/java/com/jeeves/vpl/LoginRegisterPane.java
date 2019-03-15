@@ -57,8 +57,8 @@ public class LoginRegisterPane extends Pane{
 		Node root = fxmlLoader.load();
 		getChildren().add(root);
 		//default values for now
-		txtUsername.setText("drrough@mail.com");
-		txtPassword.setText("command22");
+		txtUsername.setText("");
+		txtPassword.setText("");
 
 	}
 

@@ -4,6 +4,7 @@ import static com.jeeves.vpl.Constants.VAR_CLOCK;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +32,7 @@ public class RandomTimePane extends Pane{
 	private FirebaseVariable var;
 	private TimeReceiver timeEarliest;
 	private TimeReceiver timeLatest;
-	
-	public RandomTimePane(Stage stage, FirebaseVariable var) {
+	public RandomTimePane(Stage stage, FirebaseVariable var, boolean isNew) {
 		this.stage = stage;
 		this.var = var;
 		FXMLLoader fxmlLoader = new FXMLLoader();
@@ -47,6 +47,14 @@ public class RandomTimePane extends Pane{
 			timeLatest = new TimeReceiver(VAR_CLOCK);
 			hBoxEarliest.getChildren().add(timeEarliest);
 			hBoxLatest.getChildren().add(timeLatest);
+			if(!isNew) {
+				List<String> options = var.getrandomOptions();
+				timeEarliest.setText(options.get(0));
+				timeLatest.setText(options.get(1));
+				timeEarliest.setDisable(true);
+				timeLatest.setDisable(true);
+				btnAdd.setDisable(true);
+			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e.fillInStackTrace());
 		}

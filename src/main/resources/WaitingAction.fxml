@@ -21,7 +21,6 @@
                   <Insets left="10.0" />
                </padding>
             </Label>
-            <TextField fx:id="txtWaitTime" minHeight="20.0" prefHeight="20.0" prefWidth="20.0" styleClass="textfield" stylesheets="@Styles.css" />
             <ComboBox fx:id="cboWaitGranularity" prefHeight="11.0" stylesheets="@Styles.css">
                <styleClass>
                   <String fx:value="styled-select" />

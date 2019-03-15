@@ -1,6 +1,7 @@
 package com.jeeves.vpl;
 
 import java.net.URL;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +29,7 @@ public class RandomCategoryPane extends Pane{
 	@FXML private ListView<String> lstList;
 	private Stage stage;
 	private FirebaseVariable var;
-	
-	public RandomCategoryPane(Stage stage,FirebaseVariable var) {
+	public RandomCategoryPane(Stage stage,FirebaseVariable var, boolean isNew) {
 		this.stage = stage;
 		this.var = var;
 		FXMLLoader fxmlLoader = new FXMLLoader();
@@ -43,6 +43,13 @@ public class RandomCategoryPane extends Pane{
 			lstList.selectionModelProperty().addListener(changed->
 				btnDelete.setDisable(false)
 			);
+			if(!isNew) {
+				List<String> options = var.getrandomOptions();
+				lstList.getItems().addAll(options);
+				txtOption.setDisable(true);
+				btnAddOption.setDisable(true);
+				btnAdd.setDisable(true);
+			}
 			
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e.fillInStackTrace());

@@ -4,6 +4,7 @@ import static com.jeeves.vpl.Constants.VAR_DATE;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +31,7 @@ public class RandomDatePane extends Pane{
 	private FirebaseVariable var;
 	private DateReceiver dateEarliest;
 	private DateReceiver dateLatest;
-	public RandomDatePane(Stage stage, FirebaseVariable var) {
+	public RandomDatePane(Stage stage, FirebaseVariable var,boolean isNew) {
 		this.stage = stage;
 		this.var = var;
 		FXMLLoader fxmlLoader = new FXMLLoader();
@@ -45,6 +46,14 @@ public class RandomDatePane extends Pane{
 			dateLatest = new DateReceiver(VAR_DATE);
 			hBoxEarliest.getChildren().add(dateEarliest);
 			hBoxLatest.getChildren().add(dateLatest);
+			if(!isNew) {
+				List<String> options = var.getrandomOptions();
+				dateEarliest.setText(options.get(0));
+				dateLatest.setText(options.get(1));
+				dateEarliest.setDisable(true);
+				dateLatest.setDisable(true);
+				btnAdd.setDisable(true);
+			}
 
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e.fillInStackTrace());
