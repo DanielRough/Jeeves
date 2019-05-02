@@ -257,7 +257,6 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 
 	}
 
-	//I worry that this will overwrite the model stuff that's already in there.
 	protected void setData(T model) {
 
 		this.model = model;

@@ -155,8 +155,9 @@ public abstract class Control extends Action {
 			for (FirebaseAction action : onReceive) {
 				Action myaction = Action.create(action);
 				actions.add(myaction);
-
-				childReceiver.addChild(myaction, 0, 0);
+				//I think the Y coordinate has to be high so it gets tacked onto the end...
+				//Yup that worked. Wow.
+				childReceiver.addChild(myaction, 0, 10000);
 			}
 		}
 		FirebaseExpression condition = model.getcondition();

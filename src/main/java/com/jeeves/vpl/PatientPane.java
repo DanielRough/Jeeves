@@ -150,7 +150,10 @@ public class PatientPane extends Pane {
 			throws InvalidKeyException, UnsupportedEncodingException,
 			IllegalBlockSizeException, BadPaddingException {
 		this.cipher.init(Cipher.DECRYPT_MODE, key);
-
+		System.out.println("message: " + msg);
+		if(msg==null) {
+			return "";
+		}
 		return new String(cipher.doFinal(Base64.decodeBase64(msg)), "UTF-8");
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -229,7 +232,9 @@ public class PatientPane extends Pane {
 		String surveyId = "";
 		if(rdioSelSurvey.isSelected()) {
 			String surveyname = lstSurveys.getSelectionModel().getSelectedItem();
+			System.out.println("survye name is " + surveyname);
 			surveyId = surveyIdMap.get(surveyname).getsurveyId();
+			System.out.println("And so the id is " + surveyId);
 		}
 		for(String id : allSurveyIds) {
 			//If we've selected a specific survey, only want the results for that one
@@ -490,7 +495,7 @@ public class PatientPane extends Pane {
 	public void loadSurveys(){
 
 		List<FirebaseSurvey> surveydata = Constants.getOpenProject().getObservableSurveys();
-		surveydata.forEach(key->lstSurveys.getItems().add(key.gettitle()));
+		surveydata.forEach(key->{lstSurveys.getItems().add(key.gettitle());System.out.println("AND ITS ID IS " + key.getsurveyId());});
 		lstSurveys.getSelectionModel().selectedItemProperty().addListener(surveyListener);
 		FirebaseProject proj = FirebaseDB.getInstance().getOpenProject();
 		if (proj == null) {

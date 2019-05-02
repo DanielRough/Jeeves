@@ -1,6 +1,6 @@
 package com.jeeves.vpl.survey;
 
-import static com.jeeves.vpl.Constants.*;
+import static com.jeeves.vpl.Constants.getSaltString;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,6 +14,7 @@ import com.jeeves.vpl.survey.questions.QuestionView;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -138,6 +139,7 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 		});
 		view.getQuestionTextProperty().addListener((o,v0,v1) -> {
 				if(!v1.isEmpty()) {
+					System.out.println("YO YO YO HAPPENIN HERE?");
 					getModel().setsurveyId(getSaltString()); //question text changed, again survey ID needs to be updated
 				}
 		});
@@ -157,14 +159,33 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 		surveyLoader.setController(this);
 		surveyLoader.setLocation(getClass().getResource("/survey.fxml"));
 		Pane surveynode;
+		chkExpiryListener = (arg0,arg1,arg2)-> {
+			if (chkExpiry.isSelected()) {
+				txtExpiry.setDisable(false);
+			} else {
+				txtExpiry.setText("");
+				getModel().setexpiryTime(0);
+				txtExpiry.setDisable(true);
+			}
+			System.out.println("DID IT HAPPEN HERE");
+			getModel().setsurveyId(getSaltString()); //question text changed, again survey ID needs to be updated
 
+		
+	};
+	chkFastTranslationListener = (o,v0,v1)->{
+		getModel().setfastTransition(chkFastTranslation.isSelected());
+		System.out.println("OR PERHAPS HERE");
+		
+		getModel().setsurveyId(getSaltString()); //question text changed, again survey ID needs to be updated
+
+	};
 		surveyQuestions = FXCollections.observableArrayList();
 		title = new SimpleStringProperty();
 		editor = new QuestionEditor(surveyQuestions);
 
 		try {
 			surveynode = surveyLoader.load();
-
+			
 			this.getChildren().add(surveynode);
 			paneEditor.getChildren().add(editor);
 			addProperties();
@@ -210,16 +231,21 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 	public void setData(FirebaseSurvey model) {
 		super.setData(model);
 		this.model = model;
-		addProperties();
+		//addProperties();
 		txtSurveyName.setText(model.gettitle());
 		//THIS IS TO STOP THEM RENAMING SURVEYS ONCE THE THING IS PUBLISHED
 				if(FirebaseDB.getInstance().getOpenProject().getactive() && model.gettitle() != null)
 					txtSurveyName.setDisable(true);
+		
+		removeProperties();
 		if (model.getexpiryTime() > 0) {
 			chkExpiry.setSelected(true);
 			txtExpiry.setText(Long.toString(model.getexpiryTime()));
 		}
-
+		if(model.getfastTransition()) {
+			chkFastTranslation.setSelected(true);
+		}
+		addProperties(); //Straddle this to avoid it updating the salt string
 		
 		List<FirebaseQuestion> questions = model.getquestions();
 
@@ -257,25 +283,16 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 		title.set(name);
 	}
 
+	private void removeProperties() {
+		chkExpiry.selectedProperty().removeListener(chkExpiryListener);
+		chkFastTranslation.selectedProperty().removeListener(chkFastTranslationListener);
+	}
+	ChangeListener<Boolean> chkExpiryListener;
+	ChangeListener<Boolean> chkFastTranslationListener;
 	private void addProperties() {
-		chkExpiry.selectedProperty().addListener((arg0,arg1,arg2)-> {
-				if (chkExpiry.isSelected()) {
-					txtExpiry.setDisable(false);
-				} else {
-					txtExpiry.setText("");
-					getModel().setexpiryTime(0);
-					txtExpiry.setDisable(true);
-				}
-				getModel().setsurveyId(getSaltString()); //question text changed, again survey ID needs to be updated
 
-			
-		});
-
-		chkFastTranslation.selectedProperty().addListener((o,v0,v1)->{
-				getModel().setfastTransition(chkFastTranslation.isSelected());
-				getModel().setsurveyId(getSaltString()); //question text changed, again survey ID needs to be updated
-
-		});
+	chkExpiry.selectedProperty().addListener(chkExpiryListener);
+	chkFastTranslation.selectedProperty().addListener(chkFastTranslationListener);
 		
 		txtSurveyName.setOnKeyReleased(event -> {
 				setTitle(txtSurveyName.getText());

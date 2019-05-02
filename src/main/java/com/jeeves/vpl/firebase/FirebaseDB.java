@@ -107,6 +107,7 @@ public class FirebaseDB {
 						entrymap.put(entry.getKey(), surveyentry);
 					}
 					surveymap.put(surveyname, entrymap);
+					System.out.println("Added " + surveyname + " To the survey map");
 					
 				}
 				openProject.setsurveydata(surveymap);

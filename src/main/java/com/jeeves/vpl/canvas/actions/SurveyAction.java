@@ -53,11 +53,14 @@ public class SurveyAction extends Action { // NO_UCD (unused code)
 		});
 
 		selectionListener = (arg0,arg1,arg2)->{
-				if (arg2 != null) 
+				if (arg2 != null) {
 					params.put(SURVEY, arg2);
+				System.out.println("survey is " + arg2);	
+				}
 			};
 		cboSurveyName.valueProperty().addListener(selectionListener);
-		cboSurveyName.getSelectionModel().selectFirst();
+		//This line tries to set the survey name before the model is set properly
+		//cboSurveyName.getSelectionModel().selectFirst();
 	}
 
 	public void addTitleListener(FirebaseSurvey survey) {

@@ -93,6 +93,7 @@ public class LoginRegisterPane extends Pane{
 		}
 		//This should all be fine with validation above, but it's in a try-catch just in case...
 		try{
+			System.out.println("FUCK " + email);
 			request = new CreateRequest()
 					.setEmail(email)
 					.setEmailVerified(false)
@@ -104,20 +105,39 @@ public class LoginRegisterPane extends Pane{
 			makeInfoAlert(TITLE,"Registration failed", "Sorry, that didn't work. " + err.getMessage());
 			return;
 		}
+		//UserRecord userRecord = FirebaseAuth.getInstance().createUser(request);
+
 		ApiFuture<UserRecord> userRecord = FirebaseAuth.getInstance().createUserAsync(request);
 		ApiFutures.addCallback(userRecord, new ApiFutureCallback<UserRecord>() {
+			
 			@Override
 			public void onSuccess(UserRecord result) {
-				makeInfoAlert(TITLE,"Success","Successfully registered! You can now log into Jeeves");
+				System.out.println("YOU WORK");
+				Platform.runLater(new Runnable() {
+					
+					public void run() {
+						makeInfoAlert(TITLE,"Success","Successfully registered! You can now log into Jeeves");
+						FirebaseDB.getInstance().putUserCredentials(email, password);
+					}
+				});
 			}
 
 			@Override
 			public void onFailure(Throwable t) {
-				makeInfoAlert(TITLE,"Registration failed", "Sorry, that didn't work. "
-						+ "A user with this email address already exists!");
-			}
+						//t.printStackTrace();
+					//	System.out.println("YOU NO WORK");
+					Platform.runLater(new Runnable() {
+						
+						public void run() {
+							makeInfoAlert(TITLE,"Registration failed", "Sorry, that didn't work. "
+									+ "A user with this email address already exists!");
+						}
+					});	
+
+					}
+
 		});
-		FirebaseAuth.getInstance().createUserAsync(request);
+		//FirebaseAuth.getInstance().createUserAsync(request);
 
 	}
 
@@ -129,7 +149,14 @@ public class LoginRegisterPane extends Pane{
 	}
 	public void authenticate(String email, String password) throws InterruptedException, ExecutionException {
 		UserRecord userRecord;
-		userRecord = FirebaseAuth.getInstance().getUserByEmailAsync(email).get();
+		try {
+			userRecord = FirebaseAuth.getInstance().getUserByEmailAsync(email).get();
+		}
+		catch(Exception e) {
+				lblError.setText("Error logging in. Check your password and Internet connection");			
+			
+			return;
+		}
 		String uid = userRecord.getUid();
 		DatabaseReference	dbRef = FirebaseDatabase.getInstance().getReference();
 		DatabaseReference privateRef =  dbRef.child(PRIVATE_COLL).child(uid);
