@@ -265,7 +265,7 @@ public class PatientPane extends Pane {
 		c.setCellValue("Completed");
 		c = r.createCell(1);
 		c.setCellStyle(style);
-		c.setCellValue("Patient ID");
+		c.setCellValue("Participant ID");
 		ObservableList<FirebaseSurvey> surveystuff = Constants.getOpenProject().getObservableSurveys();
 		//When we download data for all surveys, want to get question text up there
 		for(FirebaseSurvey survey : surveystuff) {
@@ -378,7 +378,7 @@ public class PatientPane extends Pane {
 			fileChooser.setInitialFileName(selectedPatient.getName()+ ".xls");
 			fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel spreadsheet(*.xls)", "*.xls"));
 
-			fileChooser.setTitle("Save Patient Data");
+			fileChooser.setTitle("Save Participant Data");
 
 			File file = fileChooser.showSaveDialog(getScene().getWindow());
 
@@ -504,6 +504,7 @@ public class PatientPane extends Pane {
 		lstSurveys.getSelectionModel().clearAndSelect(0);
 
 	}
+	int lastRemovedIndex = 0;
 	public void loadPatients() {
 		FirebaseProject proj = FirebaseDB.getInstance().getOpenProject();
 		if (proj == null)
@@ -513,12 +514,15 @@ public class PatientPane extends Pane {
 			FirebasePatient selected = lstPatients.getSelectionModel().getSelectedItem();
 			c.next();
 			if(c.wasAdded()){
-
+				
 				addToTable(c.getAddedSubList()); 
 				lstPatients.getSelectionModel().select(selected);
 				updatePatient();
 			}
 			else if (c.wasRemoved()){
+				//For some unknown reason it fires twice, and the first time is -1
+				lastRemovedIndex = Math.max(0,lstPatients.getItems().indexOf(c.getRemoved().get(0)));
+				System.out.println("Last removed index was " + lastRemovedIndex);
 				removeFromTable(c.getRemoved());
 				lstPatients.getSelectionModel().select(selected);
 				updatePatient();
@@ -548,7 +552,7 @@ public class PatientPane extends Pane {
 
 					String personalInfo = decryptText(patient.getuserinfo(),privateKey);
 					decryptInfo(patient,personalInfo);
-					lstPatients.getItems().add(patient);
+					lstPatients.getItems().add(lastRemovedIndex,patient);
 				} catch (Exception e) {
 					logger.error(e.getMessage(),e.fillInStackTrace());
 				}

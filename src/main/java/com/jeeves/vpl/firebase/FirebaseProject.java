@@ -11,6 +11,7 @@ import com.google.firebase.database.IgnoreExtraProperties;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.expressions.Expression;
 import com.jeeves.vpl.canvas.expressions.UserVariable;
+import com.jeeves.vpl.canvas.triggers.LocationTrigger;
 import com.jeeves.vpl.canvas.triggers.Trigger;
 import com.jeeves.vpl.canvas.uielements.UIElement;
 import com.jeeves.vpl.survey.Survey;
@@ -148,6 +149,9 @@ public class FirebaseProject implements Serializable {
 		FirebaseElement model = elem.getModel();
 		if (elem instanceof Trigger) {
 			gettriggers().add((FirebaseTrigger) model);
+			if(elem instanceof LocationTrigger) {
+				sensors.add("Location");
+			}
 		}
 		else if (elem instanceof Expression) {
 			getexpressions().add((FirebaseExpression) model);
@@ -207,8 +211,12 @@ public class FirebaseProject implements Serializable {
 
 	public void remove(ViewElement elem) {
 		FirebaseElement model = elem.getModel();
-		if (elem instanceof Trigger)
+		if (elem instanceof Trigger) {
 			gettriggers().remove(model);
+			if(elem instanceof LocationTrigger) {
+				sensors.remove("Location");	
+			}
+		}
 		else if (elem instanceof Expression)
 			getexpressions().remove(model);
 		else if (elem instanceof UIElement)

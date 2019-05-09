@@ -102,7 +102,6 @@ public class Main extends Application {
 	private PatientPane patientController;
 	private Stage primaryStage;
 
-	@FXML private VBox vboxSurveyVars;
 
 	@FXML private Label lblActions;
 	@FXML private Label lblConditions;
@@ -110,25 +109,19 @@ public class Main extends Application {
 	@FXML private VBox paneActions;
 	@FXML private VBox paneConditions;
 	@FXML private VBox paneTriggers;
-	@FXML private VBox vboxUIElements;
 
-	@FXML private Pane paneAndroid;
 	@FXML private Pane panePatients;
 	@FXML private ImageView imgTrash;
 
-	@FXML private Button btnAddVar;
-	@FXML private Button btnDeleteVar;
-	@FXML private Button btnInspectVar;
-	@FXML private Label lblSelected;
-	private UserVariable selectedVar;
-	@FXML private TextField txtAttrName;
-	@FXML private ChoiceBox<String> cboAttrType;
+
+
 
 
 	@FXML private Pane paneFrame;
 	@FXML private Pane paneIntervention;
 	@FXML private VBox paneQuestions;
 	@FXML private SplitPane splitPane;
+	@FXML private SplitPane paneSplit; //Cryptic
 	@FXML private HBox surveyBox;
 	@FXML private Tab tabFramework;
 	@FXML private Tab tabPatients;
@@ -137,8 +130,8 @@ public class Main extends Application {
 	@FXML private Label lblConnection;
 	@FXML private Label lblOpenProject;
 	private EventHandler<MouseEvent> viewElementHandler;
-
-	@FXML private CheckBox chkRandom;
+	private AndroidPane paneAndroid;
+	private AttributesPane paneAttributes;
 	ArrayList<ViewElement<?>> elements;
 
 	public static Main getContext() {
@@ -165,6 +158,11 @@ public class Main extends Application {
 		dragPane = new DragPane(myPane.getWidth(), myPane.getHeight());
 		myPane.getChildren().add(dragPane);
 
+		paneAndroid = new AndroidPane();
+		paneSplit.getItems().add(0,paneAndroid);
+		paneAttributes = new AttributesPane();
+		paneSplit.getItems().add(1,paneAttributes);
+		
 		primaryStage.setTitle(TITLE);
 		primaryStage.setResizable(false);
 		primaryStage.setOnCloseRequest(event -> System.exit(0));
@@ -216,7 +214,6 @@ public class Main extends Application {
 
 	private void resetPanes() {
 		SurveyPane surveyController;
-		ElementReceiver receiver; 
 		panePatients.getChildren().clear();
 		patientController = new PatientPane();
 		panePatients.getChildren().add(patientController);
@@ -227,10 +224,8 @@ public class Main extends Application {
 		canvas = new ViewCanvas();
 		paneIntervention.getChildren().add(canvas);
 
-		paneAndroid.getChildren().clear();
-		receiver = new ElementReceiver(215, 307);
-		paneAndroid.getChildren().add(receiver);
-
+		paneAndroid.reset();
+		paneAttributes.reset(canvas);
 		if (surveyBox.getChildren().size() > 1)
 			surveyBox.getChildren().remove(1);
 		surveyController = new SurveyPane();
@@ -247,24 +242,13 @@ public class Main extends Application {
 			Expression exprview = Expression.create(expr);
 			views.add(exprview);
 		}
+		/*
 		for (FirebaseVariable var : openProject.getvariables()) {
 			if(var == null)continue;
 			UserVariable varview = new UserVariable(var);
 			views.add(varview);
-		}
-		int index = 0;
-		for (FirebaseUI var : openProject.getuidesign()) {
+		}*/
 
-			UIElement element = UIElement.create(var);
-			var.getMyTextProperty().addListener(change -> {
-				receiver.getChildElements().remove(element);
-				receiver.getChildElements().add(element);
-			});
-			element.setPreviouslyAdded(true);  
-			receiver.addChildAtIndex(element, index++);
-			setElementParent(element);
-			element.addEventHandler(MouseEvent.ANY, element.mainHandler);
-		}
 		for (FirebaseSurvey survey : openProject.getsurveys()) {
 			Survey surveyview = new Survey(survey);
 			surveyController.addSurvey(surveyview);
@@ -280,7 +264,6 @@ public class Main extends Application {
 			view.addEventHandler(MouseEvent.ANY, view.mainHandler);
 		});
 		canvas.addEventHandlers();
-		receiver.addChildListeners();
 		patientController.loadPatients(); // Reset so we have the patients for THIS project
 		patientController.loadSurveys();
 		tabPane.getSelectionModel().select(tabFramework);
@@ -313,42 +296,11 @@ public class Main extends Application {
 		panePatients.getChildren().add(patientController);	
 	}
 
-	public void addVariable(FirebaseVariable var) {
-		openProject.getvariables().add(var);
-	}
+
 
 	/**
 	 * Physically add the attribute blocks to the menu
 	 */
-	public void loadVariables() {
-		vboxSurveyVars.getChildren().clear();
-
-		openProject.getvariables().forEach(variable -> {
-			if(variable != null) {
-				UserVariable global = new UserVariable(variable);
-					ViewElement<FirebaseExpression> draggable = new UserVariable(variable);
-					global.setDraggable(draggable); // DJRNEW
-					global.setReadOnly();
-					setElementParent(draggable);
-					global.setHandler(viewElementHandler);
-					vboxSurveyVars.getChildren().add(global);
-					global.addEventHandler(MouseEvent.MOUSE_ENTERED, (x)->{
-						btnDeleteVar.setDisable(false);
-						if(variable.getisRandom()) {
-							btnInspectVar.setDisable(false);
-						}
-						else {
-							btnInspectVar.setDisable(true);
-						}
-						lblSelected.setText("selected: " + global.getName());
-						selectedVar = global;
-					});
-			}
-		});
-
-		cboAttrType.getItems().clear();
-		cboAttrType.getItems().addAll("True/False","Number","Category","Date","Time","Location");
-	}
 
 
 
@@ -447,7 +399,7 @@ public class Main extends Application {
 			loadType(trigNames,"canvas.triggers.",paneTriggers);
 			loadType(actNames,"canvas.actions.",paneActions);
 			loadType(exprNames,"canvas.expressions.",paneConditions);
-			loadType(elemNames,"canvas.uielements.",vboxUIElements);
+			loadType(elemNames,"canvas.uielements.",paneAndroid.getContainer());
 			for (String[] qName : questionNames) {
 				ViewElement<?> question = ViewElement.create(qName[0],prefix+"survey.questions." + qName[3]);
 				elements.add(question);
@@ -468,7 +420,8 @@ public class Main extends Application {
 				element.setHandler(viewElementHandler);
 
 			}
-			loadVariables();
+			paneAttributes.setEventHandler(viewElementHandler);
+		//	paneAttributes.loadVariables();
 		
 
 		//Resize the tabs depending on what's focused
@@ -514,7 +467,7 @@ public class Main extends Application {
 			element.setPickOnBounds(false);
 			element.setHandler(viewElementHandler);
 		}
-		loadVariables();
+		paneAttributes.loadVariables();
 		setUpdateTriggers(true);
 	}
 
@@ -694,123 +647,6 @@ public class Main extends Application {
 
 
 
-	//Attributes stuff
-
-	@FXML
-	public void inspectAttribute(Event e) {
-		String attrType = selectedVar.getVarType();
-		Stage stage = new Stage(StageStyle.UNDECORATED);
-		stage.setTitle(selectedVar.getName() + " details");
-		stage.initModality(Modality.APPLICATION_MODAL);
-		stage.initOwner(splitPane.getScene().getWindow());
-		switch(attrType) {
-		case VAR_NUMERIC:
-			RandomNumberPane nRoot = new RandomNumberPane(stage,(FirebaseVariable)selectedVar.getModel(),false);
-			stage.setScene(new Scene(nRoot));
-			stage.showAndWait();
-			break;
-		case VAR_CATEGORY:
-			RandomCategoryPane cRoot = new RandomCategoryPane(stage,(FirebaseVariable)selectedVar.getModel(),false);
-			stage.setScene(new Scene(cRoot));
-			stage.showAndWait();
-			break;
-		case VAR_DATE: 
-			RandomDatePane dRoot = new RandomDatePane(stage,(FirebaseVariable)selectedVar.getModel(),false);
-			stage.setScene(new Scene(dRoot));
-			stage.showAndWait();
-			break;
-		case VAR_CLOCK: 
-			RandomTimePane tRoot = new RandomTimePane(stage,(FirebaseVariable)selectedVar.getModel(),false);
-			stage.setScene(new Scene(tRoot));
-			stage.showAndWait();
-			break;
-		default:break;
-		}
-	}
-	@FXML
-	public void deleteAttribute(Event e) {
-		Alert alert = new Alert(AlertType.CONFIRMATION);
-		alert.setTitle("Jeeves");
-		alert.setHeaderText("Delete Attribute");
-		alert.setContentText("Do you really want to delete attribute " + selectedVar.getName() + "?");
-		Optional<ButtonType> result = alert.showAndWait();
-		if(result.get().equals(ButtonType.OK)) {
-			openProject.getvariables().remove(selectedVar.getModel());
-			selectedVar = null;
-			btnDeleteVar.setDisable(true);
-			btnInspectVar.setDisable(true);
-			lblSelected.setText("selected:  *none*");
-			loadVariables();
-		}
-	}
-	@FXML
-	public void addAttribute(Event e){
-		FirebaseVariable var = new FirebaseVariable();
-		String attrName = txtAttrName.getText();
-		if(attrName.isEmpty()){
-			return;
-		}
-		var.setname(attrName);
-		String attrType = cboAttrType.getValue();
-		if(attrType == null || attrType.isEmpty()){
-			return;
-		}
-		switch(attrType){
-		case USER_BOOLEAN:var.setVartype(VAR_BOOLEAN);break;
-		case USER_NUMERIC:var.setVartype(VAR_NUMERIC);break;
-		default :var.setVartype(attrType);break;
-		}
-		var.setisCustom(true);
-		var.settimeCreated(System.currentTimeMillis());
-		if(chkRandom.isSelected()) {
-			var.setisRandom(true);
-			Stage stage = new Stage(StageStyle.UNDECORATED);
-			stage.setTitle("Random attribute");
-			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.initOwner(splitPane.getScene().getWindow());
-			switch(attrType) {
-			case "Number":
-				RandomNumberPane nRoot = new RandomNumberPane(stage,var,true);
-				stage.setScene(new Scene(nRoot));
-				stage.showAndWait();
-				break;
-			case "Category":
-				RandomCategoryPane cRoot = new RandomCategoryPane(stage,var,true);
-				stage.setScene(new Scene(cRoot));
-				stage.showAndWait();
-				break;
-			case "Date": 
-				RandomDatePane dRoot = new RandomDatePane(stage,var,true);
-				stage.setScene(new Scene(dRoot));
-				stage.showAndWait();
-				break;
-			case "Time": 
-				RandomTimePane tRoot = new RandomTimePane(stage,var,true);
-				stage.setScene(new Scene(tRoot));
-				stage.showAndWait();
-				break;
-			default:addVariable(var); break;
-			}
-		}
-		else {
-			addVariable(var);
-		}
-		loadVariables();
-
-	}
-
-	public void refreshAttributes(){
-		vboxSurveyVars.getChildren().clear();
-		Constants.getOpenProject().getObservableVariables().forEach(variable->{
-			UserVariable global = new UserVariable(variable);
-
-			ViewElement<FirebaseExpression> draggable = new UserVariable(variable);
-			global.setDraggable(draggable); // DJRNEW
-			global.setReadOnly();
-			setElementParent(draggable);
-			global.setHandler(viewElementHandler);
-			vboxSurveyVars.getChildren().add(global);
-		});
-	}
+	
 
 }

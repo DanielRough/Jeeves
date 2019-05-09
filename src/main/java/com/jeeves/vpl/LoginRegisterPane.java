@@ -1,8 +1,8 @@
 package com.jeeves.vpl;
 import static com.jeeves.vpl.Constants.PRIVATE_COLL;
-import static com.jeeves.vpl.Constants.makeInfoAlert;
-import static com.jeeves.vpl.Constants.TITLE;
 import static com.jeeves.vpl.Constants.REG_ERROR;
+import static com.jeeves.vpl.Constants.TITLE;
+import static com.jeeves.vpl.Constants.makeInfoAlert;
 
 import java.io.IOException;
 import java.net.URL;
@@ -33,19 +33,31 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * Class for logging in/registering. Communicates with the Firebase database to determine
+ * whether the email/password combination exists
+ * @author DJR
+ *
+ */
 public class LoginRegisterPane extends Pane{
 	private Stage stage;
-	@FXML private TextField txtUsername;
+	@FXML private TextField txtLogEmail;
 	@FXML private PasswordField txtPassword;
-	@FXML private TextField txtFirstName;
-	@FXML private TextField txtLastName;
-	@FXML private TextField txtEmail;
+	@FXML private TextField txtRegEmail;
 	@FXML private PasswordField txtRegPassword;
 	@FXML private PasswordField txtRegPasswordConfirm;
 	@FXML private Label lblError;
+	@FXML private VBox vboxShadow;
+	@FXML private VBox vboxLoading;
+	@FXML private Label lblLoading;
+	@FXML private HBox hboxError;
 	Subject currentUser;
 
 	public LoginRegisterPane(Stage stage) throws IOException {
@@ -57,7 +69,7 @@ public class LoginRegisterPane extends Pane{
 		Node root = fxmlLoader.load();
 		getChildren().add(root);
 		//default values for now
-		txtUsername.setText("");
+		txtLogEmail.setText("");
 		txtPassword.setText("");
 
 	}
@@ -65,96 +77,107 @@ public class LoginRegisterPane extends Pane{
 	@SuppressWarnings("deprecation")
 	@FXML 
 	private void validate(Event e){
-		String email = txtEmail.getText();
+		String email = txtRegEmail.getText();
 		String password = txtRegPassword.getText();
 		String passwordconfirm = txtRegPasswordConfirm.getText();
-		String firstName = txtFirstName.getText();
-		String lastName = txtLastName.getText();
 		CreateRequest request = null;
-		if(firstName == null || firstName.isEmpty()){
-			makeInfoAlert(TITLE,REG_ERROR,"Please enter your first name");
-			return;
-		}
-		if(lastName == null || lastName.isEmpty()){
-			makeInfoAlert(TITLE,REG_ERROR,"Please enter your last name");
-			return;
-		}
 		if(email == null || email.isEmpty() ||  !EmailValidator.getInstance().isValid(email)){
-			makeInfoAlert(TITLE,REG_ERROR,"Please enter a valid email address");
+			makeInfoAlert(TITLE,REG_ERROR,
+					"Please enter a valid email address");
 			return;
 		}
 		if(password == null || password.isEmpty()){
-			makeInfoAlert(TITLE,REG_ERROR,"Please enter a password");
+			makeInfoAlert(TITLE,REG_ERROR,
+					"Please enter a password");
 			return;
 		}
 		if(passwordconfirm == null || passwordconfirm.isEmpty() || !password.equals(passwordconfirm)){
-			makeInfoAlert(TITLE,REG_ERROR,"Make sure your passwords match!");
+			makeInfoAlert(TITLE,REG_ERROR,
+					"Make sure your passwords match!");
 			return;
 		}
+		vboxShadow.setVisible(true);
+		vboxLoading.setVisible(true);
+		lblLoading.setText("Registering");
 		//This should all be fine with validation above, but it's in a try-catch just in case...
 		try{
-			System.out.println("FUCK " + email);
 			request = new CreateRequest()
 					.setEmail(email)
 					.setEmailVerified(false)
 					.setPassword(password)
-					.setDisplayName(firstName + " " + lastName)
+					.setDisplayName(email)
 					.setDisabled(false);
 		}
 		catch(Exception err){
-			makeInfoAlert(TITLE,"Registration failed", "Sorry, that didn't work. " + err.getMessage());
+			makeInfoAlert(TITLE,
+					"Registration failed", "Sorry, that didn't work. " +
+							err.getMessage());
+			vboxShadow.setVisible(false);
+			vboxLoading.setVisible(false);
 			return;
 		}
-		//UserRecord userRecord = FirebaseAuth.getInstance().createUser(request);
 
 		ApiFuture<UserRecord> userRecord = FirebaseAuth.getInstance().createUserAsync(request);
 		ApiFutures.addCallback(userRecord, new ApiFutureCallback<UserRecord>() {
-			
+
 			@Override
 			public void onSuccess(UserRecord result) {
-				System.out.println("YOU WORK");
 				Platform.runLater(new Runnable() {
-					
+
 					public void run() {
+						vboxShadow.setVisible(false);
+						vboxLoading.setVisible(false);
 						makeInfoAlert(TITLE,"Success","Successfully registered! You can now log into Jeeves");
 						FirebaseDB.getInstance().putUserCredentials(email, password);
+						txtLogEmail.setText(email);
+						txtPassword.setText(password);
+						txtRegEmail.clear();
+						txtRegPassword.clear();
+						txtRegPasswordConfirm.clear();
 					}
 				});
 			}
 
 			@Override
 			public void onFailure(Throwable t) {
-						//t.printStackTrace();
-					//	System.out.println("YOU NO WORK");
-					Platform.runLater(new Runnable() {
-						
-						public void run() {
-							makeInfoAlert(TITLE,"Registration failed", "Sorry, that didn't work. "
-									+ "A user with this email address already exists!");
-						}
-					});	
+				Platform.runLater(new Runnable() {
 
+					public void run() {
+						vboxShadow.setVisible(false);
+						vboxLoading.setVisible(false);
+						makeInfoAlert(TITLE,"Registration failed", "Sorry, that didn't work. "
+								+ "A user with this email address already exists!");
 					}
+				});	
+
+			}
 
 		});
-		//FirebaseAuth.getInstance().createUserAsync(request);
 
 	}
 
 	@FXML
 	private void login(Event e) throws InterruptedException, ExecutionException{
-		String username = txtUsername.getText();
+		vboxShadow.setVisible(true);
+		vboxLoading.setVisible(true);
+		hboxError.setVisible(false);
+		lblLoading.setText("Logging you in");
+		String username = txtLogEmail.getText();
 		String password = txtPassword.getText();
+
 		authenticate(username,password);
 	}
 	public void authenticate(String email, String password) throws InterruptedException, ExecutionException {
 		UserRecord userRecord;
+		hboxError.setVisible(false);
 		try {
 			userRecord = FirebaseAuth.getInstance().getUserByEmailAsync(email).get();
 		}
 		catch(Exception e) {
-				lblError.setText("Error logging in. Check your password and Internet connection");			
-			
+			hboxError.setVisible(true);
+			lblError.setText("Error logging in. Check your password and Internet connection");			
+			vboxShadow.setVisible(false);
+			vboxLoading.setVisible(false);
 			return;
 		}
 		String uid = userRecord.getUid();
@@ -168,12 +191,19 @@ public class LoginRegisterPane extends Pane{
 					@SuppressWarnings("unchecked")
 					Map<String,Object> value = (Map<String,Object>)dataSnapshot.getValue();
 					//It's a bit annoying, but this is the only bit of the project that gets updated from the Android side!
-					String token = value.get("token").toString();
-					if(token.equals(password)) {
-						FirebaseDB.getInstance().setCurrentUserEmail(txtUsername.getText());
-						stage.hide();
+					try {
+						String token = value.get("token").toString();
+						if(token.equals(password)) {
+							FirebaseDB.getInstance().setCurrentUserEmail(txtLogEmail.getText());
+							stage.hide();
+						}
 					}
-
+					catch(NullPointerException e) {
+						lblError.setText("Sorry, this account is no longer active.");									
+					}
+					vboxShadow.setVisible(false);
+					vboxLoading.setVisible(false);
+					hboxError.setVisible(true);					
 					lblError.setText("Error logging in. Check your password and Internet connection");			
 				});
 
@@ -182,11 +212,30 @@ public class LoginRegisterPane extends Pane{
 
 			@Override
 			public void onCancelled(DatabaseError arg0) {
+				vboxShadow.setVisible(false);
+				vboxLoading.setVisible(false);
+				hboxError.setVisible(true);
 				lblError.setText("Error logging in. Check your password and Internet connection");					
 			}
 		});
 
 
+	}
+	
+	//Listener for login action when button is focused and Enter is pressed
+	@FXML
+	private void checkEnterLogin(Event e) throws InterruptedException, ExecutionException {
+		if(((KeyEvent)e).getCode().equals(KeyCode.ENTER)) {
+			login(e);
+		}		
+	}
+
+	//Listener for register action when button is focused and Enter is pressed
+	@FXML
+	private void checkEnterRegister(Event e) throws InterruptedException, ExecutionException {
+		if(((KeyEvent)e).getCode().equals(KeyCode.ENTER)) {
+			validate(e);
+		}
 	}
 	@FXML
 	private void close(Event e){

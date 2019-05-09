@@ -137,6 +137,7 @@ public class Constants {
 		{"Begin Trigger","BeginTrigger"},
 		{"Button Trigger","ButtonTrigger"},
 		{"Repeated Time Trigger","ClockTriggerInterval"},
+		{"Interval Trigger","ClockTriggerWindowed"},
 		{"Set Times Trigger","ClockTriggerSetTimes"},
 		{"Location Trigger","LocationTrigger"},
 		{"Sensor Trigger","SensorTrigger"},
@@ -144,7 +145,7 @@ public class Constants {
 		}).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 	public static final Map<String,String> actNames = Stream.of(new String[][] {
 		{"Prompt User","PromptAction"},
-		{"Send SMS","SendTextAction"}, 
+		{"Send SMS","SendTextAction"},
 		{"Update User Attribute","UpdateAction"},
 		{"Send Survey","SurveyAction"}, 
 		{"Sense Data","CaptureDataAction"},
@@ -194,6 +195,7 @@ public class Constants {
 	public static final String[] DURATIONS_SHORT = {"minutes","hours"};
 	public static final String[] DURATIONS = { "minutes", "hours", "days", "weeks" };
 	public static final String INTERVAL_TRIGGER_TIME = "intervalTriggerTime";
+	public static final String INTERVAL_TRIGGER_WINDOW = "intervalTriggerWindow";
 	public static final String LIMIT_AFTER_HOUR = "limitAfterHour";
 	public static final String LIMIT_BEFORE_HOUR = "limitBeforeHour";
 	public static final String INTERVAL_WINDOW = "intervalWindowLength";

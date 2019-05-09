@@ -210,7 +210,16 @@ public class FirebaseDB {
 		    @Override
 		    public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
 		    	FirebasePatient changedPatient = dataSnapshot.getValue(FirebasePatient.class);
-		    	newpatients.add(changedPatient);
+		    	System.out.println("CHANGE " + changedPatient.getName());
+		    	newpatients.forEach(p->{
+		    		if(p.getName() == changedPatient.getName()) {
+		    			int index = newpatients.indexOf(p);
+		    			newpatients.remove(p);
+		    			newpatients.add(index,changedPatient);
+		    			return;
+		    		}
+		    	});
+		    //	newpatients.add(changedPatient);
 		    }
 
 		    @Override

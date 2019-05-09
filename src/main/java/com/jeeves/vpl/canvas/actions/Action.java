@@ -52,10 +52,8 @@ public abstract class Action extends ViewElement<FirebaseAction> {
 						(javafx.collections.MapChangeListener.Change<? extends String, ? extends Object> change) ->{
 
 					if (change.wasAdded()) {
-						System.out.println("value added is " + change.getValueAdded());
 						model.getparams().put(change.getKey(), change.getValueAdded());
 					} else {
-						System.out.println("Now removed " + change.getKey());
 						model.getparams().remove(change.getKey());
 					}
 				}

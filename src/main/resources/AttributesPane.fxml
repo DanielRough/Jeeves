@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<Pane prefHeight="379.0" prefWidth="420.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label layoutX="14.0" layoutY="4.0" text="User Attributes">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
+      <HBox alignment="CENTER_LEFT" fillHeight="false" layoutX="14.0" layoutY="34.0" prefHeight="240.0" prefWidth="320.0" spacing="5.0">
+         <children>
+            <ScrollPane hbarPolicy="NEVER" prefHeight="214.0" prefWidth="163.0">
+               <content>
+                  <VBox fx:id="vboxSurveyVars" alignment="CENTER" fillWidth="false" spacing="10.0">
+                     <padding>
+                        <Insets left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </ScrollPane>
+            <VBox alignment="TOP_CENTER" prefHeight="247.0" prefWidth="154.0" spacing="5.0">
+               <children>
+                  <HBox alignment="CENTER">
+                     <children>
+                        <Label text="Name: " />
+                        <TextField fx:id="txtAttrName" prefHeight="25.0" prefWidth="93.0" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER">
+                     <children>
+                        <Label text="  Type: " />
+                        <ChoiceBox fx:id="cboAttrType" prefHeight="25.0" prefWidth="92.0" />
+                     </children>
+                  </HBox>
+                  <CheckBox fx:id="chkRandom" mnemonicParsing="false" prefWidth="135.0" text="random value" textAlignment="CENTER" wrapText="true" />
+                  <Button fx:id="btnAddVar" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#addAttribute" prefHeight="25.0" prefWidth="135.0" text="Add Attribute" textAlignment="CENTER">
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </Button>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+</Pane>

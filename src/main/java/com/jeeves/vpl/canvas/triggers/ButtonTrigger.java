@@ -37,10 +37,10 @@ public class ButtonTrigger extends Trigger { // NO_UCD (unused code)
 		cboButton.getItems().clear();
 
 		ObservableList<FirebaseUI> uielements = Constants.getOpenProject().getUIElements(); 
-		uielements.forEach(survey -> {
-			if(survey.getname().equals("button")){
-			cboButton.getItems().add(survey.gettext());
-			cboButton.getSelectionModel().selectFirst();
+		uielements.forEach(ui -> {
+			if(ui.getname().equals("button")){
+			cboButton.getItems().add(ui.gettext());
+			//cboButton.getSelectionModel().selectFirst();
 			params.put(BUTTON, cboButton.getSelectionModel().getSelectedItem());
 			}
 		});
@@ -68,8 +68,8 @@ public class ButtonTrigger extends Trigger { // NO_UCD (unused code)
 	@Override
 	public void setData(FirebaseTrigger model) {
 		super.setData(model);
-		if (cboButton.getItems() != null && !cboButton.getItems().isEmpty())
-			cboButton.getSelectionModel().clearAndSelect(0);
+		//if (cboButton.getItems() != null && !cboButton.getItems().isEmpty())
+			//cboButton.getSelectionModel().clearAndSelect(0);
 		if (params.get(BUTTON) == null)
 			return;
 		cboButton.setValue(params.get(BUTTON).toString());

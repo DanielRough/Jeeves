@@ -19,8 +19,6 @@ import javafx.stage.Stage;
 class UIPopupPane extends Pane {
 
 	@FXML
-	private Button btnCancel;
-	@FXML
 	private Button btnOkay;
 	private UIElement element;
 	@FXML
@@ -48,9 +46,6 @@ class UIPopupPane extends Pane {
 			System.exit(1);
 		}
 		txtText.requestFocus();
-		btnCancel.setOnAction(click -> 
-			stage.hide()
-		);
 		btnOkay.setOnAction(click -> {
 			if(element instanceof UIButton && !txtText.getText().equals(currentname) && currentnames.contains(txtText.getText())){
 				Alert alert = new Alert(AlertType.INFORMATION);

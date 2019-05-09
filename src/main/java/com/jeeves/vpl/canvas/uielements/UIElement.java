@@ -10,6 +10,7 @@ import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.firebase.FirebaseUI;
 
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Control;
@@ -88,6 +89,10 @@ public abstract class UIElement extends ViewElement<FirebaseUI> {
 		stage.setTitle("Add property");
 		stage.initModality(Modality.APPLICATION_MODAL);
 		stage.initOwner(this.getScene().getWindow());
+		Point2D point = new Point2D(this.getLayoutX(),this.getLayoutY());
+		Point2D ppoint = getParent().localToScene(point);
+		stage.setX(ppoint.getX()+150);
+		stage.setY(ppoint.getY()+150);
 		stage.showAndWait();
 	}
 }
