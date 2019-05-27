@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<Pane fx:id="pane" maxHeight="30.0" minHeight="30.0" prefHeight="30.0" styleClass="action" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+  <children>
+    <Label alignment="CENTER" contentDisplay="CENTER" layoutY="3.0" prefHeight="26.0" text="update waking schedule" textAlignment="CENTER" textFill="BLACK" wrapText="true">
+      <font>
+        <Font name="System Bold" size="14.0" fx:id="x1" />
+      </font>
+         <padding>
+            <Insets left="5.0" />
+         </padding>
+    </Label>
+      <Pane layoutX="-14.0" layoutY="9.0" prefHeight="12.0" prefWidth="15.0" styleClass="action_join" />
+  </children>
+  <stylesheets>
+    <URL value="@Styles.css" />
+  </stylesheets>
+</Pane>

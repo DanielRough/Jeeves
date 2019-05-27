@@ -147,7 +147,7 @@ public class QuestionImagePresent extends QuestionView{
 
 	@Override
 	public String getQuestionType() {
-		return "Present an image to the user";
+		return Constants.IMAGEPRESENT;
 	}
 	@Override
 	public String getAnswerType() {

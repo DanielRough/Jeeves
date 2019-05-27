@@ -28,8 +28,6 @@ public class TimeExpression extends Expression { // NO_UCD (unused code)
 
 	public TimeExpression(FirebaseExpression data) {
 		super(data);
-	//	addListeners();
-
 	}
 	@Override
 	public void setParentPane(DragPane parent) {

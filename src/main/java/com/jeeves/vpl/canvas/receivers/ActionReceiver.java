@@ -3,13 +3,16 @@ package com.jeeves.vpl.canvas.receivers;
 import java.util.Arrays;
 
 import com.jeeves.vpl.Constants.ElementType;
-import com.jeeves.vpl.canvas.actions.Control;
+import com.jeeves.vpl.ScheduleAttributesPane;
 import com.jeeves.vpl.ViewElement;
+import com.jeeves.vpl.canvas.actions.Control;
+import com.jeeves.vpl.canvas.actions.ScheduleAction;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -17,6 +20,8 @@ import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Polygon;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  * A list of actions to be executed either in a trigger or as part of a
@@ -82,11 +87,14 @@ public class ActionReceiver extends Receiver {
 	public void addChildAtIndex(ViewElement<?> child, int index){
 		super.addChildAtIndex(child, index);
 		addChildHandlers(child);
+		
 		if (child.getType() == ElementType.CTRL_ACTION) {
 			((Control) child).getMyReceiver().setParentReceiver(this);
 		}
-		Platform.runLater(()->
-				heightChanged(child.getHeight())
+		Platform.runLater(()->{
+				heightChanged(child.getHeight());
+				
+		}
 		);
 	}
 

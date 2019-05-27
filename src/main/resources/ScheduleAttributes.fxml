@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox alignment="CENTER" spacing="5.0" styleClass="blueprint" stylesheets="@Styles.css">
+         <children>
+            <Label prefHeight="100.0" prefWidth="300.0" text="Please enter the names of attributes that will represent the start and end dates of the schedule period, and the wake/sleep times that will update for each day of the schedule" textAlignment="CENTER" wrapText="true" />
+            <HBox fx:id="hBoxEarliest" alignment="CENTER_RIGHT" spacing="5.0">
+               <children>
+                  <Label text="Start date name" />
+                  <TextField fx:id="txtStartDate" promptText="StartDate" />
+               </children>
+            </HBox>
+            <HBox fx:id="hBoxLatest" alignment="CENTER_RIGHT" spacing="5.0">
+               <children>
+                  <Label text="End date name" />
+                  <TextField fx:id="txtEndDate" promptText="EndDate" />
+               </children>
+            </HBox>
+            <HBox fx:id="hBoxLatest1" alignment="CENTER_RIGHT" layoutX="20.0" layoutY="48.0" spacing="5.0">
+               <children>
+                  <Label text="Wake time name" />
+                  <TextField fx:id="txtWakeTime" promptText="WakeTime" />
+               </children>
+            </HBox>
+            <HBox fx:id="hBoxLatest11" alignment="CENTER_RIGHT" layoutX="20.0" layoutY="72.0" spacing="5.0">
+               <children>
+                  <Label text="Sleep time name" />
+                  <TextField fx:id="txtSleepTime" promptText="SleepTime" />
+               </children>
+            </HBox>
+            <Button fx:id="btnAdd" mnemonicParsing="false" onAction="#add" text="Add attributes" />
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </VBox>
+   </children>
+   <effect>
+      <InnerShadow />
+   </effect>
+</Pane>

@@ -3,6 +3,7 @@ package com.jeeves.vpl.canvas.expressions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.Constants.ElementType;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.firebase.FirebaseExpression;
@@ -78,6 +79,12 @@ public class UserVariable extends Expression {
 		
 		if(!model.getisValue()){
 		getChildren().add(label);
+		if(varType.equals(Constants.VAR_DATE)) {
+			label.setMinWidth(80);
+		}
+		else {
+			label.setMinWidth(60);
+		}
 		label.setAlignment(Pos.CENTER);
 		label.autosize();
 		}
@@ -85,6 +92,6 @@ public class UserVariable extends Expression {
 
 	@Override
 	public void setup() {
-	//Unused for variables, no setup required
-	}
+
+		}
 }

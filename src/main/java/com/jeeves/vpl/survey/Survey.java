@@ -139,7 +139,6 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 		});
 		view.getQuestionTextProperty().addListener((o,v0,v1) -> {
 				if(!v1.isEmpty()) {
-					System.out.println("YO YO YO HAPPENIN HERE?");
 					getModel().setsurveyId(getSaltString()); //question text changed, again survey ID needs to be updated
 				}
 		});
@@ -167,14 +166,12 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 				getModel().setexpiryTime(0);
 				txtExpiry.setDisable(true);
 			}
-			System.out.println("DID IT HAPPEN HERE");
 			getModel().setsurveyId(getSaltString()); //question text changed, again survey ID needs to be updated
 
 		
 	};
 	chkFastTranslationListener = (o,v0,v1)->{
 		getModel().setfastTransition(chkFastTranslation.isSelected());
-		System.out.println("OR PERHAPS HERE");
 		
 		getModel().setsurveyId(getSaltString()); //question text changed, again survey ID needs to be updated
 
@@ -265,8 +262,10 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 			FirebaseQuestion condition = newquestion.getconditionQuestion();
 			if(condition != null){
 				for(QuestionView q : this.surveyQuestions) {
+					System.out.println("Possible ID : " + q.getQuestionId() + " and this is " + condition.getquestionId());
 					if(q.getQuestionId().equals(condition.getquestionId())){
 						question.setParentQuestion(q);
+						
 					}
 				}
 			}

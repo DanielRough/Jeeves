@@ -12,7 +12,6 @@ import com.jeeves.vpl.firebase.FirebaseProject;
 import com.jeeves.vpl.firebase.FirebaseUI;
 
 import javafx.collections.ListChangeListener;
-import javafx.collections.ListChangeListener.Change;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

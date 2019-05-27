@@ -4,6 +4,7 @@ import com.jeeves.vpl.Constants.ElementType;
 
 import static com.jeeves.vpl.Constants.VAR_ANY;
 
+import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.expressions.UserVariable;
 
@@ -22,6 +23,9 @@ public class VariableReceiver extends ExpressionReceiver {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean isValidElement(ViewElement dragged) {
-		return (dragged.getType() == ElementType.VARIABLE && (((UserVariable) dragged).getVarType() == getReceiveType() || getReceiveType().equals(VAR_ANY)));
+		return (dragged.getType() == ElementType.VARIABLE && 
+				(((UserVariable) dragged).getVarType() == getReceiveType() || getReceiveType().equals(VAR_ANY)) &&
+				//Can't edit those schedule variables
+				!Constants.getOpenProject().getscheduleAttrs().values().contains(((UserVariable)dragged).getName()));
 	}
 }

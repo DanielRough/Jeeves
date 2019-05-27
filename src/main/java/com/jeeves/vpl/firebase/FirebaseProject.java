@@ -44,10 +44,21 @@ public class FirebaseProject implements Serializable {
 	private boolean isPublic;
 	private long lastUpdated;
 	private String pubKey;
+	private boolean hasSchedule;
+	private Map<String,Object> scheduleAttrs;
 	
-	/*
-	
-*/
+	public void sethasSchedule(boolean schedule) {
+		this.hasSchedule = schedule;
+	}
+	public boolean gethasSchedule() {
+		return hasSchedule;
+	}
+	public Map<String,Object> getscheduleAttrs(){
+		return scheduleAttrs;
+	}
+	public void setscheduleAttrs(Map<String,Object> scheduleAttrs) {
+		this.scheduleAttrs = scheduleAttrs;
+	}
 	@Exclude
 	public transient ObservableMap<String,Map<String,FirebaseSurveyEntry>> surveydataobservable = FXCollections.observableMap(surveydata);
 	@Exclude

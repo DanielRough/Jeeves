@@ -16,10 +16,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jeeves.vpl.canvas.expressions.UserVariable;
+import com.jeeves.vpl.firebase.FirebaseDB;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 import com.jeeves.vpl.firebase.FirebaseProject;
 import com.jeeves.vpl.firebase.FirebaseVariable;
 
+import javafx.collections.ListChangeListener;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -30,13 +32,13 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.image.ImageView;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -105,6 +107,7 @@ public class AttributesPane extends Pane{
 		editDeletePane.setVisible(false);
 		addEventHandler(MouseEvent.MOUSE_EXITED, handler->{editDeletePane.setVisible(false);});
 
+
 	}
 	public void addVariable(FirebaseVariable var) {
 		Constants.getOpenProject().getvariables().add(var);
@@ -129,6 +132,11 @@ public class AttributesPane extends Pane{
 					vboxSurveyVars.getChildren().add(global);
 					global.addEventHandler(MouseEvent.MOUSE_ENTERED, (x)->{
 						selectedVar = global;
+						//Thou shalt not edit the schedule attributes
+						if(openProject.getscheduleAttrs().values().contains(selectedVar.getName())){
+							editDeletePane.setVisible(false);
+							return;
+						}
 						Point2D point = new Point2D(global.getLayoutX()+global.getWidth(),global.getLayoutY()-30);
 						Point2D worsepoint = global.parentToLocal(point);
 						Point2D holyfuckpoint = global.localToScene(worsepoint);
@@ -177,6 +185,12 @@ public class AttributesPane extends Pane{
 		String attrName = txtAttrName.getText();
 		if(attrName.isEmpty()){
 			return;
+		}
+		for(FirebaseVariable v : Constants.getOpenProject().getvariables()) {
+			if(attrName.equals(v.getname())) {
+				Constants.makeInfoAlert("Duplicate", "Duplicate Attribute Name", "Attribute with name "  + attrName + " already exists");
+				return;
+			}
 		}
 		var.setname(attrName);
 		String attrType = cboAttrType.getValue();
@@ -260,17 +274,4 @@ public class AttributesPane extends Pane{
 			}
 		}
 		
-		public void refreshAttributes(){
-			vboxSurveyVars.getChildren().clear();
-			Constants.getOpenProject().getObservableVariables().forEach(variable->{
-				UserVariable global = new UserVariable(variable);
-
-				ViewElement<FirebaseExpression> draggable = new UserVariable(variable);
-				global.setDraggable(draggable); // DJRNEW
-				global.setReadOnly();
-				draggable.setParentPane(canvas);
-				global.setHandler(viewElementHandler);
-				vboxSurveyVars.getChildren().add(global);
-			});
-		}
 }

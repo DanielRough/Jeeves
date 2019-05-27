@@ -5,6 +5,8 @@ import static com.jeeves.vpl.Constants.INTERVAL_TRIGGER_WINDOW;
 
 import com.jeeves.vpl.firebase.FirebaseTrigger;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
@@ -77,6 +79,24 @@ public class ClockTriggerWindowed extends ClockTrigger { // NO_UCD (use default)
 				return;
 			long intervalTriggerTime = Long.parseLong(txtFieldWindow.getText());// *
 			params.put(INTERVAL_TRIGGER_WINDOW, intervalTriggerTime);
+		});
+		paneStartDate.widthProperty().addListener(new ChangeListener<Number>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				System.out.println("date things are " + paneStartDate.getWidth() + " long");
+				
+			}
+			
+		});
+		paneIntervalFrom.widthProperty().addListener(new ChangeListener<Number>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				System.out.println("And time things are " + paneIntervalFrom.getWidth() + " long");
+				
+			}
+			
 		});
 	}
 

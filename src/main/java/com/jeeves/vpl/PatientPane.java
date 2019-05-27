@@ -322,6 +322,7 @@ public class PatientPane extends Pane {
 		for (FirebaseSurveyEntry nextsurvey : surveylist) {
 
 			date.setTime(nextsurvey.getcomplete());
+			System.out.println("Tine is " + nextsurvey.getcomplete());
 			// Do we have a sheet for this particular survey?
 			s = sheets.get(nextsurvey.getname());
 			if (s == null) {
@@ -465,6 +466,7 @@ public class PatientPane extends Pane {
 	public void writeAnswers(Sheet s, FirebaseSurvey nextsurvey,CellStyle style) {
 		Date date = new Date();
 		date.setTime(nextsurvey.gettimeFinished());
+		System.out.println("TIME is " + nextsurvey.gettimeFinished());
 
 		Row r = s.createRow(s.getLastRowNum() + 1);
 		Cell c = r.createCell(0);

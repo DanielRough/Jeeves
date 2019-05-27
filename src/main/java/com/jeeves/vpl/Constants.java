@@ -145,7 +145,7 @@ public class Constants {
 		}).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 	public static final Map<String,String> actNames = Stream.of(new String[][] {
 		{"Prompt User","PromptAction"},
-		{"Send SMS","SendTextAction"},
+		{"Update Waking Schedule","ScheduleAction"},
 		{"Update User Attribute","UpdateAction"},
 		{"Send Survey","SurveyAction"}, 
 		{"Sense Data","CaptureDataAction"},

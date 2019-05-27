@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.jeeves.vpl.Constants.ElementType;
+import com.jeeves.vpl.canvas.actions.ScheduleAction;
 import com.jeeves.vpl.canvas.expressions.Expression;
 import com.jeeves.vpl.canvas.expressions.UserVariable;
 import com.jeeves.vpl.canvas.receivers.ElementReceiver;
@@ -242,13 +243,6 @@ public class Main extends Application {
 			Expression exprview = Expression.create(expr);
 			views.add(exprview);
 		}
-		/*
-		for (FirebaseVariable var : openProject.getvariables()) {
-			if(var == null)continue;
-			UserVariable varview = new UserVariable(var);
-			views.add(varview);
-		}*/
-
 		for (FirebaseSurvey survey : openProject.getsurveys()) {
 			Survey surveyview = new Survey(survey);
 			surveyController.addSurvey(surveyview);
@@ -295,17 +289,6 @@ public class Main extends Application {
 		patientController = new PatientPane();
 		panePatients.getChildren().add(patientController);	
 	}
-
-
-
-	/**
-	 * Physically add the attribute blocks to the menu
-	 */
-
-
-
-
-
 
 	@FXML
 	public void saveAsStudyMenu(Event e) {
@@ -376,7 +359,14 @@ public class Main extends Application {
 					myPane.getChildren().add(clicked.getDraggable());
 				else if (arg0.getEventType() == MouseEvent.MOUSE_RELEASED) {
 					myPane.getChildren().remove(clicked.getDraggable());
-
+					//Not ideal but will have to do for now
+					//If we add a Schedule Action and haven't added one before, create schedule attributes
+					if(clicked instanceof ScheduleAction && !Constants.getOpenProject().gethasSchedule()) {
+						Stage stage = new Stage(StageStyle.UNDECORATED);
+						ScheduleAttributesPane cRoot = new ScheduleAttributesPane(stage,paneAttributes);
+						stage.setScene(new Scene(cRoot));
+						stage.showAndWait();
+					}
 					ViewElement<?> draggable = null;
 					// annoying exception for user variables
 					if (clicked.getType() == ElementType.VARIABLE)
