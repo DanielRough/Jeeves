@@ -22,7 +22,8 @@ public class FirebaseTrigger extends FirebaseElement implements Serializable {
 	private FirebaseExpression timeTo;
 	private FirebaseExpression location;
 	private String triggerId;
-
+	private boolean isScheduled;
+	
 	public FirebaseTrigger() {}
 	public FirebaseTrigger(String name) {
 		this.setname(name);
@@ -97,5 +98,12 @@ public class FirebaseTrigger extends FirebaseElement implements Serializable {
 
 	public void settriggerId(String triggerId) {
 		this.triggerId = triggerId;
+	}
+	
+	public boolean getisScheduled() {
+		return isScheduled;
+	}
+	public void setisScheduled(boolean sched) {
+		this.isScheduled = sched;
 	}
 }

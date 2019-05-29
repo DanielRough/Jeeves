@@ -182,6 +182,13 @@ public class Constants {
 	public static List<Integer> getConstraintNums(){
 		return constraintNums;
 	}
+	
+	//Schedule constants
+	public static final String START_DATE = "startdate";
+	public static final String END_DATE = "enddate";
+	public static final String WAKE_TIME = "waketime";
+	public static final String SLEEP_TIME = "sleeptime";
+	
 	// Database constants
 	public static final String DB_URL = "https://jeeves-27914.firebaseio.com/";
 	public static final String SERVICE_JSON = "/Jeeves-9b9326e90601.json";

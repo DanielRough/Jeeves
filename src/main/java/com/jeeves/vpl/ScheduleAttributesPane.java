@@ -64,7 +64,7 @@ public class ScheduleAttributesPane extends Pane {
 			startDateVar.setVartype(Constants.VAR_DATE);
 			startDateVar.setisCustom(true);
 			startDateVar.settimeCreated(System.currentTimeMillis());
-			scheduleAttrs.put("startdate",txtStartDate.getText());
+			scheduleAttrs.put(Constants.START_DATE,txtStartDate.getText());
 			FirebaseDB.getInstance().getOpenProject().getvariables().add(startDateVar);
 			
 			FirebaseVariable endDateVar = new FirebaseVariable();
@@ -72,7 +72,7 @@ public class ScheduleAttributesPane extends Pane {
 			endDateVar.setVartype(Constants.VAR_DATE);
 			endDateVar.setisCustom(true);
 			endDateVar.settimeCreated(System.currentTimeMillis());
-			scheduleAttrs.put("enddate",txtEndDate.getText());
+			scheduleAttrs.put(Constants.END_DATE,txtEndDate.getText());
 			FirebaseDB.getInstance().getOpenProject().getvariables().add(endDateVar);
 			
 			FirebaseVariable wakeTimeVar = new FirebaseVariable();
@@ -80,7 +80,7 @@ public class ScheduleAttributesPane extends Pane {
 			wakeTimeVar.setVartype(Constants.VAR_CLOCK);
 			wakeTimeVar.setisCustom(true);
 			wakeTimeVar.settimeCreated(System.currentTimeMillis());
-			scheduleAttrs.put("waketime",txtWakeTime.getText());
+			scheduleAttrs.put(Constants.WAKE_TIME,txtWakeTime.getText());
 			FirebaseDB.getInstance().getOpenProject().getvariables().add(wakeTimeVar);
 			
 			FirebaseVariable sleepTimeVar = new FirebaseVariable();
@@ -88,7 +88,7 @@ public class ScheduleAttributesPane extends Pane {
 			sleepTimeVar.setVartype(Constants.VAR_CLOCK);
 			sleepTimeVar.setisCustom(true);
 			sleepTimeVar.settimeCreated(System.currentTimeMillis());
-			scheduleAttrs.put("sleeptime",txtSleepTime.getText());
+			scheduleAttrs.put(Constants.SLEEP_TIME,txtSleepTime.getText());
 			FirebaseDB.getInstance().getOpenProject().getvariables().add(sleepTimeVar);	
 			
 			paneAttributes.loadVariables();

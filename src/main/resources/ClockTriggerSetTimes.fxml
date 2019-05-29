@@ -37,21 +37,14 @@
                   </Button>
                </children>
             </HBox>
-            <Pane layoutY="76.0" prefHeight="19.0" prefWidth="142.0" styleClass="trigger">
-               <children>
-                  <Label prefWidth="93.0" text="at these times" textFill="WHITE">
-                     <font>
-                        <Font size="13.0" />
-                     </font>
-                     <padding>
-                        <Insets bottom="10.0" top="5.0" />
-                     </padding>
-                  </Label>
-               </children>
-               <VBox.margin>
-                  <Insets bottom="10.0" />
-               </VBox.margin>
-            </Pane>
+            <Label prefWidth="93.0" text="at these times" textFill="WHITE">
+               <font>
+                  <Font size="13.0" />
+               </font>
+               <padding>
+                  <Insets bottom="10.0" top="5.0" />
+               </padding>
+            </Label>
          </children>
          <padding>
             <Insets left="5.0" top="10.0" />

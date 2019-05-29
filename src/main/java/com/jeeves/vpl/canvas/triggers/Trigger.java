@@ -158,11 +158,11 @@ public abstract class Trigger extends ViewElement<FirebaseTrigger> {
 			getChildren().add(childReceiver);
 
 			double layouty = Math.max(((Pane) root).getPrefHeight(), ((Pane) root).getMinHeight());
-			childReceiver.setLayoutY(layouty - 5);
+			childReceiver.setLayoutY(layouty);
 			setPickOnBounds(false);
 			((Pane) root).heightProperty().addListener(listen -> {
 				double layout = ((Pane) root).getHeight();
-				childReceiver.setLayoutY(layout - 5);
+				childReceiver.setLayoutY(layout);
 			});
 			getChildren().forEach(child -> child.setPickOnBounds(false));
 

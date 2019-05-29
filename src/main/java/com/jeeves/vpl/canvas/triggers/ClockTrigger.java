@@ -7,7 +7,10 @@ import static com.jeeves.vpl.Constants.LIMIT_BEFORE_HOUR;
 import static com.jeeves.vpl.Constants.VAR_CLOCK;
 import static com.jeeves.vpl.Constants.VAR_DATE;
 
+import java.util.List;
+import java.util.Map;
 
+import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.DragPane;
 import com.jeeves.vpl.ViewElement;
 import com.jeeves.vpl.canvas.expressions.UserVariable;
@@ -15,8 +18,14 @@ import com.jeeves.vpl.canvas.receivers.DateReceiver;
 import com.jeeves.vpl.canvas.receivers.TimeReceiver;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
+import com.jeeves.vpl.firebase.FirebaseVariable;
 
 import javafx.collections.ListChangeListener;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -33,11 +42,45 @@ public abstract class ClockTrigger extends Trigger { // NO_UCD (use default)
 	public ClockTrigger(FirebaseTrigger data) {
 		super(data);
 	}
+	FirebaseVariable wakeVar = null, sleepVar = null,startVar = null,endVar = null;
 
 	@Override
 	public void addListeners() {
 		super.addListeners();
 
+		this.addEventHandler(MouseEvent.MOUSE_CLICKED,new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				if(!Constants.getOpenProject().gethasSchedule()) {
+					return;
+				}
+				
+				ContextMenu contextMenu = new ContextMenu();
+				 
+		        MenuItem item1 = new MenuItem("Set to waking schedule");
+		        item1.setOnAction(new EventHandler<ActionEvent>() {		 
+		            @Override
+		            public void handle(ActionEvent event) {
+		            	setScheduled();
+		            }
+		        });
+		        MenuItem unschedule = new MenuItem("Remove waking schedule");
+		        unschedule.setOnAction(new EventHandler<ActionEvent>() {
+
+					@Override
+					public void handle(ActionEvent event) {
+						unSchedule();
+					}
+		        });
+		        // Add MenuItem to ContextMenu
+		        if(getModel().getisScheduled())
+		        	contextMenu.getItems().add(unschedule);
+		        else
+		        	contextMenu.getItems().add(item1);
+		        contextMenu.show(getInstance(), event.getScreenX(), event.getScreenY());
+			}			
+		});
 		timeReceiverFrom.getChildElements().addListener(
 				(ListChangeListener<ViewElement>) listener ->{
 					listener.next();
@@ -134,7 +177,10 @@ public abstract class ClockTrigger extends Trigger { // NO_UCD (use default)
 	@Override
 	public void setData(FirebaseTrigger data) {
 		super.setData(data);
-
+		if(model.getisScheduled()) {
+			setScheduled();
+			return;
+		}
 		if (model.gettimeFrom() != null) {
 			timeReceiverFrom.addChild(UserVariable.create(model.gettimeFrom()), 0, 0);
 		} else if (params.containsKey(LIMIT_BEFORE_HOUR)) {
@@ -182,5 +228,74 @@ public abstract class ClockTrigger extends Trigger { // NO_UCD (use default)
 		if (dateReceiverTo.getChildExpression() != null)
 			dateReceiverTo.getChildExpression().setParentPane(parent);
 
+	}
+	public void unSchedule() {
+		getModel().setisScheduled(false);
+    	timeReceiverFrom.removeChild(timeReceiverFrom.getChildExpression());
+    	timeReceiverFrom.setEditable(true);
+    	timeReceiverTo.removeChild(timeReceiverTo.getChildExpression());
+    	timeReceiverTo.setEditable(true);
+    	dateReceiverFrom.removeChild(dateReceiverFrom.getChildExpression());    	
+    	dateReceiverFrom.setEditable(true);    	
+    	dateReceiverTo.removeChild(dateReceiverTo.getChildExpression());    	
+    	dateReceiverTo.setEditable(true);
+    	
+    	getMyReceiver().getBrackets().getStyleClass().remove("schedule");
+    	getMyReceiver().getBrackets().getStyleClass().add("trigger");
+    	Pane topPane = (Pane)getChildren().get(0);
+    	topPane.getStyleClass().remove("schedule");
+    	topPane.getStyleClass().add("trigger");
+    	topPane.getChildren().forEach(child->{
+    		child.getStyleClass().remove("schedule");
+    		child.getStyleClass().add("trigger");
+    	});
+	}
+	public void setScheduled() {
+		getModel().setisScheduled(true);
+    	Map<String,Object> scheduleAttrs = Constants.getOpenProject().getscheduleAttrs();
+    	String wakeTime = scheduleAttrs.get(Constants.WAKE_TIME).toString();
+    	String sleepTime = scheduleAttrs.get(Constants.SLEEP_TIME).toString();
+    	String startDate = scheduleAttrs.get(Constants.START_DATE).toString();
+    	String endDate = scheduleAttrs.get(Constants.END_DATE).toString();
+    	List<FirebaseVariable> vars = Constants.getOpenProject().getvariables();
+    	vars.forEach(var ->{
+    		if(var.getname().equals(wakeTime))
+    			wakeVar = var;
+    		else if(var.getname().equals(sleepTime))
+    			sleepVar = var;
+    		else if(var.getname().equals(startDate))
+    			startVar = var;
+    		else if(var.getname().equals(endDate))
+    			endVar = var;
+    	});
+    	if(timeReceiverFrom.getChildExpression() != null)
+    		timeReceiverFrom.removeChild(timeReceiverFrom.getChildExpression());
+    	timeReceiverFrom.addChild(UserVariable.create(wakeVar), 0, 0);
+    	timeReceiverFrom.setEditable(false);
+    	
+    	if(timeReceiverTo.getChildExpression() != null)
+    		timeReceiverTo.removeChild(timeReceiverTo.getChildExpression());
+    	timeReceiverTo.addChild(UserVariable.create(sleepVar), 0, 0);
+    	timeReceiverTo.setEditable(false);
+
+    	if(dateReceiverFrom.getChildExpression() != null)
+    		dateReceiverFrom.removeChild(dateReceiverFrom.getChildExpression());
+    	dateReceiverFrom.addChild(UserVariable.create(startVar), 0, 0);
+    	dateReceiverFrom.setEditable(false);
+
+    	if(dateReceiverTo.getChildExpression() != null)
+    		dateReceiverTo.removeChild(dateReceiverTo.getChildExpression());
+    	dateReceiverTo.addChild(UserVariable.create(endVar), 0, 0);
+    	dateReceiverTo.setEditable(false);
+    	
+    	getMyReceiver().getBrackets().getStyleClass().remove("trigger");
+    	getMyReceiver().getBrackets().getStyleClass().add("schedule");
+    	Pane topPane = (Pane)getChildren().get(0);
+    	topPane.getStyleClass().remove("trigger");
+    	topPane.getStyleClass().add("schedule");
+    	topPane.getChildren().forEach(child->{
+    		child.getStyleClass().remove("trigger");
+    		child.getStyleClass().add("schedule");
+    	});
 	}
 }

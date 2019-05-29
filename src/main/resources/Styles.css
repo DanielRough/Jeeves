@@ -80,7 +80,13 @@
 	-fx-border-radius: 10 10 0 0;
 	-fx-background-radius: 10 10 0 0;
 }
-
+.schedule {
+	-fx-background-color: #07509A;
+	-fx-background: #07509A;
+	-fx-fill: #07509A;
+	-fx-border-radius: 10 10 0 0;
+	-fx-background-radius: 10 10 0 0;
+}
 .Numeric {
 	-fx-background-color: radial-gradient(center 50% -40%, radius 200%, #b8ee36 45%, #80c800 50%);
 	-fx-fill: radial-gradient(center 50% -40%, radius 200%, #b8ee36 45%, #80c800 50%);
@@ -169,31 +175,6 @@
 	
 	-fx-text-alignment: center;
 }
-
-.WiFi {
-	-fx-background-color: thistle;
-	-fx-border-radius: 20 20 20 20;
-	-fx-border-width: 0;
-	-fx-background-radius: 20 20 20 20;
-	  -fx-alignment: center;
--fx-text-alignment: center;
-}
-
-.WiFi .img{
-    -fx-background-image: url("img/icons/wifi.png");
-}
-
-.WiFi .label{
-	-fx-text-fill: black;
-	-fx-font-family: 'Calibri';
-	-fx-alignment: center;
-		-fx-font-weight: bold; 
-		-fx-padding: 0 15 0 15;
-	
-	-fx-text-alignment: center;
-}
-
-
 
 .Bluetooth{
 	-fx-background-color: thistle;

@@ -98,6 +98,13 @@ public abstract class Receiver extends DragPane {
 		mreleased = this::handleReleased;
 	}
 
+	public void setEditable(boolean editable) {
+		this.setDisabled(!editable);
+		this.setMouseTransparent(!editable);
+		getChildren().forEach(child->{
+			child.setMouseTransparent(!editable);
+		});
+	}
 	@SuppressWarnings("rawtypes")
 	public ObservableList<ViewElement> getChildElements() {
 		return childList;
