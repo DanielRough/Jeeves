@@ -106,10 +106,9 @@ public class Constants {
 	}
 	// Sensor constants
 	private static Sensor accelSensor = new Sensor("Activity", "/img/icons/accelerometer.png", new String[] {"Walking", "Running", "Still", "Driving"},true);
-	private static Sensor microphoneSensor = new Sensor("Microphone", "/img/icons/microphone.png", new String[] {"Noisy","Quiet"},true);
-	private static Sensor smsSensor = new Sensor("SMS", "/img/icons/sms.png", new String[] { "Message Sent", "Message Received" },false);
+	private static Sensor microphoneSensor = new Sensor("Microphone", "/img/icons/mic.png", new String[] {"Noisy","Quiet"},true);
 
-	public static final Sensor[] sensors = { accelSensor,smsSensor,microphoneSensor };
+	public static final Sensor[] sensors = { accelSensor,microphoneSensor };
 	private static ObservableMap<String,String[]> categoryOpts = FXCollections.observableHashMap();
 
 	public static ObservableMap<String,String[]> getCategoryOpts(){

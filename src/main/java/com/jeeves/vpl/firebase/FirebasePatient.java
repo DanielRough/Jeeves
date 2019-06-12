@@ -1,6 +1,7 @@
 package com.jeeves.vpl.firebase;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import com.google.firebase.database.IgnoreExtraProperties;
@@ -24,6 +25,21 @@ public class FirebasePatient implements Serializable {
 	private String uid;
 	private String date;
 	private String screenName;
+	private List<String> schedule;
+	private boolean hasSchedule;
+	
+	public void setschedule(List<String> schedule) {
+		this.schedule = schedule;
+	}
+	public List<String> getschedule(){
+		return schedule;
+	}
+	public void sethasSchedule(boolean hasSchedule) {
+		this.hasSchedule = hasSchedule;
+	}
+	public boolean gethasSchedule() {
+		return hasSchedule;
+	}
 	
 	public String getAddress() {
 		return address;

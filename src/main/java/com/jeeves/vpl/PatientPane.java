@@ -13,6 +13,7 @@ import java.security.PrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,21 +58,27 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.TableColumn.CellEditEvent;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
@@ -96,13 +103,19 @@ public class PatientPane extends Pane {
 	@FXML private Label lblSent;
 	@FXML private Label lblComplete;
 	@FXML private Label lblMissed;
-	@FXML private Label lblCompliance;
+	//@FXML private Label lblCompliance;
 	@FXML private Label lblTimeTriggers;
 	@FXML private Label lblSensorTriggers;
 	@FXML private Label lblButtonTriggers;
-	@FXML private Label lblInitTime;
+	//@FXML private Label lblInitTime;
 	@FXML private Label lblCompletionTime;
 
+	@FXML private TableView tblSchedule;
+	@FXML private TableColumn colWake;
+	@FXML private TableColumn colSleep;
+	@FXML private TableColumn colDay;
+	@FXML private Button btnUpdateSchedule;
+	@FXML private Label lblUpdated;
 	@FXML private TextArea txtPatientMessage;
 	@FXML private Button btnSendMessage;
 
@@ -116,10 +129,6 @@ public class PatientPane extends Pane {
 	@FXML private RadioButton rdioAllSurvey;
 	private ToggleGroup surveyGroup;
 	private PrivateKey privateKey;
-
-	@FXML private ChoiceBox<String> cboChartType;
-	@FXML private ChoiceBox<String> cboXAxis;
-	@FXML private ChoiceBox<String> cboYAxis;
 
 	public PrivateKey getPrivate(String keystr) throws NoSuchAlgorithmException, InvalidKeySpecException {
 		byte[] keyBytes = Base64.decodeBase64(keystr);
@@ -201,7 +210,7 @@ public class PatientPane extends Pane {
 			rdioSelPatient.setToggleGroup(patientGroup);
 			rdioAllPatient.setToggleGroup(patientGroup);
 
-			cboChartType.getItems().addAll("Line","Scatter","Bar","Pie");
+			//cboChartType.getItems().addAll("Line","Scatter","Bar","Pie");
 
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e.fillInStackTrace());
@@ -622,8 +631,8 @@ public class PatientPane extends Pane {
 			lblSent.setText("0");
 			lblComplete.setText("");
 			lblMissed.setText("");
-			lblCompliance.setText("");
-			lblInitTime.setText("");
+			//lblCompliance.setText("");
+			//lblInitTime.setText("");
 			lblCompletionTime.setText("");
 			return;
 		}
@@ -652,6 +661,7 @@ public class PatientPane extends Pane {
 
 		lblComplete.setText(completedsize+"");
 		lblMissed.setText(missedsize+"");
+		/*
 		lblCompliance.setText((100*completedsize/sentsize)+"%");
 		if((100*completedsize/sentsize) < 60)
 			lblCompliance.setStyle("-fx-text-fill:#a6392e");
@@ -661,6 +671,7 @@ public class PatientPane extends Pane {
 			lblInitTime.setText(avgInitTime/(1000*initialised)+" seconds");
 		else
 			lblInitTime.setText("N/A");
+		*/
 		if(completedsize != 0)
 			lblCompletionTime.setText(avgCompleteTime/(1000*completedsize)+" seconds");
 		else
@@ -690,8 +701,8 @@ public class PatientPane extends Pane {
 				orderedFeedback = new TreeMap();
 			}
 			Date date = new Date();
-			DateFormat df = new SimpleDateFormat("dd MMM HH:mm");
-			df.setTimeZone(TimeZone.getTimeZone("GMT"));
+			DateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm");
+			df.setTimeZone(TimeZone.getDefault());
 
 			Iterator<Entry<String, Object>> feeds = orderedFeedback.entrySet().iterator();
 			ObservableList<String> items = FXCollections.observableArrayList();
@@ -702,7 +713,67 @@ public class PatientPane extends Pane {
 				items.add(message);
 			}
 			lstMessages.setItems(items);
+			
+			if(selectedPatient.getschedule() != null) {
+				ObservableList<ScheduleItem> scheduleItems = FXCollections.observableArrayList();
+				List<String> scheduleStrings = selectedPatient.getschedule();
+				int count = 1;
+				for(String day : scheduleStrings) {
+					String[] wakeSleep = day.split(":");
+					ScheduleItem s = new ScheduleItem(count,wakeSleep[0],wakeSleep[1]);
+					scheduleItems.add(s);
+					count++;
+				}
+				colDay.setCellValueFactory(new PropertyValueFactory<>("studyDay"));
+				colWake.setCellValueFactory(new PropertyValueFactory<>("wakeTime"));
+				colSleep.setCellValueFactory(new PropertyValueFactory<>("sleepTime"));
+				tblSchedule.setDisable(false);
+				btnUpdateSchedule.setDisable(false);
+				tblSchedule.setItems(scheduleItems);
+				
+				Callback<TableColumn<ScheduleItem,String>, TableCell<ScheduleItem,String>> cellFactoryDate = (TableColumn<ScheduleItem,String> p) -> new DateTimeCell();
+				colWake.setCellFactory(cellFactoryDate);
+				colWake.setOnEditCommit(
+				    new EventHandler<CellEditEvent<ScheduleItem,String>>() {
+				        @Override
+				        public void handle(CellEditEvent<ScheduleItem,String> t) {
+				            try {
+				                df.parse(t.getNewValue());
+				            } catch (ParseException e) {
 
+				            }				
+				            ((ScheduleItem) t.getTableView().getItems()
+				            		.get(t.getTablePosition().getRow()))
+					                .setWakeTime(t.getNewValue());
+				            
+			            	getTableViewValues(tblSchedule);
+
+				        }
+				    }
+				);
+				colSleep.setCellFactory(cellFactoryDate);
+				colSleep.setOnEditCommit(
+				    new EventHandler<CellEditEvent<ScheduleItem,String>>() {
+				        @Override
+				        public void handle(CellEditEvent<ScheduleItem,String> t) {
+				            try {
+				                df.parse(t.getNewValue());
+				            } catch (ParseException e) {
+				            }
+				            ((ScheduleItem) t.getTableView().getItems()
+				            		.get(t.getTablePosition().getRow()))
+				            		.setSleepTime(t.getNewValue());
+			            	getTableViewValues(tblSchedule);
+
+				        }
+				    }
+				);
+			}
+			else {
+				tblSchedule.getItems().clear();
+				tblSchedule.setDisable(true);
+				btnUpdateSchedule.setDisable(true);
+			}
 			Callback<ListView<String>, ListCell<String>> cellFactory = param->
 
 			new ListCell<String>() {
@@ -733,15 +804,43 @@ public class PatientPane extends Pane {
 			int complete = completedSurveys == null ? 0 : completedSurveys.values().size();
 			lblComplete.setText(Integer.toString(complete));
 
-			txtName.setText(selectedPatient.getScreenName());
-			txtEmail.setText(selectedPatient.getEmail());
-			txtPhone.setText(selectedPatient.getPhoneNo());
-
 		});
 	}
+	
+	private List<String> getTableViewValues(TableView tableView) {
+	    ObservableList<TableColumn> columns = tableView.getColumns();
+	    TableColumn wakeCol = columns.get(1);
+	    TableColumn sleepCol = columns.get(2);
+	    List<String> scheduleVals = new ArrayList<String>();
+		DateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm");
+		df.setTimeZone(TimeZone.getDefault());
+		df.setLenient(false);
+	    for (Object row : tableView.getItems()) {
+	    	 String wakeStr = wakeCol.getCellData(row).toString();
+	    	 String sleepStr = sleepCol.getCellData(row).toString();
+	    	 String scheduleStr = "";
+	    	 try {
+	    		 scheduleStr = df.parse(wakeStr).getTime() + ":" + df.parse(sleepStr).getTime();
+	    		 scheduleVals.add(scheduleStr);
+	    	 }
+	    	 catch(ParseException e) {
+	    		 btnUpdateSchedule.setDisable(true);
+	    		 return scheduleVals;
+	    	 }
+	    }
+	    btnUpdateSchedule.setDisable(false);
+	    return scheduleVals;
+	  }
 
-
-
+	@FXML
+	public void updateSchedule(Event e) {
+		List<String> scheduleVals = getTableViewValues(tblSchedule);
+		selectedPatient.setschedule(scheduleVals);
+		FirebaseDB.getInstance().updatePatient(selectedPatient);
+		Bounds lblBounds = lblUpdated.getBoundsInParent();
+		Toast.makeText(Main.getContext().getStage(),localToScreen(lblBounds).getMinX(),localToScreen(lblBounds).getMinY(),lblUpdated.getWidth(), "Schedule updated!",18);
+		
+	}
 	@FXML
 	public void sendMessage(Event e){
 		String messageText = txtPatientMessage.getText();

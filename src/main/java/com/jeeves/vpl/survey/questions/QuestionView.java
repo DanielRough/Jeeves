@@ -282,7 +282,8 @@ public abstract class QuestionView extends ViewElement<FirebaseQuestion> {
 		setQuestionText(model.getquestionText());
 		setQuestionId(model.getquestionId());
 		model.setquestionType(getQuestionType());
-		//model.setquestionId(getSaltString());
+		if(model.getquestionId() == null)
+			model.setquestionId(getSaltString());
 		model.settype(getClass().getName());
 
 	}

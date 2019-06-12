@@ -21,7 +21,7 @@
          <children>
             <HBox fx:id="hboxBox" alignment="CENTER" fillHeight="false" spacing="5.0">
                <children>
-                <Label alignment="CENTER" contentDisplay="CENTER" layoutY="3.0" prefHeight="26.0" text="When patient" textAlignment="RIGHT" textFill="WHITE">
+                <Label alignment="CENTER" contentDisplay="CENTER" layoutY="3.0" prefHeight="26.0" text="When user" textAlignment="RIGHT" textFill="WHITE">
                   <font>
                     <Font size="13.0" fx:id="x2" />
                   </font>

@@ -22,7 +22,7 @@ public final class Toast
 {
 	final static Logger logger = LoggerFactory.getLogger(Toast.class);
 
-    public static void makeText(Stage ownerStage, double xPos, double yPos, double length, String toastMsg)
+    public static void makeText(Stage ownerStage, double xPos, double yPos, double length, String toastMsg, int fontSize)
     {
         Stage toastStage=new Stage();
         toastStage.initOwner(ownerStage);
@@ -30,11 +30,13 @@ public final class Toast
         toastStage.initStyle(StageStyle.TRANSPARENT);
 
         Text text = new Text(toastMsg);
-        text.setFont(Font.font("Verdana", 24));
+        text.setFont(Font.font("Oswald", fontSize));
+        text.setFill(Color.WHITE);
         HBox root = new HBox();
         root.setAlignment(Pos.CENTER);
         root.getChildren().add(text);
-        root.setStyle("-fx-background-color: rgba(0, 0, 0, 0.2); -fx-padding: 10px " + (length-40-text.getBoundsInParent().getWidth()) + "px 10px 40px");
+        root.setStyle("-fx-background-color: rgba(100, 25, 127, 0.7); -fx-text-fill: white; -fx-padding: 10px 40px 10px 40px");
+        //root.setStyle("-fx-background-color: rgba(0, 0, 0, 0.2); -fx-padding: 10px " + (length-40-text.getBoundsInParent().getWidth()) + "px 10px 40px");
         root.setOpacity(0);
 
         Scene scene = new Scene(root);

@@ -133,7 +133,8 @@ public class AttributesPane extends Pane{
 					global.addEventHandler(MouseEvent.MOUSE_ENTERED, (x)->{
 						selectedVar = global;
 						//Thou shalt not edit the schedule attributes
-						if(openProject.getscheduleAttrs().values().contains(selectedVar.getName())){
+						
+						if(openProject.gethasSchedule() && openProject.getscheduleAttrs().values().contains(selectedVar.getName())){
 							editDeletePane.setVisible(false);
 							return;
 						}

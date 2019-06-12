@@ -148,6 +148,9 @@ public class Main extends Application {
 	public Main() {
 	}
 
+	public Stage getStage() {
+		return primaryStage;
+	}
 	private Main(Stage primaryStage) throws IOException {
 		this.primaryStage = primaryStage;
 		currentGUI = this;
@@ -523,7 +526,7 @@ public class Main extends Application {
 		} else {
 			FirebaseDB.getInstance().saveProject(openProject.getname(), this.openProject);
 		}
-		Toast.makeText(primaryStage,canvasPos.getX(),canvasPos.getY(), canvasLength, toastMsg);
+		Toast.makeText(primaryStage,canvasPos.getX(),canvasPos.getY(), canvasLength, toastMsg,24);
 
 	}
 
