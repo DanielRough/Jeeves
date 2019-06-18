@@ -106,7 +106,7 @@ public class ViewCanvas extends DragPane {
 			while (arg0.next()) {
 				if (arg0.wasAdded()) {
 					List<?> addedlist = arg0.getAddedSubList();
-					Constants.getOpenProject().add((ViewElement<?>) addedlist.get(0));
+					Constants.getOpenProject().add((ViewElement<?>) addedlist.get(0),0);
 				} else if (arg0.wasRemoved()) {
 					List<?> removedlist = arg0.getRemoved();
 					Constants.getOpenProject().remove((ViewElement<?>) removedlist.get(0));

@@ -85,7 +85,6 @@ import javafx.util.Callback;
 
 public class PatientPane extends Pane {
 	final Logger logger = LoggerFactory.getLogger(PatientPane.class);
-	private static final String INIT_TIME = "initTime";
 	private ObservableList<FirebasePatient> allowedPatients = FXCollections.observableArrayList();
 	private Map<String, FirebaseSurvey> completedSurveys;
 
@@ -98,17 +97,13 @@ public class PatientPane extends Pane {
 	private ChangeListener<FirebasePatient> patientListener;
 	private ChangeListener<String> surveyListener;
 	private FirebasePatient selectedPatient;
-
+	private FirebaseSurvey selectedSurvey;
+	Map<String,FirebaseSurvey> surveyIdMap;
 	@FXML private ListView<String> lstSurveys;
-	@FXML private Label lblSent;
+	@FXML private Label lblCompTimeThis;
 	@FXML private Label lblComplete;
 	@FXML private Label lblMissed;
-	//@FXML private Label lblCompliance;
-	@FXML private Label lblTimeTriggers;
-	@FXML private Label lblSensorTriggers;
-	@FXML private Label lblButtonTriggers;
-	//@FXML private Label lblInitTime;
-	@FXML private Label lblCompletionTime;
+	@FXML private Label lblCompTimeAll;
 
 	@FXML private TableView tblSchedule;
 	@FXML private TableColumn colWake;
@@ -210,8 +205,6 @@ public class PatientPane extends Pane {
 			rdioSelPatient.setToggleGroup(patientGroup);
 			rdioAllPatient.setToggleGroup(patientGroup);
 
-			//cboChartType.getItems().addAll("Line","Scatter","Bar","Pie");
-
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e.fillInStackTrace());
 		}
@@ -233,11 +226,7 @@ public class PatientPane extends Pane {
 		ArrayList<FirebaseSurveyEntry> surveylist = new ArrayList<>();
 		Map<String,Map<String,FirebaseSurveyEntry>> surveydata = Constants.getOpenProject().getSurveyEntries();
 		ArrayList<String> allSurveyIds = new ArrayList<>(surveydata.keySet());
-		System.out.println("ALL NAMES: " + allSurveyIds.toString());
-		Map<String,FirebaseSurvey> surveyIdMap = new HashMap<>();
-		for(FirebaseSurvey survey :FirebaseDB.getInstance().getOpenProject().getsurveys()) {
-			surveyIdMap.put(survey.gettitle(), survey);
-		}
+		
 		String surveyId = "";
 		if(rdioSelSurvey.isSelected()) {
 			String surveyname = lstSurveys.getSelectionModel().getSelectedItem();
@@ -331,7 +320,6 @@ public class PatientPane extends Pane {
 		for (FirebaseSurveyEntry nextsurvey : surveylist) {
 
 			date.setTime(nextsurvey.getcomplete());
-			System.out.println("Tine is " + nextsurvey.getcomplete());
 			// Do we have a sheet for this particular survey?
 			s = sheets.get(nextsurvey.getname());
 			if (s == null) {
@@ -385,6 +373,10 @@ public class PatientPane extends Pane {
 
 		try(Workbook wb = new HSSFWorkbook()) {
 			FileChooser fileChooser = new FileChooser();
+			if(selectedPatient == null) {
+				Constants.makeInfoAlert("Exception", "No participant selected", "Please select a participant from the list");
+				return;
+			}
 			fileChooser.setInitialFileName(selectedPatient.getName()+ ".xls");
 			fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel spreadsheet(*.xls)", "*.xls"));
 
@@ -399,6 +391,7 @@ public class PatientPane extends Pane {
 				writeFile(wb, file);
 			}
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			System.exit(1);
 		}
 
@@ -506,7 +499,9 @@ public class PatientPane extends Pane {
 	public void loadSurveys(){
 
 		List<FirebaseSurvey> surveydata = Constants.getOpenProject().getObservableSurveys();
-		surveydata.forEach(key->{lstSurveys.getItems().add(key.gettitle());System.out.println("AND ITS ID IS " + key.getsurveyId());});
+		surveyIdMap = new HashMap<>();
+
+		surveydata.forEach(key->{surveyIdMap.put(key.gettitle(), key);lstSurveys.getItems().add(key.gettitle());System.out.println("AND ITS ID IS " + key.getsurveyId());});
 		lstSurveys.getSelectionModel().selectedItemProperty().addListener(surveyListener);
 		FirebaseProject proj = FirebaseDB.getInstance().getOpenProject();
 		if (proj == null) {
@@ -596,15 +591,12 @@ public class PatientPane extends Pane {
 	Map<String,FirebaseSurvey> allComplete;
 
 	private void loadPatientTable(String name) {
-		System.out.println("Loading pateinet table");
 		Platform.runLater(()->{
 			allowedPatients.clear();
 			
 			FirebaseDB.getInstance().getpatients().forEach(patient -> {
-				System.out.println("FOUND A PATIENT");
 				if (patient.getCurrentStudy() != null && patient.getCurrentStudy().equals(name)) {
 					try {
-						System.out.println("CORRECT");
 						allowedPatients.add(patient);
 						privateKey = getPrivate(FirebaseDB.getInstance().getProjectToken());
 						String personalInfo = decryptText(patient.getuserinfo(),privateKey);
@@ -625,57 +617,28 @@ public class PatientPane extends Pane {
 
 	private void updateSurvey(){
 		String surveyname = lstSurveys.getSelectionModel().getSelectedItem();
+		String surveyId = surveyIdMap.get(surveyname).getsurveyId();
+		selectedSurvey = surveyIdMap.get(surveyname);
 		Map<String,Map<String,FirebaseSurveyEntry>> surveydata = FirebaseDB.getInstance().getOpenProject().getSurveyEntries();
-		Map<String,FirebaseSurveyEntry> data = surveydata.get(surveyname);
+		Map<String,FirebaseSurveyEntry> data = surveydata.get(surveyId);
 		if(data == null){
-			lblSent.setText("0");
 			lblComplete.setText("");
 			lblMissed.setText("");
-			//lblCompliance.setText("");
-			//lblInitTime.setText("");
-			lblCompletionTime.setText("");
+			lblCompTimeThis.setText("");
+			lblCompTimeAll.setText("");
 			return;
 		}
-		Map<String,FirebaseSurveyEntry> completedMap = surveydata.get("completed");
-		Map<String,FirebaseSurveyEntry> missedMap = surveydata.get("missed");
-		if(completedMap == null)completedMap = new HashMap<>();
-		if(missedMap == null)missedMap = new HashMap<>();
 
-		int sentsize = completedMap.size() + missedMap.size();
-		int completedsize = completedMap.size();
-		int missedsize = missedMap.size();
-		lblSent.setText(""+sentsize);
-		int initialised = 0; 
-		int avgInitTime = 0;
 		int avgCompleteTime = 0;
 
-		Iterator iter = completedMap.values().iterator();
+		Iterator<FirebaseSurveyEntry> iter = data.values().iterator();
 		while(iter.hasNext()){
-			Map<String,Object> entrydata = (Map<String,Object>)iter.next();
-			avgCompleteTime += (long)entrydata.get("complete");
-			if(entrydata.containsKey(INIT_TIME) && (long)entrydata.get(INIT_TIME)>0){
-				avgInitTime += (long)entrydata.get(INIT_TIME);
-				initialised++;
-			}
+			FirebaseSurveyEntry entrydata = iter.next();
+			avgCompleteTime += (entrydata.getcomplete() + entrydata.getinitTime());
 		}
-
-		lblComplete.setText(completedsize+"");
-		lblMissed.setText(missedsize+"");
-		/*
-		lblCompliance.setText((100*completedsize/sentsize)+"%");
-		if((100*completedsize/sentsize) < 60)
-			lblCompliance.setStyle("-fx-text-fill:#a6392e");
-		else if((100*completedsize/sentsize) > 90)
-			lblCompliance.setStyle("-fx-text-fill:#2fa845");
-		if(initialised != 0)
-			lblInitTime.setText(avgInitTime/(1000*initialised)+" seconds");
-		else
-			lblInitTime.setText("N/A");
-		*/
-		if(completedsize != 0)
-			lblCompletionTime.setText(avgCompleteTime/(1000*completedsize)+" seconds");
-		else
-			lblCompletionTime.setText("N/A");
+		avgCompleteTime /= data.values().size();
+		lblCompTimeAll.setText((avgCompleteTime/1000) + " seconds");
+		updatePatient();
 	}
 	/**
 	 * This method gets the selected patient in the patient table, and udpates the rest of the GUI with this
@@ -799,10 +762,27 @@ public class PatientPane extends Pane {
 
 			incompleteSurveys = selectedPatient.getincomplete();
 			completedSurveys = selectedPatient.getcomplete();
+			Iterator<FirebaseSurvey> completeIter = completedSurveys.values().iterator();
+			int avgTime = 0;
+			int numSurveys = 0;
+			while(completeIter.hasNext()) {
+				FirebaseSurvey entry = completeIter.next();
+				if(!entry.getsurveyId().equals(selectedSurvey.getsurveyId()))
+					continue;
+				long finishTime = entry.gettimeFinished();
+				long startTime = entry.gettimeSent();
+				avgTime += (finishTime-startTime);
+				numSurveys++;
+			}
+			if(numSurveys == 0)
+				avgTime = 0;
+			else
+				avgTime /= numSurveys;
 			int incomplete  = incompleteSurveys == null ? 0 : incompleteSurveys.values().size();
 			lblMissed.setText(Integer.toString(incomplete));
 			int complete = completedSurveys == null ? 0 : completedSurveys.values().size();
 			lblComplete.setText(Integer.toString(complete));
+			lblCompTimeThis.setText((avgTime/1000) + " seconds");
 
 		});
 	}

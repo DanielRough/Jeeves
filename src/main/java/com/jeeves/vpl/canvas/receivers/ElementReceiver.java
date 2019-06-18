@@ -77,8 +77,9 @@ public class ElementReceiver extends ExternalReceiver{
 			arg0.next();
 			if (arg0.wasAdded()) {
 				ViewElement<?> added = (ViewElement<?>) arg0.getAddedSubList().get(0);
+				int addedPos = getChildElements().indexOf(added);
 				//FirebaseUI uiModel = (FirebaseUI) added.getModel();
-				Constants.getOpenProject().add(added);
+				Constants.getOpenProject().add(added,addedPos);
 				/*if(uiModel.gettext()!=null){
 					Constants.getOpenProject().add(added);
 				}

@@ -17,6 +17,7 @@ import javafx.scene.control.ToggleGroup;
  */
 public class ButtonTrigger extends Trigger { // NO_UCD (unused code)
 	private static final String BUTTON = "selectedButton";
+	ObservableList<FirebaseUI> uielements;
 	@FXML
 	private ComboBox<String> cboButton;
 	final ToggleGroup group = new ToggleGroup();
@@ -36,7 +37,7 @@ public class ButtonTrigger extends Trigger { // NO_UCD (unused code)
 		super.addListeners();
 		cboButton.getItems().clear();
 
-		ObservableList<FirebaseUI> uielements = Constants.getOpenProject().getUIElements(); 
+		uielements = Constants.getOpenProject().getUIElements(); 
 		uielements.forEach(ui -> {
 			if(ui.getname().equals("button")){
 			cboButton.getItems().add(ui.gettext());
@@ -46,6 +47,10 @@ public class ButtonTrigger extends Trigger { // NO_UCD (unused code)
 		});
 		Constants.getOpenProject().registerElementListener(
 				(ListChangeListener.Change<? extends FirebaseUI> c) ->{
+					System.out.println("ITS CHAAAAAANGE");
+					
+					uielements = Constants.getOpenProject().getUIElements(); 
+
 				if (cboButton.getValue() != null)
 					value = cboButton.getValue();
 				cboButton.getItems().clear();

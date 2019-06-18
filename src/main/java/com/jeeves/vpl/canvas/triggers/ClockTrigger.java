@@ -124,9 +124,9 @@ public abstract class ClockTrigger extends Trigger { // NO_UCD (use default)
 		dateReceiverFrom.getChildElements().addListener((ListChangeListener<ViewElement>) listener -> {
 			listener.next();
 			if(listener.wasAdded()){
-				ViewElement<?> added = listener.getAddedSubList().get(0);
-				added.setPrefWidth(dateReceiverFrom.getWidth());
-				((UserVariable)added).setup();
+				//ViewElement<?> added = listener.getAddedSubList().get(0);
+				//added.setPrefWidth(dateReceiverFrom.getWidth());
+				//((UserVariable)added).setup();
 				model.getvariables().add(dateReceiverFrom.getChildModel().getname());
 			}
 			else{

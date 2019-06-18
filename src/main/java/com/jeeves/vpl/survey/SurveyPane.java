@@ -16,6 +16,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Pane;
+import static com.jeeves.vpl.Constants.getSaltString;
 
 public class SurveyPane extends Pane {
 
@@ -71,8 +72,9 @@ public class SurveyPane extends Pane {
 		FirebaseSurvey survey = new FirebaseSurvey();
 		Survey surveyview = new Survey(new FirebaseSurvey());
 		surveyview.setData(survey);
+		survey.setsurveyId(getSaltString());
 		survey.settitle("New survey");
-		Constants.getOpenProject().add(surveyview);
+		Constants.getOpenProject().add(surveyview,0);
 		addSurvey(surveyview);
 
 	}

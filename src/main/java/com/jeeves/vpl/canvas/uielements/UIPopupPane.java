@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.ViewElement;
 
 import javafx.fxml.FXML;
@@ -56,6 +57,9 @@ class UIPopupPane extends Pane {
 				return;
 			}
 			element.setText(txtText.getText());
+			//Ensures updates
+			Constants.getOpenProject().remove(element);
+			Constants.getOpenProject().add(element,currentChildren.indexOf(element));
 			stage.hide();
 		});
 		txtText.setOnKeyReleased(keyevent -> {
@@ -69,6 +73,8 @@ class UIPopupPane extends Pane {
 					return;
 				}
 				element.setText(txtText.getText());
+				Constants.getOpenProject().remove(element);
+				Constants.getOpenProject().add(element,currentChildren.indexOf(element));
 				stage.hide();
 			}
 		});

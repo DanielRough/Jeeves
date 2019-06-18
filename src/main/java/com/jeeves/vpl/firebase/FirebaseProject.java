@@ -156,7 +156,7 @@ public class FirebaseProject implements Serializable {
 				.observableMap(surveydata);
 	}
 
-	public void add(ViewElement elem) {
+	public void add(ViewElement elem, int pos) {
 		FirebaseElement model = elem.getModel();
 		if (elem instanceof Trigger) {
 			gettriggers().add((FirebaseTrigger) model);
@@ -168,7 +168,7 @@ public class FirebaseProject implements Serializable {
 			getexpressions().add((FirebaseExpression) model);
 		}
 		else if (elem instanceof UIElement) {
-			currentelements.add((FirebaseUI)model);
+			currentelements.add(pos,(FirebaseUI)model);
 		}
 		else if (elem instanceof UserVariable) {
 			currentvariables.add((FirebaseVariable)model);

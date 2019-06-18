@@ -224,7 +224,7 @@ public class ConditionEditor extends Pane {
 		}
 		rdioTrue.setSelected(true);
 		if (conditionConstraints.length() > 0) {
-			tgroup.selectToggle(Boolean.parseBoolean(conditionConstraints) ? rdioTrue : rdioFalse);
+			tgroup.selectToggle(conditionConstraints.equals("yes") ? rdioTrue : rdioFalse);
 		}
 	}
 	private void addListeners() {

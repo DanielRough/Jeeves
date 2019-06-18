@@ -228,7 +228,7 @@ public class Main extends Application {
 		canvas = new ViewCanvas();
 		paneIntervention.getChildren().add(canvas);
 
-		paneAndroid.reset();
+		paneAndroid.reset(dragPane);
 		paneAttributes.reset(canvas);
 		if (surveyBox.getChildren().size() > 1)
 			surveyBox.getChildren().remove(1);

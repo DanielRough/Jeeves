@@ -70,7 +70,7 @@ public class AndroidPane extends Pane{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		DragPane dragPane = new DragPane(getWidth(),getHeight());
+		dragPane = new DragPane(getWidth(),getHeight());
 		getChildren().add(dragPane);
 		editDeletePane = new EditDeletePane();
 		getChildren().add(editDeletePane);
@@ -81,7 +81,7 @@ public class AndroidPane extends Pane{
 		return vboxUIElements;
 	}
 
-	public void reset() {
+	public void reset(DragPane dragpane) {
 		paneAndroid.getChildren().clear();
 		receiver = new ElementReceiver(215, 307);
 		paneAndroid.getChildren().add(receiver);
@@ -140,7 +140,7 @@ public class AndroidPane extends Pane{
 
 			element.setPreviouslyAdded(true);  
 			receiver.addChildAtIndex(element, index++);
-			element.setParentPane(dragPane);
+			element.setParentPane(dragpane);
 			element.addEventHandler(MouseEvent.ANY, element.mainHandler);
 		}
 		receiver.addChildListeners();

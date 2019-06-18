@@ -29,21 +29,16 @@ public class SettingsPane extends Pane{
 	private Stage stage;
 	@FXML private TextField txtStudyId;
 	@FXML private Button btnStudyId;
-	@FXML private Button btnPublic;
 	@FXML private Label lblStudyId;
 	@FXML private Label lblStudyStatus;
 	@FXML private Label lblStatusDesc;
 	@FXML private VBox vboxPublished;
 	@FXML private VBox vboxUnpublished;
-	private String notPublic;
-	private String currentlyPublic;
 	
 	public SettingsPane(Stage stage) {
 		this.stage = stage;
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setController(this);
-		notPublic = "Your study currently requires patients to have your study ID. To make your study freely available to anyone, click 'Go Public' below!";
-		currentlyPublic = "Your study is now public! Anyone with the Jeeves app can now assign themselves to your study. To make your study available only with the study ID, click 'Go Private'";
 		URL location = this.getClass().getResource("/SettingsPane.fxml");
 
 		fxmlLoader.setLocation(location);
@@ -59,8 +54,6 @@ public class SettingsPane extends Pane{
 			String currentid = currentproject.getid();
 			lblStudyId.setText(currentid);
 
-			updatePublicBit();
-
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e.fillInStackTrace());
 		}
@@ -71,21 +64,6 @@ public class SettingsPane extends Pane{
 		stage.close();
 	}
 	
-	private void updatePublicBit(){
-		boolean isPublic = currentproject.getisPublic();
-		if(isPublic){
-			lblStudyStatus.setText("PUBLIC");
-			lblStudyStatus.setStyle("-fx-text-fill:green;-fx-font-weight: bold;");	
-			lblStatusDesc.setText(currentlyPublic);
-			btnPublic.setText("Go Private");
-		}
-		else{
-			lblStudyStatus.setText("PRIVATE");
-			lblStudyStatus.setStyle("-fx-text-fill:purple;-fx-font-weight: bold;");
-			lblStatusDesc.setText(notPublic);
-			btnPublic.setText("Go Public");
-		}
-	}
 	@FXML
 	public void updateStudyId(Event e){
 		
@@ -111,11 +89,4 @@ public class SettingsPane extends Pane{
 		image.getStyleClass().remove("drop_shadow");
 	}
 	
-	@FXML
-	public void goPublic(Event e){
-		currentproject.setisPublic(!currentproject.getisPublic());
-		updatePublicBit();
-		FirebaseDB.getInstance().publishStudy(currentproject);
-
-	}
 }

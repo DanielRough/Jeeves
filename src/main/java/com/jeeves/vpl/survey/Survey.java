@@ -1,6 +1,5 @@
 package com.jeeves.vpl.survey;
 
-import static com.jeeves.vpl.Constants.getSaltString;
 
 import java.io.IOException;
 import java.util.List;
@@ -98,7 +97,7 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 	public void addListeners() {
 		receiverListener = (ListChangeListener.Change<? extends Node> arg0) ->{
 				//new question, better update the survey ID!
-				getModel().setsurveyId(getSaltString());
+				//getModel().setsurveyId(getSaltString());
 				arg0.next();
 				if (arg0.wasAdded()) {
 					ViewElement<?> added = (ViewElement<?>) arg0.getAddedSubList().get(0);
@@ -137,11 +136,11 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 			editor.populateQuestion(view);
 			paneEditor.setDisable(false);
 		});
-		view.getQuestionTextProperty().addListener((o,v0,v1) -> {
-				if(!v1.isEmpty()) {
-					getModel().setsurveyId(getSaltString()); //question text changed, again survey ID needs to be updated
-				}
-		});
+//		view.getQuestionTextProperty().addListener((o,v0,v1) -> {
+//				if(!v1.isEmpty()) {
+//					getModel().setsurveyId(getSaltString()); //question text changed, again survey ID needs to be updated
+//				}
+//		});
 		view.getDeleteButton().setOnAction(event -> {
 			Stage stage = new Stage(StageStyle.UNDECORATED);
 			QuestionDeletePane root = new QuestionDeletePane(this, view, stage);
@@ -166,14 +165,14 @@ public class Survey extends ViewElement<FirebaseSurvey> {
 				getModel().setexpiryTime(0);
 				txtExpiry.setDisable(true);
 			}
-			getModel().setsurveyId(getSaltString()); //question text changed, again survey ID needs to be updated
+			//getModel().setsurveyId(getSaltString()); //question text changed, again survey ID needs to be updated
 
 		
 	};
 	chkFastTranslationListener = (o,v0,v1)->{
 		getModel().setfastTransition(chkFastTranslation.isSelected());
 		
-		getModel().setsurveyId(getSaltString()); //question text changed, again survey ID needs to be updated
+		//getModel().setsurveyId(getSaltString()); //question text changed, again survey ID needs to be updated
 
 	};
 		surveyQuestions = FXCollections.observableArrayList();
