@@ -185,32 +185,27 @@ public class FirebaseDB {
 	}
 
 	public String getProjectToken() {
-		System.out.println("it's can" + projectKey);
 		return projectKey;
 	}
 	public void addListeners() {
 	
 		dbRef = FirebaseDatabase.getInstance().getReference();
 		privateRef =  dbRef.child(PRIVATE_COLL).child(currentUserId);
-		System.out.println("REF is " + privateRef.toString());
 		DatabaseReference patientsRef = privateRef.child("patients");
-		publicRef = dbRef.child(PUBLIC_COLL);
+		//changed public ref to mirror privateref structure
+		publicRef = dbRef.child(PUBLIC_COLL).child(currentUserId);
 		//We now have listeners for individual patients rather than just clearing and adding them all every time an
 		//update happens. This should make the patients pane function more cleanly
 		patientsRef.addChildEventListener(new ChildEventListener() {
 		    @Override
 		    public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-		    	System.out.println("ADDING PATIENT");
-		    	System.out.println(dataSnapshot.getKey());
 		        FirebasePatient newPost = dataSnapshot.getValue(FirebasePatient.class);
-		        System.out.println("Did it");
 		        newpatients.add(newPost);
 		    }
 
 		    @Override
 		    public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
 		    	FirebasePatient changedPatient = dataSnapshot.getValue(FirebasePatient.class);
-		    	System.out.println("CHANGE " + changedPatient.getName());
 		    	newpatients.forEach(p->{
 		    		if(p.getName() == changedPatient.getName()) {
 		    			int index = newpatients.indexOf(p);
@@ -351,7 +346,12 @@ public class FirebaseDB {
 		privateRef.child(PROJECTS_COLL).child(object.getname()).setValueAsync(object);
 		
 		if(object.getactive()){
-			publicRef.child(PROJECTS_COLL).child(object.getname()).setValueAsync(object);		}
+			Map<String,Map<String,FirebaseSurveyEntry>> data = object.getsurveydata();
+			//object.getsurveydata().clear();
+			publicRef.child(PROJECTS_COLL).child(object.getname()).setValueAsync(object);
+			publicRef.child(PROJECTS_COLL).child(object.getname()).child("surveydata").setValueAsync(null);
+			//object.setsurveydata(data);
+			}
 		return true;
 	}
 

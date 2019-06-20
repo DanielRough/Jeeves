@@ -1,7 +1,7 @@
 package com.jeeves.vpl;
-import static com.jeeves.vpl.Constants.PRIVATE_COLL;
 import static com.jeeves.vpl.Constants.REG_ERROR;
 import static com.jeeves.vpl.Constants.TITLE;
+import static com.jeeves.vpl.Constants.PRIVATE_COLL;
 import static com.jeeves.vpl.Constants.makeInfoAlert;
 
 import java.io.IOException;
@@ -167,6 +167,38 @@ public class LoginRegisterPane extends Pane{
 
 		authenticate(username,password);
 	}
+	//Need to do some proper authentication in here. 
+//	public void authenticate(String email, String password) throws IOException {
+//		// Fetch the service account key JSON file contents
+//		FileInputStream serviceAccount = new FileInputStream("path/to/serviceAccount.json");
+//
+//		// Initialize the app with a custom auth variable, limiting the server's access
+//		Map<String, Object> auth = new HashMap<String, Object>();
+//		auth.put("uid", "my-service-worker");
+//
+//		// Initialize the app with a service account, granting admin privileges
+//		FirebaseOptions options = new FirebaseOptions.Builder()
+//		    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+//		    .setDatabaseUrl("https://<databaseName>.firebaseio.com")
+//		    .setDatabaseAuthVariableOverride(auth)
+//		    .build();
+//		FirebaseApp.initializeApp(options);
+//
+//		// As an admin, the app has access to read and write all data, regardless of Security Rules
+//		DatabaseReference ref = FirebaseDatabase.getInstance()
+//		    .getReference("restricted_access/secret_document");
+//		ref.addListenerForSingleValueEvent(new ValueEventListener() {
+//		  @Override
+//		  public void onDataChange(DataSnapshot dataSnapshot) {
+//		    Object document = dataSnapshot.getValue();
+//		    System.out.println(document);
+//		  }
+//
+//		  @Override
+//		  public void onCancelled(DatabaseError error) {
+//		  }
+//		});
+//	}
 	public void authenticate(String email, String password) throws InterruptedException, ExecutionException {
 		UserRecord userRecord;
 		hboxError.setVisible(false);
