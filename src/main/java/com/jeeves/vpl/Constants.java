@@ -1,5 +1,6 @@
 package com.jeeves.vpl;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import java.util.stream.Stream;
 import com.jeeves.vpl.firebase.FirebaseDB;
 import com.jeeves.vpl.firebase.FirebaseProject;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.event.EventHandler;
@@ -188,13 +190,20 @@ public class Constants {
 	public static final String WAKE_TIME = "waketime";
 	public static final String SLEEP_TIME = "sleeptime";
 	
+	public static String FILEPATH = "." + File.separator + "firebasekey.json";
+	public static String STORAGEPATH = "." + File.separator + "storagekey.json";
+
+	public static String PROJECT_ID;
+	public static void setProjectID(String projid) {
+		PROJECT_ID = projid;
+	}
 	// Database constants
-	public static final String DB_URL = "https://jeeves-27914.firebaseio.com/";
-	public static final String SERVICE_JSON = "/Jeeves-9b9326e90601.json";
-	public static final String CLOUD_JSON = "/Jeeves-290e97745883.json";
-	public static final String PRIVATE_COLL = "private";
-	public static final String PUBLIC_COLL = "public";
-	public static final String PATIENTS_COLL = "patients";
+	//public static final String DB_URL = "https://jeeves-27914.firebaseio.com/";
+	//public static final String SERVICE_JSON = "/myjeevesproject.json";
+	//public static final String CLOUD_JSON = "/jeeves-27914-firebase-adminsdk-5ver8-cfb7bc7ae9.json";
+//	public static final String PRIVATE_COLL = "private";
+	//public static final String PUBLIC_COLL = "public";
+	public static final String PATIENTS_COLL = "users";
 	public static final String PROJECTS_COLL = "projects";
 
 	// Clock trigger / time expression constants

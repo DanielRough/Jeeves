@@ -94,7 +94,6 @@ public class ProjectsPane extends Pane {
 	private class ProjectCell extends ListCell<FirebaseProject>{
 		@FXML private Label lblProjectName;
 		@FXML private Label lblLastUpdated;
-		@FXML private Label lblStatus;
 		@FXML private Label lblPatients;
 		@FXML private HBox hbox;
 		FXMLLoader fxmlLoader;
@@ -128,21 +127,21 @@ public class ProjectsPane extends Pane {
 				date.setTime(project.getlastUpdated());
 				String dateStr = formatter.format(date);
 				lblLastUpdated.setText(dateStr);
-				if(project.getactive()){
-					lblStatus.setText("Status: Running");
-					lblStatus.setStyle("-fx-text-fill: green");
-				}
-				else{
-					lblStatus.setText("Status: Unpublished");
-					lblStatus.setStyle("-fx-text-fill: red");
-				}
+//				if(project.getactive()){
+//					lblStatus.setText("Status: Running");
+//					lblStatus.setStyle("-fx-text-fill: green");
+//				}
+//				else{
+//					lblStatus.setText("Status: Unpublished");
+//					lblStatus.setStyle("-fx-text-fill: red");
+//				}
 				FirebaseDB.getInstance().getpatients().forEach(patient->{
 					String study = patient.getCurrentStudy();
 
 					if(study != null && study.equals(project.getname()))
 						patientCount++;
 				});
-				lblPatients.setText("Patients: " + patientCount);
+				lblPatients.setText("Users: " + patientCount);
 				patientCount = 0;
 			}
 
