@@ -190,8 +190,8 @@ public class Constants {
 	
 	// Database constants
 	public static final String DB_URL = "https://jeeves-27914.firebaseio.com/";
-	public static final String SERVICE_JSON = "/Jeeves-9b9326e90601.json";
-	public static final String CLOUD_JSON = "/Jeeves-290e97745883.json";
+	public static final String SERVICE_JSON = "/jeevesfirebase.json";
+	public static final String CLOUD_JSON = "/jeevescloud.json";
 	public static final String PRIVATE_COLL = "private";
 	public static final String PUBLIC_COLL = "public";
 	public static final String PATIENTS_COLL = "patients";
