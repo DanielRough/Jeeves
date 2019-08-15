@@ -213,6 +213,11 @@ public class FirebaseDB {
     	patientsRef.child(patient.getName()).setValueAsync(patient);
     	return true;
     }
+    
+    public boolean deleteProject(FirebaseProject obj) {
+		dbRef.child(PROJECTS_COLL).child(obj.getname()).removeValueAsync();
+    	return true;
+    }
 	public boolean saveProject(String oldname, FirebaseProject object) {
 		if (oldname == null){
 			try {
