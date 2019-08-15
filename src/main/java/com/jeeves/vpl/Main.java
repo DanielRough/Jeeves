@@ -4,13 +4,6 @@ import static com.jeeves.vpl.Constants.GLOW_CLASS;
 import static com.jeeves.vpl.Constants.NEW_PROJ;
 import static com.jeeves.vpl.Constants.SELECTED;
 import static com.jeeves.vpl.Constants.TITLE;
-import static com.jeeves.vpl.Constants.USER_BOOLEAN;
-import static com.jeeves.vpl.Constants.USER_NUMERIC;
-import static com.jeeves.vpl.Constants.VAR_BOOLEAN;
-import static com.jeeves.vpl.Constants.VAR_NUMERIC;
-import static com.jeeves.vpl.Constants.VAR_CATEGORY;
-import static com.jeeves.vpl.Constants.VAR_DATE;
-import static com.jeeves.vpl.Constants.VAR_CLOCK;
 import static com.jeeves.vpl.Constants.actNames;
 import static com.jeeves.vpl.Constants.elemNames;
 import static com.jeeves.vpl.Constants.exprNames;
@@ -18,32 +11,24 @@ import static com.jeeves.vpl.Constants.makeInfoAlert;
 import static com.jeeves.vpl.Constants.questionNames;
 import static com.jeeves.vpl.Constants.setUpdateTriggers;
 import static com.jeeves.vpl.Constants.trigNames;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Optional;
-
 import com.jeeves.vpl.Constants.ElementType;
 import com.jeeves.vpl.canvas.actions.ScheduleAction;
 import com.jeeves.vpl.canvas.expressions.Expression;
 import com.jeeves.vpl.canvas.expressions.UserVariable;
-import com.jeeves.vpl.canvas.receivers.ElementReceiver;
 import com.jeeves.vpl.canvas.triggers.Trigger;
-import com.jeeves.vpl.canvas.uielements.UIElement;
 import com.jeeves.vpl.firebase.FirebaseDB;
 import com.jeeves.vpl.firebase.FirebaseExpression;
 import com.jeeves.vpl.firebase.FirebaseProject;
 import com.jeeves.vpl.firebase.FirebaseSurvey;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
-import com.jeeves.vpl.firebase.FirebaseUI;
-import com.jeeves.vpl.firebase.FirebaseVariable;
 import com.jeeves.vpl.survey.Survey;
 import com.jeeves.vpl.survey.SurveyPane;
 import com.jeeves.vpl.survey.questions.QuestionView;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.Event;
@@ -53,12 +38,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.SplitPane;
@@ -102,22 +82,14 @@ public class Main extends Application {
 	private AnchorPane myPane; // The main pane
 	private PatientPane patientController;
 	private Stage primaryStage;
-
-
 	@FXML private Label lblActions;
 	@FXML private Label lblConditions;
 	@FXML private Label lblTriggers;
 	@FXML private VBox paneActions;
 	@FXML private VBox paneConditions;
 	@FXML private VBox paneTriggers;
-
 	@FXML private Pane panePatients;
 	@FXML private ImageView imgTrash;
-
-
-
-
-
 	@FXML private Pane paneFrame;
 	@FXML private Pane paneIntervention;
 	@FXML private VBox paneQuestions;
@@ -127,9 +99,11 @@ public class Main extends Application {
 	@FXML private Tab tabFramework;
 	@FXML private Tab tabPatients;
 	@FXML private TabPane tabPane;
-	@FXML private Label lblWelcome;
 	@FXML private Label lblConnection;
 	@FXML private Label lblOpenProject;
+	@FXML private TextField txtStudyId;
+	@FXML private Label lblStudyId;
+	@FXML private Button btnUpdateId;
 	private EventHandler<MouseEvent> viewElementHandler;
 	private AndroidPane paneAndroid;
 	private AttributesPane paneAttributes;
@@ -273,24 +247,24 @@ public class Main extends Application {
 		try {
 			root = new LoginRegisterPane(stage);
 			stage.setScene(new Scene(root));
-		} catch (IOException e) {
+			if(root.shouldLoad()) {
+				Pane pane = new Pane();
+				pane.getStyleClass().add("shadowpane");
+				pane.setPrefWidth(myPane.getPrefWidth());
+				pane.setPrefHeight(myPane.getPrefHeight());
+				myPane.getChildren().add(pane);
+	
+				stage.initStyle(StageStyle.TRANSPARENT);
+				stage.initOwner(splitPane.getScene().getWindow());
+				stage.showAndWait();
+				myPane.getChildren().remove(pane);
+			}
+		} catch (IOException e) {			
 			System.exit(1);
 		}
-		Pane pane = new Pane();
-		pane.getStyleClass().add("shadowpane");
-		pane.setPrefWidth(myPane.getPrefWidth());
-		pane.setPrefHeight(myPane.getPrefHeight());
-		myPane.getChildren().add(pane);
-
-		stage.initStyle(StageStyle.TRANSPARENT);
-		stage.initOwner(splitPane.getScene().getWindow());
-		stage.showAndWait();
-		myPane.getChildren().remove(pane);
-		lblWelcome.setText("Welcome, " + FirebaseDB.getInstance().getCurrentUserEmail());
-
-		FirebaseDB.getInstance().getUserCredentials();
 		patientController = new PatientPane();
-		panePatients.getChildren().add(patientController);	
+		panePatients.getChildren().add(patientController);
+
 	}
 
 	@FXML
@@ -305,7 +279,18 @@ public class Main extends Application {
 
 	}
 
-
+	@FXML
+	public void updateStudyId(Event e){
+		
+		String newId = txtStudyId.getText();
+		
+		if(newId.length() < 3){
+			makeInfoAlert("Jeeves","ID too short","New ID must be at least 3 characters long");
+			return;
+		}
+		openProject.setid(newId);
+		lblStudyId.setText(newId);		
+	}
 	private VBox createSidebarView(ViewElement<?> elem) {
 		Label newlable = new Label(elem.getName());
 
@@ -462,6 +447,9 @@ public class Main extends Application {
 		}
 		paneAttributes.loadVariables();
 		setUpdateTriggers(true);
+		String currentid = openProject.getid();
+		lblStudyId.setText(currentid);
+		System.out.println("SET ID TO " + currentid);
 	}
 
 	/**Method called from SaveAsPane until I can be bothered with a better way of doing things**/
@@ -527,35 +515,8 @@ public class Main extends Application {
 			FirebaseDB.getInstance().saveProject(openProject.getname(), this.openProject);
 		}
 		Toast.makeText(primaryStage,canvasPos.getX(),canvasPos.getY(), canvasLength, toastMsg,24);
-
-	}
-
-	@FXML
-	public void openSettings(Event e){
-		Stage stage = new Stage(StageStyle.UNDECORATED);
-		SettingsPane root = new SettingsPane(stage);
-		stage.setScene(new Scene(root));
-		stage.setTitle("Settings");
-		stage.initModality(Modality.APPLICATION_MODAL);
-		stage.initOwner(splitPane.getScene().getWindow());
-		stage.showAndWait();
-	}
-
-	@FXML
-	public void publish(Event e){
-		if(openProject.getactive()){
-			makeInfoAlert(TITLE, "Already published","Your study is already published!");
-			return;
-		}
-		Alert alert = new Alert(AlertType.CONFIRMATION);
-		alert.setTitle("Confirm Publish");
-		alert.setHeaderText("Publish study " + openProject.getname() + "?");
-		alert.setContentText("This will allow other researchers to view the study spec, and allow you to assign patients to the study");
-		Optional<ButtonType> result = alert.showAndWait();
-		if (result.isPresent() && result.get() == ButtonType.OK){
-			FirebaseDB.getInstance().publishStudy(openProject);
-			makeInfoAlert("Study published","Successfully published!","Your study is now published! Configuration settings, including the study ID that you distribute to patients, are available in the Settings menu");
-		} 
+		String currentid = openProject.getid();
+		lblStudyId.setText(currentid);
 	}
 
 	@FXML
@@ -637,9 +598,4 @@ public class Main extends Application {
 	boolean isOverTrash(double mouseX, double mouseY) {
 		return imgTrash.getBoundsInParent().contains(mouseX, mouseY);
 	}
-
-
-
-	
-
 }

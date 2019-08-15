@@ -1,86 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="349.0" prefWidth="600.0" styleClass="blueprint" stylesheets="@Styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="395.0" prefWidth="450.0" styleClass="blueprint" stylesheets="@Styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Label layoutX="103.0" layoutY="22.0" text="Jeeves - Experience Sampling at your service!">
+      <Label layoutX="14.0" layoutY="22.0" text="Jeeves - Experience Sampling at your service!">
          <font>
             <Font name="Oswald Regular" size="24.0" />
          </font>
       </Label>
-      <VBox fillWidth="false" layoutX="14.0" layoutY="76.0" prefHeight="310.0" prefWidth="285.0" spacing="5.0">
+      <VBox alignment="TOP_CENTER" fillWidth="false" layoutX="5.0" layoutY="76.0" prefHeight="309.0" prefWidth="443.0" spacing="5.0">
          <children>
-            <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="262.0" spacing="10.0">
-               <children>
-                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@img/icons/id-card.png" />
-                     </image>
-                  </ImageView>
-                  <Label prefHeight="27.0" prefWidth="243.0" text="Log In">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                  </Label>
-               </children>
-            </HBox>
-            <Label prefWidth="262.0" text="Registered user? Log in here" wrapText="true" />
-            <TextField fx:id="txtLogEmail" prefHeight="35.0" prefWidth="228.0" promptText="Email address" />
-            <PasswordField fx:id="txtPassword" prefHeight="35.0" prefWidth="228.0" promptText="Password" />
-            <Button fx:id="btnLogin" mnemonicParsing="false" onAction="#login" onKeyPressed="#checkEnterLogin" prefHeight="35.0" prefWidth="227.0" text="Log In" />
-            <HBox fx:id="hboxError" alignment="CENTER_LEFT" visible="false">
-               <children>
-                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@img/icons/jeeveswarning.png" />
-                     </image>
-                  </ImageView>
-                  <Label fx:id="lblError" alignment="CENTER" prefHeight="67.0" prefWidth="244.0" textAlignment="CENTER" textFill="#220808" wrapText="true">
-                     <font>
-                        <Font name="Oswald Regular" size="18.0" />
-                     </font>
-                  </Label>
-               </children>
-            </HBox>
+            <Label prefHeight="116.0" prefWidth="443.0" text="Welcome to Jeeves! If you followed the user guide instructions, you should have a database key JSON file and a storage key JSON file. Please click on the buttons below to locate these files - you will only need to do this once. " textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txtJson" editable="false" prefWidth="295.0" promptText="Database key JSON" />
+            <Button fx:id="btnJson" mnemonicParsing="false" prefHeight="31.0" prefWidth="196.0" text="Find database JSON">
+               <VBox.margin>
+                  <Insets bottom="30.0" />
+               </VBox.margin>
+            </Button>
+            <TextField fx:id="txtStorage" editable="false" prefWidth="299.0" promptText="Storage key JSON" />
+            <Button fx:id="btnStorage" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="31.0" prefWidth="188.0" text="Find storage JSON" textAlignment="CENTER" />
          </children>
       </VBox>
-      <VBox layoutX="324.0" layoutY="76.0" prefHeight="310.0" prefWidth="262.0" spacing="5.0">
-         <children>
-            <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="262.0" spacing="10.0">
-               <children>
-                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@img/icons/edit.png" />
-                     </image>
-                  </ImageView>
-                  <Label prefHeight="27.0" prefWidth="251.0" text="Register">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                  </Label>
-               </children>
-            </HBox>
-            <Label text="Fill in this form to get access to Jeeves" />
-            <TextField fx:id="txtRegEmail" prefHeight="35.0" promptText="Email address" />
-            <PasswordField fx:id="txtRegPassword" prefHeight="35.0" promptText="Password" />
-            <PasswordField fx:id="txtRegPasswordConfirm" prefHeight="35.0" promptText="Confirm Password" />
-            <Button fx:id="txtRegister" mnemonicParsing="false" onAction="#validate" onKeyPressed="#checkEnterRegister" prefHeight="35.0" prefWidth="279.0" text="Register" />
-         </children>
-      </VBox>
-      <Separator layoutX="300.0" layoutY="67.0" orientation="VERTICAL" prefHeight="268.0" prefWidth="4.0" styleClass="shadowy" />
-      <Separator layoutX="17.0" layoutY="62.0" prefHeight="8.0" prefWidth="564.0" />
-      <ImageView fx:id="btnClose" fitHeight="27.0" fitWidth="40.0" layoutX="554.0" layoutY="14.0" onMouseEntered="#showGlow" onMouseExited="#hideGlow" onMousePressed="#close" pickOnBounds="true" preserveRatio="true">
+      <Separator layoutX="17.0" layoutY="59.0" prefHeight="11.0" prefWidth="408.0" />
+      <ImageView fx:id="btnClose" fitHeight="27.0" fitWidth="40.0" layoutX="416.0" layoutY="28.0" onMouseEntered="#showGlow" onMouseExited="#hideGlow" onMousePressed="#close" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@img/icons/error.png" />
          </image>
       </ImageView>
-      <VBox fx:id="vboxShadow" alignment="CENTER" layoutX="-1.0" layoutY="-2.0" prefHeight="355.0" prefWidth="608.0" styleClass="shadowpane" visible="false" />
-      <VBox fx:id="vboxLoading" alignment="CENTER" layoutX="220.0" layoutY="76.0" visible="false">
+      <VBox fx:id="vboxShadow" alignment="CENTER" layoutX="-1.0" layoutY="-2.0" prefHeight="355.0" prefWidth="450.0" styleClass="shadowpane" visible="false" />
+      <VBox fx:id="vboxLoading" alignment="CENTER" layoutX="140.0" layoutY="76.0" visible="false">
          <children>
             <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                <image>

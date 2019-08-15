@@ -1,7 +1,8 @@
 package com.jeeves.vpl.survey.questions;
 
-import static com.jeeves.vpl.Constants.CLOUD_JSON;
+//import static com.jeeves.vpl.Constants.CLOUD_JSON;
 import static com.jeeves.vpl.Constants.AUDIO;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -22,7 +23,6 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.firebase.cloud.StorageClient;
 import com.jeeves.vpl.Constants;
-import com.jeeves.vpl.firebase.FirebaseDB;
 import com.jeeves.vpl.firebase.FirebaseQuestion;
 
 import javafx.fxml.FXML;
@@ -46,51 +46,54 @@ public class QuestionAudio extends QuestionView{
 		this(new FirebaseQuestion(label));
 	}
 
-	static Storage storage;
+	Storage storage;
+	Bucket bucket;
 	static {
-		InputStream googleCloudCrentials = FirebaseDB.class.getResourceAsStream(CLOUD_JSON);
-		try {
-			storage = StorageOptions.newBuilder().setProjectId("firebaseId")
-					.setCredentials(ServiceAccountCredentials.fromStream(googleCloudCrentials))
-					.build()
-					.getService();
-		} catch (IOException e) {
-			logger.error(e.getMessage(),e.fillInStackTrace());
-		}
+
 	}
 	public QuestionAudio(FirebaseQuestion data) {
 		super(data);
 	}
 
-	@SuppressWarnings("deprecation")
+	private void getStorage() {
+		try {
+			InputStream resource = new FileInputStream(Constants.STORAGEPATH);
+			storage = StorageOptions.newBuilder().setProjectId("firebaseId")
+					.setCredentials(ServiceAccountCredentials.fromStream(resource))
+					.build()
+					.getService();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+	//@SuppressWarnings("deprecation")
 	@Override
 	public void addEventHandlers() {
 		btnBrowse.setOnAction(e -> {
-				final FileChooser fileChooser = new FileChooser();
+			if(storage == null) {
+				getStorage();
+			}
 
-				Bucket bucket = StorageClient.getInstance().bucket();
-				File file = fileChooser.showOpenDialog(null);
-				if (file != null) {
-					txtImage.setText(file.getAbsolutePath());
-					imgImage.setImage(new Image(getClass().getResourceAsStream(getImagePath())));
-					Map<String, Object> audioOpts = new HashMap<>();
-					audioOpts.put("fullpath", file.getAbsolutePath());
-					audioOpts.put(AUDIOSTR, file.getName());
-					model.getparams().put("options",audioOpts);
-					try {
-						
-						storage.create(
-								BlobInfo
-								.newBuilder(bucket.getName(), file.getName())
-								.setContentType("audio/*")
-								.setBlobId(BlobId.of(bucket.getName(), file.getName()))
-								.build(),
-								new FileInputStream(file));
-					} catch (FileNotFoundException e1) {
-						logger.error(e1.getMessage(),e1.fillInStackTrace());
-					} 
+			final FileChooser fileChooser = new FileChooser();
 
-				}	
+			Bucket bucket = StorageClient.getInstance().bucket();
+			File file = fileChooser.showOpenDialog(null);
+			if (file != null) {
+				txtImage.setText(file.getAbsolutePath());
+				imgImage.setImage(new Image(getClass().getResourceAsStream(getImagePath())));
+				Map<String, Object> audioOpts = new HashMap<>();
+				audioOpts.put("fullpath", file.getAbsolutePath());
+				audioOpts.put(AUDIOSTR, file.getName());
+				model.getparams().put("options",audioOpts);
+				try {
+					BlobId blobId = BlobId.of(bucket.getName(), file.getName());
+					BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("audio/*").build();
+					Blob blob = storage.create(blobInfo,new FileInputStream(file));
+				} catch (FileNotFoundException e1) {
+					logger.error(e1.getMessage(),e1.fillInStackTrace());
+				} 
+
+			}	
 		});		
 	}
 
@@ -128,6 +131,9 @@ public class QuestionAudio extends QuestionView{
 			}
 			else
 				return;
+		}
+		if(storage == null) {
+			getStorage();
 		}
 		if(imgImage.getImage() != null)return;
 		Bucket bucket = StorageClient.getInstance().bucket();

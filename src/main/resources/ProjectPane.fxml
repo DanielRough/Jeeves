@@ -5,7 +5,6 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="281.0" prefWidth="425.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <ListView fx:id="lstProjects" layoutX="14.0" layoutY="41.0" prefHeight="200.0" prefWidth="399.0" />
@@ -24,5 +23,15 @@
             <Font size="16.0" />
          </font>
       </Label>
+      <Button fx:id="btnDelete" disable="true" layoutX="304.0" layoutY="6.0" mnemonicParsing="false" onAction="#deleteProject" text="Delete Project">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
+      <Button fx:id="btnLoadFile" layoutX="14.0" layoutY="243.0" mnemonicParsing="false" onAction="#loadFile" text="Load from file">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
    </children>
 </Pane>

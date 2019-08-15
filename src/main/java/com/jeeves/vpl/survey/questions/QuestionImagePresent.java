@@ -1,6 +1,6 @@
 package com.jeeves.vpl.survey.questions;
 
-import static com.jeeves.vpl.Constants.CLOUD_JSON;
+//import static com.jeeves.vpl.Constants.CLOUD_JSON;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -20,7 +20,6 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.firebase.cloud.StorageClient;
 import com.jeeves.vpl.Constants;
-import com.jeeves.vpl.firebase.FirebaseDB;
 import com.jeeves.vpl.firebase.FirebaseQuestion;
 
 import javafx.fxml.FXML;
@@ -47,26 +46,29 @@ public class QuestionImagePresent extends QuestionView{
 	public QuestionImagePresent(FirebaseQuestion data) {
 		super(data);
 	}
-	static Storage storage;
-	static {
-        InputStream googleCloudCrentials = FirebaseDB.class.getResourceAsStream(CLOUD_JSON);
+	Storage storage;
+
+	private void getStorage() {
+		
 		try {
+			InputStream resource = new FileInputStream(Constants.STORAGEPATH);
 			storage = StorageOptions.newBuilder().setProjectId("firebaseId")
-					.setCredentials(ServiceAccountCredentials.fromStream(googleCloudCrentials))
+					.setCredentials(ServiceAccountCredentials.fromStream(resource))
 					.build()
 					.getService();
-		} catch (IOException e) {
-			System.exit(1);
+		}
+		catch (IOException e1) {
+			e1.printStackTrace();
 		}
 	}
-
 	@Override
 	public void addEventHandlers() {
-		// the inputstream is closed by default, so we don't need to close it here
-		  
 		btnBrowse.setOnAction(e -> {
 		        final FileChooser fileChooser = new FileChooser();
 
+		        if(storage == null) {
+		        	getStorage();
+		        }
 				 Bucket bucket = StorageClient.getInstance().bucket();
 				 File file = fileChooser.showOpenDialog(null);
                  if (file != null) {
@@ -77,13 +79,9 @@ public class QuestionImagePresent extends QuestionView{
              		imageOpts.put(IMAGE, file.getName());
              			model.getparams().put("options",imageOpts);
              			 try {
-             				       storage.create(
-             				           BlobInfo
-             				               .newBuilder(bucket.getName(), file.getName())
-             				               .setContentType("image/png")
-             				               .setBlobId(BlobId.of(bucket.getName(), file.getName()))
-             				               .build(),
-             				  			new FileInputStream(file));
+             				BlobId blobId = BlobId.of(bucket.getName(), file.getName());
+        					BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("image/png").build();
+        					Blob blob = storage.create(blobInfo,new FileInputStream(file));
 						} catch (FileNotFoundException e1) {
 							System.exit(1);
 						} 
@@ -127,6 +125,9 @@ public class QuestionImagePresent extends QuestionView{
 		if(imgImage.getImage() != null) {
 			return;
 		}
+        if(storage == null) {
+        	getStorage();
+        }
 		 Bucket bucket = StorageClient.getInstance().bucket();
 
 		BlobId blobId = BlobId.of(bucket.getName(), imageName);

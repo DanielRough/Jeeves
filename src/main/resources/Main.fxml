@@ -193,31 +193,6 @@
             <Separator orientation="VERTICAL" prefHeight="30.0" />
             <VBox alignment="TOP_CENTER">
                <children>
-                  <ImageView fitHeight="40.0" fitWidth="55.0" onMouseClicked="#publish" onMouseEntered="#addGlow" onMouseExited="#removeGlow" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@img/icons/publish.png" />
-                     </image>
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </ImageView>
-                  <Label text="Publish" visible="false" />
-               </children>
-            </VBox>
-            <Separator orientation="VERTICAL" prefHeight="30.0" />
-            <VBox alignment="TOP_CENTER">
-               <children>
-                  <ImageView fitHeight="40.0" fitWidth="55.0" onMouseClicked="#openSettings" onMouseEntered="#addGlow" onMouseExited="#removeGlow" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@img/icons/settings.png" />
-                     </image>
-                  </ImageView>
-                  <Label text="Settings" visible="false" />
-               </children>
-            </VBox>
-            <Separator orientation="VERTICAL" prefHeight="30.0" />
-            <VBox alignment="TOP_CENTER">
-               <children>
                   <ImageView fitHeight="40.0" fitWidth="55.0" onMouseClicked="#exit" onMouseEntered="#addGlow" onMouseExited="#removeGlow" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@img/icons/exit.png" />
@@ -227,13 +202,22 @@
                </children>
             </VBox>
             <Separator orientation="VERTICAL" prefHeight="30.0" />
-            <VBox prefHeight="57.0" spacing="10.0">
+            <VBox prefHeight="57.0" spacing="8.0">
                <children>
-                  <Label fx:id="lblWelcome">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                  </Label>
+                  <HBox spacing="3.0">
+                     <children>
+                        <Label text="Open project:">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblOpenProject" text="Label">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
                   <HBox spacing="10.0">
                      <children>
                         <Label text="Connection status:">
@@ -250,20 +234,26 @@
                   </HBox>
                </children>
             </VBox>
-            <HBox spacing="3.0">
+            <VBox>
                <children>
-                  <Label text="Open project:">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="lblOpenProject" text="Label">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Label>
+                  <HBox alignment="CENTER" prefHeight="100.0" spacing="10.0">
+                     <children>
+                        <Label text="Study ID: ">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblStudyId">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="txtStudyId" prefHeight="14.0" prefWidth="87.0" promptText="NEWID" />
+                        <Button fx:id="btnUpdateId" mnemonicParsing="false" onAction="#updateStudyId" prefHeight="22.0" prefWidth="129.0" text="Update Study ID" />
+                     </children>
+                  </HBox>
                </children>
-            </HBox>
+            </VBox>
          </children>
          <padding>
             <Insets bottom="5.0" left="15.0" top="5.0" />
