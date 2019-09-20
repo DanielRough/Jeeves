@@ -67,7 +67,7 @@ public class FirebaseDB {
 		openProject.addStuff();
 		if(project.getname() == null)return;
 		DatabaseReference globalRef = dbRef.child(PROJECTS_COLL).child(project.getname());
-		projectKey =projectTokens.get(project.getname()+ TOKEN);
+		projectKey =projectTokens.get(project.getname());
 		DatabaseReference surveyDataRef = globalRef.child("surveydata");
 
 		surveyDataRef.addValueEventListener(new ValueEventListener(){

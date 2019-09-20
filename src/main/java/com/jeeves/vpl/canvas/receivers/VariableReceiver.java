@@ -24,8 +24,9 @@ public class VariableReceiver extends ExpressionReceiver {
 	@Override
 	public boolean isValidElement(ViewElement dragged) {
 		return (dragged.getType() == ElementType.VARIABLE && 
-				(((UserVariable) dragged).getVarType() == getReceiveType() || getReceiveType().equals(VAR_ANY)) &&
+				(((UserVariable) dragged).getVarType() == getReceiveType() || getReceiveType().equals(VAR_ANY)));
+				//&&
 				//Can't edit those schedule variables
-				!Constants.getOpenProject().getscheduleAttrs().values().contains(((UserVariable)dragged).getName()));
+				//!Constants.getOpenProject().getscheduleAttrs().values().contains(((UserVariable)dragged).getName()));
 	}
 }

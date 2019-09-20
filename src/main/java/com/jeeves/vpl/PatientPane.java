@@ -222,41 +222,44 @@ public class PatientPane extends Pane {
 			}
 		}
 	}
-	public List<FirebaseSurveyEntry> createSurveyList() {
-		ArrayList<FirebaseSurveyEntry> surveylist = new ArrayList<>();
-		Map<String,Map<String,FirebaseSurveyEntry>> surveydata = Constants.getOpenProject().getSurveyEntries();
-		ArrayList<String> allSurveyIds = new ArrayList<>(surveydata.keySet());
-		
-		String surveyId = "";
-		if(rdioSelSurvey.isSelected()) {
-			String surveyname = lstSurveys.getSelectionModel().getSelectedItem();
-			System.out.println("survye name is " + surveyname);
-			surveyId = surveyIdMap.get(surveyname).getsurveyId();
-			System.out.println("And so the id is " + surveyId);
-		}
-		for(String id : allSurveyIds) {
-			//If we've selected a specific survey, only want the results for that one
-			if(!surveyId.equals("") && !surveyId.equals(id))continue;
-			Map<String,FirebaseSurveyEntry> data = surveydata.get(id);
+//	public List<FirebaseSurveyEntry> createSurveyList() {
+//		ArrayList<FirebaseSurveyEntry> surveylist = new ArrayList<>();
+////		Map<String,Map<String,FirebaseSurveyEntry>> surveydata = Constants.getOpenProject().getSurveyEntries();
+//		ObservableList<FirebaseSurvey> surveydata = Constants.getOpenProject().getObservableSurveys();
+//
+//		//ArrayList<String> allSurveyIds = new ArrayList<>(surveydata.keySet());
+//		
+//		String surveyId = "";
+//		if(rdioSelSurvey.isSelected()) {
+//			String surveyname = lstSurveys.getSelectionModel().getSelectedItem();
+//			System.out.println("survye name is " + surveyname);
+//			surveyId = surveyIdMap.get(surveyname).getsurveyId();
+//			System.out.println("And so the id is " + surveyId);
+//		}
+//		for(String id : allSurveyIds) {
+//			System.out.println("Ooh la la " + id);
+//			//If we've selected a specific survey, only want the results for that one
+//			if(!surveyId.equals("") && !surveyId.equals(id))continue;
+//			Map<String,FirebaseSurveyEntry> data = surveydata.get(id);
+//
+//			if (data == null || data.isEmpty()) {
+//				return surveylist;
+//			}
+//			Iterator<FirebaseSurveyEntry> iter = data.values().iterator();
+//			while(iter.hasNext()) {
+//				FirebaseSurveyEntry newentry = iter.next();
+//				newentry.setname(id);
+//				surveylist.add(newentry);
+//			}
+//		}
+//		return surveylist;
+//	}
 
-			if (data == null || data.isEmpty()) {
-				return surveylist;
-			}
-			Iterator<FirebaseSurveyEntry> iter = data.values().iterator();
-			while(iter.hasNext()) {
-				FirebaseSurveyEntry newentry = iter.next();
-				newentry.setname(id);
-				surveylist.add(newentry);
-			}
-		}
-		return surveylist;
-	}
-
-	public Sheet doAThing(Workbook wb,Map<String,Sheet> sheets, FirebaseSurveyEntry nextsurvey,CellStyle style) {
+	public Sheet doAThing(Workbook wb,Map<String,Sheet> sheets, FirebaseSurvey nextsurvey,CellStyle style) {
 
 		Sheet s = wb.createSheet();
 		sheets.put(nextsurvey.getname(), s);
-		wb.setSheetName(wb.getSheetIndex(s), nextsurvey.getname());
+		wb.setSheetName(wb.getSheetIndex(s), nextsurvey.gettitle());
 		Row r = s.createRow(0);
 		Cell c = r.createCell(0);
 		c.setCellStyle(style);
@@ -267,7 +270,7 @@ public class PatientPane extends Pane {
 		ObservableList<FirebaseSurvey> surveystuff = Constants.getOpenProject().getObservableSurveys();
 		//When we download data for all surveys, want to get question text up there
 		for(FirebaseSurvey survey : surveystuff) {
-			if(survey.gettitle().equals(nextsurvey.getname())) {
+			if(survey.gettitle().equals(nextsurvey.gettitle())) {
 				int qcount = 2;
 				for(FirebaseQuestion q : survey.getquestions()){
 					c = r.createCell(qcount);
@@ -300,10 +303,11 @@ public class PatientPane extends Pane {
 
 		HashMap<String, Sheet> sheets = new HashMap<>();
 
-		List<FirebaseSurveyEntry> surveylist = createSurveyList();
-		surveylist.sort((o1, o2) ->
-		(int) (o1.getcomplete() - o2.getcomplete())
-				);
+//		List<FirebaseSurveyEntry> surveylist = createSurveyList();
+//		System.out.println("Survey list size is " + surveylist.size());
+//		surveylist.sort((o1, o2) ->
+//		(int) (o1.getcomplete() - o2.getcomplete())
+//				);
 
 		Sheet s = null;
 		CreationHelper createHelper = wb.getCreationHelper();
@@ -317,49 +321,104 @@ public class PatientPane extends Pane {
 		cellStyle.setDataFormat(createHelper.createDataFormat().getFormat("m/d/yy h:mm"));
 		cellStyle.setFont(font);
 
-		for (FirebaseSurveyEntry nextsurvey : surveylist) {
+		String surveyId = "";
+		if(rdioSelSurvey.isSelected()) {
+			String surveyname = lstSurveys.getSelectionModel().getSelectedItem();
+			System.out.println("survye name is " + surveyname);
+			surveyId = surveyIdMap.get(surveyname).getsurveyId();
+			System.out.println("And so the id is " + surveyId);
+		}
+		for (FirebasePatient p : allowedPatients) {
+			Map<String,FirebaseSurvey> completed = p.getcomplete();
+			Iterator<FirebaseSurvey> iter = completed.values().iterator();
+			while(iter.hasNext()) {
+				FirebaseSurvey surv = iter.next();
+				if(!surveyId.equals("") && !surveyId.equals(surv.getsurveyId()))
+					continue;
+				date.setTime(surv.gettimeFinished());
+				s = sheets.get(surv.gettitle());
+				if (s == null) {
+					s = doAThing(wb,sheets,surv,style);
+					sheets.put(surv.gettitle(), s);
+				}
+				r = s.createRow(s.getLastRowNum() + 1);
+				c = r.createCell(0);
+				c.setCellStyle(cellStyle);
 
-			date.setTime(nextsurvey.getcomplete());
-			// Do we have a sheet for this particular survey?
-			s = sheets.get(nextsurvey.getname());
-			if (s == null) {
-				s = doAThing(wb,sheets,nextsurvey,style);
-			}
+				c.setCellValue(date);
+				c = r.createCell(1);
+				c.setCellStyle(cellStyle);
+				
+				c.setCellValue(p.getScreenName());
+				String decoded = "";
+				String encodedanswers = surv.getencodedAnswers();
+				if(surv.getencodedKey() != null) {
+					String encodedkey = surv.getencodedKey();
+					String symmetrickey = decryptText(encodedkey, privateKey);
 
+					decoded = decryptSymmetric(encodedanswers, symmetrickey);
+				}
+				else {
+					decoded = decryptText(encodedanswers, privateKey);
+				}
+				String[] answers = decoded.split(";");
+				int answercounter = 2;
+				for (String answer : answers) {
 
-			r = s.createRow(s.getLastRowNum() + 1);
-			c = r.createCell(0);
-			c.setCellStyle(cellStyle);
+					c = r.createCell(answercounter);
+					answercounter++;
 
-			c.setCellValue(date);
-			c = r.createCell(1);
-			c.setCellStyle(cellStyle);
-			c.setCellValue(nextsurvey.getuid());
-			String decoded = "";
-			String encodedanswers = nextsurvey.getencodedAnswers();
-			if(nextsurvey.getencodedKey() != null) {
-				String encodedkey = nextsurvey.getencodedKey();
-				String symmetrickey = decryptText(encodedkey, privateKey);
-
-				decoded = decryptSymmetric(encodedanswers, symmetrickey);
-			}
-			else {
-				decoded = decryptText(encodedanswers, privateKey);
-			}
-			String[] answers = decoded.split(";");
-			int answercounter = 2;
-			for (String answer : answers) {
-
-				c = r.createCell(answercounter);
-				answercounter++;
-
-				c.setCellValue(answer);
-			}
-			s.setColumnWidth(0, 20*256);
-			for (int i = 1; i < answercounter; i++){
-				s.autoSizeColumn(i);
+					c.setCellValue(answer);
+				}
+				s.setColumnWidth(0, 20*256);
+				for (int i = 1; i < answercounter; i++){
+					s.autoSizeColumn(i);
+				}
 			}
 		}
+//		for (FirebaseSurveyEntry nextsurvey : surveylist) {
+//			System.out.println("EYUP " + nextsurvey.getname());
+//			date.setTime(nextsurvey.getcomplete());
+//			// Do we have a sheet for this particular survey?
+//			s = sheets.get(nextsurvey.getname());
+//			if (s == null) {
+//				s = doAThing(wb,sheets,nextsurvey,style);
+//			}
+//
+//
+//			r = s.createRow(s.getLastRowNum() + 1);
+//			c = r.createCell(0);
+//			c.setCellStyle(cellStyle);
+//
+//			c.setCellValue(date);
+//			c = r.createCell(1);
+//			c.setCellStyle(cellStyle);
+//			c.setCellValue(nextsurvey.getuid());
+//			String decoded = "";
+//			String encodedanswers = nextsurvey.getencodedAnswers();
+//			if(nextsurvey.getencodedKey() != null) {
+//				String encodedkey = nextsurvey.getencodedKey();
+//				String symmetrickey = decryptText(encodedkey, privateKey);
+//
+//				decoded = decryptSymmetric(encodedanswers, symmetrickey);
+//			}
+//			else {
+//				decoded = decryptText(encodedanswers, privateKey);
+//			}
+//			String[] answers = decoded.split(";");
+//			int answercounter = 2;
+//			for (String answer : answers) {
+//
+//				c = r.createCell(answercounter);
+//				answercounter++;
+//
+//				c.setCellValue(answer);
+//			}
+//			s.setColumnWidth(0, 20*256);
+//			for (int i = 1; i < answercounter; i++){
+//				s.autoSizeColumn(i);
+//			}
+//		}
 		try(FileOutputStream fileOut = new FileOutputStream(file)){
 			wb.write(fileOut);
 			Desktop.getDesktop().open(file);
@@ -373,11 +432,11 @@ public class PatientPane extends Pane {
 
 		try(Workbook wb = new HSSFWorkbook()) {
 			FileChooser fileChooser = new FileChooser();
-			if(selectedPatient == null) {
+			if(selectedPatient == null && rdioSelPatient.isSelected()) {
 				Constants.makeInfoAlert("Exception", "No participant selected", "Please select a participant from the list");
 				return;
 			}
-			fileChooser.setInitialFileName(selectedPatient.getName()+ ".xls");
+			fileChooser.setInitialFileName("jeevesdata.xls");
 			fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel spreadsheet(*.xls)", "*.xls"));
 
 			fileChooser.setTitle("Save Participant Data");
@@ -388,7 +447,10 @@ public class PatientPane extends Pane {
 				if (!file.getName().contains(".")) {
 					file = new File(file.getAbsolutePath() + ".xls");
 				}
-				writeFile(wb, file);
+				//if(rdioSelPatient.isSelected())
+					writeFile(wb, file);
+				//else
+					
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -598,6 +660,8 @@ public class PatientPane extends Pane {
 				if (patient.getCurrentStudy() != null && patient.getCurrentStudy().equals(name)) {
 					try {
 						allowedPatients.add(patient);
+						System.out.println("Private key is " + FirebaseDB.getInstance().getProjectToken());
+
 						privateKey = getPrivate(FirebaseDB.getInstance().getProjectToken());
 						String personalInfo = decryptText(patient.getuserinfo(),privateKey);
 						decryptInfo(patient,personalInfo);
