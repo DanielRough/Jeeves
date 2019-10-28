@@ -330,6 +330,8 @@ public class PatientPane extends Pane {
 		}
 		for (FirebasePatient p : allowedPatients) {
 			Map<String,FirebaseSurvey> completed = p.getcomplete();
+			if(completed == null || completed.values() == null)
+				continue;
 			Iterator<FirebaseSurvey> iter = completed.values().iterator();
 			while(iter.hasNext()) {
 				FirebaseSurvey surv = iter.next();
