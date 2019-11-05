@@ -828,9 +828,11 @@ public class PatientPane extends Pane {
 
 			incompleteSurveys = selectedPatient.getincomplete();
 			completedSurveys = selectedPatient.getcomplete();
-			Iterator<FirebaseSurvey> completeIter = completedSurveys.values().iterator();
 			int avgTime = 0;
 			int numSurveys = 0;
+			if(completedSurveys != null) {
+			Iterator<FirebaseSurvey> completeIter = completedSurveys.values().iterator();
+
 			while(completeIter.hasNext()) {
 				FirebaseSurvey entry = completeIter.next();
 				if(!entry.getsurveyId().equals(selectedSurvey.getsurveyId()))
@@ -839,6 +841,7 @@ public class PatientPane extends Pane {
 				long startTime = entry.gettimeSent();
 				avgTime += (finishTime-startTime);
 				numSurveys++;
+			}
 			}
 			if(numSurveys == 0)
 				avgTime = 0;
@@ -849,8 +852,9 @@ public class PatientPane extends Pane {
 			int complete = completedSurveys == null ? 0 : completedSurveys.values().size();
 			lblComplete.setText(Integer.toString(complete));
 			lblCompTimeThis.setText((avgTime/1000) + " seconds");
-
+			
 		});
+		
 	}
 	
 	private List<String> getTableViewValues(TableView tableView) {

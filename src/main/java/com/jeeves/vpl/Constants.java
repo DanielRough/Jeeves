@@ -62,6 +62,7 @@ public class Constants {
 	public static final String TEXTPRESENT = "TEXTPRESENT";
 	public static final String HEART = "HEART";
 	public static final String AUDIO = "AUDIO";
+	public static final String TIMELIST = "TIMELIST";
 	
 	public static final String USER_BOOLEAN = "True/False";
 	public static final String USER_NUMERIC = "Number";
@@ -132,7 +133,9 @@ public class Constants {
 			{HEART,"/img/icons/heart.png","Capture user's heart rate","QuestionHeart"},
 			{AUDIO,"/img/icons/audio.png","Play audio file to user","QuestionAudio"},
 			{IMAGEPRESENT,"/img/icons/camera.png","Present image to user","QuestionImagePresent"},
-			{TEXTPRESENT,"/img/icons/textpresent.png","Present text to user","PresentText"}
+			{TEXTPRESENT,"/img/icons/textpresent.png","Present text to user","PresentText"},
+			{TIMELIST,"/img/icons/imgtimelist.png","Add times+items to a list","QuestionTimedList"}
+
 	};
 	public static final Map<String,String> trigNames = Stream.of(new String[][] {
 		{"Begin Trigger","BeginTrigger"},
