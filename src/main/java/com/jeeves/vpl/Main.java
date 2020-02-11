@@ -11,11 +11,13 @@ import static com.jeeves.vpl.Constants.makeInfoAlert;
 import static com.jeeves.vpl.Constants.questionNames;
 import static com.jeeves.vpl.Constants.setUpdateTriggers;
 import static com.jeeves.vpl.Constants.trigNames;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
 import com.jeeves.vpl.Constants.ElementType;
 import com.jeeves.vpl.canvas.actions.ScheduleAction;
 import com.jeeves.vpl.canvas.expressions.Expression;
@@ -29,6 +31,7 @@ import com.jeeves.vpl.firebase.FirebaseTrigger;
 import com.jeeves.vpl.survey.Survey;
 import com.jeeves.vpl.survey.SurveyPane;
 import com.jeeves.vpl.survey.questions.QuestionView;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.Event;
@@ -112,16 +115,18 @@ public class Main extends Application {
 	public static Main getContext() {
 		return currentGUI;
 	}
-	public static void main(String[] args) {
-		launch(args);
-	}
+//	public static void main(String[] args) {
+//		launch(args);
+//	}
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		new Main(primaryStage);
 	}
 	public Main() {
 	}
-
+	public Main(String[] args) {
+		launch(args);
+	}
 	public Stage getStage() {
 		return primaryStage;
 	}
