@@ -191,6 +191,17 @@
                </children>
             </VBox>
             <Separator orientation="VERTICAL" prefHeight="30.0" />
+            <VBox alignment="TOP_CENTER" layoutX="178.0" layoutY="16.0">
+               <children>
+                  <ImageView fitHeight="40.0" fitWidth="55.0" onMouseClicked="#cloneStudy" onMouseEntered="#addGlow" onMouseExited="#removeGlow" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/icons/ftcopy.png" />
+                     </image>
+                  </ImageView>
+                  <Label text="Clone" visible="false" />
+               </children>
+            </VBox>
+            <Separator layoutX="233.0" layoutY="16.0" orientation="VERTICAL" prefHeight="30.0" />
             <VBox alignment="TOP_CENTER">
                <children>
                   <ImageView fitHeight="40.0" fitWidth="55.0" onMouseClicked="#exit" onMouseEntered="#addGlow" onMouseExited="#removeGlow" pickOnBounds="true" preserveRatio="true">
