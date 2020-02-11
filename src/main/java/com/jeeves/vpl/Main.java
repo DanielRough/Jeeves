@@ -11,11 +11,14 @@ import static com.jeeves.vpl.Constants.makeInfoAlert;
 import static com.jeeves.vpl.Constants.questionNames;
 import static com.jeeves.vpl.Constants.setUpdateTriggers;
 import static com.jeeves.vpl.Constants.trigNames;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
+
 import com.jeeves.vpl.Constants.ElementType;
 import com.jeeves.vpl.canvas.actions.ScheduleAction;
 import com.jeeves.vpl.canvas.expressions.Expression;
@@ -29,6 +32,7 @@ import com.jeeves.vpl.firebase.FirebaseTrigger;
 import com.jeeves.vpl.survey.Survey;
 import com.jeeves.vpl.survey.SurveyPane;
 import com.jeeves.vpl.survey.questions.QuestionView;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.Event;
@@ -38,6 +42,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.SingleSelectionModel;
@@ -46,6 +52,7 @@ import javafx.scene.control.SplitPane.Divider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseDragEvent;
@@ -504,6 +511,33 @@ public class Main extends Application {
 		label.setTextFill(Color.ORANGE);
 	}
 
+	@FXML
+	public void cloneStudy(Event e) {
+		if(openProject.getname() == null) {
+			Alert alert = new Alert(AlertType.INFORMATION);
+			alert.setTitle("No saved study");
+			alert.setHeaderText(null);
+			alert.setContentText("Please save your study before attempting to clone it");
+			alert.showAndWait();
+			return;
+		}
+		TextInputDialog dialog = new TextInputDialog("Copy of " + openProject.getname());
+		dialog.setTitle("Clone name");
+		dialog.setHeaderText("Please enter a name for the cloned study");
+		dialog.setContentText("Clone name:");
+
+		Optional<String> result = dialog.showAndWait();
+		// The Java 8 way to get the response value (with lambda expression).
+		result.ifPresent(name ->{
+			System.out.println("Your name: " + name);
+			openProject.setname(name);
+			FirebaseDB.getInstance().saveProject(null, this.openProject);
+
+		});
+
+	}
+	
+	
 	@FXML
 	public void saveStudy(Event e){
 		String toastMsg = "Project saved";
