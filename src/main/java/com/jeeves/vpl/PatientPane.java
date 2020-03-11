@@ -6,12 +6,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.TimeZone;
 import java.util.TreeMap;
 
@@ -63,7 +67,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -76,9 +83,9 @@ import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
@@ -116,6 +123,9 @@ public class PatientPane extends Pane {
 
 	@FXML private TextArea txtAllMessage;
 	@FXML private Button btnSendAll;
+	
+	@FXML private Button btnChangeName;
+	@FXML private Button btnDelete;
 
 	@FXML private RadioButton rdioSelPatient;
 	@FXML private RadioButton rdioAllPatient;
@@ -132,6 +142,15 @@ public class PatientPane extends Pane {
 		return kf.generatePrivate(spec);
 	}
 
+	public PublicKey getPublic(String keystr) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException {
+        byte[] keyBytes = Base64.decodeBase64(keystr);
+        X509EncodedKeySpec X509publicKey = new X509EncodedKeySpec(keyBytes);
+            KeyFactory kf = KeyFactory.getInstance("RSA");
+            Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+            PublicKey key = kf.generatePublic(X509publicKey);
+            return key;
+	}
+	
 	private Cipher cipher;
 
 
@@ -160,6 +179,12 @@ public class PatientPane extends Pane {
 		}
 		return new String(cipher.doFinal(Base64.decodeBase64(msg)), "UTF-8");
 	}
+	
+	public String encryptText(String msg, PublicKey key) throws InvalidKeyException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException {
+        cipher.init(Cipher.ENCRYPT_MODE, key);
+        return Base64.encodeBase64String((cipher.doFinal(msg.getBytes(StandardCharsets.UTF_8))));
+	}
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public PatientPane() {
 		FXMLLoader fxmlLoader = new FXMLLoader();
@@ -222,38 +247,6 @@ public class PatientPane extends Pane {
 			}
 		}
 	}
-//	public List<FirebaseSurveyEntry> createSurveyList() {
-//		ArrayList<FirebaseSurveyEntry> surveylist = new ArrayList<>();
-////		Map<String,Map<String,FirebaseSurveyEntry>> surveydata = Constants.getOpenProject().getSurveyEntries();
-//		ObservableList<FirebaseSurvey> surveydata = Constants.getOpenProject().getObservableSurveys();
-//
-//		//ArrayList<String> allSurveyIds = new ArrayList<>(surveydata.keySet());
-//		
-//		String surveyId = "";
-//		if(rdioSelSurvey.isSelected()) {
-//			String surveyname = lstSurveys.getSelectionModel().getSelectedItem();
-//			System.out.println("survye name is " + surveyname);
-//			surveyId = surveyIdMap.get(surveyname).getsurveyId();
-//			System.out.println("And so the id is " + surveyId);
-//		}
-//		for(String id : allSurveyIds) {
-//			System.out.println("Ooh la la " + id);
-//			//If we've selected a specific survey, only want the results for that one
-//			if(!surveyId.equals("") && !surveyId.equals(id))continue;
-//			Map<String,FirebaseSurveyEntry> data = surveydata.get(id);
-//
-//			if (data == null || data.isEmpty()) {
-//				return surveylist;
-//			}
-//			Iterator<FirebaseSurveyEntry> iter = data.values().iterator();
-//			while(iter.hasNext()) {
-//				FirebaseSurveyEntry newentry = iter.next();
-//				newentry.setname(id);
-//				surveylist.add(newentry);
-//			}
-//		}
-//		return surveylist;
-//	}
 
 	public Sheet doAThing(Workbook wb,Map<String,Sheet> sheets, FirebaseSurvey nextsurvey,CellStyle style) {
 
@@ -302,12 +295,6 @@ public class PatientPane extends Pane {
 		HSSFWorkbook wb = new HSSFWorkbook();
 
 		HashMap<String, Sheet> sheets = new HashMap<>();
-
-//		List<FirebaseSurveyEntry> surveylist = createSurveyList();
-//		System.out.println("Survey list size is " + surveylist.size());
-//		surveylist.sort((o1, o2) ->
-//		(int) (o1.getcomplete() - o2.getcomplete())
-//				);
 
 		Sheet s = null;
 		CreationHelper createHelper = wb.getCreationHelper();
@@ -378,49 +365,7 @@ public class PatientPane extends Pane {
 				}
 			}
 		}
-//		for (FirebaseSurveyEntry nextsurvey : surveylist) {
-//			System.out.println("EYUP " + nextsurvey.getname());
-//			date.setTime(nextsurvey.getcomplete());
-//			// Do we have a sheet for this particular survey?
-//			s = sheets.get(nextsurvey.getname());
-//			if (s == null) {
-//				s = doAThing(wb,sheets,nextsurvey,style);
-//			}
-//
-//
-//			r = s.createRow(s.getLastRowNum() + 1);
-//			c = r.createCell(0);
-//			c.setCellStyle(cellStyle);
-//
-//			c.setCellValue(date);
-//			c = r.createCell(1);
-//			c.setCellStyle(cellStyle);
-//			c.setCellValue(nextsurvey.getuid());
-//			String decoded = "";
-//			String encodedanswers = nextsurvey.getencodedAnswers();
-//			if(nextsurvey.getencodedKey() != null) {
-//				String encodedkey = nextsurvey.getencodedKey();
-//				String symmetrickey = decryptText(encodedkey, privateKey);
-//
-//				decoded = decryptSymmetric(encodedanswers, symmetrickey);
-//			}
-//			else {
-//				decoded = decryptText(encodedanswers, privateKey);
-//			}
-//			String[] answers = decoded.split(";");
-//			int answercounter = 2;
-//			for (String answer : answers) {
-//
-//				c = r.createCell(answercounter);
-//				answercounter++;
-//
-//				c.setCellValue(answer);
-//			}
-//			s.setColumnWidth(0, 20*256);
-//			for (int i = 1; i < answercounter; i++){
-//				s.autoSizeColumn(i);
-//			}
-//		}
+
 		try(FileOutputStream fileOut = new FileOutputStream(file)){
 			wb.write(fileOut);
 			Desktop.getDesktop().open(file);
@@ -665,6 +610,7 @@ public class PatientPane extends Pane {
 						System.out.println("Private key is " + FirebaseDB.getInstance().getProjectToken());
 
 						privateKey = getPrivate(FirebaseDB.getInstance().getProjectToken());
+						System.out.println("user info: " + patient.getuserinfo());
 						String personalInfo = decryptText(patient.getuserinfo(),privateKey);
 						decryptInfo(patient,personalInfo);
 					} catch (Exception e) {
@@ -716,6 +662,8 @@ public class PatientPane extends Pane {
 			MultipleSelectionModel<FirebasePatient> selectionModel = lstPatients.getSelectionModel();
 			if (selectionModel.getSelectedItem() != null) {
 				selectedPatient = selectionModel.getSelectedItem();
+				btnChangeName.setDisable(false);
+				btnDelete.setDisable(false);
 			} else {
 				return;
 			}
@@ -890,6 +838,44 @@ public class PatientPane extends Pane {
 		Bounds lblBounds = lblUpdated.getBoundsInParent();
 		Toast.makeText(Main.getContext().getStage(),localToScreen(lblBounds).getMinX(),localToScreen(lblBounds).getMinY(),lblUpdated.getWidth(), "Schedule updated!",18);
 		
+	}
+	
+	@FXML
+	public void changeUsername(Event e) {
+		TextInputDialog dialog = new TextInputDialog(selectedPatient.getScreenName());
+		dialog.setTitle("Change name");
+		dialog.setHeaderText("Please enter a new name for this user");
+		dialog.setContentText("New name:");
+
+		Optional<String> result = dialog.showAndWait();
+		// The Java 8 way to get the response value (with lambda expression).
+		result.ifPresent(name ->{
+			System.out.println("Your name: " + name);
+			try {
+				privateKey = getPrivate(FirebaseDB.getInstance().getProjectToken());
+				String personalInfo = decryptText(selectedPatient.getuserinfo(),privateKey);
+				String newInfo = personalInfo.replaceFirst("[^;]*", name);
+				System.out.println("persona linfo was " + personalInfo + " and is now " + newInfo);
+				String encryptedInfo = encryptText(newInfo,getPublic(FirebaseDB.getInstance().getOpenProject().getpubKey()));
+				selectedPatient.setuserinfo(encryptedInfo);
+			} catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | UnsupportedEncodingException | IllegalBlockSizeException | BadPaddingException | NoSuchPaddingException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+			FirebaseDB.getInstance().updatePatient(selectedPatient);
+
+		});
+	}
+	
+	@FXML
+	public void deleteUser(Event e) {
+		Alert alert = new Alert(AlertType.CONFIRMATION, "Delete user " + selectedPatient.getScreenName() + " ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+		alert.showAndWait();
+
+		if (alert.getResult() == ButtonType.YES) {
+		    FirebaseDB.getInstance().deletePatient(selectedPatient);
+		}
 	}
 	@FXML
 	public void sendMessage(Event e){
