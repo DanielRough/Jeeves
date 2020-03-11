@@ -119,9 +119,9 @@ public class Main extends Application {
 	public static Main getContext() {
 		return currentGUI;
 	}
-	public static void main(String[] args) {
-		launch(args);
-	}
+//	public static void main(String[] args) {
+//		launch(args);
+//	}
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		new Main(primaryStage);
@@ -129,6 +129,9 @@ public class Main extends Application {
 	public Main() {
 	}
 
+	public Main(String[] args) {
+		launch(args);
+	}
 	public Stage getStage() {
 		return primaryStage;
 	}
