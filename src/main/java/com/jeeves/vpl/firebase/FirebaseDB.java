@@ -116,6 +116,7 @@ public class FirebaseDB {
 		    @Override
 		    public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
 		        FirebasePatient newPost = dataSnapshot.getValue(FirebasePatient.class);
+		        newPost.setUid(dataSnapshot.getKey());
 		        newpatients.add(newPost);
 		    }
 
@@ -186,10 +187,17 @@ public class FirebaseDB {
 		});
 	}
 
-	public boolean addPatient(FirebasePatient object) {
-		DatabaseReference globalRef = dbRef.child(PATIENTS_COLL).child(object.getUid());
-		globalRef.setValueAsync(object);
-		return true;
+//	public boolean addPatient(FirebasePatient object) {
+//		DatabaseReference globalRef = dbRef.child(PATIENTS_COLL).child(object.getUid());
+//		globalRef.setValueAsync(object);
+//		return true;
+//	}
+	
+	public void deletePatient(FirebasePatient object) {
+		System.out.println(object.getScreenName());
+		System.out.println(object.getUid());
+		DatabaseReference patientRef = dbRef.child(PATIENTS_COLL).child(object.getUid());
+		patientRef.removeValueAsync();
 	}
 
 	public void sendPatientFeedback(FirebasePatient patient, String feedback){
@@ -209,8 +217,9 @@ public class FirebaseDB {
     String decrypted;
 
     public boolean updatePatient(FirebasePatient patient) {
-    	DatabaseReference patientsRef = dbRef.child(Constants.PATIENTS_COLL);
-    	patientsRef.child(patient.getName()).setValueAsync(patient);
+    	DatabaseReference patientsRef = dbRef.child(PATIENTS_COLL);
+    	System.out.println("patients name is " + patient.getScreenName());
+    	patientsRef.child(patient.getUid()).setValueAsync(patient);
     	return true;
     }
     
@@ -225,7 +234,7 @@ public class FirebaseDB {
 				kpg.initialize(2048);
 		        kp = kpg.genKeyPair();
 		        publicKey = kp.getPublic();
-		 
+		      
 		        privateKey = kp.getPrivate();
 		        object.setpubKey(Base64.encodeBase64String(publicKey.getEncoded()));
 		        dbRef.child(TOKENS).child(object.getname()).setValueAsync(Base64.encodeBase64String(privateKey.getEncoded()));
