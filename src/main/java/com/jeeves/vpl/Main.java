@@ -128,6 +128,10 @@ public class Main extends Application {
 	}
 	public Main() {
 	}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0dfeb6ef9decc426458bcb76a973886432aa0e7e
 	public Main(String[] args) {
 		launch(args);
 	}

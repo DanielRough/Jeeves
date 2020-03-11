@@ -104,5 +104,7 @@
             <Font name="System Bold" size="15.0" />
          </font>
       </Label>
+      <Button fx:id="btnChangeName" disable="true" layoutX="480.0" layoutY="571.0" mnemonicParsing="false" onAction="#changeUsername" text="Change user's name" textAlignment="CENTER" />
+      <Button fx:id="btnDelete" disable="true" layoutX="496.0" layoutY="612.0" mnemonicParsing="false" onAction="#deleteUser" text="Delete this user" textAlignment="CENTER" />
    </children>
 </Pane>
