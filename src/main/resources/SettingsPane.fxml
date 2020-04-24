@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@Styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox prefWidth="262.0" spacing="5.0" styleClass="blueprint">
+         <children>
+            <HBox alignment="CENTER_LEFT" prefWidth="262.0" spacing="10.0">
+               <children>
+                  <ImageView fitHeight="50.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/icons/settings.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="27.0" prefWidth="243.0" text="Settings">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" onMouseClicked="#close" onMouseEntered="#showGlow" onMouseExited="#hideGlow" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/icons/error.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
+            <VBox fx:id="vboxPublished" alignment="CENTER" spacing="8.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <Label text="Your unique study ID is:" />
+                        <Label fx:id="lblStudyId">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <Label prefWidth="242.0" text="Patients use this ID in the JeevesAndroid app to assign themselves to your study. If you wish to change this ID, enter a new value and press 'Update ID' below" textAlignment="CENTER" wrapText="true" />
+                  <TextField fx:id="txtStudyId" promptText="New Study ID" />
+                  <Button fx:id="btnStudyId" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#updateStudyId" text="Update ID" textAlignment="CENTER" />
+               </children>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+         <effect>
+            <InnerShadow />
+         </effect>
+      </VBox>
+      <VBox fx:id="vboxUnpublished" layoutY="55.0" mouseTransparent="true" prefWidth="262.0" visible="false">
+         <children>
+            <Label alignment="CENTER" prefWidth="274.0" text="Your study is not currently published! To adjust publishing settings, make sure your study is published first by clicking 'Publish' in the menu bar" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font size="16.0" />
+               </font>
+               <VBox.margin>
+                  <Insets left="10.0" right="10.0" />
+               </VBox.margin>
+            </Label>
+         </children>
+      </VBox>
+   </children>
+   <effect>
+      <DropShadow height="68.44" radius="23.3425" width="26.93" />
+   </effect>
+</Pane>

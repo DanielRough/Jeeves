@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+
+<HBox spacing="5.0" styleClass="editDeletePane" stylesheets="@Styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView fx:id="imgEdit" fitHeight="30.0" fitWidth="30.0" focusTraversable="true" layoutX="5.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@img/icons/jeevesedit.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgDel" fitHeight="30.0" fitWidth="30.0" focusTraversable="true" layoutX="55.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@img/icons/jeevestrash.png" />
+         </image>
+      </ImageView>
+   </children>
+   <padding>
+      <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+   </padding>
+   <effect>
+      <Blend />
+   </effect>
+</HBox>

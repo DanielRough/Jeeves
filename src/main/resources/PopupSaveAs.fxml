@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="154.0" prefWidth="321.0" styleClass="blueprint" stylesheets="@Styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TextField fx:id="txtSaveAsName" layoutX="69.0" layoutY="67.0" prefHeight="25.0" prefWidth="183.0" promptText="Enter Study Name">
+         <font>
+            <Font size="14.0" />
+         </font></TextField>
+      <Button fx:id="btnSave" disable="true" layoutX="107.0" layoutY="110.0" mnemonicParsing="false" onAction="#handleSaveAsClick" prefHeight="25.0" prefWidth="108.0" text="Save">
+         <font>
+            <Font size="16.0" />
+         </font></Button>
+      <HBox alignment="CENTER_LEFT" layoutX="30.0" layoutY="14.0" prefWidth="262.0" spacing="10.0">
+         <children>
+            <ImageView fitHeight="50.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@img/icons/save.png" />
+               </image>
+            </ImageView>
+            <Label prefHeight="27.0" prefWidth="243.0" text="Save Study">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <ImageView fitHeight="20.0" fitWidth="20.0" onMouseClicked="#close" onMouseEntered="#showGlow" onMouseExited="#hideGlow" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@img/icons/error.png" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" />
+   </padding>
+</Pane>

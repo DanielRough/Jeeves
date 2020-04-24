@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.shape.*?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<Pane prefHeight="543.0" prefWidth="687.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Group fx:id="grpSurveyGroup" layoutX="23.0" layoutY="-7.0">
+         <children>
+            <TextField fx:id="txtSurveyName" layoutX="64.0" layoutY="15.0" prefHeight="28.0" prefWidth="139.0" promptText="Survey name" />
+            <Label alignment="CENTER_RIGHT" layoutX="-9.0" layoutY="15.0" prefHeight="28.0" prefWidth="67.0" text="Name:" textAlignment="RIGHT">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+         </children>
+      </Group>
+      <TextField fx:id="txtExpiry" disable="true" layoutX="404.0" layoutY="9.0" prefHeight="26.0" prefWidth="33.0" />
+      <CheckBox fx:id="chkExpiry" layoutX="269.0" layoutY="13.0" mnemonicParsing="false" text="Add expiry time:">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </CheckBox>
+      <Pane fx:id="paneEditor" disable="true" layoutX="338.0" layoutY="77.0" prefHeight="446.0" prefWidth="308.0" />
+      <Label layoutX="443.0" layoutY="13.0" text="minutes">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="140.0" layoutY="51.0" text="Questions">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="450.0" layoutY="51.0" text="Edit Question">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <ScrollPane fitToWidth="true" layoutX="18.0" layoutY="77.0" maxHeight="446.0">
+         <content>
+            <Pane fx:id="paneReceiver" layoutX="18.0" layoutY="77.0" prefWidth="292.0">
+               <children>
+                  <Pane fx:id="paneDropRect" prefHeight="55.0" prefWidth="292.0" styleClass="addQuestionPane" stylesheets="@Styles.css">
+                     <children>
+                        <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="28.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@img/icons/downarrow.png" />
+                           </image>
+                        </ImageView>
+                        <Label layoutX="78.0" layoutY="21.0" text="Drop a question here!" textFill="#949494">
+                           <font>
+                              <Font name="Calibri" size="20.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </Pane>
+               </children>
+            </Pane>
+         </content>
+      </ScrollPane>
+      <CheckBox fx:id="chkFastTranslation" layoutX="507.0" layoutY="14.0" mnemonicParsing="false" text="Fast Transitions" />
+   </children>
+</Pane>

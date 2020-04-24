@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.media.*?>
+<?import javafx.scene.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane id="AnchorPane" fx:id="myPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="740.0" prefWidth="1474.0" stylesheets="@Styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+	<children>
+		<SplitPane fx:id="splitPane" dividerPositions="0.25, 0.7635869565217391" focusTraversable="true" layoutX="-3.0" layoutY="64.0" prefHeight="679.0" prefWidth="1474.0" AnchorPane.bottomAnchor="-3.0" AnchorPane.leftAnchor="-3.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="64.0">
+			<items>
+				<TabPane fx:id="tabPane" prefHeight="691.0">
+					<stylesheets>
+						<URL value="@Styles.css" />
+					</stylesheets>
+					<tabs>
+						<Tab fx:id="tabFramework" closable="false" text="Blocks">
+							<content>
+                        <VBox fx:id="vboxFrame">
+                           <children>
+                              <Pane fx:id="paneIcons" minHeight="-Infinity" prefWidth="403.0">
+                                 <children>
+                                    <VBox fx:id="vboxConfig" layoutX="20.0" prefHeight="82.0" prefWidth="146.0">
+                                       <children>
+                                          <Label fx:id="lblTriggers" layoutX="20.0" onMouseClicked="#showMenu" onMouseEntered="#addHighlight" onMouseExited="#removeHighlight" text="Triggers">
+                                             <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="14.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@img/icons/itrigger.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                             <font>
+                                                <Font size="17.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="lblActions" layoutX="20.0" layoutY="10.0" onMouseClicked="#showMenu" onMouseEntered="#addHighlight" onMouseExited="#removeHighlight" text="Actions">
+                                             <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="14.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@img/icons/iaction.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                             <font>
+                                                <Font size="17.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="lblConditions" layoutX="20.0" layoutY="20.0" onMouseClicked="#showMenu" onMouseEntered="#addHighlight" onMouseExited="#removeHighlight" text="Conditions">
+                                             <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="14.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@img/icons/iexpressions.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                             <font>
+                                                <Font size="17.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                       <padding>
+                                          <Insets top="10.0" />
+                                       </padding>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <ScrollPane fx:id="paneMain" hbarPolicy="NEVER" VBox.vgrow="ALWAYS">
+                                 <content>
+                                    <Pane fx:id="paneFrame" prefWidth="402.0">
+                                       <children>
+                                          <VBox fx:id="paneTriggers" layoutY="20.0" stylesheets="@Styles.css">
+                                             <padding>
+                                                <Insets left="20.0" />
+                                             </padding>
+                                          </VBox>
+                                          <VBox fx:id="paneActions" layoutY="20.0" visible="false">
+                                             <padding>
+                                                <Insets left="20.0" />
+                                             </padding>
+                                          </VBox>
+                                          <VBox fx:id="paneConditions" layoutY="20.0" stylesheets="@Styles.css" visible="false">
+                                             <padding>
+                                                <Insets left="20.0" />
+                                             </padding>
+                                          </VBox>
+                                       </children>
+                                    </Pane>
+                                 </content>
+                              </ScrollPane>
+                           </children>
+                        </VBox>
+							</content>
+						</Tab>
+                  <Tab fx:id="tabSurvey" closable="false" text="Survey Design">
+                     <content>
+                        <HBox fx:id="surveyBox" fillHeight="false">
+                           <children>
+                              <Pane maxWidth="220.0" minWidth="220.0" prefHeight="679.0" prefWidth="220.0" style="-fx-border-color: lightblue;">
+                                 <children>
+                                    <Label layoutX="53.0" layoutY="14.0" text="Question Types">
+                                       <font>
+                                          <Font name="Calibri" size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <ScrollPane fx:id="paneScroll" hbarPolicy="NEVER" layoutX="5.0" layoutY="45.0" prefHeight="600.0" prefWidth="216.0">
+                                       <content>
+                                          <VBox fx:id="paneQuestions">
+                                             <padding>
+                                                <Insets left="20.0" />
+                                             </padding>
+                                          </VBox>
+                                       </content>
+                                    </ScrollPane>
+                                 </children>
+                              </Pane>
+                           </children>
+                        </HBox>
+                     </content></Tab>
+                  <Tab fx:id="tabPatients" closable="false" text="User Data">
+                     <content>
+                        <Pane fx:id="panePatients" prefHeight="200.0" prefWidth="200.0" />
+                     </content></Tab>
+			
+					</tabs>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+				</TabPane>
+            <VBox>
+               <children>
+            								<Pane fx:id="paneIntervention" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="0.0" prefHeight="686.0" prefWidth="695.0">
+            									<stylesheets>
+            										<URL value="@Styles.css" />
+            									</stylesheets>
+            								</Pane>
+               </children>
+            </VBox>
+            <SplitPane fx:id="paneSplit" minWidth="0.0" orientation="VERTICAL" style="-fx-border-color: transparent;" />
+			</items>
+			<stylesheets>
+				<URL value="@Styles.css" />
+			</stylesheets>
+		</SplitPane>
+      <ImageView fx:id="imgTrash" fitHeight="99.0" fitWidth="65.0" layoutX="925.0" layoutY="660.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@img/icons/recycle.png" />
+         </image>
+      </ImageView>
+      <HBox fx:id="hboxIcons" prefHeight="64.0" prefWidth="1474.0" spacing="15.0" style="-fx-border-color: transparent;">
+         <children>
+            <VBox alignment="TOP_CENTER">
+               <children>
+                  <ImageView fitHeight="40.0" fitWidth="55.0" onMouseClicked="#newStudy" onMouseEntered="#addGlow" onMouseExited="#removeGlow" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/icons/new.png" />
+                     </image>
+                  </ImageView>
+                  <Label text="New" visible="false" />
+               </children>
+            </VBox>
+            <Separator orientation="VERTICAL" prefHeight="30.0" />
+            <VBox alignment="TOP_CENTER">
+               <children>
+                  <ImageView fitHeight="40.0" fitWidth="55.0" onMouseClicked="#openStudy" onMouseEntered="#addGlow" onMouseExited="#removeGlow" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/icons/open.png" />
+                     </image>
+                  </ImageView>
+                  <Label text="Open" visible="false" />
+               </children>
+            </VBox>
+            <Separator orientation="VERTICAL" prefHeight="30.0" />
+            <VBox alignment="TOP_CENTER">
+               <children>
+                  <ImageView fitHeight="40.0" fitWidth="55.0" onMouseClicked="#saveStudy" onMouseEntered="#addGlow" onMouseExited="#removeGlow" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/icons/save.png" />
+                     </image>
+                  </ImageView>
+                  <Label text="Save" visible="false" />
+               </children>
+            </VBox>
+            <Separator orientation="VERTICAL" prefHeight="30.0" />
+            <VBox alignment="TOP_CENTER" layoutX="178.0" layoutY="16.0">
+               <children>
+                  <ImageView fitHeight="40.0" fitWidth="55.0" onMouseClicked="#cloneStudy" onMouseEntered="#addGlow" onMouseExited="#removeGlow" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/icons/ftcopy.png" />
+                     </image>
+                  </ImageView>
+                  <Label text="Clone" visible="false" />
+               </children>
+            </VBox>
+            <Separator layoutX="233.0" layoutY="16.0" orientation="VERTICAL" prefHeight="30.0" />
+            <VBox alignment="TOP_CENTER">
+               <children>
+                  <ImageView fitHeight="40.0" fitWidth="55.0" onMouseClicked="#exit" onMouseEntered="#addGlow" onMouseExited="#removeGlow" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/icons/exit.png" />
+                     </image>
+                  </ImageView>
+                  <Label text="Quit" visible="false" />
+               </children>
+            </VBox>
+            <Separator orientation="VERTICAL" prefHeight="30.0" />
+            <VBox prefHeight="57.0" spacing="8.0">
+               <children>
+                  <HBox spacing="3.0">
+                     <children>
+                        <Label text="Open project:">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblOpenProject" text="Label">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label text="Connection status:">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblConnection" text="Disconnected, unable to sync changes" textFill="#bf2e2e">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox>
+               <children>
+                  <HBox alignment="CENTER" prefHeight="100.0" spacing="10.0">
+                     <children>
+                        <Label text="Study ID: ">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblStudyId">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="txtStudyId" prefHeight="14.0" prefWidth="87.0" promptText="NEWID" />
+                        <Button fx:id="btnUpdateId" mnemonicParsing="false" onAction="#updateStudyId" prefHeight="22.0" prefWidth="129.0" text="Update Study ID" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="15.0" top="5.0" />
+         </padding>
+      </HBox>
+	</children>
+</AnchorPane>

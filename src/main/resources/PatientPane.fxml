@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane maxWidth="-Infinity" minWidth="-Infinity" prefHeight="682.0" prefWidth="827.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff00" height="134.0" layoutX="514.0" layoutY="123.0" stroke="BLACK" strokeType="INSIDE" width="297.0" />
+      <StackPane layoutX="36.0" layoutY="44.0" prefHeight="190.0" prefWidth="217.0">
+         <children>
+            <ListView fx:id="lstPatients" prefHeight="224.0" prefWidth="217.0" />
+         </children>
+      </StackPane>
+      <Label layoutX="132.0" layoutY="246.0" prefHeight="20.0" text="Feedback">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <ListView fx:id="lstMessages" layoutX="32.0" layoutY="273.0" prefHeight="113.0" prefWidth="283.0" />
+      <VBox layoutX="507.0" layoutY="23.0" prefHeight="113.0" spacing="5.0">
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <Label alignment="CENTER_RIGHT" prefWidth="120.0" text="Completed:" textAlignment="RIGHT" />
+                  <Label fx:id="lblComplete" textFill="#2fa845">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <Label alignment="CENTER_RIGHT" text="Missed:" textAlignment="RIGHT" />
+                  <Label fx:id="lblMissed" textFill="#a6392e">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <Label alignment="CENTER_RIGHT" text="Mean completion time (this user): " textAlignment="RIGHT" />
+                  <Label fx:id="lblCompTimeThis">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <Label alignment="CENTER_RIGHT" text="Mean completion time (all users):" textAlignment="RIGHT" />
+                  <Label fx:id="lblCompTimeAll">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <Label alignment="CENTER" layoutX="349.0" layoutY="14.0" text="Survey" textAlignment="CENTER">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <ListView fx:id="lstSurveys" layoutX="267.0" layoutY="43.0" prefHeight="190.0" prefWidth="217.0" />
+      <TextArea fx:id="txtPatientMessage" layoutX="32.0" layoutY="419.0" prefHeight="47.0" prefWidth="283.0" promptText="Enter message text here" />
+      <Button fx:id="btnSendMessage" layoutX="114.0" layoutY="475.0" mnemonicParsing="false" onAction="#sendMessage" text="Message user" />
+      <Label layoutX="95.0" layoutY="398.0" prefHeight="20.0" text="Message selected user" />
+      <Button fx:id="btnDownload" layoutX="593.0" layoutY="219.0" mnemonicParsing="false" onAction="#downloadData" text="Download Results" />
+      <Label alignment="CENTER" layoutX="120.0" layoutY="14.0" text="User" textAlignment="CENTER">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <RadioButton fx:id="rdioSelPatient" layoutX="554.0" layoutY="162.0" mnemonicParsing="false" selected="true" text="Selected user" />
+      <RadioButton fx:id="rdioAllPatient" layoutX="691.0" layoutY="162.0" mnemonicParsing="false" text="All users" />
+      <RadioButton fx:id="rdioSelSurvey" layoutX="555.0" layoutY="190.0" mnemonicParsing="false" selected="true" text="Selected survey" />
+      <RadioButton fx:id="rdioAllSurvey" layoutX="692.0" layoutY="190.0" mnemonicParsing="false" text="All surveys" />
+      <Label alignment="CENTER" layoutX="557.0" layoutY="129.0" prefWidth="211.0" text="Data Download" textAlignment="CENTER" />
+      <Label layoutX="112.0" layoutY="521.0" prefHeight="20.0" text="Message all users" />
+      <TextArea fx:id="txtAllMessage" layoutX="28.0" layoutY="542.0" prefHeight="47.0" prefWidth="283.0" promptText="Enter message text here" />
+      <Button fx:id="btnSendAll" layoutX="120.0" layoutY="596.0" mnemonicParsing="false" onAction="#sendMessage" text="Message all" textAlignment="CENTER" />
+      <Label alignment="CENTER" layoutX="501.0" layoutY="300.0" prefHeight="20.0" text="User schedule" textAlignment="CENTER">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Button fx:id="btnUpdateSchedule" disable="true" layoutX="474.0" layoutY="529.0" mnemonicParsing="false" onAction="#updateSchedule" text="Update user schedule" textAlignment="CENTER" />
+      <TableView fx:id="tblSchedule" disable="true" editable="true" layoutX="407.0" layoutY="327.0" prefHeight="200.0" prefWidth="300.0">
+        <columns>
+            <TableColumn fx:id="colDay" editable="false" prefWidth="43.0" resizable="false" sortable="false" text="Day" />
+          <TableColumn fx:id="colWake" minWidth="50.0" prefWidth="130.0" resizable="false" sortable="false" style="text-align: center;" text="Wake time" />
+          <TableColumn fx:id="colSleep" prefWidth="130.0" resizable="false" sortable="false" style="text-align: center;" text="Sleep time" />
+        </columns>
+      </TableView>
+      <Label fx:id="lblUpdated" layoutX="473.0" layoutY="565.0" opacity="0.0" text="User schedule updated!" textAlignment="CENTER">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Label>
+      <Button fx:id="btnChangeName" disable="true" layoutX="480.0" layoutY="571.0" mnemonicParsing="false" onAction="#changeUsername" text="Change user's name" textAlignment="CENTER" />
+      <Button fx:id="btnDelete" disable="true" layoutX="496.0" layoutY="612.0" mnemonicParsing="false" onAction="#deleteUser" text="Delete this user" textAlignment="CENTER" />
+   </children>
+</Pane>

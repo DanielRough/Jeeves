@@ -1,0 +1,309 @@
+.text-area .scroll-bar:vertical {
+	-fx-opacity: 0;
+}
+.shadowpane{
+-fx-background-color: black;
+-fx-opacity: 0.5;	
+}
+.popup-shadow {
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+.blueprint {
+	-fx-background-image: url("paper.jpg");
+	-fx-background-repeat: repeat;
+	-fx-background-position: center center;
+	/*       -fx-effect: dropshadow( gaussian , rgba(0,0,128,0.5) , 30, 0.5, 0, 0 );*/
+}
+
+.if_control {
+	-fx-border-radius: 0 15 0 0;
+	-fx-background-radius: 0 15 0 0;
+	-fx-background-color: #3366ff;
+	-fx-background: #3366ff;
+	-fx-fill: #3366ff;
+}
+
+.if_control_join{
+	-fx-background-color: #3366ff;
+	-fx-background: #3366ff;
+	-fx-fill: #3366ff;
+}
+
+.action {
+	-fx-background-color: linear-gradient(#660198, #4B0082);
+	-fx-border-radius: 0 15 15 0;
+	-fx-background-radius: 0 15 15 0;
+	-fx-background: #4B0082;
+	-fx-fill:  #4B0082;
+}
+
+.action_join {
+	-fx-background-color: linear-gradient(#660198, #4B0082);
+}
+
+.action .label {
+	-fx-text-fill: white;
+	-fx-text-alignment: center;
+	-fx-alignment: center;
+}
+
+.action .choice-box .label {
+	-fx-text-fill: black;
+	-fx-font-size: 13px;
+}
+.addQuestionPane{
+	-fx-border-color: grey;
+    -fx-border-insets: 0;
+	-fx-border-width: 1;
+	-fx-border-style: dashed;
+}
+.editDeletePane{
+	-fx-border-color: grey;
+    -fx-border-insets: 0;
+	-fx-border-width: 1;
+    	-fx-border-radius: 8 8 8 0;
+	-fx-background-radius: 8 8 8 0;
+	-fx-border-style: dashed;
+    -fx-background-color: white;
+}
+.drop_shadow {
+	-fx-effect: dropshadow(three-pass-box, #29befe, 15, 0.8, 0, 0);
+}
+
+.light_drop_shadow {
+	-fx-effect: dropshadow(three-pass-box, #29befe, 10, 0.4, 0, 0);
+}
+.trigger {
+	-fx-background-color: #223768;
+	-fx-background: #223768;
+	-fx-fill: #223768;
+	-fx-border-radius: 10 10 0 0;
+	-fx-background-radius: 10 10 0 0;
+}
+.schedule {
+	-fx-background-color: #07509A;
+	-fx-background: #07509A;
+	-fx-fill: #07509A;
+	-fx-border-radius: 10 10 0 0;
+	-fx-background-radius: 10 10 0 0;
+}
+.Numeric {
+	-fx-background-color: radial-gradient(center 50% -40%, radius 200%, #b8ee36 45%, #80c800 50%);
+	-fx-fill: radial-gradient(center 50% -40%, radius 200%, #b8ee36 45%, #80c800 50%);
+	-fx-border-color: darkgreen;
+	-fx-border-width: 0;
+
+	  -fx-alignment: center;
+-fx-text-alignment: center;
+}
+
+.Numeric .label {
+	-fx-text-fill: black;
+	-fx-font-family: 'Calibri';
+	-fx-alignment: center;
+	-fx-font-weight: bold; 
+	-fx-padding: 0 15 0 15;
+	-fx-text-alignment: center;
+}
+
+.Category {
+	-fx-background-color: radial-gradient(center 50% -40%, radius 200%, #ff531a 45%, #cc3300 50%);
+	-fx-fill: radial-gradient(center 50% -40%, radius 200%, #ff531a 45%, #cc3300 50%);
+	-fx-border-color: darkred;
+	-fx-border-width: 0;
+
+	  -fx-alignment: center;
+-fx-text-alignment: center;
+}
+
+.Category .label {
+	-fx-text-fill: black;
+	-fx-font-family: 'Calibri';
+	-fx-alignment: center;
+	-fx-font-weight: bold; 
+	-fx-padding: 0 15 0 15;
+	-fx-text-alignment: center;
+}
+
+.textfield {
+	-fx-border-color: green;
+	-fx-border-width: 1;
+	-fx-padding: -5 0 -5 0;
+	-fx-font-size: 14px
+}
+.Boolean {
+	-fx-background-color: radial-gradient(center 50% -40%, radius 200%, #00FFFF 45%, #00BFFF 50%);
+	-fx-border-color: darkcyan;
+	-fx-border-width: 0;
+	-fx-border-radius: 20 20 20 20;
+	-fx-background-radius: 20 20 20 20;
+	
+	  -fx-alignment: center;
+-fx-text-alignment: center;
+}
+
+.Boolean .label {
+	-fx-text-fill: black;
+	-fx-font-weight: bold; 
+	-fx-font-family: 'Calibri';
+	-fx-alignment: center;
+	-fx-text-alignment: center;
+	
+}
+
+.Boolean .var .label  {
+	-fx-padding: 0 15 0 15;
+}
+
+.Location {
+	-fx-background-color: thistle;
+	-fx-border-radius: 20 20 20 20;
+	-fx-border-width: 0;
+	-fx-background-radius: 20 20 20 20;
+	  -fx-alignment: center;
+-fx-text-alignment: center;
+}
+.Location .img{
+    -fx-background-image: url("img/icons/location.png");
+}
+.Location .label {
+	-fx-text-fill: black;
+	-fx-font-family: 'Calibri';
+	-fx-alignment: center;
+		-fx-font-weight: bold; 
+		-fx-padding: 0 15 0 15;
+	
+	-fx-text-alignment: center;
+}
+
+.Bluetooth{
+	-fx-background-color: thistle;
+	-fx-border-radius: 20 20 20 20;
+	-fx-border-width: 0;
+	-fx-background-radius: 20 20 20 20;
+	  -fx-alignment: center;
+-fx-text-alignment: center;
+}
+
+.Bluetooth .img{
+    -fx-background-image: url("img/icons/bluetooth.png");
+}
+.Bluetooth .label{
+	-fx-text-fill: black;
+	-fx-font-family: 'Calibri';
+	-fx-alignment: center;
+		-fx-font-weight: bold; 
+		-fx-padding: 0 15 0 15;
+	
+	-fx-text-alignment: center;
+}
+.Date {
+	-fx-border-radius: 20 20 20 20;
+	-fx-background-radius: 20 20 20 20;
+	-fx-background-color: #681077;
+	  -fx-text-fill: white;
+	  -fx-alignment: center;
+-fx-text-alignment: center;
+	}
+
+.Date . label{
+	-fx-font-family: 'Calibri';
+	-fx-alignment: center;
+		-fx-font-weight: bold; 
+		-fx-padding: 0 15 0 15;
+	-fx-text-alignment: center;
+		-fx-text-fill: white;
+	-fx-font-weight: bold;
+}
+
+.Time {
+	-fx-border-radius: 20 20 20 20;
+	-fx-background-radius: 20 20 20 20;
+	-fx-background-color: #223768;
+	  -fx-text-fill: white;
+	  -fx-alignment: center;
+-fx-text-alignment: center;
+	}
+
+.Time . label{
+	-fx-font-family: 'Calibri';
+	-fx-alignment: center;
+		-fx-font-weight: bold; 
+		-fx-padding: 0 15 0 15;
+	-fx-text-alignment: center;
+		-fx-text-fill: white;
+	-fx-font-weight: bold;
+}
+.timevar {
+	-fx-border-radius: 20 20 20 20;
+	-fx-background-radius: 20 20 20 20;
+	-fx-background-color: #223768;
+	-fx-effect: innershadow(three-pass-box, rgba(0, 0, 0, 0.7), 6, 0.0, 0, 2);
+	-fx-text-fill: white;
+	-fx-font-weight: bold;
+	-fx-font-size: 14px
+}
+.datevar {
+	-fx-border-radius: 20 20 20 20;
+	-fx-background-radius: 20 20 20 20;
+	-fx-background-color: #681077;
+	-fx-effect: innershadow(three-pass-box, rgba(0, 0, 0, 0.7), 6, 0.0, 0, 2);
+	-fx-text-fill: white;
+	-fx-font-weight: bold;
+	-fx-font-size: 14px
+}
+/*For choice boxes */
+.styled-select {
+	-fx-background-color: #223768;
+	-fx-background-insets: 0 0 -1 0, 0, 1;
+	-fx-border-radius: 15;
+	-fx-background-radius: 15;
+}
+
+.shadowy {
+	-fx-effect: innershadow(three-pass-box, rgba(0, 0, 0, 0.7), 6, 0.0, 0, 2);
+}
+
+.combo-box-base {
+    -fx-background-color: #223768;
+	-fx-background-insets: 0 0 -1 0, 0, 1;
+	-fx-border-radius: 15;
+	-fx-background-radius: 15;
+	-fx-effect: innershadow(three-pass-box, rgba(0, 0, 0, 0.7), 6, 0.0, 0, 2);
+	-fx-text-fill: white;
+	-fx-color: white;
+	-fx-fill: #223768;
+}
+.combo-box-base select {
+	-fx-text-fill: white;
+	-fx-background-color: transparent;
+}
+.combo-box-base .list-view {
+	-fx-background-color: #223768;
+}
+
+.combo-box-base .list-cell {
+	-fx-text-fill: white;
+	-fx-background-color: transparent;
+	-fx-padding: 1 5 2 5;
+}
+.mycell {
+	-fx-text-fill: white;
+	-fx-font-size: 8px;
+	-fx-color: white;
+}
+
+.styled-select select {
+	-fx-text-fill: white;
+	-fx-background-color: transparent;
+}
+
+.styled-select .list-view {
+	-fx-background-color: #223768;
+}
+
+.styled-select .list-cell {
+	-fx-text-fill: white;
+	-fx-background-color: transparent;
+	-fx-padding: 1 5 2 5;
+}
