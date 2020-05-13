@@ -859,7 +859,6 @@ public class PatientPane extends Pane {
 				String encryptedInfo = encryptText(newInfo,getPublic(FirebaseDB.getInstance().getOpenProject().getpubKey()));
 				selectedPatient.setuserinfo(encryptedInfo);
 			} catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | UnsupportedEncodingException | IllegalBlockSizeException | BadPaddingException | NoSuchPaddingException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 
@@ -882,5 +881,14 @@ public class PatientPane extends Pane {
 		String messageText = txtPatientMessage.getText();
 		FirebaseDB.getInstance().sendPatientFeedback(lstPatients.getSelectionModel().getSelectedItem(), messageText);
 		txtPatientMessage.clear();
+	}
+	
+	@FXML
+	public void sendToAll(Event e){
+		String messageText = txtAllMessage.getText();
+		for(FirebasePatient patient : allowedPatients) {
+			FirebaseDB.getInstance().sendPatientFeedback(patient, messageText);
+		}
+		txtAllMessage.clear();
 	}
 }

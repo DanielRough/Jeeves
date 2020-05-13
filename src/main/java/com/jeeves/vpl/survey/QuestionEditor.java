@@ -1,8 +1,11 @@
 package com.jeeves.vpl.survey;
 
 import static com.jeeves.vpl.Constants.VAR_CATEGORY;
+
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.slf4j.Logger;
@@ -14,7 +17,6 @@ import com.jeeves.vpl.firebase.FirebaseVariable;
 import com.jeeves.vpl.survey.questions.QuestionView;
 
 import javafx.beans.value.ChangeListener;
-
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -147,10 +149,10 @@ public class QuestionEditor extends Pane {
 		} else {
 			chkAssignToVar.setSelected(false);
 		}
-
+		
 		Map<String, Object> opts = entry.getQuestionOptions();
-		TreeMap<String,Object> sortedmap = new TreeMap<>(opts);
-		selectedQuestion.showEditOpts(sortedmap);
+
+		selectedQuestion.showEditOpts(opts);
 		conditionEditor.setDisable(!entry.getChildQuestions().isEmpty());
 
 		vboxOpts.getChildren().remove(3, vboxOpts.getChildren().size());
@@ -174,7 +176,7 @@ public class QuestionEditor extends Pane {
 		for (QuestionView question : surveyQuestions) {
 			if (question.equals(entry))
 				break;
-			else if (!question.isChild())	
+			else //if (!question.isChild())	
 				conditionEditor.addOption(question);
 		}
 
