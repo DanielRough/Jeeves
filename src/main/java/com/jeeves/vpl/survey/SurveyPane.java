@@ -1,9 +1,13 @@
 package com.jeeves.vpl.survey;
 
 
+import static com.jeeves.vpl.Constants.getSaltString;
+
 import java.net.URL;
+import java.util.Optional;
 
 import com.jeeves.vpl.Constants;
+import com.jeeves.vpl.firebase.FirebaseProject;
 import com.jeeves.vpl.firebase.FirebaseSurvey;
 
 import javafx.collections.FXCollections;
@@ -13,13 +17,18 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Pane;
-import static com.jeeves.vpl.Constants.getSaltString;
 
 public class SurveyPane extends Pane {
 
+	@FXML
+	private Button btnDelete;
 	@FXML
 	private Pane paneNoSurveys;
 	@FXML
@@ -61,8 +70,11 @@ public class SurveyPane extends Pane {
 
 	public void addSurveyListeners() {
 		paneSurveys.getSelectionModel().selectedItemProperty().addListener((arg0,arg1,arg2)->{
-				if (arg2 == null)
+				if (arg2 == null) {
+					btnDelete.setVisible(false);
 					return;			
+				}
+				btnDelete.setVisible(true);
 		});
 	}
 
@@ -77,5 +89,25 @@ public class SurveyPane extends Pane {
 		Constants.getOpenProject().add(surveyview,0);
 		addSurvey(surveyview);
 
+	}
+	
+	@FXML
+	public void handleDeleteSurveyClick(Event e) {
+		FirebaseProject openProject = Constants.getOpenProject();
+		Survey toDelete = (Survey)paneSurveys.getSelectionModel().getSelectedItem().getContent();
+		String surveyname = toDelete.getModel().gettitle();
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle("Jeeves");
+		alert.setHeaderText("Delete Survey");
+		alert.setContentText("Do you really want to delete survey " + surveyname + "?");
+		Optional<ButtonType> result = alert.showAndWait();
+		if(result.get().equals(ButtonType.OK)) {
+			paneSurveys.getTabs().remove(paneSurveys.getSelectionModel().getSelectedItem());
+			openProject.remove(toDelete);
+			//openProject.getsurveys().remove(index)
+			if(paneSurveys.getTabs().isEmpty()) {
+				paneNoSurveys.setVisible(true);
+			}
+		}
 	}
 }

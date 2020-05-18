@@ -46,6 +46,15 @@ public class FirebaseProject implements Serializable {
 	private String pubKey;
 	private boolean hasSchedule;
 	private Map<String,Object> scheduleAttrs;
+	private boolean isDebug;
+	
+	public void setisDebug(boolean debug) {
+		this.isDebug= debug;
+	}
+	
+	public boolean getisDebug() {
+		return isDebug;
+	}
 	
 	public void sethasSchedule(boolean schedule) {
 		this.hasSchedule = schedule;
@@ -235,7 +244,7 @@ public class FirebaseProject implements Serializable {
 		else if (elem instanceof UserVariable)
 			getvariables().remove(model);
 		else if (elem instanceof Survey)
-			getsurveys().remove(model);
+			currentsurveys.remove(model);
 	}
 
 	public void setname(String name) {

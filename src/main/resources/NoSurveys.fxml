@@ -7,7 +7,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane fx:id="pane" prefHeight="584.0" prefWidth="662.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<Pane fx:id="pane" prefHeight="584.0" prefWidth="790.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <TabPane fx:id="paneSurveys" layoutX="2.0" layoutY="70.0" tabClosingPolicy="UNAVAILABLE" />
       <Button fx:id="btnNewSurvey" layoutX="259.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleNewSurveyClick" prefHeight="12.0" prefWidth="151.0" text="New Survey">
@@ -29,5 +29,10 @@
             </Text>
          </children>
       </Pane>
+      <Button fx:id="btnDelete" layoutX="657.0" layoutY="584.0" mnemonicParsing="false" onAction="#handleDeleteSurveyClick" prefHeight="39.0" prefWidth="179.0" text="Delete this survey" visible="false">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
    </children>
 </Pane>
