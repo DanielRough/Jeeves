@@ -1,9 +1,13 @@
 package com.jeeves.vpl.survey.questions;
 
+import static com.jeeves.vpl.Constants.MULT_SINGLE;
+
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.firebase.FirebaseQuestion;
@@ -12,14 +16,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import static com.jeeves.vpl.Constants.*;
 
 public class QuestionMultSingle extends QuestionView {
 	private static final String OPTION = "option";
@@ -154,11 +157,19 @@ public class QuestionMultSingle extends QuestionView {
 			handleAddOpt(paneChoiceOptsS,"B");
 			return;
 		}
-
-		Iterator<String> iter = opts.keySet().iterator();
+		TreeMap<String, Object> sortedmap = new TreeMap<String, Object>(new Comparator<String>() {
+			   @Override
+			   public int compare(String o1, String o2) {
+			   	System.out.println("o1 is " + o1);
+			     return Integer.parseInt(o1.substring(6)) - Integer.parseInt(o2.substring(6)); //Gets rid of the 'option' bit that
+			     	//I've inexplicably added to each option
+			   }
+			 });
+			sortedmap.putAll(opts);
+		Iterator<String> iter = sortedmap.keySet().iterator();
 		while(iter.hasNext()) {
 			String key = iter.next();
-			handleAddOpt(paneChoiceOptsS, opts.get(key).toString());
+			handleAddOpt(paneChoiceOptsS, sortedmap.get(key).toString());
 
 		}
 
