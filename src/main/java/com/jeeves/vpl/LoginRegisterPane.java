@@ -39,20 +39,23 @@ public class LoginRegisterPane extends Pane{
 	private Stage stage;
 	@FXML private TextField txtJson;
 	@FXML private TextField txtStorage;	
+	@FXML private TextField txtAndroid;
 	@FXML private Button btnJson;
 	@FXML private Button btnStorage;
+	@FXML private Button btnAndroid;
 	@FXML private Label lblError;
 	@FXML private VBox vboxShadow;
 	@FXML private VBox vboxLoading;
 	@FXML private Label lblLoading;
 	@FXML private HBox hboxError;
-	private boolean bothLoaded = false;
+	private boolean allLoaded = false;
 	public void doFileCheck() {
 		File f = new File(Constants.FILEPATH);
 		File f2 = new File(Constants.STORAGEPATH);
+		File f3 = new File(Constants.ANDROIDPATH);
 		
-		if(f.exists() && f2.exists()) {
-			bothLoaded = true;
+		if(f.exists() && f2.exists() && f3.exists()) {
+			allLoaded = true;
 			JsonParser parser = new JsonParser();
 			JsonElement fileStuff;
 			try {
@@ -76,7 +79,7 @@ public class LoginRegisterPane extends Pane{
 	}
 	
 	public boolean shouldLoad() {
-		return !bothLoaded;
+		return !allLoaded;
 	}
 	public LoginRegisterPane(Stage stage) throws IOException {
 		this.stage = stage;
@@ -119,6 +122,27 @@ public class LoginRegisterPane extends Pane{
 				try {
 					JsonElement fileStuff = parser.parse(new JsonReader(new FileReader(txtStorage.getText())));
 					FileWriter writer = new FileWriter(Constants.STORAGEPATH);
+					writer.write(fileStuff.toString());
+					writer.close();
+					doFileCheck();
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			}	
+		});
+		btnAndroid.setOnAction(e -> {
+			final FileChooser fileChooser = new FileChooser();
+			 // Set extension filter
+            FileChooser.ExtensionFilter extFilter = 
+                    new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json");
+            fileChooser.getExtensionFilters().add(extFilter);
+			File file = fileChooser.showOpenDialog(null);
+			if (file != null) {
+				txtAndroid.setText(file.getAbsolutePath());
+				JsonParser parser = new JsonParser();
+				try {
+					JsonElement fileStuff = parser.parse(new JsonReader(new FileReader(txtStorage.getText())));
+					FileWriter writer = new FileWriter(Constants.ANDROIDPATH);
 					writer.write(fileStuff.toString());
 					writer.close();
 					doFileCheck();
