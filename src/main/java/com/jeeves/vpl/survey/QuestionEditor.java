@@ -174,7 +174,7 @@ public class QuestionEditor extends Pane {
 		for (QuestionView question : surveyQuestions) {
 			if (question.equals(entry))
 				break;
-			else if (!question.isChild())	
+			else //if (!question.isChild())	
 				conditionEditor.addOption(question);
 		}
 
