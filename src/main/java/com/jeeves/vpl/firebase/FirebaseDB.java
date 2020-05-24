@@ -244,8 +244,6 @@ public class FirebaseDB {
 			}
 	        
 
-			String projid = generateProjectID();
-			object.setid(projid);
 			object.setresearcherno(uid);
 
 		}

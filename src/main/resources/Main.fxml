@@ -245,27 +245,9 @@
                   </HBox>
                </children>
             </VBox>
-            <VBox>
-               <children>
-                  <HBox alignment="CENTER" prefHeight="100.0" spacing="10.0">
-                     <children>
-                        <Label text="Study ID: ">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="lblStudyId">
-                           <font>
-                              <Font name="System Bold" size="16.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="txtStudyId" prefHeight="14.0" prefWidth="87.0" promptText="NEWID" />
-                        <Button fx:id="btnUpdateId" mnemonicParsing="false" onAction="#updateStudyId" prefHeight="22.0" prefWidth="129.0" text="Update Study ID" />
-                     </children>
-                  </HBox>
-               </children>
-            </VBox>
+            <VBox />
             <ChoiceBox fx:id="cboDebug" prefWidth="150.0" />
+            <Button fx:id="btnUrl" mnemonicParsing="false" onAction="#generateStudyUrl" text="Generate Study URL" />
          </children>
          <padding>
             <Insets bottom="5.0" left="15.0" top="5.0" />

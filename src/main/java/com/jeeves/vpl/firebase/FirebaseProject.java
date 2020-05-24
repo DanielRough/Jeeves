@@ -39,7 +39,6 @@ public class FirebaseProject implements Serializable {
 	private List<FirebaseUI> uidesign = new ArrayList<>();
 	private List<FirebaseVariable> variables = new ArrayList<>();
 	private List<String> sensors = new ArrayList<>();
-	private String id;
 	private boolean active;
 	private boolean isPublic;
 	private long lastUpdated;
@@ -129,12 +128,6 @@ public class FirebaseProject implements Serializable {
 	}
 	public boolean getisPublic(){
 		return isPublic;
-	}
-	public void setid(String id){
-		this.id = id;
-	}
-	public String getid(){
-		return id;
 	}
 	public void setactive(boolean active){
 		this.active = active;

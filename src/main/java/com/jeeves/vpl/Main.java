@@ -7,18 +7,39 @@ import static com.jeeves.vpl.Constants.TITLE;
 import static com.jeeves.vpl.Constants.actNames;
 import static com.jeeves.vpl.Constants.elemNames;
 import static com.jeeves.vpl.Constants.exprNames;
-import static com.jeeves.vpl.Constants.makeInfoAlert;
 import static com.jeeves.vpl.Constants.questionNames;
 import static com.jeeves.vpl.Constants.setUpdateTriggers;
 import static com.jeeves.vpl.Constants.trigNames;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
+import com.google.auth.oauth2.ServiceAccountCredentials;
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Bucket;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
+import com.google.firebase.cloud.StorageClient;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.stream.JsonReader;
 import com.jeeves.vpl.Constants.ElementType;
 import com.jeeves.vpl.canvas.actions.ScheduleAction;
 import com.jeeves.vpl.canvas.expressions.Expression;
@@ -44,8 +65,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.SingleSelectionModel;
@@ -53,7 +74,6 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.SplitPane.Divider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
@@ -110,9 +130,6 @@ public class Main extends Application {
 	@FXML private TabPane tabPane;
 	@FXML private Label lblConnection;
 	@FXML private Label lblOpenProject;
-	@FXML private TextField txtStudyId;
-	@FXML private Label lblStudyId;
-	@FXML private Button btnUpdateId;
 	@FXML private ChoiceBox<String> cboDebug;
 	private EventHandler<MouseEvent> viewElementHandler;
 	private AndroidPane paneAndroid;
@@ -296,18 +313,6 @@ public class Main extends Application {
 
 	}
 
-	@FXML
-	public void updateStudyId(Event e){
-		
-		String newId = txtStudyId.getText();
-		
-		if(newId.length() < 3){
-			makeInfoAlert("Jeeves","ID too short","New ID must be at least 3 characters long");
-			return;
-		}
-		openProject.setid(newId);
-		lblStudyId.setText(newId);		
-	}
 	private VBox createSidebarView(ViewElement<?> elem) {
 		Label newlable = new Label(elem.getName());
 
@@ -483,9 +488,6 @@ public class Main extends Application {
 		}
 		paneAttributes.loadVariables();
 		setUpdateTriggers(true);
-		String currentid = openProject.getid();
-		lblStudyId.setText(currentid);
-		System.out.println("SET ID TO " + currentid);
 	}
 
 	/**Method called from SaveAsPane until I can be bothered with a better way of doing things**/
@@ -565,8 +567,67 @@ public class Main extends Application {
 		});
 
 	}
-	
-	
+	Storage storage;
+	Bucket bucket;
+	private void getStorage() {
+		try {
+			InputStream resource = new FileInputStream(Constants.STORAGEPATH);
+			storage = StorageOptions.newBuilder().setProjectId("firebaseId")
+					.setCredentials(ServiceAccountCredentials.fromStream(resource))
+					.build()
+					.getService();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+	@FXML
+	public void generateStudyUrl(Event e) {
+		if(storage == null) {
+			getStorage();
+		}
+
+		Bucket bucket = StorageClient.getInstance().bucket();
+		File file = new File(Constants.ANDROIDPATH); //Path to JSON config file
+		JsonParser parser = new JsonParser();
+		JsonElement fileStuff;
+		try {
+			JsonObject studyInfo = new JsonObject();
+			studyInfo.addProperty("title", openProject.getname());
+			studyInfo.addProperty("description", "A new study");
+			studyInfo.addProperty("researcher", "Researcher name");
+			fileStuff = parser.parse(new JsonReader(new FileReader(file)));
+			fileStuff.getAsJsonObject().add("studyinfo", studyInfo);
+			FileWriter writer = new FileWriter(Constants.ANDROIDPATH + "_updated");
+			writer.write(fileStuff.toString());
+			writer.close();
+		} catch (JsonIOException | JsonSyntaxException | IOException e2) {
+			e2.printStackTrace();
+		}
+		file = new File(Constants.ANDROIDPATH + "_updated"); //Doing this again just in case
+		if(file.exists()) {
+			Alert alert = new Alert(AlertType.CONFIRMATION);
+			alert.setTitle("Existing study URL");
+			alert.setHeaderText(null);
+			alert.setContentText("A URL for this study already exists. Would you like to make a new one?");
+			Optional<ButtonType> result = alert.showAndWait();
+			if (result.isPresent() && result.get() != ButtonType.OK){
+				return; //User has said no
+			}
+		}
+		if (file != null) {
+			try {
+				BlobId blobId = BlobId.of(bucket.getName(), file.getName());
+				BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("application/json").build();
+				Blob blob = storage.create(blobInfo,new FileInputStream(file));
+				URL myUrl = blob.signUrl(14, TimeUnit.DAYS);
+				System.out.println(myUrl);
+				Constants.makeInfoAlert("Jeeves", "New study URL", "Your study URL is " + myUrl);
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+			} 
+
+		}	
+	}
 	@FXML
 	public void saveStudy(Event e){
 		String toastMsg = "Project saved";
@@ -578,8 +639,6 @@ public class Main extends Application {
 			FirebaseDB.getInstance().saveProject(openProject.getname(), this.openProject);
 		}
 		Toast.makeText(primaryStage,canvasPos.getX(),canvasPos.getY(), canvasLength, toastMsg,24);
-		String currentid = openProject.getid();
-		lblStudyId.setText(currentid);
 	}
 
 	@FXML

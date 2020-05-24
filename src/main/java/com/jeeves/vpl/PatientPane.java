@@ -589,6 +589,9 @@ public class PatientPane extends Pane {
 
 	private void decryptInfo(FirebasePatient patient, String personalInfo){
 		String[] infoBits = personalInfo.split(";");
+		if(infoBits.length < 2) {
+			return; //Bad things have happened. 
+		}
 		String name = infoBits[0];
 		String email = infoBits[1];
 		patient.setScreenName(name);

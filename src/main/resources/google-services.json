@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "372956659447",
+    "firebase_url": "https://atestproject-58c0f.firebaseio.com",
+    "project_id": "atestproject-58c0f",
+    "storage_bucket": "atestproject-58c0f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:372956659447:android:90700fd63b846a5a",
+        "android_client_info": {
+          "package_name": "com.jeevesandroid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "372956659447-8c50lt5in84c19l7cq10hpba6qglobjc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEQXmH-TEyndgwtAsf1L84GOpNaa65eJY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "372956659447-8c50lt5in84c19l7cq10hpba6qglobjc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
