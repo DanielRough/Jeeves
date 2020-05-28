@@ -7,33 +7,39 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="472.0" prefWidth="450.0" styleClass="blueprint" stylesheets="@Styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="360.0" prefWidth="450.0" styleClass="blueprint" stylesheets="@Styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label layoutX="14.0" layoutY="22.0" text="Jeeves - Experience Sampling at your service!">
          <font>
-            <Font name="Oswald Regular" size="24.0" />
+            <Font size="23.0" />
          </font>
       </Label>
-      <VBox alignment="TOP_CENTER" fillWidth="false" layoutX="5.0" layoutY="76.0" prefHeight="401.0" prefWidth="443.0" spacing="5.0">
+      <VBox alignment="TOP_CENTER" fillWidth="false" layoutX="5.0" layoutY="76.0" prefHeight="298.0" prefWidth="443.0" spacing="15.0">
          <children>
             <Label prefHeight="130.0" prefWidth="443.0" text="Welcome to Jeeves! If you followed the user guide instructions, you should have a database key JSON file, a storage key JSON file, and an Android config JSON file. Please click on the buttons below to locate these files - you will only need to do this once. " textAlignment="CENTER" wrapText="true">
                <font>
                   <Font size="16.0" />
                </font>
             </Label>
-            <TextField fx:id="txtJson" editable="false" prefWidth="295.0" promptText="Database key JSON" />
-            <Button fx:id="btnJson" mnemonicParsing="false" prefHeight="31.0" prefWidth="196.0" text="Find database JSON">
-               <VBox.margin>
-                  <Insets bottom="20.0" />
-               </VBox.margin>
-            </Button>
-            <TextField fx:id="txtStorage" editable="false" prefWidth="299.0" promptText="Storage key JSON" />
-            <Button fx:id="btnStorage" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="31.0" prefWidth="188.0" text="Find storage JSON" textAlignment="CENTER">
-               <VBox.margin>
-                  <Insets bottom="20.0" />
-               </VBox.margin></Button>
-            <TextField fx:id="txtAndroid" editable="false" prefWidth="299.0" promptText="Android config JSON" />
-            <Button fx:id="btnAndroid" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="31.0" prefWidth="188.0" text="Find config JSON" textAlignment="CENTER" />
+            <HBox spacing="10.0">
+               <children>
+                  <TextField fx:id="txtJson" editable="false" prefWidth="150.0" promptText="Database key JSON" />
+                  <Button fx:id="btnJson" mnemonicParsing="false" prefWidth="150.0" text="Find database JSON" />
+               </children>
+            </HBox>
+            <HBox spacing="10.0">
+               <children>
+                  <TextField fx:id="txtStorage" editable="false" prefWidth="150.0" promptText="Storage key JSON" />
+                  <Button fx:id="btnStorage" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefWidth="150.0" text="Find storage JSON" textAlignment="CENTER" />
+               </children>
+            </HBox>
+            <HBox spacing="10.0">
+               <children>
+                  <TextField fx:id="txtAndroid" editable="false" prefWidth="150.0" promptText="Android config JSON" />
+                  <Button fx:id="btnAndroid" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefWidth="150.0" text="Find config JSON" textAlignment="CENTER" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="45.0" prefWidth="431.0" />
          </children>
       </VBox>
       <Separator layoutX="17.0" layoutY="59.0" prefHeight="11.0" prefWidth="408.0" />
@@ -43,19 +49,5 @@
          </image>
       </ImageView>
       <VBox fx:id="vboxShadow" alignment="CENTER" layoutX="-1.0" layoutY="-2.0" prefHeight="355.0" prefWidth="450.0" styleClass="shadowpane" visible="false" />
-      <VBox fx:id="vboxLoading" alignment="CENTER" layoutX="140.0" layoutY="76.0" visible="false">
-         <children>
-            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@img/icons/jeevesload.gif" />
-               </image>
-            </ImageView>
-            <Label fx:id="lblLoading" alignment="CENTER" text="Label" textAlignment="CENTER" textFill="WHITE">
-               <font>
-                  <Font name="Oswald Regular" size="28.0" />
-               </font>
-            </Label>
-         </children>
-      </VBox>
    </children>
 </Pane>

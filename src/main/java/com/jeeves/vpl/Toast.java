@@ -35,8 +35,8 @@ public final class Toast
         HBox root = new HBox();
         root.setAlignment(Pos.CENTER);
         root.getChildren().add(text);
-        root.setStyle("-fx-background-color: rgba(100, 25, 127, 0.7); -fx-text-fill: white; -fx-padding: 10px 40px 10px 40px");
-        //root.setStyle("-fx-background-color: rgba(0, 0, 0, 0.2); -fx-padding: 10px " + (length-40-text.getBoundsInParent().getWidth()) + "px 10px 40px");
+        //root.setStyle("-fx-background-color: rgba(100, 25, 127, 0.7); -fx-text-fill: white; -fx-padding: 10px 40px 10px 40px");
+        root.setStyle("-fx-background-color: rgba(0, 0, 0, 0.7); -fx-padding: 10px " + (length-40-text.getBoundsInParent().getWidth()) + "px 10px 40px");
         root.setOpacity(0);
 
         Scene scene = new Scene(root);

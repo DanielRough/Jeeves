@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -16,6 +17,9 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
 import com.jeeves.vpl.firebase.FirebaseDB;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -48,6 +52,7 @@ public class LoginRegisterPane extends Pane{
 	@FXML private VBox vboxLoading;
 	@FXML private Label lblLoading;
 	@FXML private HBox hboxError;
+	
 	private boolean allLoaded = false;
 	public void doFileCheck() {
 		File f = new File(Constants.FILEPATH);
@@ -72,10 +77,10 @@ public class LoginRegisterPane extends Pane{
 				stage.hide();
 				FirebaseDB.getInstance().firebaseLogin();
 
-			} catch (IOException | JsonIOException | JsonSyntaxException e) {
-				e.printStackTrace();
+			} catch (IOException | JsonIOException | JsonSyntaxException ex) {
+				ex.printStackTrace();
 			} 
-		}
+			}
 	}
 	
 	public boolean shouldLoad() {
@@ -89,6 +94,7 @@ public class LoginRegisterPane extends Pane{
 		fxmlLoader.setLocation(location);
 		Node root = fxmlLoader.load();
 		getChildren().add(root);
+		
 		btnJson.setOnAction(e -> {
 			final FileChooser fileChooser = new FileChooser();
 			FileChooser.ExtensionFilter extFilter = 
@@ -141,7 +147,7 @@ public class LoginRegisterPane extends Pane{
 				txtAndroid.setText(file.getAbsolutePath());
 				JsonParser parser = new JsonParser();
 				try {
-					JsonElement fileStuff = parser.parse(new JsonReader(new FileReader(txtStorage.getText())));
+					JsonElement fileStuff = parser.parse(new JsonReader(new FileReader(txtAndroid.getText())));
 					FileWriter writer = new FileWriter(Constants.ANDROIDPATH);
 					writer.write(fileStuff.toString());
 					writer.close();

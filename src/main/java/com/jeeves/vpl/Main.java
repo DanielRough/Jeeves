@@ -57,6 +57,7 @@ import com.jeeves.vpl.survey.questions.QuestionView;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -65,8 +66,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.SingleSelectionModel;
@@ -74,9 +77,13 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.SplitPane.Divider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -131,6 +138,11 @@ public class Main extends Application {
 	@FXML private Label lblConnection;
 	@FXML private Label lblOpenProject;
 	@FXML private ChoiceBox<String> cboDebug;
+	
+	@FXML private TextField txtResearcher;
+	@FXML private TextField txtDescription;
+	@FXML private Button btnUrl;
+	
 	private EventHandler<MouseEvent> viewElementHandler;
 	private AndroidPane paneAndroid;
 	private AttributesPane paneAttributes;
@@ -477,6 +489,23 @@ public class Main extends Application {
 	    		openProject.setisDebug(false);
 	    });
 
+		File file = new File(Constants.ANDROIDPATH + "_" + openProject.getname()); //Doing this again just in case
+		JsonParser parser = new JsonParser();
+		JsonElement fileStuff;
+		if(file.exists()) {
+			try {
+				fileStuff = parser.parse(new JsonReader(new FileReader(file)));
+				JsonObject studystuff = fileStuff.getAsJsonObject().getAsJsonObject("studyinfo");
+				String desc = studystuff.get("description").getAsString();
+				String name = studystuff.get("researcher").getAsString();
+				txtDescription.setText(desc);
+				txtResearcher.setText(name);
+				btnUrl.setDisable(false);
+			} catch (JsonIOException | JsonSyntaxException | FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		for (ViewElement<?> element : elements) {
 			ViewElement<?> draggable = ViewElement.create(element.getName(),element.getClass().getName());
@@ -493,6 +522,16 @@ public class Main extends Application {
 	/**Method called from SaveAsPane until I can be bothered with a better way of doing things**/
 	public void setNameLabel(String name){
 		lblOpenProject.setText(name);
+	}
+	
+	@FXML
+	private void checkNameAndDesc() {
+		if(!txtResearcher.getText().isBlank() && !txtDescription.getText().isBlank()) {
+			btnUrl.setDisable(false);
+		}
+		else {
+			btnUrl.setDisable(true);
+		}
 	}
 	@FXML
 	private void removeHighlight(Event e) {
@@ -568,7 +607,7 @@ public class Main extends Application {
 
 	}
 	Storage storage;
-	Bucket bucket;
+	//Bucket bucket;
 	private void getStorage() {
 		try {
 			InputStream resource = new FileInputStream(Constants.STORAGEPATH);
@@ -587,46 +626,131 @@ public class Main extends Application {
 		}
 
 		Bucket bucket = StorageClient.getInstance().bucket();
-		File file = new File(Constants.ANDROIDPATH); //Path to JSON config file
+		File file = new File(Constants.ANDROIDPATH ); //Path to JSON config file
 		JsonParser parser = new JsonParser();
 		JsonElement fileStuff;
 		try {
 			JsonObject studyInfo = new JsonObject();
 			studyInfo.addProperty("title", openProject.getname());
-			studyInfo.addProperty("description", "A new study");
-			studyInfo.addProperty("researcher", "Researcher name");
+			studyInfo.addProperty("description", txtDescription.getText());
+			studyInfo.addProperty("researcher", txtResearcher.getText());
 			fileStuff = parser.parse(new JsonReader(new FileReader(file)));
+
+		
+		file = new File(Constants.ANDROIDPATH + "_" + openProject.getname()); //Doing this again just in case
+		if(file.exists()) {
+			fileStuff = parser.parse(new JsonReader(new FileReader(file)));
+			JsonObject studystuff = fileStuff.getAsJsonObject().getAsJsonObject("studyinfo");
+			String myUrl = studystuff.get("url").getAsString();
+			long generated = studystuff.get("generated").getAsLong();
+			long currentTime = System.currentTimeMillis();
+			int timeDiff = 14 - (int)((currentTime - generated)/(1000*3600*24));
+			makeExpandableAlert("Jeeves", "Current study URL (expires in " + timeDiff + " days)", myUrl.toString());
+		}
+		else {
+			FileWriter writer = new FileWriter(file);
 			fileStuff.getAsJsonObject().add("studyinfo", studyInfo);
-			FileWriter writer = new FileWriter(Constants.ANDROIDPATH + "_updated");
+
 			writer.write(fileStuff.toString());
 			writer.close();
-		} catch (JsonIOException | JsonSyntaxException | IOException e2) {
-			e2.printStackTrace();
-		}
-		file = new File(Constants.ANDROIDPATH + "_updated"); //Doing this again just in case
-		if(file.exists()) {
-			Alert alert = new Alert(AlertType.CONFIRMATION);
-			alert.setTitle("Existing study URL");
-			alert.setHeaderText(null);
-			alert.setContentText("A URL for this study already exists. Would you like to make a new one?");
-			Optional<ButtonType> result = alert.showAndWait();
-			if (result.isPresent() && result.get() != ButtonType.OK){
-				return; //User has said no
-			}
-		}
-		if (file != null) {
-			try {
 				BlobId blobId = BlobId.of(bucket.getName(), file.getName());
 				BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("application/json").build();
 				Blob blob = storage.create(blobInfo,new FileInputStream(file));
 				URL myUrl = blob.signUrl(14, TimeUnit.DAYS);
-				System.out.println(myUrl);
-				Constants.makeInfoAlert("Jeeves", "New study URL", "Your study URL is " + myUrl);
-			} catch (FileNotFoundException e1) {
-				e1.printStackTrace();
-			} 
+				studyInfo.addProperty("url", myUrl.toString());	
+				studyInfo.addProperty("generated", System.currentTimeMillis());
+				fileStuff.getAsJsonObject().add("studyinfo", studyInfo);
+				writer = new FileWriter(Constants.ANDROIDPATH + "_" + openProject.getname());
+				writer.write(fileStuff.toString());
+				writer.close();
+				makeExpandableAlert("Jeeves", "New study URL", myUrl.toString());
+		}
 
-		}	
+		} catch (JsonIOException | JsonSyntaxException | IOException e2) {
+			e2.printStackTrace();
+		}
+	}
+	public void makeExpandableAlert(String titleText, String headerText, String infoText) {
+		if(storage == null) {
+			getStorage();
+		}
+		
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle(titleText);
+		alert.setHeaderText(headerText);
+		alert.setContentText(infoText);
+
+		TextArea textArea = new TextArea(infoText);
+		textArea.setEditable(false);
+		textArea.setWrapText(true);
+
+		textArea.setMaxWidth(Double.MAX_VALUE);
+		textArea.setMaxHeight(Double.MAX_VALUE);
+
+		ButtonType buttonTypeNew = new ButtonType("Generate new URL");
+		ButtonType buttonTypeOne = new ButtonType("Copy to clipboard",ButtonData.OK_DONE);
+		ButtonType buttonTypeTwo = new ButtonType("Close",ButtonData.CANCEL_CLOSE);
+
+		alert.getDialogPane().setContent(textArea);
+		alert.getButtonTypes().setAll(buttonTypeNew,buttonTypeOne, buttonTypeTwo);
+
+		final Button btNew = (Button) alert.getDialogPane().lookupButton(buttonTypeNew);
+		btNew.addEventFilter(
+		    ActionEvent.ACTION, 
+		    event -> {
+		    	File file = new File(Constants.ANDROIDPATH + "_" + openProject.getname());
+				JsonElement fileStuff;
+				JsonParser parser = new JsonParser();
+				try {
+					fileStuff = parser.parse(new JsonReader(new FileReader(file)));
+					Bucket bucket = StorageClient.getInstance().bucket();
+
+				JsonObject studystuff = fileStuff.getAsJsonObject().getAsJsonObject("studyinfo");
+				studystuff.addProperty("description", txtDescription.getText());
+				studystuff.addProperty("researcher", txtResearcher.getText());
+				fileStuff.getAsJsonObject().add("studyinfo", studystuff);
+		    	FileWriter writer = new FileWriter(file);
+
+				writer.write(fileStuff.toString());
+				writer.close();
+					BlobId blobId = BlobId.of(bucket.getName(), file.getName());
+					BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("application/json").build();
+					Blob blob = storage.create(blobInfo,new FileInputStream(file));
+					URL myUrl = blob.signUrl(14, TimeUnit.DAYS);
+					studystuff.addProperty("url", myUrl.toString());	
+					studystuff.addProperty("generated", System.currentTimeMillis());
+					studystuff.addProperty("description", txtDescription.getText());
+					studystuff.addProperty("researcher", txtResearcher.getText());
+					fileStuff.getAsJsonObject().add("studyinfo", studystuff);
+			    	writer = new FileWriter(file);
+
+					writer.write(fileStuff.toString());
+					writer.close();
+					textArea.setText(myUrl.toString());
+				} catch (JsonIOException | JsonSyntaxException | IOException e) {
+					e.printStackTrace();
+				}
+				event.consume();
+		    }
+		);
+		
+		final Button btOk = (Button) alert.getDialogPane().lookupButton(buttonTypeOne);
+		btOk.addEventFilter(
+		    ActionEvent.ACTION, 
+		    event -> {
+		        // Check whether some conditions are fulfilled
+				 final Clipboard clipboard = Clipboard.getSystemClipboard();
+				 final ClipboardContent content = new ClipboardContent();
+				 content.putString(infoText);
+				 clipboard.setContent(content);
+				 textArea.selectAll();
+				 Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+				 Toast.makeText(stage, alert.getX(),alert.getY()+20, alert.getWidth(), "copied URL to clipboard", 14);
+				 event.consume();
+		    }
+		);
+		alert.showAndWait();
+		
 	}
 	@FXML
 	public void saveStudy(Event e){

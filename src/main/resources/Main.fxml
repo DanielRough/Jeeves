@@ -16,7 +16,7 @@
 
 <AnchorPane id="AnchorPane" fx:id="myPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="740.0" prefWidth="1474.0" stylesheets="@Styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
-		<SplitPane fx:id="splitPane" dividerPositions="0.25, 0.7635869565217391" focusTraversable="true" layoutX="-3.0" layoutY="64.0" prefHeight="679.0" prefWidth="1474.0" AnchorPane.bottomAnchor="-3.0" AnchorPane.leftAnchor="-3.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="64.0">
+		<SplitPane fx:id="splitPane" dividerPositions="0.25, 0.7635869565217391" focusTraversable="true" layoutX="-3.0" layoutY="71.0" prefHeight="672.0" prefWidth="1474.0" AnchorPane.bottomAnchor="-3.0" AnchorPane.leftAnchor="-3.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="71.0">
 			<items>
 				<TabPane fx:id="tabPane" prefHeight="691.0">
 					<stylesheets>
@@ -247,7 +247,19 @@
             </VBox>
             <VBox />
             <ChoiceBox fx:id="cboDebug" prefWidth="150.0" />
-            <Button fx:id="btnUrl" mnemonicParsing="false" onAction="#generateStudyUrl" text="Generate Study URL" />
+            <Separator orientation="VERTICAL" prefHeight="30.0">
+               <opaqueInsets>
+                  <Insets left="5.0" right="5.0" />
+               </opaqueInsets>
+            </Separator>
+            <VBox prefHeight="57.0" prefWidth="246.0" spacing="5.0">
+               <children>
+                  <TextField fx:id="txtResearcher" maxWidth="-Infinity" onKeyTyped="#checkNameAndDesc" prefHeight="27.0" prefWidth="120.0" promptText="Researcher name" />
+                  <TextField fx:id="txtDescription" onKeyTyped="#checkNameAndDesc" promptText="Study description" />
+               </children>
+            </VBox>
+            <Button fx:id="btnUrl" disable="true" mnemonicParsing="false" onAction="#generateStudyUrl" text="View/Edit Study URL" />
+            <Separator orientation="VERTICAL" prefHeight="30.0" />
          </children>
          <padding>
             <Insets bottom="5.0" left="15.0" top="5.0" />
