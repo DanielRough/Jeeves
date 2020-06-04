@@ -22,7 +22,11 @@
             <Font size="18.0" />
          </font>
       </Label>
-      <ListView fx:id="lstMessages" layoutX="32.0" layoutY="273.0" prefHeight="113.0" prefWidth="283.0" />
+      <ScrollPane hbarPolicy="NEVER" layoutX="32.0" layoutY="273.0" prefHeight="106.0" prefViewportHeight="113.0" prefViewportWidth="283.0" prefWidth="285.0">
+         <content>
+            <ListView fx:id="lstMessages" layoutX="32.0" layoutY="273.0" prefWidth="283.0" />
+         </content>
+      </ScrollPane>
       <VBox layoutX="507.0" layoutY="23.0" prefHeight="113.0" spacing="5.0">
          <children>
             <HBox alignment="CENTER_LEFT" spacing="10.0">
