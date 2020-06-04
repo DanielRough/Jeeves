@@ -46,7 +46,15 @@ public class FirebaseProject implements Serializable {
 	private String pubKey;
 	private boolean hasSchedule;
 	private Map<String,Object> scheduleAttrs;
-	
+	private boolean isDebug;
+
+	public void setisDebug(boolean debug) {
+		this.isDebug= debug;
+	}
+
+	public boolean getisDebug() {
+		return isDebug;
+	}
 	public void sethasSchedule(boolean schedule) {
 		this.hasSchedule = schedule;
 	}

@@ -156,7 +156,7 @@
             <Image url="@img/icons/recycle.png" />
          </image>
       </ImageView>
-      <HBox fx:id="hboxIcons" prefHeight="64.0" prefWidth="1474.0" spacing="15.0" style="-fx-border-color: transparent;">
+      <HBox fx:id="hboxIcons" alignment="CENTER_LEFT" prefHeight="64.0" prefWidth="1474.0" spacing="15.0" style="-fx-border-color: transparent;">
          <children>
             <VBox alignment="TOP_CENTER">
                <children>
@@ -265,6 +265,8 @@
                   </HBox>
                </children>
             </VBox>
+                        <ChoiceBox fx:id="cboDebug" prefWidth="150.0" />
+            
          </children>
          <padding>
             <Insets bottom="5.0" left="15.0" top="5.0" />

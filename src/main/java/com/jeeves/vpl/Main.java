@@ -35,6 +35,7 @@ import com.jeeves.vpl.survey.questions.QuestionView;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -45,6 +46,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.SplitPane;
@@ -111,6 +113,7 @@ public class Main extends Application {
 	@FXML private TextField txtStudyId;
 	@FXML private Label lblStudyId;
 	@FXML private Button btnUpdateId;
+	@FXML private ChoiceBox<String> cboDebug;
 	private EventHandler<MouseEvent> viewElementHandler;
 	private AndroidPane paneAndroid;
 	private AttributesPane paneAttributes;
@@ -159,9 +162,13 @@ public class Main extends Application {
 
 		openProject = new FirebaseProject();
 		lblOpenProject.setText(NEW_PROJ);
+		openProject.setisDebug(true);
+
 		FirebaseDB.getInstance().setOpenProject(openProject);
 
-
+		cboDebug.getItems().add("debug version");
+		cboDebug.getItems().add("release version");
+		cboDebug.getSelectionModel().select("debug version");
 		Platform.runLater(() ->{
 				resetPanes();
 				loadCanvasElements();
@@ -446,7 +453,19 @@ public class Main extends Application {
 		primaryStage.setTitle(TITLE);
 		resetPanes();
 
+		if(openProject.getisDebug())
+			cboDebug.getSelectionModel().select("debug version");
+		else
+			cboDebug.getSelectionModel().select("release version");
 
+		cboDebug.getSelectionModel().selectedItemProperty()
+	    .addListener( (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+	    	if(newValue.equals("debug version"))
+	    		openProject.setisDebug(true);
+	    	else
+	    		openProject.setisDebug(false);
+	    });
+		
 		for (ViewElement<?> element : elements) {
 			ViewElement<?> draggable = ViewElement.create(element.getName(),element.getClass().getName());
 			element.setDraggable(draggable); // DJRNEW
