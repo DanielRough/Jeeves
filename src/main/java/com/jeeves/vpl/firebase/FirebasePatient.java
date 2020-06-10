@@ -119,9 +119,7 @@ public class FirebasePatient implements Serializable {
 	public boolean equals(Object other){
 		if(!(other instanceof FirebasePatient))
 			return false;
-		if(((FirebasePatient)other).getuserinfo() == null)
-			return false;
-		if(((FirebasePatient)other).getuserinfo().equals(this.getuserinfo()))
+		if(((FirebasePatient)other).getName().contentEquals(this.getName()))
 			return true;
 		return false;
 	}

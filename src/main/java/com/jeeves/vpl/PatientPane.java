@@ -500,7 +500,7 @@ public class PatientPane extends Pane {
 			c.setCellValue(answer);
 		}
 	}
-	private void loadSurveys(){
+	public void loadSurveys(){
 
 		List<FirebaseSurvey> surveydata = Constants.getOpenProject().getObservableSurveys();
 		surveyIdMap = new HashMap<>();
@@ -515,7 +515,7 @@ public class PatientPane extends Pane {
 
 	}
 	int lastRemovedIndex = 0;
-	private void loadPatients() {
+	public void loadPatients() {
 		FirebaseProject proj = FirebaseDB.getInstance().getOpenProject();
 		if (proj == null)
 			return;

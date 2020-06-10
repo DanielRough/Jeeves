@@ -2,8 +2,6 @@ package com.jeeves.vpl.firebase;
 
 import static com.jeeves.vpl.Constants.PATIENTS_COLL;
 import static com.jeeves.vpl.Constants.PROJECTS_COLL;
-import static com.jeeves.vpl.Constants.generateProjectID;
-import static com.jeeves.vpl.Constants.makeInfoAlert;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -19,12 +17,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.api.core.ApiFuture;
-import com.google.api.core.ApiFutureCallback;
-import com.google.api.core.ApiFutures;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.UserRecord;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -40,7 +32,6 @@ import javafx.collections.ObservableList;
 
 public class FirebaseDB {
 	final Logger logger = LoggerFactory.getLogger(FirebaseDB.class);
-	private static final String TOKEN = "token";
 	private static final String TOKENS = "tokens";
 	private DatabaseReference dbRef;
 	DatabaseReference connectedRef;
@@ -116,21 +107,48 @@ public class FirebaseDB {
 		    @Override
 		    public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
 		        FirebasePatient newPost = dataSnapshot.getValue(FirebasePatient.class);
-		        newPost.setUid(dataSnapshot.getKey());
+		      //  newPost.setUid(dataSnapshot.getKey());
 		        newpatients.add(newPost);
 		    }
 
 		    @Override
 		    public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
 		    	FirebasePatient changedPatient = dataSnapshot.getValue(FirebasePatient.class);
-		    	newpatients.forEach(p->{
-		    		if(p.getName() == changedPatient.getName()) {
-		    			int index = newpatients.indexOf(p);
-		    			newpatients.remove(p);
-		    			newpatients.add(index,changedPatient);
-		    			return;
+		    	System.out.println("Changed name: " + changedPatient.getName());
+		    	System.out.println(newpatients);
+		    	for(FirebasePatient p : newpatients) {
+		    		System.out.println(p);
+	    			System.out.println("Index of " + p.getName() + " is " + newpatients.indexOf(p));
+
+		    		if(p.getName().equals(changedPatient.getName())) {
+		    			System.out.println("New patients hath changed");
+//		    			try {
+//		    				Platform.runLater(new Runnable() {
+//								@Override
+//								public void run() {
+					    			int index = newpatients.indexOf(p);
+					    			System.out.println("INdex is " + index);
+					    			System.out.println("Success? " + newpatients.remove(p));
+					    			newpatients.add(index,changedPatient);
+					    			System.out.println("Soooooo did this work!?");
+					    			return;
+//								}
+//		    					
+//		    				});
+//
+//		    			}
+//		    			catch(Exception e) {
+//		    				System.out.println(e.getMessage());
+//		    				e.printStackTrace();
+//		    			}
+
 		    		}
-		    	});
+		    	}
+		    	//newpatients.forEach(p->{
+		    		//System.out.println(changedPatient.getName() + "/" + p.getName());
+		    		//System.out.println("Lengths: " + changedPatient.getName().length() + "/" + p.getName().length());
+		    		
+		    //	});
 		    }
 
 		    @Override
