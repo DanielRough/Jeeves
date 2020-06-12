@@ -13,7 +13,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TextField;
 import static com.jeeves.vpl.Constants.*;
 
-public class QuestionLikert extends QuestionView {
+public class QuestionLikert extends Question {
 	private static final String LABELS = "labels";
 	private static final String NUMBER = "number";
 	private TextField[] fields;

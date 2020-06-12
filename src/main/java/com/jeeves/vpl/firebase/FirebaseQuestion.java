@@ -1,6 +1,7 @@
 package com.jeeves.vpl.firebase;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import com.google.firebase.database.IgnoreExtraProperties;
@@ -13,8 +14,8 @@ import com.google.firebase.database.IgnoreExtraProperties;
 public class FirebaseQuestion extends FirebaseElement implements Serializable {
 
 	private String assignedVar;
-	private String conditionConstraints;
 	private FirebaseQuestion conditionQuestion;
+	private String conditionConstraints;
 	private String image;
 	private String questionId;
 	private String questionText;
@@ -25,6 +26,22 @@ public class FirebaseQuestion extends FirebaseElement implements Serializable {
 	public FirebaseQuestion() {}
 	public FirebaseQuestion(String name) {
 		this.questionText = name;
+	}
+	
+	private List<FirebaseQuestion> childQuestions;
+
+	public FirebaseQuestion getconditionQuestion() {
+		return conditionQuestion;
+	}
+	public void setconditionQuestion(FirebaseQuestion cond) {
+		this.conditionQuestion = cond;
+	}
+	
+	public List<FirebaseQuestion> getchildQuestions(){
+		return childQuestions;
+	}
+	public void setchildQuestions(List<FirebaseQuestion> childQuestions) {
+		this.childQuestions = childQuestions;
 	}
 	public boolean getisMandatory(){
 		return isMandatory;
@@ -42,9 +59,6 @@ public class FirebaseQuestion extends FirebaseElement implements Serializable {
 		return conditionConstraints;
 	}
 
-	public FirebaseQuestion getconditionQuestion() {
-		return conditionQuestion;
-	}
 
 	public String getimage() {
 		return image;
@@ -84,9 +98,6 @@ public class FirebaseQuestion extends FirebaseElement implements Serializable {
 		this.conditionConstraints = constraints;
 	}
 
-	public void setconditionQuestion(FirebaseQuestion q) {
-		this.conditionQuestion = q;
-	}
 
 	public void setquestionId(String id) {
 		this.questionId = id;

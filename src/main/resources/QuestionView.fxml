@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
@@ -7,20 +13,30 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox alignment="CENTER_LEFT" prefHeight="55.0" spacing="10.0" style="-fx-background-color: white;" styleClass="addQuestionPane" stylesheets="@Styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<Pane prefHeight="30.0" prefWidth="160.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <ImageView fx:id="imgEntry" fitHeight="45.0" fitWidth="45.0" layoutX="5.0" pickOnBounds="true" preserveRatio="true">
-         <HBox.margin>
-            <Insets left="5.0" />
-         </HBox.margin>
-      </ImageView>
-      <Label fx:id="lblQuestion" layoutX="70.0" layoutY="20.0" maxWidth="100.0" minWidth="100.0" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0" HBox.hgrow="ALWAYS">
-         <font>
-            <Font size="12.0" />
-         </font>
-         <HBox.margin>
-            <Insets />
-         </HBox.margin>
-      </Label>
+      <HBox alignment="CENTER_LEFT" prefHeight="30.0" spacing="7.0" style="-fx-background-color: white;" stylesheets="@Styles.css">
+         <children>
+            <ImageView fx:id="imgEntry" fitHeight="30.0" fitWidth="30.0" layoutX="5.0" pickOnBounds="true" preserveRatio="true">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </ImageView>
+            <Label fx:id="lblQuestion" layoutX="70.0" layoutY="20.0" minWidth="100.0" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0" HBox.hgrow="ALWAYS">
+               <font>
+                  <Font size="12.0" />
+               </font>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Label>
+            <Button fx:id="btnEdit" mnemonicParsing="false" stylesheets="@Styles.css" text="EDIT" textAlignment="CENTER" visible="false">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Button>
+         </children>
+      </HBox>
+      <Pane layoutX="-14.0" layoutY="9.0" prefHeight="12.0" prefWidth="15.0" style="-fx-background-color: white;" stylesheets="@Styles.css" />
    </children>
-</HBox>
+</Pane>

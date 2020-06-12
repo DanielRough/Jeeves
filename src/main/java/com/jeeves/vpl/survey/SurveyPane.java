@@ -1,11 +1,16 @@
 package com.jeeves.vpl.survey;
 
 
+import static com.jeeves.vpl.Constants.getSaltString;
+
 import java.net.URL;
 
 import com.jeeves.vpl.Constants;
+import com.jeeves.vpl.QuestionCanvas;
 import com.jeeves.vpl.firebase.FirebaseSurvey;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -13,29 +18,34 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import static com.jeeves.vpl.Constants.getSaltString;
 
 public class SurveyPane extends Pane {
 
 	@FXML
-	private Pane paneNoSurveys;
+	private ScrollPane paneScroll;
 	@FXML
-	private TabPane paneSurveys;
+	private Pane paneCanvas;
+	private QuestionCanvas canvas;
+	
+	public QuestionCanvas getCanvas() {
+		return canvas;
+	}
+	public void setCanvas(QuestionCanvas canvas) {
+		this.canvas = canvas;
+	}
+
 	private ObservableList<FirebaseSurvey> currentsurveys;
 
-	public ObservableList<Tab> getSurveyTabs(){
-		return paneSurveys.getTabs();
-	}
 	public void registerSurveyListener(ListChangeListener<FirebaseSurvey> listener){
 		currentsurveys.addListener(listener);
 	}
 	public SurveyPane() {
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setController(this);
-		URL location = this.getClass().getResource("/NoSurveys.fxml");
+		URL location = this.getClass().getResource("/SurveyPane.fxml");
 		fxmlLoader.setLocation(location);
 		try {
 			Node root = fxmlLoader.load();
@@ -45,25 +55,24 @@ public class SurveyPane extends Pane {
 		}
 		Constants.getConstraintNums().clear();
 		currentsurveys = FXCollections.observableArrayList();
-		addSurveyListeners();
+		canvas = new QuestionCanvas(paneCanvas.getPrefWidth(), paneCanvas.getPrefHeight());
+
+		paneCanvas.getChildren().add(canvas);
+		canvas.addEventHandlers();
+		this.widthProperty().addListener(new ChangeListener<Number>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+				paneScroll.setPrefWidth(arg2.intValue() -30);
+			
+			}
+		});
 	}
 
 	public void addSurvey(Survey s) {
-		paneNoSurveys.setVisible(false);
-		Tab tab = new Tab();
-		s.setTab(tab);
-		tab.setContent(s);
-		tab.setText(s.getModel().gettitle());
-		paneSurveys.getTabs().add(tab);
-		paneSurveys.getSelectionModel().clearAndSelect(paneSurveys.getTabs().indexOf(tab));
-
-	}
-
-	public void addSurveyListeners() {
-		paneSurveys.getSelectionModel().selectedItemProperty().addListener((arg0,arg1,arg2)->{
-				if (arg2 == null)
-					return;			
-		});
+		canvas.addChild(s, 270, 175); //seems to work nicely
+		s.setParentPane(canvas);
+		s.addEventHandler(MouseEvent.ANY, s.mainHandler);
 	}
 
 

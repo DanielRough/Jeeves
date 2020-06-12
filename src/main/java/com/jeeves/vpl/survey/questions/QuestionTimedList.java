@@ -7,7 +7,7 @@ import com.jeeves.vpl.firebase.FirebaseQuestion;
 
 import static com.jeeves.vpl.Constants.*;
 
-public class QuestionTimedList extends QuestionView {
+public class QuestionTimedList extends Question {
 	public QuestionTimedList(String label) {
 		this(new FirebaseQuestion(label));
 	}

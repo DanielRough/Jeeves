@@ -30,7 +30,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 
-public class QuestionImagePresent extends QuestionView{
+public class QuestionImagePresent extends Question{
 	private static final String IMAGE = "image";
 	@FXML
 	private TextField txtImage;

@@ -2,13 +2,13 @@ package com.jeeves.vpl.survey;
 
 import static com.jeeves.vpl.Constants.BOOLEAN;
 import static com.jeeves.vpl.Constants.DATE;
-import static com.jeeves.vpl.Constants.TIME;
 import static com.jeeves.vpl.Constants.GEO;
 import static com.jeeves.vpl.Constants.MULT_MANY;
 import static com.jeeves.vpl.Constants.MULT_SINGLE;
 import static com.jeeves.vpl.Constants.NUMERIC;
 import static com.jeeves.vpl.Constants.OPEN_ENDED;
 import static com.jeeves.vpl.Constants.SCALE;
+import static com.jeeves.vpl.Constants.TIME;
 import static com.jeeves.vpl.Constants.VAR_CLOCK;
 import static com.jeeves.vpl.Constants.VAR_DATE;
 import static com.jeeves.vpl.Constants.numberHandler;
@@ -16,8 +16,12 @@ import static com.jeeves.vpl.Constants.numberHandler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+
+import com.jeeves.vpl.canvas.receivers.DateReceiver;
+import com.jeeves.vpl.canvas.receivers.TimeReceiver;
+import com.jeeves.vpl.survey.questions.AnswerControl;
+import com.jeeves.vpl.survey.questions.Question;
 
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
@@ -32,10 +36,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-
-import com.jeeves.vpl.canvas.receivers.DateReceiver;
-import com.jeeves.vpl.canvas.receivers.TimeReceiver;
-import com.jeeves.vpl.survey.questions.QuestionView;
 
 public class ConditionEditor extends Pane {
 	@FXML
@@ -52,13 +52,13 @@ public class ConditionEditor extends Pane {
 	public TextField txtNumAnswer;
 	@FXML
 	private ComboBox<String> cboBeforeAfter;
-	@FXML
-	private ComboBox<String> cboQuestionText; // Can we embed the question
+	//@FXML
+	//private ComboBox<String> cboQuestionText; // Can we embed the question
 	@FXML
 	private CheckBox chkAskOnCondition;
 	private ArrayList<Node> conditionPanes;
-	private Map<String, QuestionView> conditionQuestions;
-	private QuestionView currentQuestion;
+//	private Map<String, Question> conditionQuestions;
+	private Question currentQuestion;
 	private DateReceiver dateReceiver;
 	@FXML
 	private HBox hboxDateOpts;
@@ -70,10 +70,13 @@ public class ConditionEditor extends Pane {
 	private HBox paneDateTimeReceiver;
 	private ToggleGroup tgroup;
 	private TimeReceiver timeReceiver;
+	private AnswerControl control;
 
 	ChangeListener<String> cboQuestionListener;
 
-	public ConditionEditor() throws IOException {
+	//DJR probably bad practice to have condition editor and Answer Control referring to each other...
+	public ConditionEditor(AnswerControl control) throws IOException {
+		this.control = control;
 		FXMLLoader surveyLoader = new FXMLLoader();
 		surveyLoader.setController(this);
 		surveyLoader.setLocation(getClass().getResource("/ConditionEditor.fxml"));
@@ -95,47 +98,48 @@ public class ConditionEditor extends Pane {
 		}
 	}
 
-	public void addOption(QuestionView entry) {
-		conditionQuestions.put(entry.getText(), entry);
-		cboQuestionText.getItems().add(entry.getText());
-	}
+//	public void addOption(Question entry) {
+//		conditionQuestions.put(entry.getText(), entry);
+//		cboQuestionText.getItems().add(entry.getText());
+//	}
+//
+//	public void clear() {
+//		cboQuestionText.getItems().clear();
+//	}
+//
+//	public void disable() {
+//		hideConditionPanes();
+//		currentQuestion.setParentQuestion(null);
+//		paneCondition.getChildren().forEach(child -> 
+//			child.setDisable(true)
+//		);
+//	}
 
-	public void clear() {
-		cboQuestionText.getItems().clear();
-	}
-
-	public void disable() {
-		hideConditionPanes();
-		currentQuestion.setParentQuestion(null);
-		paneCondition.getChildren().forEach(child -> 
-			child.setDisable(true)
-		);
-	}
-
-	public void populate(QuestionView question) {
+	public void populate(Question question) {
 		this.currentQuestion = question;
-
-		QuestionView conditionQuestion = question.getParentQuestion();
-
-		if (conditionQuestion == null) { // If we don't have a condition
-											// question, we're done here
-			chkAskOnCondition.setSelected(false);
-			return;
-		}
-
-		chkAskOnCondition.setSelected(true);
-		cboQuestionText.getSelectionModel().selectedItemProperty().removeListener(cboQuestionListener);
-		cboQuestionText.getSelectionModel().select(conditionQuestion.getText());
-		cboQuestionText.getSelectionModel().selectedItemProperty().addListener(cboQuestionListener);
+//
+//		Question conditionQuestion = question.getParentQuestion();
+//
+//		if (conditionQuestion == null) { // If we don't have a condition
+//											// question, we're done here
+//			chkAskOnCondition.setSelected(false);
+//			return;
+//		}
+//
+//		chkAskOnCondition.setSelected(true);
+//		cboQuestionText.getSelectionModel().selectedItemProperty().removeListener(cboQuestionListener);
+//		cboQuestionText.getSelectionModel().select(conditionQuestion.getText());
+//		cboQuestionText.getSelectionModel().selectedItemProperty().addListener(cboQuestionListener);
 
 		showConstraints();
 	}
 
 	public void showConstraints() {
 		hideConditionPanes();
-		QuestionView conditionQuestion = currentQuestion.getParentQuestion();
-		String conditionConstraints = currentQuestion.getParentConstraints();
-		switch (conditionQuestion.getQuestionType()) {
+		Question conditionQuestion = control.getParentQuestion();
+		String conditionConstraints = control.getParentConstraints();
+		if(currentQuestion == null)return;
+		switch (currentQuestion.getQuestionType()) {
 		case OPEN_ENDED:
 			txtAnswer.setVisible(true);
 			txtAnswer.setText(conditionConstraints);
@@ -151,7 +155,7 @@ public class ConditionEditor extends Pane {
 		case MULT_SINGLE:
 		case MULT_MANY:
 			cboMultiChoice.setVisible(true);
-			Map<String, Object> opts = conditionQuestion.getQuestionOptions();
+			Map<String, Object> opts = currentQuestion.getQuestionOptions();
 			cboMultiChoice.getItems().clear();
 			for (Object opt : opts.values()) {
 				String option = opt.toString();
@@ -228,26 +232,26 @@ public class ConditionEditor extends Pane {
 		}
 	}
 	private void addListeners() {
-		chkAskOnCondition.selectedProperty().addListener((ob, old, nval) -> {
-			if (chkAskOnCondition.isSelected()) {
-				paneCondition.getChildren().forEach(child -> {
-					child.setDisable(false);
-					cboQuestionText.getSelectionModel().clearSelection();
-				});
-			} else {
-				disable();
-				cboQuestionText.getSelectionModel().clearSelection();
+//		chkAskOnCondition.selectedProperty().addListener((ob, old, nval) -> {
+//			if (chkAskOnCondition.isSelected()) {
+//				paneCondition.getChildren().forEach(child -> {
+//					child.setDisable(false);
+//					cboQuestionText.getSelectionModel().clearSelection();
+//				});
+//			} else {
+//				disable();
+//				cboQuestionText.getSelectionModel().clearSelection();
+//
+//			}
+//		});
 
-			}
-		});
-
-		cboQuestionListener = (ob, old, nval) -> {
-			if (nval == null)
-				return;
-			updateCondition("");
-			populate(currentQuestion);
-		};
-		cboQuestionText.getSelectionModel().selectedItemProperty().addListener(cboQuestionListener);
+//		cboQuestionListener = (ob, old, nval) -> {
+//			if (nval == null)
+//				return;
+//			updateCondition("");
+//			populate(currentQuestion);
+//		};
+		//cboQuestionText.getSelectionModel().selectedItemProperty().addListener(cboQuestionListener);
 
 		txtNumAnswer.addEventHandler(KeyEvent.ANY, numberHandler);
 		txtAnswer.textProperty().addListener((ob, old, nval) -> 
@@ -279,7 +283,7 @@ public class ConditionEditor extends Pane {
 		);
 
 		conditionPanes = new ArrayList<>();
-		conditionQuestions = new HashMap<>();
+		//conditionQuestions = new HashMap<>();
 		Collections.addAll(conditionPanes, txtAnswer, txtNumAnswer, hboxDateOpts, cboLessMore, cboMultiChoice,
 				cboBeforeAfter, paneDateTimeReceiver, rdioTrue, rdioFalse);
 	}
@@ -291,9 +295,11 @@ public class ConditionEditor extends Pane {
 	}
 
 	private void updateCondition(String answer) {
-		String selection = cboQuestionText.getValue();
-		currentQuestion.setParentQuestion(conditionQuestions.get(selection));
-		currentQuestion.setParentConstraints(answer);
+	//	String selection = cboQuestionText.getValue();
+	//	currentQuestion.setParentQuestion(conditionQuestions.get(selection));
+		
+		//DJR updated this so that all the info goes to the AnswerControl, not the question itself
+		control.setParentConstraints(currentQuestion.getModel(),answer);
 	}
 
 }

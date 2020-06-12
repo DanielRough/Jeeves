@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<Pane fx:id="pane" minHeight="106.0" prefHeight="106.0" prefWidth="233.0" styleClass="schedule" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+  <children>
+      <TextField fx:id="txtTitle" layoutX="72.0" layoutY="14.0" prefHeight="31.0" prefWidth="155.0" promptText="Survey name" />
+      <Label layoutX="29.0" layoutY="16.0" text="Title">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+      <HBox alignment="CENTER" layoutX="14.0" layoutY="59.0" spacing="8.0">
+         <children>
+            <CheckBox fx:id="chkExpiry" layoutX="14.0" layoutY="62.0" mnemonicParsing="false" onAction="#showHideExpiry" text="Expires">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </CheckBox>
+            <Label fx:id="lblFirst" graphicTextGap="0.0" layoutX="102.0" layoutY="61.0" text="in" visible="false">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txtSecond" layoutX="129.0" layoutY="59.0" prefHeight="15.0" prefWidth="28.0" visible="false" />
+            <Label fx:id="lblThird" layoutX="163.0" layoutY="61.0" text="minutes" visible="false">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+  </children>
+  <stylesheets>
+    <URL value="@Styles.css" />
+  </stylesheets>
+</Pane>

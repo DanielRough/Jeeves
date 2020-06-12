@@ -3,7 +3,7 @@ package com.jeeves.vpl;
 import java.util.List;
 
 import com.jeeves.vpl.canvas.uielements.UIElement;
-import com.jeeves.vpl.survey.questions.QuestionView;
+import com.jeeves.vpl.survey.questions.Question;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
@@ -19,24 +19,24 @@ import javafx.scene.shape.Rectangle;
 @SuppressWarnings("rawtypes")
 
 public class ViewCanvas extends DragPane { 
-	EventHandler<MouseEvent> mouseHandler;
-	private EventHandler<MouseDragEvent> dragHandler;
+	protected EventHandler<MouseEvent> mouseHandler;
+	protected EventHandler<MouseDragEvent> dragHandler;
 	//For making the scrollable background 'blueprint' image
-	private Pane rectPane = new Pane();
+	protected Pane rectPane = new Pane();
 
-	private double minX = 0;
-	private double minY = 0;
-	private boolean mousepressed = false;
-	private double pressedX = 0;
-	private double pressedY = 0;
-	private double translatedX = 0;
-	private double translatedY = 0;
+	protected double minX = 0;
+	protected double minY = 0;
+	protected boolean mousepressed = false;
+	protected double pressedX = 0;
+	protected double pressedY = 0;
+	protected double translatedX = 0;
+	protected double translatedY = 0;
 
-	private void makeDragHandler() {
+	protected void makeDragHandler() {
 		 dragHandler = event -> {
 			if (event.getEventType().equals(MouseDragEvent.MOUSE_DRAG_RELEASED)
 					&& event.getGestureSource() instanceof ViewElement && !(event.getGestureSource() instanceof UIElement)
-						&& !(event.getGestureSource() instanceof QuestionView)
+						&& !(event.getGestureSource() instanceof Question)
 						&& !(getChildren().contains(event.getGestureSource()))
 						&& (ViewElement) event.getGestureSource() instanceof ViewElement) {
 					ViewElement dragged = (ViewElement) event.getGestureSource();
@@ -45,7 +45,7 @@ public class ViewCanvas extends DragPane {
 				
 		};
 	}
-	private void makeMouseHandler(){
+	protected void makeMouseHandler(){
 		// A mouse handler that allows us to pan the canvas
 		mouseHandler = event -> {
 			if (event.isSecondaryButtonDown()) {
@@ -101,7 +101,7 @@ public class ViewCanvas extends DragPane {
 		getChildren().remove(child);
 	}
 
-	void addChildrenListener() {
+	protected void addChildrenListener() {
 		getChildren().addListener((javafx.collections.ListChangeListener.Change<? extends Node> arg0)->{
 			while (arg0.next()) {
 				if (arg0.wasAdded()) {
@@ -116,7 +116,7 @@ public class ViewCanvas extends DragPane {
 		});
 	}
 
-	void addEventHandlers() {
+	protected void addEventHandlers() {
 		EventHandler<ScrollEvent> scrollHandler = event -> {
 			if (mousepressed)
 				return; // Does dodgy things when you try to click and scroll

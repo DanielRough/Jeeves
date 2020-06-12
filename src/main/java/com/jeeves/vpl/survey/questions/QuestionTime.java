@@ -13,7 +13,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 
-public class QuestionTime extends QuestionView {
+public class QuestionTime extends Question {
 
 	@FXML
 	private RadioButton rdioDate;

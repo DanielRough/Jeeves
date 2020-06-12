@@ -16,7 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 
-public class QuestionDate extends QuestionView {
+public class QuestionDate extends Question {
 	private static final String DATE_CON = "dateConstraint";
 	@FXML
 	private HBox hboxOptions;

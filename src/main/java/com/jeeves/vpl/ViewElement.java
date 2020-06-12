@@ -62,7 +62,7 @@ public abstract class ViewElement<T extends FirebaseElement> extends Pane {
 
 	private ViewElement draggable; // Self-referencing class, hm...
 	protected EventHandler<MouseEvent> draggedHandler;
-	protected EventHandler<MouseEvent> mainHandler;
+	public EventHandler<MouseEvent> mainHandler;
 	protected EventHandler<MouseEvent> releasedHandler;
 	protected EventHandler<MouseEvent> sidebarElemHandler;
 

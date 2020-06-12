@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane fx:id="pane" prefHeight="584.0" prefWidth="861.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Button fx:id="btnNewSurvey" layoutX="259.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleNewSurveyClick" prefHeight="12.0" prefWidth="151.0" text="New Survey">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <ScrollPane fx:id="paneScroll" fitToHeight="true" fitToWidth="true" layoutX="15.0" layoutY="65.0" prefHeight="537.0" prefViewportHeight="505.0" prefViewportWidth="633.0" prefWidth="831.0">
+         <content>
+            <Pane fx:id="paneCanvas" layoutX="15.0" layoutY="65.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="535.0" prefWidth="633.0" />
+         </content>
+      </ScrollPane>
+   </children>
+</Pane>

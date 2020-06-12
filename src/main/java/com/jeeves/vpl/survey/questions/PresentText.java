@@ -14,7 +14,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TextArea;
 
-public class PresentText extends QuestionView{
+public class PresentText extends Question{
 	@FXML
 	private TextArea txtPresent;
 	public PresentText(String label) {

@@ -21,7 +21,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import static com.jeeves.vpl.Constants.*;
 
-public class QuestionMultSingle extends QuestionView {
+public class QuestionMultSingle extends Question {
 	private static final String OPTION = "option";
 	private static final String OPTIONS = "options";
 	@FXML
@@ -78,14 +78,14 @@ public class QuestionMultSingle extends QuestionView {
 					alert.showAndWait();
 					return;
 				}
-				if(!getInstance().getChildQuestions().isEmpty()){
-					Alert alert = new Alert(AlertType.INFORMATION);
-					alert.setTitle("Dependent child question");
-					alert.setHeaderText(null);
-					alert.setContentText("Child questions may depend on these answers");
-					alert.showAndWait();
-					return;
-				}
+//				if(!getInstance().getChildQuestions().isEmpty()){
+//					Alert alert = new Alert(AlertType.INFORMATION);
+//					alert.setTitle("Dependent child question");
+//					alert.setHeaderText(null);
+//					alert.setContentText("Child questions may depend on these answers");
+//					alert.showAndWait();
+//					return;
+//				}
 				choices.getChildren().remove(optionBox);
 				Map<String, Object> qOptions = new HashMap<>();
 				int optcount = 1;

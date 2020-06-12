@@ -33,7 +33,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 
-public class QuestionAudio extends QuestionView{
+public class QuestionAudio extends Question{
 	final static Logger logger = LoggerFactory.getLogger(QuestionAudio.class);
 	private static final String AUDIOSTR = "audio";
 	@FXML

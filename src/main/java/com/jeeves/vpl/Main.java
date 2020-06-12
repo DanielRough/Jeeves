@@ -31,7 +31,7 @@ import com.jeeves.vpl.firebase.FirebaseSurvey;
 import com.jeeves.vpl.firebase.FirebaseTrigger;
 import com.jeeves.vpl.survey.Survey;
 import com.jeeves.vpl.survey.SurveyPane;
-import com.jeeves.vpl.survey.questions.QuestionView;
+import com.jeeves.vpl.survey.questions.Question;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -88,6 +88,8 @@ public class Main extends Application {
 	private Map<Label, VBox> labelPaneMap;
 	private AnchorPane myPane; // The main pane
 	private PatientPane patientController;
+	SurveyPane surveyController;
+
 	private Stage primaryStage;
 	@FXML private Label lblActions;
 	@FXML private Label lblConditions;
@@ -194,14 +196,15 @@ public class Main extends Application {
 	 */
 	@SuppressWarnings("rawtypes")
 	private void setElementParent(ViewElement draggable) {
-		if (draggable.getType() == ElementType.UIELEMENT || draggable.getType() == ElementType.QUESTION)
+		if (draggable.getType() == ElementType.UIELEMENT)
 			draggable.setParentPane(dragPane);
+		else if(draggable.getType() == ElementType.QUESTION || draggable.getType() == ElementType.CTRL_QUESTION)
+			draggable.setParentPane(surveyController.getCanvas());
 		else
 			draggable.setParentPane(canvas);
 	}
 
 	private void resetPanes() {
-		SurveyPane surveyController;
 		panePatients.getChildren().clear();
 		patientController = new PatientPane();
 		panePatients.getChildren().add(patientController);
@@ -221,7 +224,7 @@ public class Main extends Application {
 
 		//Add the project elements
 		ArrayList<ViewElement<?>> views = new ArrayList<>();
-
+		ArrayList<Survey> surveysToAdd = new ArrayList<>();
 		for (FirebaseTrigger trig : openProject.gettriggers()) {
 			Trigger triggerview = Trigger.create(trig);
 			views.add(triggerview);
@@ -232,10 +235,14 @@ public class Main extends Application {
 		}
 		for (FirebaseSurvey survey : openProject.getsurveys()) {
 			Survey surveyview = new Survey(survey);
-			surveyController.addSurvey(surveyview);
-			for (QuestionView q : surveyview.getQuestions()) {
-				setElementParent(q); // This means we can drag questions around
-			}
+			surveysToAdd.add(surveyview);
+			//surveyController.addSurvey(surveyview);
+		//	for (Question q : surveyview.getQuestions()) {
+			//	setElementParent(q); // This means we can drag questions around
+			//}
+		}
+		for(Survey s : surveysToAdd) {
+			surveyController.addSurvey(s);
 		}
 		views.forEach(view -> {
 			Point2D pos = view.getPosition();
@@ -388,15 +395,20 @@ public class Main extends Application {
 			loadType(actNames,"canvas.actions.",paneActions);
 			loadType(exprNames,"canvas.expressions.",paneConditions);
 			loadType(elemNames,"canvas.uielements.",paneAndroid.getContainer());
+			
+			//paneQuestions.getChildren().add(surveyOrganiser);
 			for (String[] qName : questionNames) {
 				ViewElement<?> question = ViewElement.create(qName[0],prefix+"survey.questions." + qName[3]);
 				elements.add(question);
-				((QuestionView)question).setQuestionType(qName[0]);
-				((QuestionView)question).setImage(qName[1]);
+				((Question)question).setQuestionType(qName[0]);
+				((Question)question).setImage(qName[1]);
 				paneQuestions.getChildren().add(question);
 			}
+			ViewElement<?> answerControl = ViewElement.create("Question Condition", prefix+"survey.questions.AnswerControl");
+			elements.add(answerControl);
+			paneQuestions.getChildren().add(answerControl);
 			for (ViewElement<?> element : elements) {
-				if(element instanceof QuestionView)
+				if(element instanceof Question)
 					element.setPadding(new Insets(0,0,10,0));
 				else	
 					element.setPadding(new Insets(0, 0, 20, 0));
@@ -416,13 +428,23 @@ public class Main extends Application {
 		SingleSelectionModel<Tab> selectionModel = tabPane.getSelectionModel();
 		selectionModel.selectedItemProperty().addListener((arg0,arg1,arg2)->{
 				Divider divider = splitPane.getDividers().get(0);
-				if (arg2 != null && arg2.equals(tabFramework))
+				if (arg2 != null && arg2.equals(tabFramework)) {
 					divider.setPosition(0.25);
-				else if (arg2 != null && arg2.equals(tabPatients))
+					tabPane.setMinWidth(tabPane.USE_COMPUTED_SIZE);
+					paneSplit.setMinWidth(0);
+				}
+				else if (arg2 != null && arg2.equals(tabPatients)) {
 					divider.setPosition(0.6);
-				else
+					tabPane.setMinWidth(tabPane.USE_COMPUTED_SIZE);
+					paneSplit.setMinWidth(0);
+				}
+				else {
+					System.out.println("SURVEYS?");
 					divider.setPosition(0.75);
-			});
+					tabPane.setMinWidth(1100);
+					paneSplit.setMinWidth(370);
+				}
+				});
 
 		labelPaneMap = new HashMap<>();
 		labelPaneMap.put(lblActions, paneActions);
@@ -532,7 +554,6 @@ public class Main extends Application {
 		Optional<String> result = dialog.showAndWait();
 		// The Java 8 way to get the response value (with lambda expression).
 		result.ifPresent(name ->{
-			System.out.println("Your name: " + name);
 			openProject.setname(name);
 			FirebaseDB.getInstance().saveProject(null, this.openProject);
 

@@ -7,7 +7,7 @@ import com.jeeves.vpl.firebase.FirebaseQuestion;
 
 import static com.jeeves.vpl.Constants.*;
 
-public class QuestionLocation extends QuestionView {
+public class QuestionLocation extends Question {
 	public QuestionLocation(String label) {
 		this(new FirebaseQuestion(label));
 	}

@@ -12,6 +12,7 @@ public class DragPane extends Pane {
 		this.setPickOnBounds(false);
 	}
 
+	
 	public void addChild(ViewElement<?> child, double mouseX, double mouseY) {
 		getChildren().add(child);
 		child.setLayoutX(mouseX);

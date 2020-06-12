@@ -7,7 +7,7 @@ import java.util.Map;
 import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.firebase.FirebaseQuestion;
 
-public class QuestionHeart extends QuestionView{
+public class QuestionHeart extends Question{
 
 	public QuestionHeart(String label) {
 		this(new FirebaseQuestion(label));

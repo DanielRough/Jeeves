@@ -174,7 +174,7 @@ public class FirebaseProject implements Serializable {
 			currentvariables.add((FirebaseVariable)model);
 		}
 		else if (elem instanceof Survey) {
-			currentsurveys.add((FirebaseSurvey)model);
+			getsurveys().add((FirebaseSurvey) model);
 		}
 	}
 

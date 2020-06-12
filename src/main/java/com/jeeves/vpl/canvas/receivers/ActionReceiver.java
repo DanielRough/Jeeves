@@ -31,11 +31,11 @@ import javafx.stage.StageStyle;
  * @author Daniel
  */
 public class ActionReceiver extends Receiver {
-	private Polygon brackets;
-	private Path receiverPath; // The black bit
-	private Path highlightPath;
-	private ActionReceiver parentReceiver;
-	private double[] defaultBracketValues;
+	protected Polygon brackets;
+	protected Path receiverPath; // The black bit
+	protected Path highlightPath;
+	protected ActionReceiver parentReceiver;
+	protected double[] defaultBracketValues;
 	public ActionReceiver getInstance() {
 		return this;
 	}
@@ -117,7 +117,7 @@ public class ActionReceiver extends Receiver {
 		};
 	}
 
-	private void addChildHandlers(ViewElement<?> child) {
+	protected void addChildHandlers(ViewElement<?> child) {
 
 		child.setOnMouseDragExited(event -> {
 			hoveredIndex = -1;
@@ -147,7 +147,7 @@ public class ActionReceiver extends Receiver {
 		});
 	}
 
-	private void redrawLine() {
+	protected void redrawLine() {
 
 		receiverPath.getElements().removeAll(receiverPath.getElements());
 		receiverPath.getElements().addAll(new MoveTo(25.0, 10.0), new LineTo(25, 10));
@@ -185,7 +185,7 @@ public class ActionReceiver extends Receiver {
 		return childList;
 	}
 
-	private void heightChanged(double heightChange) {
+	protected void heightChanged(double heightChange) {
 		redrawLine();
 
 		if (parentReceiver != null) {

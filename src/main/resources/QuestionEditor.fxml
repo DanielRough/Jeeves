@@ -7,11 +7,11 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox prefHeight="492.0" prefWidth="293.0" spacing="5.0" style="-fx-border-color: #D3D3D3;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefWidth="293.0" spacing="5.0" style="-fx-border-color: #D3D3D3;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Pane prefHeight="273.0" prefWidth="287.0">
+      <Pane prefWidth="287.0">
          <children>
-            <VBox fx:id="vboxOpts" layoutX="-1.0" prefHeight="201.0" prefWidth="276.0">
+            <VBox fx:id="vboxOpts" layoutX="-1.0" prefHeight="244.0" prefWidth="276.0">
                <children>
                   <Label text="Question Text">
                      <font>
@@ -31,9 +31,9 @@
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Pane fx:id="paneNoOpts" prefHeight="200.0" prefWidth="200.0">
+                  <Pane fx:id="paneNoOpts" prefHeight="137.0" prefWidth="276.0">
                      <children>
-                        <Label layoutX="70.0" layoutY="77.0" text="No additional options" textFill="#656161">
+                        <Label layoutX="71.0" layoutY="39.0" text="No additional options" textFill="#656161">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -64,7 +64,7 @@
             </ImageView>
          </children>
       </HBox>
-      <Pane fx:id="paneAssignToVar" prefHeight="72.0" prefWidth="287.0">
+      <Pane fx:id="paneAssignToVar" prefHeight="65.0" prefWidth="286.0">
          <children>
             <ComboBox fx:id="cboVars" cacheShape="false" layoutX="30.0" layoutY="2.0" prefHeight="33.0" prefWidth="150.0" scaleShape="false" stylesheets="@Styles.css" />
          </children>

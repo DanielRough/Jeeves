@@ -38,7 +38,7 @@ public class Constants {
 		return shouldUpdateTriggers;
 	}
 	public enum ElementType {
-		ACTION, CTRL_ACTION, EXPRESSION, QUESTION, TRIGGER, UIELEMENT, VARIABLE;
+		ACTION, CTRL_ACTION, EXPRESSION, QUESTION, CTRL_QUESTION, TRIGGER, UIELEMENT, VARIABLE;
 	}
 
 
@@ -145,7 +145,7 @@ public class Constants {
 		{"Set Times Trigger","ClockTriggerSetTimes"},
 		{"Location Trigger","LocationTrigger"},
 		{"Sensor Trigger","SensorTrigger"},
-		{"Survey Trigger","SurveyTrigger"}, 
+		{"Survey Trigger","SurveyTrigger"}
 		}).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 	public static final Map<String,String> actNames = Stream.of(new String[][] {
 		{"Prompt User","PromptAction"},

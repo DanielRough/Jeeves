@@ -1,13 +1,6 @@
 package com.jeeves.vpl.canvas.receivers;
 
-import static com.jeeves.vpl.Constants.VAR_DATE;
-
-import java.net.URL;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.RandomDatePane;
 import com.jeeves.vpl.Constants.ElementType;
@@ -59,16 +52,7 @@ public class ElementReceiver extends ExternalReceiver{
 		});		
 		
 		child.setOnMouseExited(handler->child.getStyleClass().remove("drop_shadow"));
-	//	child.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
-			
-			//	if(event.isSecondaryButtonDown())
-					//event.consume();
-			//		((UIElement)child).update(childList);
-				
-			
-	//	});
-		
-
+	
 	}
 
 	@Override

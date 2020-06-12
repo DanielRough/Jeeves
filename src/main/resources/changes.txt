@@ -1,0 +1,35 @@
+Line 158: entities -> entities'
+Line 168: areas the need -> areas that need
+Line 171: CS -> computer science (first use of acronym)
+Line 184/5: is important aspect -> is an important aspect
+Line 186: CVD -> colour vision deficiency (first use of acronym)
+Line 203: author supplied -> author-supplied
+Line 214: non-visual way Textual -> non-visual way, textual
+Line 291/2: code counts we agreed for -> code counts we agreed upon for
+Line 334: Representation of a object -> Representation of an object
+Line 405: In one paper, we noted a paper -> We noted that one paper
+Line 408: (as shown here) -> not sure what you mean here
+Line 457/8: a tables containing -> a table containing
+Line 463: shown in Figure 5 -> shown in Table 5
+Line 537: progress ,e.g. -> progress, e.g.
+Line 537: a table,. -> a table.
+Line 559/560: photographs of objects, photograph of scenes -> photographs of objects, scenes
+Line 636: we find it in inappropriate -> we find it inappropriate
+Line 660: rather opting -> rather than opting
+Line 700/1: Therefore, it unsurprising -> Therefore, it is unsurprising
+Line 718: the colours were lacked sufficient -> the colours lacked sufficient
+Line 746/7: colour with visual element -> colour with visual elements
+Line 760: accessibility visual elements -> accessibility of visual elements
+Line 766/7: figures -> figure's
+Line 800/1: Caption help -> Captions help
+Line 803: these instance will causing -> these instances will cause
+Line 819: when they including -> when they include
+Line 835/6: the readers understanding -> the reader's understanding
+Line 839/40: we what to stress -> we want to stress
+Line 863: visual elements these papers -> visual elements within these papers
+Line 929: tight deadline -> tight deadlines
+Line 938/9: 2013-2019 -> 2014-2019
+Line 950: These discussion -> These discussions
+Line 952: never never stated in final outcome -> never stated in the final outcome
+Line 957: illicit -> elicit
+Line 958/9: could be address -> could be addressed

@@ -1,6 +1,7 @@
 package com.jeeves.vpl.survey;
 
 import static com.jeeves.vpl.Constants.VAR_CATEGORY;
+
 import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
@@ -11,10 +12,9 @@ import org.slf4j.LoggerFactory;
 import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.canvas.expressions.UserVariable;
 import com.jeeves.vpl.firebase.FirebaseVariable;
-import com.jeeves.vpl.survey.questions.QuestionView;
+import com.jeeves.vpl.survey.questions.Question;
 
 import javafx.beans.value.ChangeListener;
-
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -26,6 +26,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -34,6 +35,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 
 public class QuestionEditor extends Pane {
@@ -43,7 +45,7 @@ public class QuestionEditor extends Pane {
 	private ComboBox<UserVariable> cboVars;
 	@FXML
 	private CheckBox chkAssignToVar;
-	private ConditionEditor conditionEditor;
+	//private ConditionEditor conditionEditor;
 
 	@FXML
 	private HBox hboxCondition;
@@ -56,19 +58,17 @@ public class QuestionEditor extends Pane {
 	private Pane paneAssignToVar;
 	@FXML
 	private Pane paneNoOpts;
-	private QuestionView selectedQuestion;
-	private ObservableList<QuestionView> surveyQuestions;
-
+	private Question selectedQuestion;
+	private Stage stage;
 	@FXML
 	private TextField txtQText;
 	@FXML
 	private VBox vboxOpts;
 	@FXML private CheckBox chkMandatory;
 
-	ListChangeListener<QuestionView> childQListener;
+	ListChangeListener<Question> childQListener;
 
-	public QuestionEditor(ObservableList<QuestionView> currentelements) {
-		this.surveyQuestions = currentelements;
+	public QuestionEditor(Stage stage) {
 		FXMLLoader surveyLoader = new FXMLLoader();
 		surveyLoader.setController(this);
 		surveyLoader.setLocation(getClass().getResource("/QuestionEditor.fxml"));
@@ -76,8 +76,7 @@ public class QuestionEditor extends Pane {
 		try {
 			surveynode = surveyLoader.load();
 			this.getChildren().add(surveynode);
-			conditionEditor = new ConditionEditor();
-			surveynode.getChildren().add(1, conditionEditor);
+			this.stage = stage;
 		} catch (IOException e) {
 			System.exit(1);
 		}
@@ -123,11 +122,11 @@ public class QuestionEditor extends Pane {
 		});
 	}
 
-	public QuestionView getSelectedQuestion() {
+	public Question getSelectedQuestion() {
 		return selectedQuestion;
 	}
 
-	public void populateQuestion(QuestionView entry) {
+	public void populateQuestion(Question entry) {
 		if (entry.equals(selectedQuestion))
 			return; // Forget it, we've already selected this quesiton
 		selectedQuestion = entry;
@@ -151,16 +150,20 @@ public class QuestionEditor extends Pane {
 		Map<String, Object> opts = entry.getQuestionOptions();
 		TreeMap<String,Object> sortedmap = new TreeMap<>(opts);
 		selectedQuestion.showEditOpts(sortedmap);
-		conditionEditor.setDisable(!entry.getChildQuestions().isEmpty());
-
+		
 		vboxOpts.getChildren().remove(3, vboxOpts.getChildren().size());
 		if (listener != null)
 			txtQText.textProperty().removeListener(listener);
-		listener = (o,v0,v1) -> 
-				entry.setQuestionText(v1);
-
-		txtQText.setOnKeyReleased(handler->
-			entry.getQuestionTextProperty().setValue(txtQText.getText()) //This might work?
+		listener = (o,v0,v1) -> {
+			entry.setQuestionText(v1);
+		};
+		txtQText.setOnKeyReleased(handler->{
+			entry.getQuestionTextProperty().setValue(txtQText.getText()); //This might work?
+			if(handler.getCode().equals(KeyCode.ENTER)) {
+				//Then we're probably done
+				stage.close();
+			}
+		}
 		);
 		txtQText.textProperty().addListener(listener);
 		txtQText.setText(selectedQuestion.getText());
@@ -169,16 +172,16 @@ public class QuestionEditor extends Pane {
 		else
 			vboxOpts.getChildren().add(paneNoOpts);
 		vboxOpts.getChildren().forEach(child -> child.setVisible(true));
-		conditionEditor.clear();
+	//	conditionEditor.clear();
 
-		for (QuestionView question : surveyQuestions) {
-			if (question.equals(entry))
-				break;
-			else if (!question.isChild())	
-				conditionEditor.addOption(question);
-		}
-
-		conditionEditor.populate(entry);
+//		for (Question question : surveyQuestions) {
+//			if (question.equals(entry))
+//				break;
+//			else if (!question.isChild())	
+//				conditionEditor.addOption(question);
+//		}
+//
+//		conditionEditor.populate(entry);
 	}
 
 	public void populateVarBox() {
@@ -221,7 +224,7 @@ public class QuestionEditor extends Pane {
 	public void refresh() {
 		if (selectedQuestion == null)
 			return;
-		conditionEditor.setDisable(!selectedQuestion.getChildQuestions().isEmpty());
+		//conditionEditor.setDisable(!selectedQuestion.getChildQuestions().isEmpty());
 	}
 
 }
