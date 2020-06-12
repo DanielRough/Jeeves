@@ -526,7 +526,7 @@ public class Main extends Application {
 	
 	@FXML
 	private void checkNameAndDesc() {
-		if(!txtResearcher.getText().isBlank() && !txtDescription.getText().isBlank()) {
+		if(!txtResearcher.getText().isEmpty() && !txtDescription.getText().isEmpty()) {
 			btnUrl.setDisable(false);
 		}
 		else {
