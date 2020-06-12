@@ -3,7 +3,9 @@ package com.jeeves.vpl.survey;
 import static com.jeeves.vpl.Constants.VAR_CATEGORY;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.slf4j.Logger;
@@ -146,11 +148,11 @@ public class QuestionEditor extends Pane {
 		} else {
 			chkAssignToVar.setSelected(false);
 		}
-
+		
 		Map<String, Object> opts = entry.getQuestionOptions();
 		TreeMap<String,Object> sortedmap = new TreeMap<>(opts);
 		selectedQuestion.showEditOpts(sortedmap);
-		
+
 		vboxOpts.getChildren().remove(3, vboxOpts.getChildren().size());
 		if (listener != null)
 			txtQText.textProperty().removeListener(listener);
@@ -182,6 +184,7 @@ public class QuestionEditor extends Pane {
 //		}
 //
 //		conditionEditor.populate(entry);
+
 	}
 
 	public void populateVarBox() {

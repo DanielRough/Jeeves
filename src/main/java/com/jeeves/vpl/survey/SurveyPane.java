@@ -4,6 +4,7 @@ package com.jeeves.vpl.survey;
 import static com.jeeves.vpl.Constants.getSaltString;
 
 import java.net.URL;
+import java.util.Optional;
 
 import com.jeeves.vpl.Constants;
 import com.jeeves.vpl.QuestionCanvas;
@@ -68,7 +69,6 @@ public class SurveyPane extends Pane {
 			}
 		});
 	}
-
 	public void addSurvey(Survey s) {
 		canvas.addChild(s, 270, 175); //seems to work nicely
 		s.setParentPane(canvas);
@@ -87,4 +87,5 @@ public class SurveyPane extends Pane {
 		addSurvey(surveyview);
 
 	}
+	
 }

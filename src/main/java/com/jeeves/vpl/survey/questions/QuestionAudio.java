@@ -8,8 +8,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,6 +91,8 @@ public class QuestionAudio extends Question{
 					BlobId blobId = BlobId.of(bucket.getName(), file.getName());
 					BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("audio/*").build();
 					Blob blob = storage.create(blobInfo,new FileInputStream(file));
+					URL myUrl = blob.signUrl(14, TimeUnit.DAYS);
+					System.out.println(myUrl);
 				} catch (FileNotFoundException e1) {
 					logger.error(e1.getMessage(),e1.fillInStackTrace());
 				} 

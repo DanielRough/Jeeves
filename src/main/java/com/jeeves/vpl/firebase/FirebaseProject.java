@@ -39,13 +39,21 @@ public class FirebaseProject implements Serializable {
 	private List<FirebaseUI> uidesign = new ArrayList<>();
 	private List<FirebaseVariable> variables = new ArrayList<>();
 	private List<String> sensors = new ArrayList<>();
-	private String id;
 	private boolean active;
 	private boolean isPublic;
 	private long lastUpdated;
 	private String pubKey;
 	private boolean hasSchedule;
 	private Map<String,Object> scheduleAttrs;
+	private boolean isDebug;
+	
+	public void setisDebug(boolean debug) {
+		this.isDebug= debug;
+	}
+	
+	public boolean getisDebug() {
+		return isDebug;
+	}
 	
 	public void sethasSchedule(boolean schedule) {
 		this.hasSchedule = schedule;
@@ -120,12 +128,6 @@ public class FirebaseProject implements Serializable {
 	}
 	public boolean getisPublic(){
 		return isPublic;
-	}
-	public void setid(String id){
-		this.id = id;
-	}
-	public String getid(){
-		return id;
 	}
 	public void setactive(boolean active){
 		this.active = active;
@@ -235,7 +237,7 @@ public class FirebaseProject implements Serializable {
 		else if (elem instanceof UserVariable)
 			getvariables().remove(model);
 		else if (elem instanceof Survey)
-			getsurveys().remove(model);
+			currentsurveys.remove(model);
 	}
 
 	public void setname(String name) {

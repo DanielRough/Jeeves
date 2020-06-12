@@ -1,23 +1,46 @@
 package com.jeeves.vpl;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.google.auth.oauth2.ServiceAccountCredentials;
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Bucket;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 import com.jeeves.vpl.firebase.FirebaseDB;
 import com.jeeves.vpl.firebase.FirebaseProject;
 
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.stage.Stage;
 
 public class Constants {
 
@@ -195,7 +218,8 @@ public class Constants {
 	
 	public static String FILEPATH = "." + File.separator + "firebasekey.json";
 	public static String STORAGEPATH = "." + File.separator + "storagekey.json";
-
+	public static String ANDROIDPATH = "." + File.separator + "config.json";
+	
 	public static String PROJECT_ID;
 	public static void setProjectID(String projid) {
 		PROJECT_ID = projid;
@@ -228,6 +252,8 @@ public class Constants {
 		alert.setContentText(infoText);
 		alert.showAndWait();
 	}
+	
+	
 	// A static event handler for ensuring we don't enter non-numeric characters
 	// into a numeric text box
 	public static EventHandler<KeyEvent> numberHandler = arg0 ->{
