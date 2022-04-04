@@ -62,11 +62,12 @@ public class LoginRegisterPane extends Pane{
 				fileStuff = parser.parse(new JsonReader(new FileReader(f)));
 				String projid = fileStuff.getAsJsonObject().get("project_id").getAsString();
 				InputStream resource = new FileInputStream(Constants.FILEPATH);
-				FirebaseOptions options = new FirebaseOptions.Builder()
+				FirebaseOptions options = FirebaseOptions.builder()
 						.setCredentials(GoogleCredentials.fromStream(resource))
-						.setDatabaseUrl("https://" + projid+".firebaseio.com")
+						.setDatabaseUrl("https://" + projid+"-default-rtdb.europe-west1.firebasedatabase.app")
 					    .setStorageBucket(projid+".appspot.com")
 						.build();
+				System.out.println("project id is " + projid);
 				FirebaseApp.initializeApp(options);
 				resource.close();
 				stage.hide();
@@ -141,7 +142,7 @@ public class LoginRegisterPane extends Pane{
 				txtAndroid.setText(file.getAbsolutePath());
 				JsonParser parser = new JsonParser();
 				try {
-					JsonElement fileStuff = parser.parse(new JsonReader(new FileReader(txtStorage.getText())));
+					JsonElement fileStuff = parser.parse(new JsonReader(new FileReader(txtAndroid.getText())));
 					FileWriter writer = new FileWriter(Constants.ANDROIDPATH);
 					writer.write(fileStuff.toString());
 					writer.close();

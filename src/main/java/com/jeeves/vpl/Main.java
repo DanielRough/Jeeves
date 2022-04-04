@@ -19,6 +19,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -65,8 +67,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.SingleSelectionModel;
@@ -571,7 +573,7 @@ public class Main extends Application {
 	Bucket bucket;
 	private void getStorage() {
 		try {
-			InputStream resource = new FileInputStream(Constants.STORAGEPATH);
+			InputStream resource = new FileInputStream(Constants.FILEPATH);
 			storage = StorageOptions.newBuilder().setProjectId("firebaseId")
 					.setCredentials(ServiceAccountCredentials.fromStream(resource))
 					.build()
@@ -618,11 +620,18 @@ public class Main extends Application {
 			try {
 				BlobId blobId = BlobId.of(bucket.getName(), file.getName());
 				BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("application/json").build();
-				Blob blob = storage.create(blobInfo,new FileInputStream(file));
+			    Blob blob = storage.create(blobInfo, Files.readAllBytes(Paths.get(file.getName())));
+				//Blob blob = storage.create(blobInfo,new FileInputStream(file));
 				URL myUrl = blob.signUrl(14, TimeUnit.DAYS);
 				System.out.println(myUrl);
-				Constants.makeInfoAlert("Jeeves", "New study URL", "Your study URL is " + myUrl);
-			} catch (FileNotFoundException e1) {
+				TextInputDialog dialog = new TextInputDialog(myUrl.toString());
+				dialog.setTitle("o7planning");
+				dialog.setHeaderText("Enter your name:");
+				dialog.setContentText("Here is your URL:");
+				dialog.getEditor().setEditable(false);
+				dialog.show();
+			//	Constants.makeInfoAlert("Jeeves", "New study URL", "Your study URL is " + myUrl);
+			} catch (IOException e1) {
 				e1.printStackTrace();
 			} 
 

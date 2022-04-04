@@ -18,6 +18,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Region;
 
 public class Constants {
 
@@ -227,6 +228,7 @@ public class Constants {
 		alert.setTitle(titleText);
 		alert.setHeaderText(headerText);
 		alert.setContentText(infoText);
+		alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 		alert.showAndWait();
 	}
 	// A static event handler for ensuring we don't enter non-numeric characters

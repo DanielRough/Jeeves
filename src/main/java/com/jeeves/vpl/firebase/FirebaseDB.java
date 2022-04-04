@@ -39,6 +39,22 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class FirebaseDB {
+	
+	public static class User {
+
+		  public String date_of_birth;
+		  public String full_name;
+		  public String nickname;
+
+		  public User(String dateOfBirth, String fullName) {
+		    // ...
+		  }
+
+		  public User(String dateOfBirth, String fullName, String nickname) {
+		    // ...
+		  }
+
+		}
 	final Logger logger = LoggerFactory.getLogger(FirebaseDB.class);
 	private static final String TOKEN = "token";
 	private static final String TOKENS = "tokens";
@@ -172,6 +188,7 @@ public class FirebaseDB {
 			}
 		});
 		connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+		System.out.println("Connected ref " + connectedRef.toString());
 		connectedRef.addValueEventListener(new ValueEventListener() {
 			@Override
 			public void onDataChange(DataSnapshot snapshot) {
@@ -185,6 +202,16 @@ public class FirebaseDB {
 				logger.error(arg0.getMessage(),arg0.getDetails());
 			}
 		});
+		
+		DatabaseReference ref = FirebaseDatabase.getInstance().getReference("server");
+
+		DatabaseReference usersRef = ref.child("users");
+
+		Map<String, User> users = new HashMap<>();
+		users.put("alanisawesome", new User("June 23, 1912", "Alan Turing"));
+		users.put("gracehop", new User("December 9, 1906", "Grace Hopper"));
+
+		usersRef.setValueAsync(users);
 	}
 
 //	public boolean addPatient(FirebasePatient object) {
