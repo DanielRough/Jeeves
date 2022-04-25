@@ -195,7 +195,7 @@ public class Constants {
 	public static final String SLEEP_TIME = "sleeptime";
 	
 	public static String FILEPATH = "." + File.separator + "firebasekey.json";
-	public static String STORAGEPATH = "." + File.separator + "storagekey.json";
+	//public static String STORAGEPATH = "." + File.separator + "storagekey.json";
 	public static String ANDROIDPATH = "." + File.separator + "config.json";
 	
 	public static String PROJECT_ID;

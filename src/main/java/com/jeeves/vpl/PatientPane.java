@@ -20,6 +20,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -49,6 +50,10 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.jeeves.vpl.firebase.FirebaseDB;
 import com.jeeves.vpl.firebase.FirebasePatient;
 import com.jeeves.vpl.firebase.FirebaseProject;
@@ -124,7 +129,7 @@ public class PatientPane extends Pane {
 	@FXML private TextArea txtAllMessage;
 	@FXML private Button btnSendAll;
 	
-	@FXML private Button btnChangeName;
+	//@FXML private Button btnChangeName;
 	@FXML private Button btnDelete;
 
 	@FXML private RadioButton rdioSelPatient;
@@ -135,6 +140,35 @@ public class PatientPane extends Pane {
 	private ToggleGroup surveyGroup;
 	private PrivateKey privateKey;
 
+	ValueEventListener patientChangeListener = new ValueEventListener() {
+
+		@Override
+		public void onDataChange(DataSnapshot snapshot) {
+			System.out.println("We have ourselves a change");
+			FirebasePatient p = snapshot.getValue(FirebasePatient.class);
+			System.out.println("Feedback size is " + p.getfeedback().size());
+			System.out.println("But apparently it think it's");
+			for(FirebasePatient patient : lstPatients.getItems()) {
+				if(patient.getName().equals(p.getName())) {
+					List<FirebasePatient> toremove = Collections.singletonList(p);
+					List<FirebasePatient> toadd = Collections.singletonList(patient);
+					removeFromTable(toremove);
+				//	addToTable(toadd);
+				}
+			}
+			System.out.println(lstPatients.getSelectionModel().getSelectedItem().getfeedback().size());
+		//	lstPatients.getSelectionModel().select(p);
+		//	loadPatientTable(FirebaseDB.getInstance().getOpenProject().getname());
+		}
+
+		@Override
+		public void onCancelled(DatabaseError error) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	};
+	
 	public PrivateKey getPrivate(String keystr) throws NoSuchAlgorithmException, InvalidKeySpecException {
 		byte[] keyBytes = Base64.decodeBase64(keystr);
 		PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
@@ -203,7 +237,7 @@ public class PatientPane extends Pane {
 
 		TableColumn nameCol = new TableColumn("Name");
 		nameCol.setCellValueFactory(p->
-		new ReadOnlyObjectWrapper(((CellDataFeatures<FirebasePatient, String>)p).getValue().getScreenName())
+		new ReadOnlyObjectWrapper(((CellDataFeatures<FirebasePatient, String>)p).getValue().getEmail())
 
 				);
 		fxmlLoader.setLocation(location);
@@ -217,7 +251,7 @@ public class PatientPane extends Pane {
 					super.updateItem(item, empty);
 					if(item != null) {
 						Platform.runLater(()->
-						setText(item.getScreenName()));
+						setText(item.getEmail()));
 					}
 				}
 			}
@@ -338,7 +372,7 @@ public class PatientPane extends Pane {
 				c = r.createCell(1);
 				c.setCellStyle(cellStyle);
 				
-				c.setCellValue(p.getScreenName());
+				c.setCellValue(p.getEmail());
 				String decoded = "";
 				String encodedanswers = surv.getencodedAnswers();
 				if(surv.getencodedKey() != null) {
@@ -544,6 +578,7 @@ public class PatientPane extends Pane {
 			}
 		}
 				);
+
 		loadPatientTable(FirebaseDB.getInstance().getOpenProject().getname());
 		lstPatients.getSelectionModel().clearAndSelect(0);
 		updatePatient();
@@ -565,11 +600,13 @@ public class PatientPane extends Pane {
 				try {
 					privateKey = getPrivate(FirebaseDB.getInstance().getProjectToken());
 
-					String personalInfo = decryptText(patient.getuserinfo(),privateKey);
-					decryptInfo(patient,personalInfo);
+					String email = decryptText(patient.getEmail(),privateKey);
+					patient.setEmail(email);
 					lstPatients.getItems().add(lastRemovedIndex,patient);
 				} catch (Exception e) {
 					logger.error(e.getMessage(),e.fillInStackTrace());
+					lstPatients.getItems().add(lastRemovedIndex,patient);
+
 				}
 
 		});
@@ -587,17 +624,17 @@ public class PatientPane extends Pane {
 	}
 
 
-	private void decryptInfo(FirebasePatient patient, String personalInfo){
-		String[] infoBits = personalInfo.split(";");
-		if(infoBits.length < 2) {
-			return; //Bad things have happened. 
-		}
-		String name = infoBits[0];
-		String email = infoBits[1];
-		patient.setScreenName(name);
-		patient.setEmail(email);
-
-	}
+//	private void decryptInfo(FirebasePatient patient, String personalInfo){
+//		String[] infoBits = personalInfo.split(";");
+//		if(infoBits.length < 2) {
+//			return; //Bad things have happened. 
+//		}
+//		String name = infoBits[0];
+//		String email = infoBits[1];
+//		patient.setScreenName(name);
+//		patient.setEmail(email);
+//
+//	}
 
 	Map<String,FirebaseSurvey> allIncomplete;
 	Map<String,FirebaseSurvey> allComplete;
@@ -611,18 +648,20 @@ public class PatientPane extends Pane {
 					try {
 						allowedPatients.add(patient);
 						System.out.println("Private key is " + FirebaseDB.getInstance().getProjectToken());
-
+						String patientName = patient.getName();
+						FirebaseDB.getInstance().getPatientsRef().child(patientName).addValueEventListener(patientChangeListener);
 						privateKey = getPrivate(FirebaseDB.getInstance().getProjectToken());
 						System.out.println("user info: " + patient.getuserinfo());
-						String personalInfo = decryptText(patient.getuserinfo(),privateKey);
-						decryptInfo(patient,personalInfo);
+						String email = decryptText(patient.getEmail(),privateKey);
+						patient.setEmail(email);
+						//decryptInfo(patient,personalInfo);
 					} catch (Exception e) {
 						e.printStackTrace();
 						logger.error(e.getMessage(),e.fillInStackTrace());
 					}
 				}
 			}); 
-
+			
 			lstPatients.setItems(allowedPatients); // This is hacky but I'll get
 			updatePatient();
 		}
@@ -630,6 +669,8 @@ public class PatientPane extends Pane {
 		lstPatients.getSelectionModel().selectedItemProperty().addListener(patientListener);
 	}
 
+
+	
 	private void updateSurvey(){
 		String surveyname = lstSurveys.getSelectionModel().getSelectedItem();
 		String surveyId = surveyIdMap.get(surveyname).getsurveyId();
@@ -665,13 +706,14 @@ public class PatientPane extends Pane {
 			MultipleSelectionModel<FirebasePatient> selectionModel = lstPatients.getSelectionModel();
 			if (selectionModel.getSelectedItem() != null) {
 				selectedPatient = selectionModel.getSelectedItem();
-				btnChangeName.setDisable(false);
+			//	btnChangeName.setDisable(false);
 				btnDelete.setDisable(false);
 			} else {
+				System.out.println("Bugger it's null");
 				return;
 			}
 			lstMessages.getItems().clear();
-
+			
 			TreeMap<String,Object> orderedFeedback;
 			Map<String, Object> feedback = selectedPatient.getfeedback();
 			if(feedback != null) {
@@ -692,6 +734,7 @@ public class PatientPane extends Pane {
 				String message = df.format(date) + ":    " + feed.getValue();
 				items.add(message);
 			}
+			System.out.println("CLEARING");
 			lstMessages.setItems(items);
 			
 			if(selectedPatient.getschedule() != null) {
@@ -843,36 +886,36 @@ public class PatientPane extends Pane {
 		
 	}
 	
-	@FXML
-	public void changeUsername(Event e) {
-		TextInputDialog dialog = new TextInputDialog(selectedPatient.getScreenName());
-		dialog.setTitle("Change name");
-		dialog.setHeaderText("Please enter a new name for this user");
-		dialog.setContentText("New name:");
-
-		Optional<String> result = dialog.showAndWait();
-		// The Java 8 way to get the response value (with lambda expression).
-		result.ifPresent(name ->{
-			System.out.println("Your name: " + name);
-			try {
-				privateKey = getPrivate(FirebaseDB.getInstance().getProjectToken());
-				String personalInfo = decryptText(selectedPatient.getuserinfo(),privateKey);
-				String newInfo = personalInfo.replaceFirst("[^;]*", name);
-				System.out.println("persona linfo was " + personalInfo + " and is now " + newInfo);
-				String encryptedInfo = encryptText(newInfo,getPublic(FirebaseDB.getInstance().getOpenProject().getpubKey()));
-				selectedPatient.setuserinfo(encryptedInfo);
-			} catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | UnsupportedEncodingException | IllegalBlockSizeException | BadPaddingException | NoSuchPaddingException e1) {
-				e1.printStackTrace();
-			}
-
-			FirebaseDB.getInstance().updatePatient(selectedPatient);
-
-		});
-	}
+//	@FXML
+//	public void changeUsername(Event e) {
+//		TextInputDialog dialog = new TextInputDialog(selectedPatient.getEmail());
+//		dialog.setTitle("Change name");
+//		dialog.setHeaderText("Please enter a new name for this user");
+//		dialog.setContentText("New name:");
+//
+//		Optional<String> result = dialog.showAndWait();
+//		// The Java 8 way to get the response value (with lambda expression).
+//		result.ifPresent(name ->{
+//			System.out.println("Your name: " + name);
+//			try {
+//				privateKey = getPrivate(FirebaseDB.getInstance().getProjectToken());
+//				String personalInfo = decryptText(selectedPatient.getuserinfo(),privateKey);
+//				String newInfo = personalInfo.replaceFirst("[^;]*", name);
+//				System.out.println("persona linfo was " + personalInfo + " and is now " + newInfo);
+//				String encryptedInfo = encryptText(newInfo,getPublic(FirebaseDB.getInstance().getOpenProject().getpubKey()));
+//				selectedPatient.setuserinfo(encryptedInfo);
+//			} catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | UnsupportedEncodingException | IllegalBlockSizeException | BadPaddingException | NoSuchPaddingException e1) {
+//				e1.printStackTrace();
+//			}
+//
+//			FirebaseDB.getInstance().updatePatient(selectedPatient);
+//
+//		});
+//	}
 	
 	@FXML
 	public void deleteUser(Event e) {
-		Alert alert = new Alert(AlertType.CONFIRMATION, "Delete user " + selectedPatient.getScreenName() + " ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+		Alert alert = new Alert(AlertType.CONFIRMATION, "Delete user " + selectedPatient.getEmail() + " ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
 		alert.showAndWait();
 
 		if (alert.getResult() == ButtonType.YES) {

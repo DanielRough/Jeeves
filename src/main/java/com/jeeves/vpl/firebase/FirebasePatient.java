@@ -98,12 +98,12 @@ public class FirebasePatient implements Serializable {
 		this.email = email;
 	}
 
-	public void setScreenName(String name){
-		this.screenName = name;
-	}
-	public String getScreenName(){
-		return screenName;
-	}
+//	public void setScreenName(String name){
+//		this.screenName = name;
+//	}
+//	public String getScreenName(){
+//		return screenName;
+//	}
 	public void setName(String lastName) {
 		this.name = lastName;
 	}

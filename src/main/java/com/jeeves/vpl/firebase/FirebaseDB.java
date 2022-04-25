@@ -68,7 +68,7 @@ public class FirebaseDB {
 	private FirebaseProject openProject;
 	private String uid;
 	private Map<String,String> projectTokens = new HashMap<>();
-	
+	private DatabaseReference patientsRef;
 
 	public static FirebaseDB getInstance(){
 		if(instance == null)
@@ -123,10 +123,13 @@ public class FirebaseDB {
 	public String getProjectToken() {
 		return projectKey;
 	}
+	public DatabaseReference getPatientsRef() {
+		return patientsRef;
+	}
 	public void addListeners() {
 	
 		dbRef = FirebaseDatabase.getInstance().getReference();
-		DatabaseReference patientsRef = dbRef.child(Constants.PATIENTS_COLL);
+		 patientsRef = dbRef.child(Constants.PATIENTS_COLL);
 
 		patientsRef.addChildEventListener(new ChildEventListener() {
 		    @Override
@@ -221,7 +224,7 @@ public class FirebaseDB {
 //	}
 	
 	public void deletePatient(FirebasePatient object) {
-		System.out.println(object.getScreenName());
+	//	System.out.println(object.getScreenName());
 		System.out.println(object.getUid());
 		DatabaseReference patientRef = dbRef.child(PATIENTS_COLL).child(object.getUid());
 		patientRef.removeValueAsync();
@@ -245,7 +248,7 @@ public class FirebaseDB {
 
     public boolean updatePatient(FirebasePatient patient) {
     	DatabaseReference patientsRef = dbRef.child(PATIENTS_COLL);
-    	System.out.println("patients name is " + patient.getScreenName());
+    //	System.out.println("patients name is " + patient.getScreenName());
     	patientsRef.child(patient.getUid()).setValueAsync(patient);
     	return true;
     }

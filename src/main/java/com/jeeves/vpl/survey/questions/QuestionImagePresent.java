@@ -51,7 +51,7 @@ public class QuestionImagePresent extends QuestionView{
 	private void getStorage() {
 		
 		try {
-			InputStream resource = new FileInputStream(Constants.STORAGEPATH);
+			InputStream resource = new FileInputStream(Constants.FILEPATH);
 			storage = StorageOptions.newBuilder().setProjectId("firebaseId")
 					.setCredentials(ServiceAccountCredentials.fromStream(resource))
 					.build()

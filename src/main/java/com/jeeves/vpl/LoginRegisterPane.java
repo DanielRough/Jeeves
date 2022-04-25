@@ -51,10 +51,10 @@ public class LoginRegisterPane extends Pane{
 	private boolean allLoaded = false;
 	public void doFileCheck() {
 		File f = new File(Constants.FILEPATH);
-		File f2 = new File(Constants.STORAGEPATH);
+		//File f2 = new File(Constants.STORAGEPATH);
 		File f3 = new File(Constants.ANDROIDPATH);
 		
-		if(f.exists() && f2.exists() && f3.exists()) {
+		if(f.exists() /*&& f2.exists()*/ && f3.exists()) {
 			allLoaded = true;
 			JsonParser parser = new JsonParser();
 			JsonElement fileStuff;
@@ -110,27 +110,27 @@ public class LoginRegisterPane extends Pane{
 				}
 			}	
 		});
-		btnStorage.setOnAction(e -> {
-			final FileChooser fileChooser = new FileChooser();
-			 // Set extension filter
-            FileChooser.ExtensionFilter extFilter = 
-                    new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json");
-            fileChooser.getExtensionFilters().add(extFilter);
-			File file = fileChooser.showOpenDialog(null);
-			if (file != null) {
-				txtStorage.setText(file.getAbsolutePath());
-				JsonParser parser = new JsonParser();
-				try {
-					JsonElement fileStuff = parser.parse(new JsonReader(new FileReader(txtStorage.getText())));
-					FileWriter writer = new FileWriter(Constants.STORAGEPATH);
-					writer.write(fileStuff.toString());
-					writer.close();
-					doFileCheck();
-				} catch (Exception e1) {
-					e1.printStackTrace();
-				}
-			}	
-		});
+//		btnStorage.setOnAction(e -> {
+//			final FileChooser fileChooser = new FileChooser();
+//			 // Set extension filter
+//            FileChooser.ExtensionFilter extFilter = 
+//                    new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json");
+//            fileChooser.getExtensionFilters().add(extFilter);
+//			File file = fileChooser.showOpenDialog(null);
+//			if (file != null) {
+//				txtStorage.setText(file.getAbsolutePath());
+//				JsonParser parser = new JsonParser();
+//				try {
+//					JsonElement fileStuff = parser.parse(new JsonReader(new FileReader(txtStorage.getText())));
+//					FileWriter writer = new FileWriter(Constants.STORAGEPATH);
+//					writer.write(fileStuff.toString());
+//					writer.close();
+//					doFileCheck();
+//				} catch (Exception e1) {
+//					e1.printStackTrace();
+//				}
+//			}	
+//		});
 		btnAndroid.setOnAction(e -> {
 			final FileChooser fileChooser = new FileChooser();
 			 // Set extension filter
