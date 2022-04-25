@@ -55,6 +55,10 @@ public class FirebasePatient implements Serializable {
 	public Map<String, FirebaseSurvey> getcomplete() {
 		return complete;
 	}
+	
+	public void setcomplete(Map<String, FirebaseSurvey> complete) {
+		this.complete = complete;
+	}
 
 	public String getCurrentStudy() {
 		return currentStudy;
@@ -70,6 +74,9 @@ public class FirebasePatient implements Serializable {
 		return email;
 	}
 
+	public void setfeedback(Map<String,Object> feedback) {
+		this.feedback = feedback;
+	}
 	public Map<String, Object> getfeedback() {
 		return feedback;
 	}
@@ -78,6 +85,9 @@ public class FirebasePatient implements Serializable {
 		return incomplete;
 	}
 
+	public void setincomplete(Map<String, FirebaseSurvey> incomplete) {
+		this.incomplete = incomplete;
+	}
 	public String getName() {
 		return name;
 	}

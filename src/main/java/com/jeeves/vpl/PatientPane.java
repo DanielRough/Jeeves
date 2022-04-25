@@ -149,14 +149,15 @@ public class PatientPane extends Pane {
 			System.out.println("Feedback size is " + p.getfeedback().size());
 			System.out.println("But apparently it think it's");
 			for(FirebasePatient patient : lstPatients.getItems()) {
+				//I'm SURE there must be a better way but I don't know yet so...
 				if(patient.getName().equals(p.getName())) {
-					List<FirebasePatient> toremove = Collections.singletonList(p);
-					List<FirebasePatient> toadd = Collections.singletonList(patient);
-					removeFromTable(toremove);
-				//	addToTable(toadd);
+					patient.setfeedback(p.getfeedback());			
+					patient.setcomplete(p.getcomplete());
+					patient.setincomplete(p.getincomplete());
 				}
 			}
-			System.out.println(lstPatients.getSelectionModel().getSelectedItem().getfeedback().size());
+			updatePatient();
+		//	System.out.println(lstPatients.getSelectionModel().getSelectedItem().getfeedback().size());
 		//	lstPatients.getSelectionModel().select(p);
 		//	loadPatientTable(FirebaseDB.getInstance().getOpenProject().getname());
 		}
