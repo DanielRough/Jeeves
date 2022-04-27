@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.poi.util.SystemOutLogger;
+
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
@@ -622,11 +624,13 @@ public class Main extends Application {
 				BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("application/json").build();
 			    Blob blob = storage.create(blobInfo, Files.readAllBytes(Paths.get(file.getName())));
 				//Blob blob = storage.create(blobInfo,new FileInputStream(file));
-				URL myUrl = blob.signUrl(14, TimeUnit.DAYS);
-				System.out.println(myUrl);
-				TextInputDialog dialog = new TextInputDialog(myUrl.toString());
-				dialog.setTitle("o7planning");
-				dialog.setHeaderText("Enter your name:");
+				//URL myUrl = blob.signUrl(14, TimeUnit.DAYS);
+				System.out.println("media link is " + blob.getMediaLink());
+				//System.out.println(myUrl);
+				//TextInputDialog dialog = new TextInputDialog(myUrl.toString());
+				TextInputDialog dialog = new TextInputDialog(blob.getMediaLink());
+				dialog.setTitle("Study URL");
+				dialog.setHeaderText("Study URL");
 				dialog.setContentText("Here is your URL:");
 				dialog.getEditor().setEditable(false);
 				dialog.show();

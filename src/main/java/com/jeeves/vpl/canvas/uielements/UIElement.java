@@ -90,9 +90,9 @@ public abstract class UIElement extends ViewElement<FirebaseUI> {
 		stage.initModality(Modality.APPLICATION_MODAL);
 		stage.initOwner(this.getScene().getWindow());
 		Point2D point = new Point2D(this.getLayoutX(),this.getLayoutY());
-		Point2D ppoint = getParent().localToScene(point);
+		Point2D ppoint = getParent().localToScreen(point);
 		stage.setX(ppoint.getX()+150);
-		stage.setY(ppoint.getY()+150);
+		stage.setY(ppoint.getY());
 		stage.showAndWait();
 	}
 }
