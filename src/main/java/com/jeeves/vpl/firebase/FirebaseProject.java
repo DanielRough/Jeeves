@@ -32,6 +32,7 @@ public class FirebaseProject implements Serializable {
 	private List<FirebaseExpression> expressions = new ArrayList<>();
 	private long maxNotifications;
 	private String name;
+	private String description;
 	private String researcherno;
 	private List<FirebaseSurvey> surveys = new ArrayList<>();
 	private List<FirebaseTrigger> triggers = new ArrayList<>();
@@ -194,6 +195,10 @@ public class FirebaseProject implements Serializable {
 
 	public String getresearcherno() {
 		return researcherno;
+	}
+	
+	public String getdescription() {
+		return description;
 	}
 
 	public Map<String,Map<String,FirebaseSurveyEntry>> getsurveydata(){

@@ -274,7 +274,7 @@ public class FirebaseDB {
 			}
 	        
 
-			object.setresearcherno(uid);
+			//object.setresearcherno(uid);
 
 		}
 

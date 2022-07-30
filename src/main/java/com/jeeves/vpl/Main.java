@@ -597,8 +597,10 @@ public class Main extends Application {
 		try {
 			JsonObject studyInfo = new JsonObject();
 			studyInfo.addProperty("title", openProject.getname());
-			studyInfo.addProperty("description", "A new study");
-			studyInfo.addProperty("researcher", "Researcher name");
+			studyInfo.addProperty("description", "");
+			System.out.println("AND HERE IT IS will be " + openProject.getresearcherno());
+
+			studyInfo.addProperty("researcher", openProject.getresearcherno());
 			fileStuff = parser.parse(new JsonReader(new FileReader(file)));
 			fileStuff.getAsJsonObject().add("studyinfo", studyInfo);
 			FileWriter writer = new FileWriter(Constants.ANDROIDPATH + "_updated");
@@ -624,14 +626,16 @@ public class Main extends Application {
 				BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("application/json").build();
 			    Blob blob = storage.create(blobInfo, Files.readAllBytes(Paths.get(file.getName())));
 				//Blob blob = storage.create(blobInfo,new FileInputStream(file));
-				//URL myUrl = blob.signUrl(14, TimeUnit.DAYS);
+				URL myUrl = blob.signUrl(14, TimeUnit.DAYS);
 				System.out.println("media link is " + blob.getMediaLink());
 				//System.out.println(myUrl);
-				//TextInputDialog dialog = new TextInputDialog(myUrl.toString());
-				TextInputDialog dialog = new TextInputDialog(blob.getMediaLink());
+				TextInputDialog dialog = new TextInputDialog(myUrl.toString());
+				//TextInputDialog dialog = new TextInputDialog(blob.getMediaLink());
 				dialog.setTitle("Study URL");
-				dialog.setHeaderText("Study URL");
-				dialog.setContentText("Here is your URL:");
+				dialog.setHeaderText("Ask your participants to open this URL on their device after installing the Jeeves app");
+				//dialog.getEditor().setPrefWidth(250);
+			//	dialog.setWidth(340);
+			//	dialog.setContentText("Ask your participants to open this URL on their device after installing the Jeeves app:");
 				dialog.getEditor().setEditable(false);
 				dialog.show();
 			//	Constants.makeInfoAlert("Jeeves", "New study URL", "Your study URL is " + myUrl);

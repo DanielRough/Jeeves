@@ -27,6 +27,7 @@ public class SaveAsPane extends Pane { // NO_UCD (use default)
 
 	@FXML private Button btnSave;
 	@FXML private TextField txtSaveAsName;
+	@FXML private TextField txtResearcherName;
 
 	private Stage stage;
 	private boolean exists;
@@ -44,8 +45,11 @@ public class SaveAsPane extends Pane { // NO_UCD (use default)
 			logger.error(e.getMessage(),e.fillInStackTrace());
 		}
 		txtSaveAsName.textProperty().addListener(listen -> 
-				btnSave.setDisable(txtSaveAsName.getText().equals(""))
+				btnSave.setDisable(txtSaveAsName.getText().equals("") || txtResearcherName.getText().equals(""))
 		);
+		txtResearcherName.textProperty().addListener(listen -> 
+		btnSave.setDisable(txtSaveAsName.getText().equals("") || txtResearcherName.getText().equals(""))
+);
 	}
 
 	@FXML
@@ -59,6 +63,7 @@ public class SaveAsPane extends Pane { // NO_UCD (use default)
 		FirebaseDB firebase = FirebaseDB.getInstance();
 		String oldname = openProject.getname();
 		String newname = txtSaveAsName.getText();
+		String researchername = txtResearcherName.getText();
 		firebase.getprojects().forEach(proj->{if(proj.getname().equals(newname)){
 			exists = true;	
 		}});
@@ -71,6 +76,7 @@ public class SaveAsPane extends Pane { // NO_UCD (use default)
 			Optional<ButtonType> result = alert.showAndWait();
 			if (result.isPresent() && result.get() == ButtonType.OK){
 				openProject.setname(newname);
+				openProject.setresearcherno(researchername);
 				Main.getContext().setNameLabel(newname); 
 				firebase.saveProject(oldname, openProject);
 				stage.close();
@@ -81,6 +87,8 @@ public class SaveAsPane extends Pane { // NO_UCD (use default)
 		else{
 			Main.getContext().setNameLabel(newname); 
 			openProject.setname(newname);
+			System.out.println("Researchername will be " + researchername);
+			openProject.setresearcherno(researchername);			
 			firebase.saveProject(oldname, openProject);
 			stage.close();
 		}
