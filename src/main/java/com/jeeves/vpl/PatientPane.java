@@ -595,12 +595,13 @@ public class PatientPane extends Pane {
 		if (proj == null)
 			return;
 		String name = proj.getname();
-
+		System.out.println("NAME IS " + name);
 		list.forEach(patient->{
 			if(patient.getCurrentStudy().equals(name))
 				try {
 					privateKey = getPrivate(FirebaseDB.getInstance().getProjectToken());
 
+					System.out.println("EMAIL IS " + patient.getEmail());
 					String email = decryptText(patient.getEmail(),privateKey);
 					patient.setEmail(email);
 					lstPatients.getItems().add(lastRemovedIndex,patient);
@@ -654,6 +655,7 @@ public class PatientPane extends Pane {
 						privateKey = getPrivate(FirebaseDB.getInstance().getProjectToken());
 						System.out.println("user info: " + patient.getuserinfo());
 						String email = decryptText(patient.getEmail(),privateKey);
+						System.out.println("Email is " + email);
 						patient.setEmail(email);
 						//decryptInfo(patient,personalInfo);
 					} catch (Exception e) {
@@ -679,10 +681,10 @@ public class PatientPane extends Pane {
 		Map<String,Map<String,FirebaseSurveyEntry>> surveydata = FirebaseDB.getInstance().getOpenProject().getSurveyEntries();
 		Map<String,FirebaseSurveyEntry> data = surveydata.get(surveyId);
 		if(data == null){
-			lblComplete.setText("");
-			lblMissed.setText("");
-			lblCompTimeThis.setText("");
-			lblCompTimeAll.setText("");
+		//	lblComplete.setText("");
+		//	lblMissed.setText("");
+		//	lblCompTimeThis.setText("");
+		//	lblCompTimeAll.setText("");
 			return;
 		}
 
@@ -736,6 +738,7 @@ public class PatientPane extends Pane {
 				items.add(message);
 			}
 			System.out.println("CLEARING");
+			System.out.println("Items length is " + items.size());
 			lstMessages.setItems(items);
 			
 			if(selectedPatient.getschedule() != null) {
@@ -810,7 +813,7 @@ public class PatientPane extends Pane {
 							setStyle("-fx-background-color: lightgrey");
 						}
 						else {
-							setStyle("-fx-background-color: white");
+							setStyle("-fx-background-color: darkgrey");
 						}
 						setGraphic(null);
 

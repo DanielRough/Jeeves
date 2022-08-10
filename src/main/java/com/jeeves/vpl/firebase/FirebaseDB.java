@@ -121,6 +121,7 @@ public class FirebaseDB {
 	}
 
 	public String getProjectToken() {
+		System.out.println("Project token IS " + projectKey);
 		return projectKey;
 	}
 	public DatabaseReference getPatientsRef() {
