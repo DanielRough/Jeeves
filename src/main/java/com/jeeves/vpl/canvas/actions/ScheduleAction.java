@@ -33,9 +33,10 @@ public class ScheduleAction extends Action { // NO_UCD (unused code)
 	@Override
 	public void setData(FirebaseAction model) {
 		super.setData(model);
+
+		Map<String, Object> params = model.getparams();
 		if (params.isEmpty())
 			return;
-		Map<String, Object> params = model.getparams();
 		if (params.containsKey(PASSWORD)) {
 			chkPassword.setSelected(true);
 			chkPassword.setText(params.get(PASSWORD).toString());
