@@ -24,7 +24,15 @@ public class FirebasePatient implements Serializable {
 	private String phoneNo;
 	private String uid;
 	private String date;
-	private String screenName;
+	private long signuptime;
+	
+	public long getsignuptime() {
+		return signuptime;
+	}
+	public void setsignuptime(long signuptime) {
+		this.signuptime = signuptime;
+	}
+	
 	private List<String> schedule;
 	private boolean hasSchedule;
 	
